@@ -1,4 +1,3 @@
-
 {
   "placeholderImages": [
     {
@@ -14,28 +13,40 @@
       "imageHint": "hairdresser shop"
     },
     {
+      "id": "makeup-hero",
+      "description": "Beauty and Makeup Hero",
+      "imageUrl": "https://picsum.photos/seed/makeup-hero/1920/1080",
+      "imageHint": "beauty makeup"
+    },
+    {
       "id": "product-1",
-      "description": "Premium Foundation",
-      "imageUrl": "https://picsum.photos/seed/prod1/400/400",
+      "description": "Silk Radiance Foundation",
+      "imageUrl": "https://picsum.photos/seed/makeup1/400/500",
       "imageHint": "foundation makeup"
     },
     {
       "id": "product-2",
-      "description": "Silk Lipstick Set",
-      "imageUrl": "https://picsum.photos/seed/prod2/400/400",
+      "description": "Velvet Matte Lip Ink",
+      "imageUrl": "https://picsum.photos/seed/makeup2/400/500",
       "imageHint": "lipstick beauty"
     },
     {
-      "id": "deal-bridal",
-      "description": "Bridal Makeup Session",
-      "imageUrl": "https://picsum.photos/seed/bridal/800/600",
-      "imageHint": "bridal makeup"
+      "id": "product-3",
+      "description": "Gold Infused Face Oil",
+      "imageUrl": "https://picsum.photos/seed/makeup3/400/500",
+      "imageHint": "serum beauty"
     },
     {
-      "id": "deal-hair",
-      "description": "Professional Hair Coloring",
-      "imageUrl": "https://picsum.photos/seed/hair/800/600",
-      "imageHint": "hair salon"
+      "id": "product-4",
+      "description": "Illuminating Priming Veil",
+      "imageUrl": "https://picsum.photos/seed/makeup4/400/500",
+      "imageHint": "primer makeup"
+    },
+    {
+      "id": "beauty-ritual",
+      "description": "Luxury Beauty Ritual",
+      "imageUrl": "https://picsum.photos/seed/beauty-ritual/800/1000",
+      "imageHint": "makeup model"
     }
   ]
 }
