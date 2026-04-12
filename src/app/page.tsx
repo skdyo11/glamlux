@@ -1,13 +1,14 @@
+
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { DEALS, PRODUCTS } from '@/app/lib/mock-data';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, Clock, MapPin, Sparkles, ArrowRight, ShoppingBag, Heart } from 'lucide-react';
+import { Star, MapPin, Sparkles, ArrowRight, ShoppingBag, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
 
@@ -36,10 +37,10 @@ export default function Home() {
       
       <main className="max-w-[100vw] overflow-x-hidden">
         {/* Mobile-First Hero Section */}
-        <section className="relative h-[60vh] md:h-[80vh] flex items-end md:items-center overflow-hidden">
+        <section className="relative h-[70vh] md:h-[80vh] flex items-end md:items-center overflow-hidden pb-12 md:pb-0">
           <div className="absolute inset-0 z-0">
             <Image 
-              src="https://picsum.photos/seed/glam-makeup-hero/1920/1080" 
+              src="https://picsum.photos/seed/glam-makeup-hero-final/1920/1080" 
               alt="Premium Beauty" 
               fill 
               className="object-cover"
@@ -48,13 +49,13 @@ export default function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10" />
           </div>
-          <div className="container mx-auto px-6 relative z-20 pb-12 md:pb-0">
+          <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-xl space-y-6 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/30 backdrop-blur-md border border-white/40 mx-auto md:mx-0">
                 <Sparkles className="h-3 w-3 text-primary" />
                 <span className="text-[10px] uppercase tracking-[0.2em] font-black text-primary">Luxury Collection</span>
               </div>
-              <h1 className="text-5xl md:text-8xl font-headline leading-[0.9] tracking-tighter text-foreground drop-shadow-sm">
+              <h1 className="text-6xl md:text-8xl font-headline leading-[0.9] tracking-tighter text-foreground drop-shadow-sm">
                 Pure <br />
                 <span className="italic text-primary">Artistry</span>
               </h1>
@@ -68,13 +69,13 @@ export default function Home() {
         {/* Quick Discovery Tabs/Cards for Mobile */}
         <section className="px-6 -mt-8 relative z-30 grid grid-cols-2 gap-4">
            <Link href="/shop" className="group">
-             <Card className="bg-white/40 backdrop-blur-xl border-white/60 p-6 flex flex-col items-center justify-center gap-3 rounded-[2rem] shadow-xl shadow-primary/5 group-active:scale-95 transition-transform">
+             <Card className="bg-white/40 backdrop-blur-xl border-white/60 p-6 flex flex-col items-center justify-center gap-3 rounded-[2rem] shadow-xl shadow-primary/5 group-active:scale-95 transition-transform h-32 md:h-40">
                <div className="p-3 bg-primary/10 rounded-2xl text-primary"><ShoppingBag className="h-6 w-6" /></div>
                <span className="font-headline text-lg italic">Shop Shop</span>
              </Card>
            </Link>
            <Link href="/deals" className="group">
-             <Card className="bg-primary text-white p-6 flex flex-col items-center justify-center gap-3 rounded-[2rem] shadow-xl shadow-primary/20 group-active:scale-95 transition-transform">
+             <Card className="bg-primary text-white p-6 flex flex-col items-center justify-center gap-3 rounded-[2rem] shadow-xl shadow-primary/20 group-active:scale-95 transition-transform h-32 md:h-40">
                <div className="p-3 bg-white/20 rounded-2xl text-white"><Sparkles className="h-6 w-6" /></div>
                <span className="font-headline text-lg italic">Book Glam</span>
              </Card>
@@ -113,7 +114,7 @@ export default function Home() {
                         <Button 
                           size="sm" 
                           onClick={() => handleAddToCart(product)}
-                          className="rounded-full bg-primary text-white hover:bg-primary/90 h-10 w-10 p-0"
+                          className="rounded-full bg-primary text-white hover:bg-primary/90 h-10 w-10 p-0 flex items-center justify-center"
                         >
                           <ShoppingBag className="h-4 w-4" />
                         </Button>
@@ -136,7 +137,7 @@ export default function Home() {
                   <Card className="group relative overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-white active:scale-95 transition-all">
                     <div className="relative h-64 overflow-hidden">
                       <Image 
-                        src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 
+                        src={`https://picsum.photos/seed/luxury-beauty-deal-${deal.id}/800/600`} 
                         alt={deal.name} 
                         fill 
                         className="object-cover group-hover:scale-105 transition-transform duration-700" 
