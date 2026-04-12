@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun, MessageSquare, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun, MessageSquare } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +22,6 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  // Removed Home from here so it doesn't show in bottom nav or desktop center
   const navLinks = [
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
@@ -71,12 +70,14 @@ export function Navbar() {
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
-            {/* Back to Home Button requested by user */}
-            <Link href="/">
-              <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 rounded-full">
-                <Home className="h-5 w-5" />
-              </Button>
-            </Link>
+            {/* Back to Home Button - Only show when not on the home page */}
+            {pathname !== '/' && (
+              <Link href="/">
+                <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 rounded-full">
+                  <Home className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
 
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative text-primary hover:bg-primary/10 rounded-full">
