@@ -1,51 +1,52 @@
+
 {
   "placeholderImages": [
     {
       "id": "parlour-1",
       "description": "Luxury Spa Interior",
-      "imageUrl": "https://picsum.photos/seed/parlour1/800/600",
+      "imageUrl": "https://picsum.photos/seed/makeup-spa-1/800/600",
       "imageHint": "luxury salon"
     },
     {
       "id": "parlour-2",
       "description": "Modern Hair Studio",
-      "imageUrl": "https://picsum.photos/seed/parlour2/800/600",
+      "imageUrl": "https://picsum.photos/seed/makeup-salon-2/800/600",
       "imageHint": "hairdresser shop"
     },
     {
       "id": "makeup-hero",
       "description": "Beauty and Makeup Hero",
-      "imageUrl": "https://picsum.photos/seed/makeup-hero/1920/1080",
+      "imageUrl": "https://picsum.photos/seed/glam-makeup-hero/1920/1080",
       "imageHint": "beauty makeup"
     },
     {
       "id": "product-1",
       "description": "Silk Radiance Foundation",
-      "imageUrl": "https://picsum.photos/seed/makeup1/400/500",
+      "imageUrl": "https://picsum.photos/seed/foundation-makeup-1/400/500",
       "imageHint": "foundation makeup"
     },
     {
       "id": "product-2",
       "description": "Velvet Matte Lip Ink",
-      "imageUrl": "https://picsum.photos/seed/makeup2/400/500",
+      "imageUrl": "https://picsum.photos/seed/lipstick-beauty-2/400/500",
       "imageHint": "lipstick beauty"
     },
     {
       "id": "product-3",
       "description": "Gold Infused Face Oil",
-      "imageUrl": "https://picsum.photos/seed/makeup3/400/500",
+      "imageUrl": "https://picsum.photos/seed/serum-beauty-3/400/500",
       "imageHint": "serum beauty"
     },
     {
       "id": "product-4",
       "description": "Illuminating Priming Veil",
-      "imageUrl": "https://picsum.photos/seed/makeup4/400/500",
+      "imageUrl": "https://picsum.photos/seed/primer-makeup-4/400/500",
       "imageHint": "primer makeup"
     },
     {
       "id": "beauty-ritual",
       "description": "Luxury Beauty Ritual",
-      "imageUrl": "https://picsum.photos/seed/beauty-ritual/800/1000",
+      "imageUrl": "https://picsum.photos/seed/makeup-model-ritual/800/1000",
       "imageHint": "makeup model"
     }
   ]

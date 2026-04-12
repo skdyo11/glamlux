@@ -1,3 +1,6 @@
+
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
@@ -6,21 +9,41 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Clock, MapPin, Sparkles, ArrowRight, ShoppingBag } from 'lucide-react';
+import { useStore } from '@/app/lib/store';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
+  const { addToCart, getCurrency } = useStore();
+  const { toast } = useToast();
+
+  const handleAddToCart = (product: any) => {
+    addToCart({
+      id: product.id,
+      type: 'product',
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.image
+    });
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your glam collection.`,
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative h-[85vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[90vh] flex items-center overflow-hidden py-32">
           <div className="absolute inset-0 z-0">
             <Image 
-              src="https://picsum.photos/seed/makeup-hero/1920/1080" 
+              src="https://picsum.photos/seed/glam-makeup-hero/1920/1080" 
               alt="Premium Beauty" 
               fill 
-              className="object-cover brightness-[0.7] scale-105 animate-pulse-slow"
+              className="object-cover brightness-[0.7] scale-105"
               priority
               data-ai-hint="beauty makeup"
             />
@@ -32,18 +55,18 @@ export default function Home() {
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">The Art of Radiance</span>
               </div>
-              <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight">
+              <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight text-foreground">
                 Your Daily <br />
                 <span className="italic text-primary">Glamour</span> Ritual
               </h1>
               <p className="text-xl text-foreground/70 font-body max-w-lg leading-relaxed">
                 Discover the ultimate destination for luxury makeup and elite parlour transformations. Curated for the modern connoisseur of beauty.
               </p>
-              <div className="flex flex-wrap gap-5 pt-4">
+              <div className="flex flex-wrap gap-5 pt-8">
                 <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 h-14 text-base shadow-lg shadow-primary/20">
                   <Link href="/shop">Shop the Collection</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary/20 hover:border-primary hover:bg-primary/5 rounded-full px-10 h-14 text-base">
+                <Button asChild variant="outline" size="lg" className="border-primary/20 hover:border-primary hover:bg-primary/5 bg-white/50 backdrop-blur-sm rounded-full px-10 h-14 text-base">
                   <Link href="/deals">Book a Transformation</Link>
                 </Button>
               </div>
@@ -73,16 +96,21 @@ export default function Home() {
                       alt={product.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      data-ai-hint="makeup product"
                     />
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
-                    <Button size="icon" className="absolute bottom-4 right-4 rounded-full opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white text-primary hover:bg-primary hover:text-white">
+                    <Button 
+                      size="icon" 
+                      onClick={() => handleAddToCart(product)}
+                      className="absolute bottom-4 right-4 rounded-full opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white text-primary hover:bg-primary hover:text-white shadow-xl z-10"
+                    >
                       <ShoppingBag className="h-5 w-5" />
                     </Button>
                   </div>
                   <CardHeader className="space-y-1 p-6 text-center">
                     <p className="text-[10px] uppercase tracking-widest text-primary/60 font-bold">{product.brand}</p>
                     <CardTitle className="text-lg font-headline">{product.name}</CardTitle>
-                    <p className="text-primary font-bold text-xl mt-2 italic">PKR {product.price.toLocaleString()}</p>
+                    <p className="text-primary font-bold text-xl mt-2 italic">{getCurrency()} {product.price.toLocaleString()}</p>
                   </CardHeader>
                 </Card>
               ))}
@@ -115,6 +143,7 @@ export default function Home() {
                           alt={deal.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
+                          data-ai-hint="luxury salon"
                         />
                         <div className="absolute top-4 left-4">
                           <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none text-[10px] uppercase font-black px-3 py-1 tracking-tighter">
@@ -137,8 +166,8 @@ export default function Home() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="flex items-baseline gap-3">
-                        <span className="text-2xl font-bold text-primary italic">PKR {deal.discounted_price.toLocaleString()}</span>
-                        <span className="text-sm text-muted-foreground line-through opacity-50">PKR {deal.price.toLocaleString()}</span>
+                        <span className="text-2xl font-bold text-primary italic">{getCurrency()} {deal.discounted_price.toLocaleString()}</span>
+                        <span className="text-sm text-muted-foreground line-through opacity-50">{getCurrency()} {deal.price.toLocaleString()}</span>
                       </CardContent>
                       <CardFooter className="pt-4 border-t flex justify-between items-center h-14 bg-secondary/10">
                         <div className="flex items-center gap-1 text-xs font-bold text-primary">
@@ -193,7 +222,7 @@ export default function Home() {
                <div className="absolute -inset-4 border border-accent/30 rounded-3xl translate-x-4 translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-700" />
                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
                  <Image 
-                  src="https://picsum.photos/seed/beauty-ritual/800/1000" 
+                  src="https://picsum.photos/seed/makeup-model-ritual/800/1000" 
                   alt="Service" 
                   fill 
                   className="object-cover"
