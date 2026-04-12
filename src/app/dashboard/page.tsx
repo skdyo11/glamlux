@@ -7,7 +7,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetDescription,
+  SheetFooter,
+  SheetClose
+} from '@/components/ui/sheet';
+import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays, CheckCircle2, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -21,37 +33,40 @@ const MOCK_ARRIVALS = [
 export default function DashboardPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const { toast } = useToast();
+  
+  // Sheet States
+  const [isParlourSheetOpen, setIsParlourSheetOpen] = useState(false);
+  const [isShopSheetOpen, setIsShopSheetOpen] = useState(false);
+  const [selectedArrival, setSelectedArrival] = useState<any>(null);
 
-  const handleAddParlour = () => {
+  const handleCreateParlour = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsParlourSheetOpen(false);
     toast({
-      title: "Registering Parlour",
-      description: "Redirecting to the parlour onboarding wizard...",
+      title: "Success",
+      description: "Parlour registration submitted for review.",
     });
   };
 
-  const handleAddShop = () => {
+  const handleCreateShop = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsShopSheetOpen(false);
     toast({
-      title: "Opening Merchant Portal",
-      description: "Preparing your beauty shop registration form...",
+      title: "Success",
+      description: "Beauty Shop has been listed successfully.",
     });
   };
 
-  const handleManageEntry = (guestName: string) => {
+  const handleVerifyEntry = () => {
     toast({
-      title: "Access Verification",
-      description: `Opening entry management for ${guestName}...`,
+      title: "Entry Verified",
+      description: `${selectedArrival.name} has been checked in.`,
     });
-  };
-
-  const handleEditSchedule = (day: string) => {
-    toast({
-      title: "Schedule Management",
-      description: `Modifying operating hours for ${day}...`,
-    });
+    setSelectedArrival(null);
   };
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-transparent pb-24 md:pb-0">
       <Navbar />
       
       <main className="container mx-auto px-6 py-8 md:py-12">
@@ -80,13 +95,13 @@ export default function DashboardPage() {
 
           <div className="flex gap-3">
             <Button 
-              onClick={handleAddParlour}
-              className="flex-1 rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest"
+              onClick={() => setIsParlourSheetOpen(true)}
+              className="flex-1 rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
             >
               <Plus className="h-4 w-4 mr-2" /> Add Parlour
             </Button>
             <Button 
-              onClick={handleAddShop}
+              onClick={() => setIsShopSheetOpen(true)}
               variant="outline" 
               className="flex-1 rounded-2xl h-14 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest"
             >
@@ -108,7 +123,11 @@ export default function DashboardPage() {
           <TabsContent value="arrivals" className="space-y-4">
             <div className="md:hidden space-y-4">
               {MOCK_ARRIVALS.map((arrival) => (
-                <Card key={arrival.id} className="p-5 rounded-[2rem] border-none shadow-lg bg-white/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all">
+                <Card 
+                  key={arrival.id} 
+                  onClick={() => setSelectedArrival(arrival)}
+                  className="p-5 rounded-[2rem] border-none shadow-lg bg-white/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
+                >
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
@@ -121,13 +140,9 @@ export default function DashboardPage() {
                       {arrival.status}
                     </Badge>
                   </div>
-                  <Button 
-                    onClick={() => handleManageEntry(arrival.name)}
-                    variant="ghost" 
-                    className="w-full justify-between h-10 px-0 text-primary font-bold text-[10px] uppercase tracking-[0.2em] border-t rounded-none pt-4"
-                  >
+                  <div className="flex justify-between items-center text-primary font-bold text-[10px] uppercase tracking-[0.2em] border-t rounded-none pt-4">
                     Manage Entry <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  </div>
                 </Card>
               ))}
             </div>
@@ -156,7 +171,7 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell className="text-right px-8">
                         <Button 
-                          onClick={() => handleManageEntry(arrival.name)}
+                          onClick={() => setSelectedArrival(arrival)}
                           variant="ghost" 
                           size="sm" 
                           className="font-bold text-primary hover:underline"
@@ -192,7 +207,7 @@ export default function DashboardPage() {
                          <Badge variant="outline" className="border-primary/20 text-primary text-[9px] uppercase font-black">12 Slots</Badge>
                        </div>
                        <Button 
-                        onClick={() => handleEditSchedule(day)}
+                        onClick={() => toast({ title: "Edit Schedule", description: `Updating capacity for ${day}...` })}
                         size="sm" 
                         variant="ghost" 
                         className="text-primary font-black uppercase text-[9px] tracking-widest"
@@ -207,6 +222,101 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* --- FORMS & SHEETS --- */}
+
+      {/* Add Parlour Sheet */}
+      <Sheet open={isParlourSheetOpen} onOpenChange={setIsParlourSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-[2.5rem] h-[90vh] md:h-auto overflow-y-auto">
+          <SheetHeader className="space-y-2">
+            <SheetTitle className="text-3xl font-headline italic">New Parlour Registration</SheetTitle>
+            <SheetDescription>Provide details about your beauty establishment to join GlamLux.</SheetDescription>
+          </SheetHeader>
+          <form onSubmit={handleCreateParlour} className="space-y-6 py-8">
+            <div className="space-y-2">
+              <Label htmlFor="parlour-name" className="text-xs uppercase font-bold tracking-widest">Parlour Name</Label>
+              <Input id="parlour-name" placeholder="e.g. The Gilded Rose" className="rounded-xl h-12 border-primary/20" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="parlour-location" className="text-xs uppercase font-bold tracking-widest">Area / Location</Label>
+              <Input id="parlour-location" placeholder="e.g. Gulberg III, Lahore" className="rounded-xl h-12 border-primary/20" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="parlour-description" className="text-xs uppercase font-bold tracking-widest">About the Studio</Label>
+              <Textarea id="parlour-description" placeholder="Describe your luxury environment..." className="rounded-xl border-primary/20 min-h-[100px]" required />
+            </div>
+            <Button type="submit" className="w-full h-14 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20">
+              Submit Registration
+            </Button>
+          </form>
+        </SheetContent>
+      </Sheet>
+
+      {/* Add Shop Sheet */}
+      <Sheet open={isShopSheetOpen} onOpenChange={setIsShopSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-[2.5rem] h-[90vh] md:h-auto overflow-y-auto">
+          <SheetHeader className="space-y-2">
+            <SheetTitle className="text-3xl font-headline italic">Merchant Onboarding</SheetTitle>
+            <SheetDescription>List your premium makeup brand on our marketplace.</SheetDescription>
+          </SheetHeader>
+          <form onSubmit={handleCreateShop} className="space-y-6 py-8">
+            <div className="space-y-2">
+              <Label htmlFor="shop-brand" className="text-xs uppercase font-bold tracking-widest">Brand Name</Label>
+              <Input id="shop-brand" placeholder="e.g. GlamLux Couture" className="rounded-xl h-12 border-primary/20" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shop-category" className="text-xs uppercase font-bold tracking-widest">Product Categories</Label>
+              <Input id="shop-category" placeholder="e.g. Foundations, Lipsticks" className="rounded-xl h-12 border-primary/20" required />
+            </div>
+            <Button type="submit" className="w-full h-14 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-lg shadow-secondary/10">
+              Open Merchant Account
+            </Button>
+          </form>
+        </SheetContent>
+      </Sheet>
+
+      {/* Manage Entry Sheet */}
+      <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
+        <SheetContent side="bottom" className="rounded-t-[2.5rem]">
+          {selectedArrival && (
+            <div className="space-y-8 py-4">
+              <SheetHeader className="space-y-2">
+                <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2">
+                  <CheckCircle2 className="h-4 w-4" /> Guest Check-In
+                </div>
+                <SheetTitle className="text-4xl font-headline">{selectedArrival.name}</SheetTitle>
+                <SheetDescription className="italic">{selectedArrival.service}</SheetDescription>
+              </SheetHeader>
+              
+              <div className="bg-primary/5 p-6 rounded-3xl space-y-4">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Booking Ref:</span>
+                  <span className="font-mono font-bold text-primary">GL-9938-X</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Scheduled Time:</span>
+                  <span className="font-bold">{selectedArrival.time}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Current Status:</span>
+                  <Badge variant="outline" className="border-primary/20 text-primary">{selectedArrival.status}</Badge>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                <Button onClick={handleVerifyEntry} className="h-14 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20">
+                  Verify & Grant Entry
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="ghost" className="h-14 font-bold text-muted-foreground">
+                    Close Details
+                  </Button>
+                </SheetClose>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
