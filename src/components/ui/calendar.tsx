@@ -18,11 +18,11 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-0", className)}
+      className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
-        month: "space-y-6 w-full",
-        caption: "flex justify-center pt-1 relative items-center mb-4",
+        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        month: "space-y-4",
+        caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-bold font-headline uppercase tracking-widest text-primary",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
@@ -32,15 +32,21 @@ function Calendar({
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse",
-        head_row: "flex w-full justify-between mb-4",
+        head_row: "flex w-full mb-2",
         head_cell:
-          "text-muted-foreground w-9 font-bold text-[11px] uppercase text-center flex items-center justify-center opacity-50",
-        row: "flex w-full justify-between mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+          "text-muted-foreground w-9 font-bold text-[10px] uppercase text-center flex-1",
+        row: "flex w-full mt-2",
+        cell: cn(
+          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 flex-1",
+          props.mode === "range"
+            ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
+            : "[&:has([aria-selected])]:rounded-md"
+        ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-bold aria-selected:opacity-100 rounded-xl transition-all"
+          "h-9 w-9 p-0 font-bold aria-selected:opacity-100 rounded-xl transition-all hover:bg-primary/10 mx-auto block"
         ),
+        day_range_start: "day-range-start",
         day_range_end: "day-range-end",
         day_selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground shadow-lg shadow-primary/30",
