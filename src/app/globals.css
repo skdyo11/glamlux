@@ -4,37 +4,37 @@
 
 @layer base {
   :root {
-    --background: 20 20% 98%; /* Creamy Silk */
-    --foreground: 20 10% 20%; /* Deep Espresso */
+    --background: 345 40% 99%; /* Milk Pearl */
+    --foreground: 345 20% 20%; /* Deep Rosewood Ash */
     --card: 0 0% 100%;
-    --card-foreground: 20 10% 20%;
+    --card-foreground: 345 20% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 20%;
-    --primary: 345 40% 35%; /* Velvet Rosewood */
-    --primary-foreground: 20 20% 98%;
-    --secondary: 25 60% 94%; /* Soft Nude */
-    --secondary-foreground: 345 40% 20%;
-    --muted: 25 20% 90%;
-    --muted-foreground: 25 10% 45%;
-    --accent: 35 40% 80%; /* Champagne Gold */
-    --accent-foreground: 345 40% 20%;
+    --popover-foreground: 345 20% 20%;
+    --primary: 345 45% 65%; /* Soft Dusty Rose */
+    --primary-foreground: 345 40% 99%;
+    --secondary: 20 60% 95%; /* Petal Peach */
+    --secondary-foreground: 345 45% 30%;
+    --muted: 345 20% 95%;
+    --muted-foreground: 345 15% 50%;
+    --accent: 35 50% 90%; /* Soft Champagne Gold */
+    --accent-foreground: 345 45% 30%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 25 15% 85%;
-    --input: 25 15% 85%;
-    --ring: 345 40% 35%;
-    --radius: 0.5rem;
+    --border: 345 20% 92%;
+    --input: 345 20% 92%;
+    --ring: 345 45% 65%;
+    --radius: 1rem;
   }
   .dark {
-    --background: 20 10% 10%;
-    --foreground: 20 20% 98%;
-    --card: 20 10% 12%;
-    --card-foreground: 20 20% 98%;
-    --primary: 345 40% 55%;
-    --primary-foreground: 20 10% 10%;
-    --secondary: 345 20% 25%;
-    --secondary-foreground: 20 20% 98%;
-    --border: 20 10% 20%;
+    --background: 345 20% 10%;
+    --foreground: 345 20% 98%;
+    --card: 345 20% 12%;
+    --card-foreground: 345 20% 98%;
+    --primary: 345 45% 75%;
+    --primary-foreground: 345 20% 10%;
+    --secondary: 345 20% 20%;
+    --secondary-foreground: 345 20% 98%;
+    --border: 345 20% 18%;
   }
 }
 
