@@ -9,6 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays } from 'lucide-react';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const MOCK_ARRIVALS = [
   { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
@@ -19,6 +20,35 @@ const MOCK_ARRIVALS = [
 
 export default function DashboardPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const { toast } = useToast();
+
+  const handleAddParlour = () => {
+    toast({
+      title: "Registering Parlour",
+      description: "Redirecting to the parlour onboarding wizard...",
+    });
+  };
+
+  const handleAddShop = () => {
+    toast({
+      title: "Opening Merchant Portal",
+      description: "Preparing your beauty shop registration form...",
+    });
+  };
+
+  const handleManageEntry = (guestName: string) => {
+    toast({
+      title: "Access Verification",
+      description: `Opening entry management for ${guestName}...`,
+    });
+  };
+
+  const handleEditSchedule = (day: string) => {
+    toast({
+      title: "Schedule Management",
+      description: `Modifying operating hours for ${day}...`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -49,10 +79,17 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex gap-3">
-            <Button className="flex-1 rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest">
+            <Button 
+              onClick={handleAddParlour}
+              className="flex-1 rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest"
+            >
               <Plus className="h-4 w-4 mr-2" /> Add Parlour
             </Button>
-            <Button variant="outline" className="flex-1 rounded-2xl h-14 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest">
+            <Button 
+              onClick={handleAddShop}
+              variant="outline" 
+              className="flex-1 rounded-2xl h-14 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest"
+            >
               <Plus className="h-4 w-4 mr-2" /> Add Shop
             </Button>
           </div>
@@ -84,7 +121,11 @@ export default function DashboardPage() {
                       {arrival.status}
                     </Badge>
                   </div>
-                  <Button variant="ghost" className="w-full justify-between h-10 px-0 text-primary font-bold text-[10px] uppercase tracking-[0.2em] border-t rounded-none pt-4">
+                  <Button 
+                    onClick={() => handleManageEntry(arrival.name)}
+                    variant="ghost" 
+                    className="w-full justify-between h-10 px-0 text-primary font-bold text-[10px] uppercase tracking-[0.2em] border-t rounded-none pt-4"
+                  >
                     Manage Entry <ChevronRight className="h-4 w-4" />
                   </Button>
                 </Card>
@@ -114,7 +155,14 @@ export default function DashboardPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right px-8">
-                        <Button variant="ghost" size="sm" className="font-bold text-primary hover:underline">Manage</Button>
+                        <Button 
+                          onClick={() => handleManageEntry(arrival.name)}
+                          variant="ghost" 
+                          size="sm" 
+                          className="font-bold text-primary hover:underline"
+                        >
+                          Manage
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -130,7 +178,7 @@ export default function DashboardPage() {
                    <CalendarDays className="h-5 w-5 text-primary" />
                    <h3 className="font-headline text-xl">Navigator</h3>
                  </div>
-                 <Calendar mode="single" selected={date} onSelect={setDate} className="mx-auto scale-110" />
+                 <Calendar mode="single" selected={date} onSelect={setDate} className="mx-auto" />
                </Card>
 
                <Card className="lg:col-span-2 rounded-[2rem] border-none shadow-xl p-8 bg-white">
@@ -143,7 +191,14 @@ export default function DashboardPage() {
                          <Badge className="bg-primary/10 text-primary border-none text-[9px] uppercase font-black">80% Capacity</Badge>
                          <Badge variant="outline" className="border-primary/20 text-primary text-[9px] uppercase font-black">12 Slots</Badge>
                        </div>
-                       <Button size="sm" variant="ghost" className="text-primary font-black uppercase text-[9px] tracking-widest">Edit</Button>
+                       <Button 
+                        onClick={() => handleEditSchedule(day)}
+                        size="sm" 
+                        variant="ghost" 
+                        className="text-primary font-black uppercase text-[9px] tracking-widest"
+                       >
+                         Edit
+                       </Button>
                      </div>
                    ))}
                  </div>
