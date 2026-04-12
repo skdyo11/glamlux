@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -84,7 +83,7 @@ export default function PartnerPortalPage() {
                <p className="text-3xl font-bold font-headline">12</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Guests Today</p>
              </Card>
-             <Card className="bg-white p-6 rounded-[2rem] border-none shadow-xl text-primary">
+             <Card className="bg-card p-6 rounded-[2rem] border-none shadow-xl text-foreground">
                <TrendingUp className="h-6 w-6 mb-3 opacity-60 text-secondary" />
                <p className="text-3xl font-bold font-headline">142.5K</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">PKR Revenue</p>
@@ -101,7 +100,7 @@ export default function PartnerPortalPage() {
             <Button 
               onClick={() => setIsShopSheetOpen(true)}
               variant="outline" 
-              className="flex-1 rounded-2xl h-16 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest"
+              className="flex-1 rounded-2xl h-16 border-primary/20 bg-background/40 backdrop-blur-md text-foreground font-bold text-xs uppercase tracking-widest"
             >
               <Plus className="h-5 w-5 mr-2" /> Add Shop
             </Button>
@@ -109,7 +108,7 @@ export default function PartnerPortalPage() {
         </header>
 
         <Tabs defaultValue="arrivals" className="space-y-8">
-          <TabsList className="bg-white/40 backdrop-blur-md p-1 h-16 border border-white/60 rounded-2xl w-full flex">
+          <TabsList className="bg-muted/40 backdrop-blur-md p-1 h-16 border border-border/60 rounded-2xl w-full flex">
             <TabsTrigger value="arrivals" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
               Queue
             </TabsTrigger>
@@ -124,14 +123,14 @@ export default function PartnerPortalPage() {
                 <Card 
                   key={arrival.id} 
                   onClick={() => setSelectedArrival(arrival)}
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-white/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
+                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
                         <Clock className="h-3 w-3" /> {arrival.time}
                       </div>
-                      <h4 className="font-headline text-2xl leading-none">{arrival.name}</h4>
+                      <h4 className="font-headline text-2xl leading-none text-foreground">{arrival.name}</h4>
                       <p className="text-xs text-muted-foreground italic">{arrival.service}</p>
                     </div>
                     <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-white border-none' : 'border-primary/20 text-primary'}>
@@ -145,10 +144,10 @@ export default function PartnerPortalPage() {
               ))}
             </div>
 
-            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-white overflow-hidden">
+            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-card overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent bg-primary/5">
+                  <TableRow className="hover:bg-transparent bg-primary/5 border-border">
                     <TableHead className="py-6 px-8 font-bold text-primary uppercase text-[10px] tracking-widest">Time</TableHead>
                     <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">Guest</TableHead>
                     <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">Service</TableHead>
@@ -158,9 +157,9 @@ export default function PartnerPortalPage() {
                 </TableHeader>
                 <TableBody>
                   {MOCK_ARRIVALS.map((arrival) => (
-                    <TableRow key={arrival.id} className="group hover:bg-primary/5">
-                      <TableCell className="px-8 font-bold text-sm">{arrival.time}</TableCell>
-                      <TableCell className="font-headline text-xl">{arrival.name}</TableCell>
+                    <TableRow key={arrival.id} className="group hover:bg-primary/5 border-border">
+                      <TableCell className="px-8 font-bold text-sm text-foreground">{arrival.time}</TableCell>
+                      <TableCell className="font-headline text-xl text-foreground">{arrival.name}</TableCell>
                       <TableCell className="text-muted-foreground text-xs italic">{arrival.service}</TableCell>
                       <TableCell>
                         <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className="rounded-full">
@@ -186,10 +185,10 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="planner" className="space-y-6">
              <div className="grid grid-cols-1 gap-8">
-               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 backdrop-blur-md">
+               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-card/60 backdrop-blur-md">
                  <div className="flex items-center justify-between mb-8">
                    <div className="space-y-1">
-                     <h3 className="font-headline text-3xl tracking-tighter">Weekly Availability</h3>
+                     <h3 className="font-headline text-3xl tracking-tighter text-foreground">Weekly Availability</h3>
                      <p className="text-sm text-muted-foreground">Manage service slots for the upcoming 7 days.</p>
                    </div>
                    <div className="p-3 bg-primary/10 rounded-2xl text-primary">
@@ -199,9 +198,9 @@ export default function PartnerPortalPage() {
                  
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
-                     <div key={day} className="flex items-center justify-between p-6 rounded-3xl bg-white/40 border border-white/60 group hover:bg-primary/5 transition-all shadow-sm">
+                     <div key={day} className="flex items-center justify-between p-6 rounded-3xl bg-background/40 border border-border/60 group hover:bg-primary/5 transition-all shadow-sm">
                        <div className="space-y-1">
-                         <span className="font-headline text-2xl">{day}</span>
+                         <span className="font-headline text-2xl text-foreground">{day}</span>
                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                            {day === 'Saturday' || day === 'Sunday' ? 'High Demand' : 'Standard Availability'}
                          </p>
