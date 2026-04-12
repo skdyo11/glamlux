@@ -26,6 +26,7 @@ export default function DashboardPage() {
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 md:py-12">
+        {/* Header Section */}
         <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 md:mb-16 gap-8">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -37,6 +38,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            {/* Quick Actions */}
             <div className="flex gap-3 w-full sm:w-auto">
               <Button className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white font-bold h-12 px-6 rounded-full shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5">
                 <Plus className="h-4 w-4 mr-2" /> Add Parlour
@@ -46,6 +48,7 @@ export default function DashboardPage() {
               </Button>
             </div>
             
+            {/* Quick Stats */}
             <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
               <Card className="border-none bg-primary text-white p-3 flex items-center gap-3 shadow-md">
                 <div className="p-2 bg-white/10 rounded-full">
@@ -89,6 +92,7 @@ export default function DashboardPage() {
                 <CardDescription className="font-body text-xs md:text-sm">Verify guests via unique QR code on arrival to maintain security.</CardDescription>
               </CardHeader>
               <CardContent className="p-0">
+                {/* Mobile View: Card List */}
                 <div className="md:hidden space-y-4 p-4">
                   {MOCK_ARRIVALS.map((arrival) => (
                     <div key={arrival.id} className="p-4 bg-primary/5 rounded-xl border border-primary/10 space-y-3">
@@ -110,6 +114,8 @@ export default function DashboardPage() {
                     </div>
                   ))}
                 </div>
+
+                {/* Desktop View: Table */}
                 <div className="hidden md:block">
                   <Table>
                     <TableHeader>
@@ -151,6 +157,7 @@ export default function DashboardPage() {
 
           <TabsContent value="planner">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+              {/* Navigator */}
               <Card className="border-none shadow-lg rounded-2xl bg-white">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl">Schedule Navigator</CardTitle>
@@ -165,6 +172,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
+              {/* Resource View */}
               <Card className="lg:col-span-2 border-none shadow-lg rounded-2xl bg-white">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl text-primary">Weekly Resource Allocation</CardTitle>
