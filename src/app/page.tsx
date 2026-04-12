@@ -38,7 +38,6 @@ export default function Home() {
       <Navbar />
       
       <main className="max-w-[100vw] overflow-x-hidden">
-        {/* Mobile-First Hero Section */}
         <section className="relative h-[70vh] md:h-[80vh] flex items-end md:items-center overflow-hidden pb-12 md:pb-0">
           <div className="absolute inset-0 z-0">
             <Image 
@@ -68,12 +67,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Quick Discovery Tabs/Cards for Mobile */}
         <section className="px-6 -mt-12 relative z-30 grid grid-cols-2 gap-4">
            <Link href="/shop" className="group">
              <Card className="bg-white/40 backdrop-blur-xl border border-white/60 p-6 flex flex-col items-center justify-center gap-3 rounded-[2.5rem] shadow-2xl shadow-primary/5 group-active:scale-95 transition-all h-36 md:h-48">
                <div className="p-4 bg-primary/10 rounded-[1.25rem] text-primary group-hover:scale-110 transition-transform"><ShoppingBag className="h-8 w-8" /></div>
-               <span className="font-headline text-xl italic">Shop Shop</span>
+               <span className="font-headline text-xl italic">The Shop</span>
              </Card>
            </Link>
            <Link href="/deals" className="group">
@@ -84,7 +82,6 @@ export default function Home() {
            </Link>
         </section>
 
-        {/* Featured Products - Horizontal Scroll on Mobile */}
         <section className="py-16 md:py-32">
           <div className="container mx-auto px-6">
             <div className="flex justify-between items-end mb-10">
@@ -134,7 +131,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Popular Deals - Card List */}
         <section className="py-16 md:py-32 bg-secondary/10 backdrop-blur-xl">
           <div className="container mx-auto px-6">
              <div className="space-y-1 mb-12 text-center md:text-left">
@@ -182,7 +178,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Philosophy Mini-Section */}
         <section className="py-32 text-center container mx-auto px-10">
            <div className="max-w-md mx-auto space-y-8">
              <Sparkles className="h-10 w-10 text-primary mx-auto opacity-20" />

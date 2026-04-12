@@ -27,12 +27,11 @@ export function Navbar() {
     { href: '/', label: 'Home', icon: Home },
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
-    { href: '/dashboard', label: 'Portal', icon: LayoutDashboard },
+    { href: '/portal', label: 'Portal', icon: LayoutDashboard },
   ];
 
   return (
     <>
-      {/* Top Navbar */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-colors duration-500">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
@@ -86,7 +85,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Bottom Navigation - Mobile Only */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t md:hidden flex items-center justify-around h-20 px-2 pb-safe transition-colors duration-500">
         {navLinks.map((link) => {
           const Icon = link.icon;
