@@ -1,0 +1,41 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "parlour-1",
+      "description": "Luxury Spa Interior",
+      "imageUrl": "https://picsum.photos/seed/parlour1/800/600",
+      "imageHint": "luxury salon"
+    },
+    {
+      "id": "parlour-2",
+      "description": "Modern Hair Studio",
+      "imageUrl": "https://picsum.photos/seed/parlour2/800/600",
+      "imageHint": "hairdresser shop"
+    },
+    {
+      "id": "product-1",
+      "description": "Premium Foundation",
+      "imageUrl": "https://picsum.photos/seed/prod1/400/400",
+      "imageHint": "foundation makeup"
+    },
+    {
+      "id": "product-2",
+      "description": "Silk Lipstick Set",
+      "imageUrl": "https://picsum.photos/seed/prod2/400/400",
+      "imageHint": "lipstick beauty"
+    },
+    {
+      "id": "deal-bridal",
+      "description": "Bridal Makeup Session",
+      "imageUrl": "https://picsum.photos/seed/bridal/800/600",
+      "imageHint": "bridal makeup"
+    },
+    {
+      "id": "deal-hair",
+      "description": "Professional Hair Coloring",
+      "imageUrl": "https://picsum.photos/seed/hair/800/600",
+      "imageHint": "hair salon"
+    }
+  ]
+}
