@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import { 
   Sheet, 
   SheetContent, 
@@ -19,7 +19,7 @@ import {
   SheetFooter,
   SheetClose
 } from '@/components/ui/sheet';
-import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays, CheckCircle2, MapPin } from 'lucide-react';
+import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays, CheckCircle2, MapPin, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,6 @@ const MOCK_ARRIVALS = [
 ];
 
 export default function DashboardPage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const { toast } = useToast();
   
   // Sheet States
@@ -43,8 +42,8 @@ export default function DashboardPage() {
     e.preventDefault();
     setIsParlourSheetOpen(false);
     toast({
-      title: "Success",
-      description: "Parlour registration submitted for review.",
+      title: "Registration Sent",
+      description: "Our curators will review your parlour application.",
     });
   };
 
@@ -52,21 +51,21 @@ export default function DashboardPage() {
     e.preventDefault();
     setIsShopSheetOpen(false);
     toast({
-      title: "Success",
-      description: "Beauty Shop has been listed successfully.",
+      title: "Merchant Request Received",
+      description: "Brand onboarding details sent to your email.",
     });
   };
 
   const handleVerifyEntry = () => {
     toast({
-      title: "Entry Verified",
-      description: `${selectedArrival.name} has been checked in.`,
+      title: "Access Granted",
+      description: `${selectedArrival.name} is now checked in.`,
     });
     setSelectedArrival(null);
   };
 
   return (
-    <div className="min-h-screen bg-transparent pb-24 md:pb-0">
+    <div className="min-h-screen bg-transparent pb-32 md:pb-0">
       <Navbar />
       
       <main className="container mx-auto px-6 py-8 md:py-12">
@@ -75,21 +74,21 @@ export default function DashboardPage() {
           <div className="space-y-1 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
               <Sparkles className="h-3 w-3 text-primary" />
-              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-primary">Partner Portal</span>
+              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-primary">Management Portal</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-headline text-primary tracking-tighter">Management</h1>
+            <h1 className="text-5xl md:text-7xl font-headline text-primary tracking-tighter">Business</h1>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
              <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-white">
                <Users className="h-6 w-6 mb-3 opacity-60" />
                <p className="text-3xl font-bold font-headline">12</p>
-               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Today's Arrivals</p>
+               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Guests Today</p>
              </Card>
              <Card className="bg-white p-6 rounded-[2rem] border-none shadow-xl text-primary">
                <TrendingUp className="h-6 w-6 mb-3 opacity-60 text-secondary" />
                <p className="text-3xl font-bold font-headline">142.5K</p>
-               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Daily Revenue</p>
+               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">PKR Revenue</p>
              </Card>
           </div>
 
@@ -116,11 +115,12 @@ export default function DashboardPage() {
               Queue
             </TabsTrigger>
             <TabsTrigger value="planner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
-              Planner
+              Capacity
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="arrivals" className="space-y-4">
+            {/* Mobile List View */}
             <div className="md:hidden space-y-4">
               {MOCK_ARRIVALS.map((arrival) => (
                 <Card 
@@ -147,6 +147,7 @@ export default function DashboardPage() {
               ))}
             </div>
 
+            {/* Desktop Table View */}
             <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-white overflow-hidden">
               <Table>
                 <TableHeader>
@@ -187,35 +188,43 @@ export default function DashboardPage() {
           </TabsContent>
 
           <TabsContent value="planner" className="space-y-6">
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-               <Card className="lg:col-span-3 rounded-[2.5rem] border-none shadow-xl p-8 bg-white flex flex-col items-center">
-                 <div className="flex items-center gap-2 mb-8 self-start">
-                   <CalendarDays className="h-6 w-6 text-primary" />
-                   <h3 className="font-headline text-2xl">Navigator</h3>
+             <div className="grid grid-cols-1 gap-8">
+               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 backdrop-blur-md">
+                 <div className="flex items-center justify-between mb-8">
+                   <div className="space-y-1">
+                     <h3 className="font-headline text-3xl tracking-tighter">Weekly Availability</h3>
+                     <p className="text-sm text-muted-foreground">Manage service slots for the upcoming 7 days.</p>
+                   </div>
+                   <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+                     <CalendarDays className="h-6 w-6" />
+                   </div>
                  </div>
-                 <div className="w-full max-w-sm">
-                  <Calendar mode="single" selected={date} onSelect={setDate} className="w-full" />
-                 </div>
-               </Card>
-
-               <Card className="lg:col-span-2 rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 backdrop-blur-md">
-                 <h3 className="font-headline text-2xl mb-8 tracking-tighter">Weekly Load</h3>
-                 <div className="space-y-4">
-                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day) => (
-                     <div key={day} className="flex items-center justify-between p-4 rounded-2xl bg-white/40 border border-white/60 group hover:bg-primary/5 transition-all">
-                       <span className="font-headline text-xl w-10">{day}</span>
-                       <div className="flex flex-col items-end gap-1">
-                         <Badge className="bg-primary/10 text-primary border-none text-[8px] uppercase font-black">80% Full</Badge>
-                         <span className="text-[10px] text-muted-foreground font-bold">12 Slots Left</span>
+                 
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+                     <div key={day} className="flex items-center justify-between p-6 rounded-3xl bg-white/40 border border-white/60 group hover:bg-primary/5 transition-all shadow-sm">
+                       <div className="space-y-1">
+                         <span className="font-headline text-2xl">{day}</span>
+                         <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                           {day === 'Saturday' || day === 'Sunday' ? 'High Demand' : 'Standard Availability'}
+                         </p>
                        </div>
-                       <Button 
-                        onClick={() => toast({ title: "Edit Schedule", description: `Updating capacity for ${day}...` })}
-                        size="icon" 
-                        variant="ghost" 
-                        className="text-primary rounded-full hover:bg-primary/10"
-                       >
-                         <Plus className="h-4 w-4" />
-                       </Button>
+                       <div className="flex flex-col items-end gap-2">
+                         <Badge className={cn(
+                           "border-none text-[8px] uppercase font-black px-3 py-1",
+                           day === 'Saturday' || day === 'Sunday' ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
+                         )}>
+                           {day === 'Saturday' || day === 'Sunday' ? '12 Slots' : '24 Slots'}
+                         </Badge>
+                         <Button 
+                          onClick={() => toast({ title: "Update Capacity", description: `Setting availability for ${day}...` })}
+                          size="sm" 
+                          variant="outline" 
+                          className="rounded-xl border-primary/20 text-primary font-bold text-[10px] h-8"
+                         >
+                           Adjust
+                         </Button>
+                       </div>
                      </div>
                    ))}
                  </div>
@@ -225,7 +234,7 @@ export default function DashboardPage() {
         </Tabs>
       </main>
 
-      {/* --- FORMS & SHEETS --- */}
+      {/* --- INTERACTIVE SHEETS --- */}
 
       {/* Add Parlour Sheet */}
       <Sheet open={isParlourSheetOpen} onOpenChange={setIsParlourSheetOpen}>
@@ -297,7 +306,7 @@ export default function DashboardPage() {
               <div className="bg-primary/5 p-8 rounded-[2rem] space-y-6">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Booking Ref</span>
-                  <span className="font-mono font-bold text-primary text-xl">GL-9938-X</span>
+                  <span className="font-mono font-bold text-primary text-xl">GL-{selectedArrival.id}938-X</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Arrival Time</span>
