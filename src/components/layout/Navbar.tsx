@@ -1,96 +1,93 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const { cart, region, toggleRegion } = useStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const navLinks = [
-    { href: '/deals', label: 'Deals' },
-    { href: '/shop', label: 'Makeup Shop' },
-    { href: '/dashboard', label: 'Partner Portal', icon: LayoutDashboard },
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/deals', label: 'Deals', icon: Scissors },
+    { href: '/shop', label: 'Shop', icon: Store },
+    { href: '/dashboard', label: 'Portal', icon: LayoutDashboard },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6 text-primary" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
-                <SheetTitle className="text-left font-headline text-2xl text-primary flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-secondary" />
-                  GlamLux
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-6 mt-12">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-xl font-headline hover:text-secondary transition-colors flex items-center gap-3"
-                  >
-                    {link.icon && <link.icon className="h-5 w-5" />}
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="pt-6 border-t">
-                  <Button variant="outline" className="w-full justify-start gap-3 h-12" onClick={() => { toggleRegion(); setIsOpen(false); }}>
-                    <MapPin className="h-4 w-4 text-secondary" />
-                    {region === 'PK' ? 'Pakistan (PKR)' : 'India (INR)'}
-                  </Button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-
+    <>
+      {/* Top Navbar - Desktop Only or Branded Header for Mobile */}
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <Sparkles className="h-6 w-6 text-secondary" />
+            <Sparkles className="h-6 w-6 text-primary" />
             <span className="font-headline text-xl md:text-2xl tracking-tighter text-primary">GlamLux</span>
           </Link>
-        </div>
 
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="hover:text-secondary transition-colors flex items-center gap-1">
-              {link.icon && <link.icon className="h-4 w-4" />}
-              {link.label}
-            </Link>
-          ))}
-        </div>
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className={cn(
+                  "hover:text-primary transition-colors flex items-center gap-1",
+                  pathname === link.href ? "text-primary font-bold" : "text-muted-foreground"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
 
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden md:flex items-center gap-2 text-xs">
-            <MapPin className="h-3 w-3 text-secondary" />
-            {region === 'PK' ? 'PKR' : 'INR'}
-          </Button>
-
-          <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingBag className="h-5 w-5 text-primary" />
-              {cartCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[10px]">
-                  {cartCount}
-                </Badge>
-              )}
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold">
+              <MapPin className="h-3 w-3 text-primary" />
+              {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
-          </Link>
+
+            <Link href="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                {cartCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[10px] rounded-full">
+                    {cartCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Bottom Navigation - Mobile Only */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t md:hidden flex items-center justify-around h-20 px-2 pb-safe">
+        {navLinks.map((link) => {
+          const Icon = link.icon;
+          const isActive = pathname === link.href;
+          return (
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1">
+              <div className={cn(
+                "p-2 rounded-2xl transition-all duration-300",
+                isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-110" : "text-muted-foreground"
+              )}>
+                <Icon className="h-6 w-6" />
+              </div>
+              <span className={cn(
+                "text-[10px] font-bold uppercase tracking-widest",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}>
+                {link.label}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+    </>
   );
 }
