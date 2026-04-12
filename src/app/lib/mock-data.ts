@@ -1,3 +1,4 @@
+
 import { Parlour, Deal, Product } from '../types';
 
 export const PARLOURS: Parlour[] = [
@@ -8,7 +9,7 @@ export const PARLOURS: Parlour[] = [
     lng: 74.3587,
     area_tag: 'Gulberg, Lahore',
     rating: 4.9,
-    images: ['https://picsum.photos/seed/parlour1/800/600'],
+    images: ['https://picsum.photos/seed/glam-makeup-1/800/600'],
   },
   {
     id: 'p2',
@@ -17,7 +18,7 @@ export const PARLOURS: Parlour[] = [
     lng: 77.2090,
     area_tag: 'South Delhi',
     rating: 4.8,
-    images: ['https://picsum.photos/seed/parlour2/800/600'],
+    images: ['https://picsum.photos/seed/glam-makeup-2/800/600'],
   },
   {
     id: 'p3',
@@ -26,7 +27,7 @@ export const PARLOURS: Parlour[] = [
     lng: 67.0011,
     area_tag: 'DHA, Karachi',
     rating: 4.7,
-    images: ['https://picsum.photos/seed/parlour3/800/600'],
+    images: ['https://picsum.photos/seed/glam-makeup-3/800/600'],
   }
 ];
 
@@ -81,7 +82,7 @@ export const PRODUCTS: Product[] = [
     price: 4800,
     stock: 25,
     delivery_fee_base: 250,
-    image: 'https://picsum.photos/seed/makeup1/400/500',
+    image: 'https://picsum.photos/seed/foundation-glam-1/400/500',
   },
   {
     id: 'prod2',
@@ -90,7 +91,7 @@ export const PRODUCTS: Product[] = [
     price: 2400,
     stock: 50,
     delivery_fee_base: 150,
-    image: 'https://picsum.photos/seed/makeup2/400/500',
+    image: 'https://picsum.photos/seed/lipstick-glam-2/400/500',
   },
   {
     id: 'prod3',
@@ -99,7 +100,7 @@ export const PRODUCTS: Product[] = [
     price: 5500,
     stock: 15,
     delivery_fee_base: 200,
-    image: 'https://picsum.photos/seed/makeup3/400/500',
+    image: 'https://picsum.photos/seed/skincare-glam-3/400/500',
   },
   {
     id: 'prod4',
@@ -108,6 +109,6 @@ export const PRODUCTS: Product[] = [
     price: 3200,
     stock: 30,
     delivery_fee_base: 150,
-    image: 'https://picsum.photos/seed/makeup4/400/500',
+    image: 'https://picsum.photos/seed/primer-glam-4/400/500',
   }
 ];
