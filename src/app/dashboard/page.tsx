@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -8,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { Users, TrendingUp, Sparkles, Clock, CheckCircle } from 'lucide-react';
+import { Users, TrendingUp, Sparkles, Clock, CheckCircle, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 const MOCK_ARRIVALS = [
@@ -25,104 +24,126 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-12">
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+      <main className="container mx-auto px-4 py-8 md:py-12">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 md:12 gap-6">
           <div className="space-y-2">
-            <h1 className="text-4xl font-headline text-primary">Partner Portal</h1>
-            <p className="text-muted-foreground italic font-body">The Gilded Rose Salon • Managing Your Luxury Workflow</p>
+            <h1 className="text-3xl md:text-4xl font-headline text-primary">Partner Portal</h1>
+            <p className="text-sm md:text-base text-muted-foreground italic font-body">The Gilded Rose Salon • Luxury Workflow</p>
           </div>
-          <div className="flex gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-auto">
             <Card className="border-none bg-primary text-white p-4 flex items-center gap-4">
               <div className="p-3 bg-white/10 rounded-full">
-                <Users className="h-6 w-6 text-secondary" />
+                <Users className="h-5 w-5 md:h-6 md:w-6 text-secondary" />
               </div>
               <div>
-                <p className="text-xs text-white/60 font-bold uppercase tracking-widest font-body">Arrivals Today</p>
-                <p className="text-2xl font-bold font-headline">12</p>
+                <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest font-body">Arrivals Today</p>
+                <p className="text-xl md:text-2xl font-bold font-headline">12</p>
               </div>
             </Card>
             <Card className="border-none bg-secondary text-primary p-4 flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-full">
-                <TrendingUp className="h-6 w-6 text-primary" />
+                <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-primary" />
               </div>
               <div>
-                <p className="text-xs text-primary/60 font-bold uppercase tracking-widest font-body">Weekly Revenue</p>
-                <p className="text-2xl font-bold tabular-nums font-headline">142,500</p>
+                <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest font-body">Weekly Revenue</p>
+                <p className="text-xl md:text-2xl font-bold tabular-nums font-headline">142,500</p>
               </div>
             </Card>
           </div>
         </header>
 
-        <Tabs defaultValue="arrivals" className="space-y-8">
-          <TabsList className="bg-primary/5 p-1 h-12 border border-primary/10">
-            <TabsTrigger value="arrivals" className="h-10 data-[state=active]:bg-primary data-[state=active]:text-white px-8 font-bold font-body">
+        <Tabs defaultValue="arrivals" className="space-y-6 md:space-y-8">
+          <TabsList className="bg-primary/5 p-1 h-auto flex flex-wrap border border-primary/10">
+            <TabsTrigger value="arrivals" className="flex-1 min-w-[120px] h-10 data-[state=active]:bg-primary data-[state=active]:text-white px-4 md:px-8 font-bold font-body">
               Daily Arrivals
             </TabsTrigger>
-            <TabsTrigger value="planner" className="h-10 data-[state=active]:bg-primary data-[state=active]:text-white px-8 font-bold font-body">
+            <TabsTrigger value="planner" className="flex-1 min-w-[120px] h-10 data-[state=active]:bg-primary data-[state=active]:text-white px-4 md:px-8 font-bold font-body">
               Weekly Planner
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="arrivals">
             <Card className="border-none shadow-xl overflow-hidden rounded-2xl">
-              <CardHeader className="bg-primary/5 border-b py-8">
+              <CardHeader className="bg-primary/5 border-b py-6 md:py-8">
                 <div className="flex items-center gap-3">
                   <Sparkles className="h-5 w-5 text-secondary" />
-                  <CardTitle className="font-headline text-2xl">Today's Appointment Queue</CardTitle>
+                  <CardTitle className="font-headline text-xl md:text-2xl">Today's Appointment Queue</CardTitle>
                 </div>
-                <CardDescription className="font-body">Verify guests via QR code on arrival to unlock review capabilities.</CardDescription>
+                <CardDescription className="font-body text-xs md:text-sm">Verify guests via QR code on arrival.</CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent bg-muted/30">
-                      <TableHead className="font-bold py-6 px-8 font-body">Arrival Time</TableHead>
-                      <TableHead className="font-bold font-body">Guest Name</TableHead>
-                      <TableHead className="font-bold font-body">Service Booked</TableHead>
-                      <TableHead className="font-bold font-body">Verification Status</TableHead>
-                      <TableHead className="text-right font-bold px-8 font-body">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {MOCK_ARRIVALS.map((arrival) => (
-                      <TableRow key={arrival.id} className="group hover:bg-primary/5 transition-colors">
-                        <TableCell className="px-8 font-medium font-body">
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-secondary" />
-                            {arrival.time}
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-bold text-primary font-body">{arrival.name}</TableCell>
-                        <TableCell className="text-muted-foreground font-body">{arrival.service}</TableCell>
-                        <TableCell>
-                          <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-secondary text-secondary-foreground border-none font-body' : 'border-primary/20 text-muted-foreground font-body'}>
-                            {arrival.status === 'Verified' && <CheckCircle className="h-3 w-3 mr-1" />}
-                            {arrival.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right px-8">
-                          <Button variant="ghost" size="sm" className="font-bold text-secondary group-hover:underline font-body">Manage Entry</Button>
-                        </TableCell>
+                <div className="md:hidden space-y-4 p-4">
+                  {MOCK_ARRIVALS.map((arrival) => (
+                    <div key={arrival.id} className="p-4 bg-primary/5 rounded-xl border border-primary/10 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-xs text-secondary font-bold flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {arrival.time}
+                          </p>
+                          <h4 className="font-bold text-primary font-body mt-1">{arrival.name}</h4>
+                        </div>
+                        <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-secondary text-secondary-foreground border-none font-body text-[10px]' : 'border-primary/20 text-muted-foreground font-body text-[10px]'}>
+                          {arrival.status}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{arrival.service}</p>
+                      <Button size="sm" variant="ghost" className="w-full justify-between text-secondary font-bold text-xs p-0 h-auto">
+                        Manage Entry <ChevronRight className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <div className="hidden md:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent bg-muted/30">
+                        <TableHead className="font-bold py-6 px-8 font-body">Arrival Time</TableHead>
+                        <TableHead className="font-bold font-body">Guest Name</TableHead>
+                        <TableHead className="font-bold font-body">Service Booked</TableHead>
+                        <TableHead className="font-bold font-body">Status</TableHead>
+                        <TableHead className="text-right font-bold px-8 font-body">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {MOCK_ARRIVALS.map((arrival) => (
+                        <TableRow key={arrival.id} className="group hover:bg-primary/5 transition-colors">
+                          <TableCell className="px-8 font-medium font-body">
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-secondary" />
+                              {arrival.time}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-bold text-primary font-body">{arrival.name}</TableCell>
+                          <TableCell className="text-muted-foreground font-body">{arrival.service}</TableCell>
+                          <TableCell>
+                            <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-secondary text-secondary-foreground border-none font-body' : 'border-primary/20 text-muted-foreground font-body'}>
+                              {arrival.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right px-8">
+                            <Button variant="ghost" size="sm" className="font-bold text-secondary group-hover:underline font-body">Manage Entry</Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="planner">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
               <Card className="border-none shadow-lg rounded-2xl">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl">Schedule Navigator</CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="flex justify-center p-2 sm:p-6">
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    className="rounded-md border-none font-body"
+                    className="rounded-md border-none font-body scale-90 sm:scale-100"
                   />
                 </CardContent>
               </Card>
@@ -130,20 +151,20 @@ export default function DashboardPage() {
               <Card className="lg:col-span-2 border-none shadow-lg rounded-2xl">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl">Weekly Resource Allocation</CardTitle>
-                  <CardDescription className="font-body">Staff and Deal planning for the upcoming 7 days.</CardDescription>
+                  <CardDescription className="font-body text-xs md:text-sm">Staff and Deal planning.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-6">
+                  <div className="space-y-4 md:space-y-6">
                     {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => (
-                      <div key={day} className="flex items-center gap-6 p-4 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/5">
-                        <div className="w-24 font-bold text-primary font-body">{day}</div>
+                      <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/5">
+                        <div className="sm:w-24 font-bold text-primary font-body">{day}</div>
                         <div className="flex-grow">
-                          <div className="flex gap-2">
-                            <Badge className="bg-secondary/20 text-secondary border-none px-3 font-body">3 Flash Deals Active</Badge>
-                            <Badge variant="outline" className="border-primary/10 text-muted-foreground font-body">8/10 Sessions Booked</Badge>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge className="bg-secondary/20 text-secondary border-none px-3 font-body text-[10px]">3 Deals Active</Badge>
+                            <Badge variant="outline" className="border-primary/10 text-muted-foreground font-body text-[10px]">8/10 Sessions</Badge>
                           </div>
                         </div>
-                        <Button size="sm" variant="ghost" className="text-primary font-bold font-body">Adjust</Button>
+                        <Button size="sm" variant="ghost" className="text-primary font-bold font-body w-full sm:w-auto mt-2 sm:mt-0">Adjust</Button>
                       </div>
                     ))}
                   </div>
