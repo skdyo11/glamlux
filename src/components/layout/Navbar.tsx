@@ -1,17 +1,27 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export function Navbar() {
   const { cart, region, toggleRegion } = useStore();
+  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
@@ -22,8 +32,8 @@ export function Navbar() {
 
   return (
     <>
-      {/* Top Navbar - Desktop Only or Branded Header for Mobile */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl">
+      {/* Top Navbar */}
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-colors duration-500">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
             <Sparkles className="h-6 w-6 text-primary" />
@@ -45,17 +55,28 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold">
-              <MapPin className="h-3 w-3 text-primary" />
+          <div className="flex items-center space-x-1">
+            {mounted && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="text-primary hover:bg-primary/10 rounded-full"
+              >
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+            )}
+
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary hover:bg-primary/10">
+              <MapPin className="h-3 w-3" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingBag className="h-5 w-5 text-primary" />
+              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-primary/10 rounded-full">
+                <ShoppingBag className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[10px] rounded-full">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[10px] rounded-full border-2 border-background">
                     {cartCount}
                   </Badge>
                 )}
@@ -66,7 +87,7 @@ export function Navbar() {
       </nav>
 
       {/* Bottom Navigation - Mobile Only */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t md:hidden flex items-center justify-around h-20 px-2 pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t md:hidden flex items-center justify-around h-20 px-2 pb-safe transition-colors duration-500">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
