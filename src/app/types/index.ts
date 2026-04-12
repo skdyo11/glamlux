@@ -50,3 +50,22 @@ export type Booking = {
   is_delivered: boolean;
   region: 'PK' | 'IN';
 };
+
+export type ChatMessage = {
+  id: string;
+  senderId: string;
+  text: string;
+  timestamp: string;
+  isMe: boolean;
+};
+
+export type Conversation = {
+  id: string;
+  participantId: string;
+  participantName: string;
+  participantImage?: string;
+  lastMessage: string;
+  lastTimestamp: string;
+  unreadCount: number;
+  messages: ChatMessage[];
+};

@@ -4,14 +4,13 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Sheet, 
   SheetContent, 
@@ -31,7 +30,8 @@ import {
   CheckCircle2, 
   Package, 
   Scissors, 
-  Settings, 
+  MessageSquare,
+  Send,
   Edit3,
   Trash2
 } from 'lucide-react';
@@ -44,6 +44,12 @@ const MOCK_ARRIVALS = [
   { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
   { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
   { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '02:30 PM', status: 'In-Progress' },
+];
+
+const MOCK_BUSINESS_MESSAGES = [
+  { id: 'b1', client: 'Sara Khan', text: 'Can we add a hair trial as well?', time: 'Just now', unread: true },
+  { id: 'b2', client: 'Amna Ahmed', text: 'Confirming my arrival for 12:00 PM.', time: '10 mins ago', unread: false },
+  { id: 'b3', client: 'Hiba Ali', text: 'Do you have the Golden Serum in stock?', time: '1 hour ago', unread: false },
 ];
 
 export default function PartnerPortalPage() {
@@ -93,13 +99,16 @@ export default function PartnerPortalPage() {
         <Tabs defaultValue="queue" className="space-y-8">
           <TabsList className="bg-muted/40 backdrop-blur-md p-1 h-16 border border-border/60 rounded-2xl w-full flex overflow-x-auto">
             <TabsTrigger value="queue" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              <Users className="h-4 w-4 mr-2 hidden sm:block" /> Queue
+              Queue
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
+              Messages
             </TabsTrigger>
             <TabsTrigger value="inventory" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              <Package className="h-4 w-4 mr-2 hidden sm:block" /> Shop
+              Shop
             </TabsTrigger>
             <TabsTrigger value="services" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              <Scissors className="h-4 w-4 mr-2 hidden sm:block" /> Deals
+              Deals
             </TabsTrigger>
           </TabsList>
 
@@ -129,6 +138,34 @@ export default function PartnerPortalPage() {
             </div>
           </TabsContent>
 
+          {/* MESSAGES TAB */}
+          <TabsContent value="messages" className="space-y-4">
+            <div className="space-y-4">
+              {MOCK_BUSINESS_MESSAGES.map((msg) => (
+                <Card 
+                  key={msg.id} 
+                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md flex items-center gap-4 group hover:shadow-xl transition-all cursor-pointer"
+                >
+                  <Avatar className="h-14 w-14 border-2 border-primary/10">
+                    <AvatarFallback className="bg-primary/5 text-primary font-headline text-xl">{msg.client[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-grow min-w-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <h4 className="font-headline text-2xl leading-none">{msg.client}</h4>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.time}</span>
+                    </div>
+                    <p className={cn("text-xs truncate", msg.unread ? "font-bold text-primary" : "text-muted-foreground")}>
+                      {msg.text}
+                    </p>
+                  </div>
+                  <div className="text-primary group-hover:translate-x-1 transition-transform">
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
           {/* INVENTORY TAB */}
           <TabsContent value="inventory" className="space-y-6">
             <div className="flex justify-between items-center px-2">
@@ -151,9 +188,6 @@ export default function PartnerPortalPage() {
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => { setEditingItem(product); setIsProductSheetOpen(true); }}>
                       <Edit3 className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </Card>
@@ -183,24 +217,12 @@ export default function PartnerPortalPage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex justify-between items-end pt-2 border-t border-dashed">
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Pricing</p>
-                      <p className="text-lg font-bold text-primary italic">PKR {deal.discounted_price.toLocaleString()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Expiry</p>
-                      <p className="text-xs font-medium">In 3 Days</p>
-                    </div>
-                  </div>
                 </Card>
               ))}
             </div>
           </TabsContent>
         </Tabs>
       </main>
-
-      {/* --- FORMS & DRAWERS --- */}
 
       {/* Product Add/Edit Sheet */}
       <Sheet open={isProductSheetOpen} onOpenChange={(open) => { if(!open) setEditingItem(null); setIsProductSheetOpen(open); }}>
@@ -225,20 +247,6 @@ export default function PartnerPortalPage() {
                     <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Initial Stock</Label>
                     <Input defaultValue={editingItem?.stock} type="number" placeholder="25" className="rounded-2xl h-14 bg-primary/5 border-primary/10" />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Category</Label>
-                  <Select defaultValue="face">
-                    <SelectTrigger className="h-14 rounded-2xl bg-primary/5 border-primary/10">
-                      <SelectValue placeholder="Select Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="face">Face & Base</SelectItem>
-                      <SelectItem value="lips">Lip Artistry</SelectItem>
-                      <SelectItem value="eyes">Eye Definitions</SelectItem>
-                      <SelectItem value="skincare">Skincare Rituals</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
               <Button onClick={() => handleAction('Inventory Updated', 'The product list has been refreshed.')} className="w-full h-16 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg">
@@ -272,19 +280,6 @@ export default function PartnerPortalPage() {
                   <Input defaultValue={editingItem?.discounted_price} type="number" placeholder="32000" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Service Category</Label>
-                <Select defaultValue={editingItem?.category || "Bridal"}>
-                  <SelectTrigger className="h-14 rounded-2xl bg-secondary/10 border-secondary/20">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Bridal">Bridal & Wedding</SelectItem>
-                    <SelectItem value="Hair">Elite Hair Care</SelectItem>
-                    <SelectItem value="Skin">Clinical Skin Rituals</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
               <Button onClick={() => handleAction('Service Published', 'Your transformation is now live on the marketplace.')} className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-xl shadow-secondary/10 text-lg">
                 {editingItem ? 'Update Live Deal' : 'Publish to Marketplace'}
               </Button>
@@ -305,18 +300,6 @@ export default function PartnerPortalPage() {
                 <SheetTitle className="text-5xl font-headline leading-none">{selectedArrival.name}</SheetTitle>
                 <SheetDescription className="italic text-lg">{selectedArrival.service}</SheetDescription>
               </SheetHeader>
-              
-              <div className="bg-primary/5 p-8 rounded-[2rem] space-y-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Booking Ref</span>
-                  <span className="font-mono font-bold text-primary text-xl">GL-{selectedArrival.id}938-X</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Arrival Time</span>
-                  <span className="font-bold text-xl">{selectedArrival.time}</span>
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 gap-4 pb-8">
                 <Button onClick={() => handleAction('Guest Verified', `${selectedArrival.name} has been checked in.`)} className="h-16 bg-primary text-white font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
                   Verify & Grant Entry

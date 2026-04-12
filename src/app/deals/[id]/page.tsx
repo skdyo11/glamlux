@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
@@ -119,9 +119,16 @@ export default function DealPage() {
                   {parlour.rating} • Verified Excellence
                 </div>
               </div>
-              <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary leading-tight">
-                {deal.name}
-              </h1>
+              <div className="flex justify-between items-start">
+                <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary leading-tight">
+                  {deal.name}
+                </h1>
+                <Button asChild variant="ghost" size="icon" className="h-14 w-14 rounded-full bg-primary/5 text-primary">
+                  <Link href="/messages">
+                    <MessageSquare className="h-6 w-6" />
+                  </Link>
+                </Button>
+              </div>
               <div className="flex items-center gap-2 text-muted-foreground italic font-medium">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span>{parlour.name} — {parlour.area_tag}</span>
@@ -142,32 +149,19 @@ export default function DealPage() {
                   SAVE {Math.round((1 - deal.discounted_price / deal.price) * 100)}%
                 </Badge>
               </div>
-              <div className="flex items-center gap-2 text-xs text-destructive font-black uppercase tracking-widest italic animate-pulse">
-                <Clock className="h-3 w-3" />
-                Expires in {Math.floor(Math.random() * 48) + 2} hours
-              </div>
             </div>
 
-            <div className="space-y-6">
-              <p className="text-lg text-muted-foreground leading-relaxed italic font-body">
-                Step into a world of curated elegance at {parlour.name}. 
-                This bespoke {deal.category.toLowerCase()} transformation is a signature experience, 
-                blending classical artistry with modern luxury. Each session is tailored to your unique radiance.
-              </p>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
-                {['Premium Formulas', 'Elite Stylists', 'Bespoke Environment', 'Safety Verified'].map(f => (
-                  <li key={f} className="flex items-center gap-3 text-sm font-bold text-primary/80">
-                    <Sparkles className="h-4 w-4 text-secondary" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+            <div className="flex gap-4">
+              <Button size="lg" className="flex-1 h-16 bg-primary text-white rounded-[2rem] text-xl font-bold shadow-2xl shadow-primary/30 group" onClick={handleAddToCart}>
+                Secure Booking
+                <ShoppingCart className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button asChild variant="outline" size="lg" className="h-16 w-16 rounded-[2rem] border-primary/20 text-primary">
+                <Link href="/messages">
+                  <MessageSquare className="h-6 w-6" />
+                </Link>
+              </Button>
             </div>
-
-            <Button size="lg" className="w-full h-16 bg-primary text-white rounded-[2rem] text-xl font-bold shadow-2xl shadow-primary/30 group" onClick={handleAddToCart}>
-              Secure Booking
-              <ShoppingCart className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-            </Button>
           </div>
         </div>
 
