@@ -34,15 +34,16 @@ import {
   QrCode,
   Truck,
   Edit3,
-  Camera
+  Camera,
+  Navigation
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
 import Image from 'next/image';
 import { DeliveryStatus } from '@/app/types';
-import { useFirestore } from '@/firebase';
-import { collectionGroup, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { useFirebase } from '@/firebase';
+import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 const MOCK_ARRIVALS = [
@@ -65,11 +66,12 @@ const MOCK_BUSINESS_MESSAGES = [
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
-  const firestore = useFirestore();
+  const { firestore } = useFirebase();
   
   // View States
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
   const [isDealSheetOpen, setIsDealSheetOpen] = useState(false);
+  const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -77,28 +79,24 @@ export default function PartnerPortalPage() {
 
   // Scanner State
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
     if (activeTab === 'scanner') {
-      setIsScanning(true);
-      // Wait for the DOM to be ready and the "reader" element to be mounted by TabsContent
       timer = setTimeout(() => {
         const readerElement = document.getElementById("reader");
         if (readerElement && !scannerRef.current) {
           const scanner = new Html5QrcodeScanner(
             "reader",
             { fps: 10, qrbox: { width: 250, height: 250 } },
-            /* verbose= */ false
+            false
           );
           scanner.render(onScanSuccess, onScanFailure);
           scannerRef.current = scanner;
         }
       }, 500);
     } else {
-      setIsScanning(false);
       if (scannerRef.current) {
         scannerRef.current.clear().catch(err => console.warn("Failed to clear scanner", err));
         scannerRef.current = null;
@@ -156,14 +154,13 @@ export default function PartnerPortalPage() {
     }
   }
 
-  function onScanFailure(error: any) {
-    // Silently handle scan failures
-  }
+  function onScanFailure() {}
 
   const handleAction = (title: string, desc: string) => {
     toast({ title, description: desc });
     setIsProductSheetOpen(false);
     setIsDealSheetOpen(false);
+    setIsCourierSheetOpen(false);
     setSelectedOrder(null);
     setEditingItem(null);
   };
@@ -188,7 +185,7 @@ export default function PartnerPortalPage() {
             <h1 className="text-5xl md:text-7xl font-headline text-primary tracking-tighter">Management</h1>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
              <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-white">
                <Users className="h-6 w-6 mb-3 opacity-60" />
                <p className="text-3xl font-bold font-headline">08</p>
@@ -199,6 +196,21 @@ export default function PartnerPortalPage() {
                <p className="text-3xl font-bold font-headline">82.4K</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Today's Revenue</p>
              </Card>
+             <Card className="hidden lg:flex bg-secondary p-6 rounded-[2rem] border-none shadow-xl text-secondary-foreground items-center justify-center cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsCourierSheetOpen(true)}>
+                <div className="text-center">
+                  <Navigation className="h-6 w-6 mb-2 mx-auto opacity-60" />
+                  <p className="text-[10px] uppercase font-black tracking-widest">Join Glam Dispatch</p>
+                </div>
+             </Card>
+          </div>
+
+          <div className="lg:hidden">
+            <Button 
+              onClick={() => setIsCourierSheetOpen(true)}
+              className="w-full h-14 rounded-2xl bg-secondary text-secondary-foreground font-bold text-xs uppercase tracking-widest shadow-xl shadow-secondary/10"
+            >
+              <Navigation className="h-4 w-4 mr-2" /> Become an Elite Courier
+            </Button>
           </div>
         </header>
 
@@ -224,7 +236,6 @@ export default function PartnerPortalPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* SCANNER TAB */}
           <TabsContent value="scanner" className="space-y-4">
              <Card className="rounded-[2.5rem] border-none shadow-2xl overflow-hidden bg-black/5">
                 <CardHeader>
@@ -241,7 +252,6 @@ export default function PartnerPortalPage() {
              </Card>
           </TabsContent>
 
-          {/* QUEUE TAB */}
           <TabsContent value="queue" className="space-y-4">
             <div className="space-y-4">
               {MOCK_ARRIVALS.map((arrival) => (
@@ -267,7 +277,6 @@ export default function PartnerPortalPage() {
             </div>
           </TabsContent>
 
-          {/* ORDERS TAB */}
           <TabsContent value="orders" className="space-y-4">
             <div className="space-y-4">
               {MOCK_ORDERS.map((order) => (
@@ -298,7 +307,6 @@ export default function PartnerPortalPage() {
             </div>
           </TabsContent>
 
-          {/* MESSAGES TAB */}
           <TabsContent value="messages" className="space-y-4">
             <div className="space-y-4">
               {MOCK_BUSINESS_MESSAGES.map((msg) => (
@@ -326,7 +334,6 @@ export default function PartnerPortalPage() {
             </div>
           </TabsContent>
 
-          {/* INVENTORY TAB */}
           <TabsContent value="inventory" className="space-y-6">
             <div className="flex justify-between items-center px-2">
               <h3 className="font-headline text-3xl italic">Shop Inventory</h3>
@@ -355,7 +362,6 @@ export default function PartnerPortalPage() {
             </div>
           </TabsContent>
 
-          {/* SERVICES TAB */}
           <TabsContent value="services" className="space-y-6">
             <div className="flex justify-between items-center px-2">
               <h3 className="font-headline text-3xl italic">Live Deals</h3>
@@ -384,7 +390,39 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      {/* --- INTERACTIVE SHEETS --- */}
+      {/* Courier Onboarding Sheet */}
+      <Sheet open={isCourierSheetOpen} onOpenChange={setIsCourierSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-y-auto">
+          <div className="max-w-xl mx-auto space-y-6 py-4">
+            <SheetHeader className="space-y-3">
+              <div className="bg-secondary/20 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <Navigation className="h-8 w-8 text-secondary" />
+              </div>
+              <SheetTitle className="text-5xl font-headline italic text-center">Join Glam Dispatch</SheetTitle>
+              <SheetDescription className="text-lg text-center font-body">Represent our luxury fleet. Deliver the finest beauty products across the city with elegance and precision.</SheetDescription>
+            </SheetHeader>
+            <div className="space-y-6 pt-4">
+               <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Full Legal Name</Label>
+                <Input placeholder="e.g. Zahid Abbas" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Contact Number</Label>
+                  <Input placeholder="+92 3XX XXXXXXX" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Vehicle Type</Label>
+                  <Input placeholder="e.g. Scooter / Car" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+                </div>
+              </div>
+              <Button onClick={() => handleAction('Application Received', 'Our logistics team will contact you for dispatch training.')} className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-xl shadow-secondary/10 text-lg">
+                Submit Fleet Application
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Order Status Management Sheet */}
       <Sheet open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
