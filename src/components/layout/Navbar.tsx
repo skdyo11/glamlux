@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun, MessageSquare } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +35,7 @@ export function Navbar() {
     <>
       {/* Desktop Navbar - Professional Minimalist */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
-        <div className="container mx-auto px-2 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-0 h-20 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
@@ -58,7 +58,7 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
             {mounted && (
               <Button 
                 variant="ghost" 
@@ -91,7 +91,7 @@ export function Navbar() {
 
       {/* Mobile Bottom Bar - Sleek & Semi-Transparent */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-20 px-4 transition-all duration-700">
-        {[...navLinks, { href: '/', label: 'Home', icon: Home }].map((link) => {
+        {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
