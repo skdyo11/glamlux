@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
@@ -9,17 +8,30 @@ import { VENDORS } from '@/app/lib/mock-data';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, MapPin, Sparkles, Search, ArrowRight, Navigation } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 
 export default function VendorsPage() {
   const { getCurrency } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [areaFilter, setAreaFilter] = useState('All');
+  const [isMounted, setIsMounted] = useState(false);
 
-  const filteredVendors = VENDORS.filter((v) => 
-    v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    v.area_tag.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const uniqueAreas = ['All', ...Array.from(new Set(VENDORS.map(v => v.area_tag.split(',').pop()?.trim() || v.area_tag)))];
+
+  const filteredVendors = VENDORS.filter((v) => {
+    const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          v.area_tag.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesArea = areaFilter === 'All' || v.area_tag.includes(areaFilter);
+    return matchesSearch && matchesArea;
+  });
+
+  if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -37,9 +49,9 @@ export default function VendorsPage() {
           </p>
         </header>
 
-        {/* Search Section */}
-        <section className="mb-20 bg-white/10 p-6 md:p-8 rounded-none border border-white/30 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
-          <div className="relative w-full">
+        {/* Search and Filter Section */}
+        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/10 p-6 md:p-8 rounded-none border border-white/30 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
+          <div className="relative flex-grow w-full">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
               placeholder="Search sanctuaries by name or area..." 
@@ -47,6 +59,18 @@ export default function VendorsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <Select value={areaFilter} onValueChange={setAreaFilter}>
+              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/20 border-none rounded-none font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md">
+                <SelectValue placeholder="All Regions" />
+              </SelectTrigger>
+              <SelectContent className="rounded-none font-body border-none shadow-2xl backdrop-blur-xl bg-white/80">
+                {uniqueAreas.map((area) => (
+                  <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest">{area}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </section>
 
