@@ -6,7 +6,7 @@ import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Wallet } from 'lucide-react';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -138,31 +138,58 @@ export default function CartPage() {
               <div className="grid grid-cols-2 gap-4">
                 {region === 'PK' ? (
                   <>
-                    <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5">
-                      <span className="text-xs font-bold text-muted-foreground">JazzCash</span>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 transition-all active:scale-[0.98]"
+                      onClick={handleCheckout}
+                      disabled={isCheckingOut}
+                    >
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">JazzCash</span>
                       <span className="text-[10px] text-muted-foreground opacity-60 italic">Mobile Wallet</span>
                     </Button>
-                    <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5">
-                      <span className="text-xs font-bold text-muted-foreground">EasyPaisa</span>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 transition-all active:scale-[0.98]"
+                      onClick={handleCheckout}
+                      disabled={isCheckingOut}
+                    >
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">EasyPaisa</span>
                       <span className="text-[10px] text-muted-foreground opacity-60 italic">Scan & Pay</span>
                     </Button>
                   </>
                 ) : (
-                  <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 w-full col-span-2">
-                    <span className="text-xs font-bold text-muted-foreground">UPI (Unified Payments)</span>
+                  <Button 
+                    variant="outline" 
+                    className="h-20 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 w-full col-span-2 transition-all active:scale-[0.98]"
+                    onClick={handleCheckout}
+                    disabled={isCheckingOut}
+                  >
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">UPI (Unified Payments)</span>
                     <span className="text-[10px] text-muted-foreground opacity-60 italic">Paytm, GPay, PhonePe</span>
                   </Button>
                 )}
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 col-span-2 transition-all active:scale-[0.98]"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                >
+                  <div className="flex items-center gap-2">
+                    <Banknote className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Cash on Delivery</span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground opacity-60 italic">Pay when you receive</span>
+                </Button>
               </div>
             </div>
 
             <Button 
-              className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 h-14 font-bold text-lg group" 
+              className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 h-16 rounded-[2rem] font-bold text-xl group shadow-lg shadow-secondary/10" 
               onClick={handleCheckout}
               disabled={isCheckingOut}
             >
               {isCheckingOut ? 'Securing Transaction...' : 'Complete Payment'}
-              {!isCheckingOut && <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />}
+              {!isCheckingOut && <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-1 transition-transform" />}
             </Button>
           </div>
         </div>
