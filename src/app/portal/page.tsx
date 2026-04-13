@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -33,17 +34,25 @@ import {
   MessageSquare,
   Send,
   Edit3,
-  Trash2
+  Trash2,
+  Truck
 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
 import Image from 'next/image';
+import { DeliveryStatus } from '@/app/types';
 
 const MOCK_ARRIVALS = [
   { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
   { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
   { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '02:30 PM', status: 'In-Progress' },
+];
+
+const MOCK_ORDERS = [
+  { id: 'ORD-101', client: 'Hina Pervez', product: 'Silk Radiance Foundation', price: 4800, status: 'Pending' as DeliveryStatus },
+  { id: 'ORD-102', client: 'Mehak Ali', product: 'Velvet Matte Lip Ink', price: 2400, status: 'Picked Up' as DeliveryStatus },
+  { id: 'ORD-103', client: 'Sana Javed', product: 'Gold Infused Face Oil', price: 5500, status: 'Delivered' as DeliveryStatus },
 ];
 
 const MOCK_BUSINESS_MESSAGES = [
@@ -59,13 +68,21 @@ export default function PartnerPortalPage() {
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
   const [isDealSheetOpen, setIsDealSheetOpen] = useState(false);
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
 
   const handleAction = (title: string, desc: string) => {
     toast({ title, description: desc });
     setIsProductSheetOpen(false);
     setIsDealSheetOpen(false);
+    setSelectedOrder(null);
     setEditingItem(null);
+  };
+
+  const updateOrderStatus = (newStatus: DeliveryStatus) => {
+    if (selectedOrder) {
+      handleAction('Status Updated', `Order ${selectedOrder.id} is now ${newStatus}.`);
+    }
   };
 
   return (
@@ -101,6 +118,9 @@ export default function PartnerPortalPage() {
             <TabsTrigger value="queue" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
               Queue
             </TabsTrigger>
+            <TabsTrigger value="orders" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
+              Orders
+            </TabsTrigger>
             <TabsTrigger value="messages" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
               Messages
             </TabsTrigger>
@@ -131,6 +151,37 @@ export default function PartnerPortalPage() {
                     </div>
                     <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-white border-none' : 'border-primary/20 text-primary'}>
                       {arrival.status}
+                    </Badge>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* ORDERS TAB */}
+          <TabsContent value="orders" className="space-y-4">
+            <div className="space-y-4">
+              {MOCK_ORDERS.map((order) => (
+                <Card 
+                  key={order.id} 
+                  onClick={() => setSelectedOrder(order)}
+                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
+                        <Package className="h-3 w-3" /> {order.id}
+                      </div>
+                      <h4 className="font-headline text-2xl leading-none text-foreground">{order.client}</h4>
+                      <p className="text-xs text-muted-foreground italic">{order.product}</p>
+                    </div>
+                    <Badge className={cn(
+                      "border-none px-3 py-1",
+                      order.status === 'Delivered' ? 'bg-green-500/10 text-green-600' : 
+                      order.status === 'Picked Up' ? 'bg-blue-500/10 text-blue-600' : 
+                      'bg-orange-500/10 text-orange-600'
+                    )}>
+                      {order.status}
                     </Badge>
                   </div>
                 </Card>
@@ -223,6 +274,48 @@ export default function PartnerPortalPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* --- INTERACTIVE SHEETS --- */}
+
+      {/* Order Status Management Sheet */}
+      <Sheet open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
+        <SheetContent side="bottom" className="rounded-t-[3rem]">
+          {selectedOrder && (
+            <div className="max-w-xl mx-auto space-y-8 py-4">
+              <SheetHeader className="space-y-3">
+                <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2 bg-primary/10 px-3 py-1 rounded-full">
+                  <Truck className="h-4 w-4" /> Logistics Manager
+                </div>
+                <SheetTitle className="text-5xl font-headline leading-none">{selectedOrder.client}</SheetTitle>
+                <SheetDescription className="italic text-lg">Managing delivery for {selectedOrder.product}</SheetDescription>
+              </SheetHeader>
+              
+              <div className="bg-primary/5 p-8 rounded-[2rem] space-y-6">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Order Ref</span>
+                  <span className="font-mono font-bold text-primary text-xl">{selectedOrder.id}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Current Status</span>
+                  <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[10px]">{selectedOrder.status}</Badge>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 pb-8">
+                <Button onClick={() => updateOrderStatus('Pending')} variant="outline" className={cn("h-14 font-bold rounded-xl", selectedOrder.status === 'Pending' && "bg-primary/10 border-primary")}>
+                  Mark as Pending
+                </Button>
+                <Button onClick={() => updateOrderStatus('Picked Up')} variant="outline" className={cn("h-14 font-bold rounded-xl", selectedOrder.status === 'Picked Up' && "bg-primary/10 border-primary")}>
+                  Mark as Picked Up
+                </Button>
+                <Button onClick={() => updateOrderStatus('Delivered')} className="h-16 bg-primary text-white font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
+                  Confirm Delivery
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Product Add/Edit Sheet */}
       <Sheet open={isProductSheetOpen} onOpenChange={(open) => { if(!open) setEditingItem(null); setIsProductSheetOpen(open); }}>

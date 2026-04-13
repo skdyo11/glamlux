@@ -41,14 +41,17 @@ export type CartItem = {
   image?: string;
 };
 
+export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
+
 export type Booking = {
   id: string;
   booking_ref_code: string;
   cart_items: CartItem[];
   total_price: number;
   qr_verification_status: boolean;
-  is_delivered: boolean;
+  delivery_status: DeliveryStatus;
   region: 'PK' | 'IN';
+  created_at: string;
 };
 
 export type ChatMessage = {

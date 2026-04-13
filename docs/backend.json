@@ -1,10 +1,11 @@
+
 {
   "entities": {
     "LocalUser": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "LocalUser",
       "type": "object",
-      "description": "Stores basic user information locally on the device for guest browsing and to remember user history without full authentication. This entity represents a 'shadow profile' linked to a device.",
+      "description": "Stores basic user information locally on the device for guest browsing and to remember user history without full authentication.",
       "properties": {
         "id": {
           "type": "string",
@@ -20,11 +21,11 @@
         },
         "deviceIdentifier": {
           "type": "string",
-          "description": "A unique identifier representing the user's specific device, used to link local storage and maintain a 'shadow profile'."
+          "description": "A unique identifier representing the user's specific device."
         },
         "lastActiveAt": {
           "type": "string",
-          "description": "Timestamp indicating the last time the user was active on the app.",
+          "description": "Timestamp of last activity.",
           "format": "date-time"
         }
       },
@@ -39,7 +40,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Parlour",
       "type": "object",
-      "description": "Represents a beauty parlour offering various services and deals within the marketplace.",
+      "description": "Represents a beauty parlour offering services.",
       "properties": {
         "id": {
           "type": "string",
@@ -51,31 +52,31 @@
         },
         "latitude": {
           "type": "number",
-          "description": "The geographical latitude coordinate of the parlour's location, used for distance calculations."
+          "description": "Geographical latitude."
         },
         "longitude": {
           "type": "number",
-          "description": "The geographical longitude coordinate of the parlour's location, used for distance calculations."
+          "description": "Geographical longitude."
         },
         "areaTag": {
           "type": "string",
-          "description": "A tag or identifier representing the geographical area or locality of the parlour."
+          "description": "Geographical area or locality."
         },
         "rating": {
           "type": "number",
-          "description": "The average rating of the parlour, typically out of 5 stars."
+          "description": "Average rating."
         },
         "imageUrls": {
           "type": "array",
-          "description": "An array of URLs pointing to images showcasing the parlour.",
+          "description": "Images of the parlour.",
           "items": {
             "type": "string"
           }
         },
         "ownerDashboardStyle": {
           "type": "string",
-          "description": "The preferred display style for the parlour owner's dashboard, either 'list' for daily arrivals or 'grid' for a weekly calendar.",
-          "format": "enum"
+          "description": "Preferred dashboard style: 'list' or 'grid'.",
+          "enum": ["list", "grid"]
         }
       },
       "required": [
@@ -90,48 +91,48 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Deal",
       "type": "object",
-      "description": "Represents a specific beauty service or package offered by a parlour, often with a special price or limited availability.",
+      "description": "Represents a specific beauty service or package.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Deal entity."
+          "description": "Unique identifier."
         },
         "parlourId": {
           "type": "string",
-          "description": "Reference to the Parlour offering this deal. (Relationship: Parlour 1:N Deal)"
+          "description": "Reference to Parlour."
         },
         "name": {
           "type": "string",
-          "description": "The name or title of the deal."
+          "description": "Deal title."
         },
         "category": {
           "type": "string",
-          "description": "The category of the deal (e.g., 'Bridal', 'Hair', 'Skin')."
+          "description": "Deal category (Bridal, Hair, Skin)."
         },
         "originalPrice": {
           "type": "number",
-          "description": "The original, non-discounted price of the deal."
+          "description": "Full price."
         },
         "discountPrice": {
           "type": "number",
-          "description": "The special discounted price for the deal."
+          "description": "Discounted price."
         },
         "currency": {
           "type": "string",
-          "description": "The currency code for the deal's prices (e.g., 'PKR', 'INR')."
+          "description": "Price currency."
         },
         "expiryDate": {
           "type": "string",
-          "description": "The date and time when the deal offer expires.",
+          "description": "Expiration date.",
           "format": "date-time"
         },
         "depositPercent": {
           "type": "number",
-          "description": "The percentage of the total deal price required as an upfront deposit during booking."
+          "description": "Upfront deposit percentage."
         },
         "upsellProductId": {
           "type": "string",
-          "description": "Reference to a recommended Makeup Product that complements this deal, used for upsell opportunities. (Relationship: Product 1:N Deal)"
+          "description": "Complementary makeup product ID."
         }
       },
       "required": [
@@ -150,39 +151,39 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Product",
       "type": "object",
-      "description": "Represents a makeup product available for purchase and delivery through the e-commerce shop.",
+      "description": "Represents a makeup product.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Product entity."
+          "description": "Unique identifier."
         },
         "name": {
           "type": "string",
-          "description": "The name of the makeup product."
+          "description": "Product name."
         },
         "brand": {
           "type": "string",
-          "description": "The brand of the makeup product."
+          "description": "Brand name."
         },
         "basePrice": {
           "type": "number",
-          "description": "The base price of the product before any discounts or currency conversions."
+          "description": "Price before discounts."
         },
         "currency": {
           "type": "string",
-          "description": "The currency code for the product's price (e.g., 'PKR', 'INR')."
+          "description": "Currency code."
         },
         "stockCount": {
           "type": "number",
-          "description": "The current number of units available in stock for this product."
+          "description": "Units in stock."
         },
         "weightKg": {
           "type": "number",
-          "description": "The weight of a single unit of the product in kilograms, potentially used for future shipping calculations."
+          "description": "Weight for delivery fee calculation."
         },
         "imageUrl": {
           "type": "string",
-          "description": "The URL to the main image of the product."
+          "description": "Product image URL."
         }
       },
       "required": [
@@ -194,164 +195,61 @@
         "stockCount"
       ]
     },
-    "BookingItem": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "BookingItem",
-      "type": "object",
-      "description": "Represents a single item (either a Deal or a Product) within a user's Booking/Order. This helps to normalize the 'Glam Cart' contents without nesting.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the BookingItem entity."
-        },
-        "bookingId": {
-          "type": "string",
-          "description": "Reference to the parent Booking entity. (Relationship: Booking 1:N BookingItem)"
-        },
-        "entityType": {
-          "type": "string",
-          "description": "Specifies whether the item is a 'Deal' or a 'Product'."
-        },
-        "entityId": {
-          "type": "string",
-          "description": "The ID of the referenced Deal or Product entity."
-        },
-        "quantity": {
-          "type": "number",
-          "description": "The quantity of this specific item in the booking/order. Always 1 for Deals."
-        },
-        "priceAtTimeOfOrder": {
-          "type": "number",
-          "description": "The price of this item at the moment the booking/order was placed."
-        },
-        "itemCurrency": {
-          "type": "string",
-          "description": "The currency code for this item's price at the time of order (e.g., 'PKR', 'INR')."
-        }
-      },
-      "required": [
-        "id",
-        "bookingId",
-        "entityType",
-        "entityId",
-        "quantity",
-        "priceAtTimeOfOrder",
-        "itemCurrency"
-      ]
-    },
     "Booking": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Booking",
       "type": "object",
-      "description": "Represents a user's consolidated booking for parlour deals and/or an order for makeup products, forming the 'Glam Cart' checkout.",
+      "description": "Represents a user's consolidated booking or order.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Booking entity."
+          "description": "Unique identifier."
         },
         "localUserId": {
           "type": "string",
-          "description": "Reference to the LocalUser who made this booking/order. (Relationship: LocalUser 1:N Booking)"
+          "description": "Owning user ID."
         },
         "referenceCode": {
           "type": "string",
-          "description": "A unique, user-facing reference code for the booking or order."
-        },
-        "bookingItemIds": {
-          "type": "array",
-          "description": "An array of IDs referencing the individual BookingItem entities included in this booking/order. (Relationship: Booking 1:N BookingItem)",
-          "items": {
-            "type": "string"
-          }
+          "description": "User-facing reference code."
         },
         "totalPrice": {
           "type": "number",
-          "description": "The total monetary value of all items in the booking/order."
+          "description": "Total order value."
         },
         "currency": {
           "type": "string",
-          "description": "The primary currency code for the total price of this booking (e.g., 'PKR', 'INR')."
+          "description": "Currency code."
         },
         "qrVerificationStatus": {
           "type": "boolean",
-          "description": "Indicates if the QR code for a parlour deal booking has been scanned and verified by the parlour, enabling reviews."
+          "description": "Verified by parlour."
         },
-        "isDelivered": {
-          "type": "boolean",
-          "description": "Indicates if the makeup products in the order have been successfully delivered to the user."
-        },
-        "bookingSlot": {
+        "deliveryStatus": {
           "type": "string",
-          "description": "The scheduled date and time for a parlour deal booking, relevant for cancellation logic.",
-          "format": "date-time"
+          "description": "Tracking status for product orders.",
+          "enum": ["Pending", "Picked Up", "Delivered"]
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp indicating when the booking or order was created.",
+          "description": "Creation timestamp.",
           "format": "date-time"
         },
         "paymentStatus": {
           "type": "string",
-          "description": "The current payment status of the booking/order (e.g., 'Pending', 'Paid', 'PartiallyPaid')."
-        },
-        "depositAmountPaid": {
-          "type": "number",
-          "description": "The amount paid as a deposit for deal bookings."
-        },
-        "deliveryFee": {
-          "type": "number",
-          "description": "The calculated delivery fee for makeup product orders."
-        },
-        "userLocationLatitude": {
-          "type": "number",
-          "description": "The latitude of the user's location at the time of order/booking, used for delivery fee calculation."
-        },
-        "userLocationLongitude": {
-          "type": "number",
-          "description": "The longitude of the user's location at the time of order/booking, used for delivery fee calculation."
+          "description": "Payment state."
         }
       },
       "required": [
         "id",
         "localUserId",
         "referenceCode",
-        "bookingItemIds",
         "totalPrice",
         "currency",
         "qrVerificationStatus",
-        "isDelivered",
+        "deliveryStatus",
         "createdAt",
         "paymentStatus"
-      ]
-    },
-    "GlobalConfig": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "GlobalConfig",
-      "type": "object",
-      "description": "Stores global configuration settings for the application, such as currency exchange rates and default shop location.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the GlobalConfig entity (e.g., 'defaultConfig')."
-        },
-        "exchangeRatePKRToINR": {
-          "type": "number",
-          "description": "The current exchange rate from Pakistani Rupee (PKR) to Indian Rupee (INR)."
-        },
-        "shopLatitude": {
-          "type": "number",
-          "description": "The geographical latitude coordinate of the main makeup shop, used as a reference for delivery calculations."
-        },
-        "shopLongitude": {
-          "type": "number",
-          "description": "The geographical longitude coordinate of the main makeup shop, used as a reference for delivery calculations."
-        }
-      },
-      "required": [
-        "id",
-        "exchangeRatePKRToINR",
-        "shopLatitude",
-        "shopLongitude"
       ]
     }
   },
@@ -362,126 +260,21 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/parlours/{parlourId}",
-        "definition": {
-          "entityName": "Parlour",
-          "schema": {
-            "$ref": "#/backend/entities/Parlour"
-          },
-          "description": "Stores information about beauty parlours. Publicly readable for all users. Write access is restricted to the parlour's owner identified by their Firebase Auth UID. Includes denormalized 'ownerId' for authorization independence.",
-          "params": [
-            {
-              "name": "parlourId",
-              "description": "The unique identifier for a specific parlour."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/deals/{dealId}",
-        "definition": {
-          "entityName": "Deal",
-          "schema": {
-            "$ref": "#/backend/entities/Deal"
-          },
-          "description": "Contains details about specific parlour deals. Publicly readable. Write access is restricted to the owner of the associated parlour. Includes denormalized 'parlourOwnerId' for authorization independence and efficient owner-specific queries.",
-          "params": [
-            {
-              "name": "dealId",
-              "description": "The unique identifier for a specific deal."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/products/{productId}",
-        "definition": {
-          "entityName": "Product",
-          "schema": {
-            "$ref": "#/backend/entities/Product"
-          },
-          "description": "Stores information about makeup products available for delivery. Publicly readable. Write access is assumed to be restricted to platform administrators (managed via backend services or specific admin UIDs).",
-          "params": [
-            {
-              "name": "productId",
-              "description": "The unique identifier for a specific product."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/globalConfig/defaultConfig",
-        "definition": {
-          "entityName": "GlobalConfig",
-          "schema": {
-            "$ref": "#/backend/entities/GlobalConfig"
-          },
-          "description": "A single document storing global application configurations, such as exchange rates and default shop location. Publicly readable. Write access is restricted to platform administrators."
-        }
-      },
-      {
-        "path": "/localUsers/{localUserId}",
-        "definition": {
-          "entityName": "LocalUser",
-          "schema": {
-            "$ref": "#/backend/entities/LocalUser"
-          },
-          "description": "Stores 'shadow profiles' for guest users, linked directly to their Firebase Anonymous Auth UID. This document is private and only readable/writable by the authenticated 'localUserId' (which is request.auth.uid).",
-          "params": [
-            {
-              "name": "localUserId",
-              "description": "The unique identifier for the local user, corresponding to their Firebase Anonymous Auth UID."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/localUsers/{localUserId}/bookings/{bookingId}",
-        "definition": {
-          "entityName": "Booking",
-          "schema": {
-            "$ref": "#/backend/entities/Booking"
-          },
-          "description": "Represents a user's combined booking for parlour deals and product orders. This data is private, readable/writable only by the owning 'localUserId'. Includes denormalized 'parlourIdsInBooking' and 'parlourOwnerIdsInBooking' arrays to facilitate owner-side queries without requiring 'get()' calls.",
-          "params": [
-            {
-              "name": "localUserId",
-              "description": "The unique identifier for the local user, corresponding to their Firebase Anonymous Auth UID."
-            },
-            {
-              "name": "bookingId",
-              "description": "The unique identifier for a specific booking or order."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/localUsers/{localUserId}/bookings/{bookingId}/bookingItems/{bookingItemId}",
-        "definition": {
-          "entityName": "BookingItem",
-          "schema": {
-            "$ref": "#/backend/entities/BookingItem"
-          },
-          "description": "Represents a single item (Deal or Product) within a specific booking. This data is private, readable/writable only by the owning 'localUserId'. Includes denormalized 'localUserId' for authorization independence, and 'parlourId' and 'parlourOwnerId' (if the item is a Deal) to support owner-specific collection group queries.",
-          "params": [
-            {
-              "name": "localUserId",
-              "description": "The unique identifier for the local user, corresponding to their Firebase Anonymous Auth UID."
-            },
-            {
-              "name": "bookingId",
-              "description": "The unique identifier for the parent booking."
-            },
-            {
-              "name": "bookingItemId",
-              "description": "The unique identifier for a specific booking item."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore structure is designed to be secure, scalable, and debuggable, adhering strictly to the provided CORE DESIGN PRINCIPLES and DESIGN STRATEGY MANDATES. The primary authentication strategy for end-users is a 'light-auth' model, leveraging Firebase Anonymous Authentication. This allows guest browsing while providing a unique `request.auth.uid` for each user's device, which then links to their 'LocalUser' profile and subsequent 'Bookings'. For parlour owners, it is assumed they will utilize Firebase Authentication, with their `uid` explicitly stored in relevant documents.\n\n**Authorization Independence via Denormalization (Strategy A):**\nThis design criticaly prioritizes eliminating `get()` calls in security rules to ensure atomic operations and straightforward debugging. Key authorization fields are denormalized as follows:\n*   **Parlours and Deals:** Each `Parlour` document will contain an `ownerId` field (the Firebase `uid` of its owner). `Deal` documents, being sub-entities of a parlour in terms of ownership, will denormalize this as `parlourOwnerId`. This enables rules like `allow write: if request.auth.uid == resource.data.parlourOwnerId;` directly on the `Deal` document without needing to fetch the parent `Parlour`.\n*   **LocalUser, Bookings, and BookingItems:** The `LocalUser` entity's `id` field will be directly mapped to the Firebase Anonymous Auth `uid` (`request.auth.uid`). All `Booking` documents (nested under `/localUsers/{localUserId}/bookings`) will inherently be secured by the path, matching `request.auth.uid` to `localUserId`. Crucially, `BookingItem` documents, nested further under `Booking`, will also contain `localUserId` to maintain full authorization independence. Additionally, for owner-side `list` queries, `Booking` documents will denormalize `parlourIdsInBooking` and `parlourOwnerIdsInBooking` (if deals are present), and `BookingItem` documents will denormalize `parlourId` and `parlourOwnerId` (if the item is a deal). This allows owners to query their bookings and items directly without needing to `get()` parent documents.\n\n**QAPs (Rules are not Filters) (Principle 4):**\n*   **Public Browsing:** Collections like `/parlours`, `/deals`, and `/products` are designed for public read access. All documents within these top-level collections share the same 'public read' security posture. This allows clients to perform `list` operations (e.g., filtering deals by category or location) without security rules restricting visibility, ensuring that the rules do not act as filters.\n*   **User-Specific Data:** User-specific `Bookings` and `BookingItems` are nested under `/localUsers/{localUserId}`. This path-based ownership ensures that `list` operations for a user's `bookings` or `bookingItems` inherently filter by the authenticated `localUserId` (`request.auth.uid`), guaranteeing that only the owning user can retrieve their data. The structure itself provides the necessary access control without complex rule logic.\n*   **Owner-Specific Dashboards:** By denormalizing `parlourOwnerId` into `Deal` and `parlourOwnerId` (and `parlourIdsInBooking`) into `Booking` and `BookingItem` documents, parlour owners can execute efficient queries using `where()` clauses (e.g., `db.collection('deals').where('parlourOwnerId', '==', request.auth.uid)` or `db.collectionGroup('bookingItems').where('parlourOwnerId', '==', request.auth.uid)`) to populate their 'Daily Arrival List' or 'Weekly Calendar Grid'. This allows them to view only their relevant data without exposing other parlours' information, again ensuring rules are not filters and supporting QAPs.\n\n**DBAC (No Custom Claims) (Principle 3):**\nRoles are implicitly defined by database ownership and document fields. A 'user' is identified by their `request.auth.uid` matching the `localUserId` in their data. A 'parlour owner' is identified by their `request.auth.uid` matching an `ownerId` field in a `Parlour` document or a `parlourOwnerId` in a `Deal` or `BookingItem` document. No custom claims are used, simplifying rule management.\n\n**Structural Segregation (Strategy B):**\nData is segregated into collections with homogeneous security postures. Public-facing data (`/parlours`, `/deals`, `/products`, `/globalConfig`) resides in top-level collections with broad read access. Private user data (`/localUsers`, and its subcollections `bookings` and `bookingItems`) is deeply nested under the user's `localUserId`, ensuring strong, explicit ownership and granular access control via path-based rules. This clear separation minimizes rule complexity and enhances security."
+    "/parlours/{parlourId}": {
+      "schema": { "$ref": "#/backend/entities/Parlour" },
+      "description": "Parlour metadata."
+    },
+    "/deals/{dealId}": {
+      "schema": { "$ref": "#/backend/entities/Deal" },
+      "description": "Service deals."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/backend/entities/Product" },
+      "description": "Shop products."
+    },
+    "/localUsers/{localUserId}/bookings/{bookingId}": {
+      "schema": { "$ref": "#/backend/entities/Booking" },
+      "description": "User orders and bookings."
+    }
   }
 }
