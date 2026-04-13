@@ -2,14 +2,14 @@
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useStore } from '@/app/lib/store';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { 
   Sheet, 
@@ -26,20 +26,14 @@ import {
   Clock, 
   ChevronRight, 
   Plus, 
-  CheckCircle2, 
-  Package, 
   QrCode,
-  Truck,
-  Edit3,
-  Camera,
   Navigation,
   CalendarDays
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
+import { PRODUCTS } from '@/app/lib/mock-data';
 import Image from 'next/image';
-import { DeliveryStatus } from '@/app/types';
 import { useFirebase } from '@/firebase';
 import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -47,10 +41,10 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 export default function PartnerPortalPage() {
   const { toast } = useToast();
   const { firestore } = useFirebase();
+  const { getCurrency } = useStore();
   
   const [activeTab, setActiveTab] = useState('queue');
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
@@ -60,11 +54,15 @@ export default function PartnerPortalPage() {
       timer = setTimeout(() => {
         const readerElement = document.getElementById("reader");
         if (readerElement && !scannerRef.current) {
-          const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
-          scanner.render(onScanSuccess, onScanFailure);
-          scannerRef.current = scanner;
+          try {
+            const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+            scanner.render(onScanSuccess, onScanFailure);
+            scannerRef.current = scanner;
+          } catch (e) {
+            console.error("Scanner init error", e);
+          }
         }
-      }, 500);
+      }, 1000);
     } else {
       if (scannerRef.current) {
         scannerRef.current.clear().catch(() => {});
@@ -109,14 +107,14 @@ export default function PartnerPortalPage() {
         <header className="flex flex-col gap-12 mb-20">
           <div className="space-y-4">
             <Badge className="bg-primary text-white rounded-none px-4 py-1 uppercase tracking-widest text-[10px]">Merchant Workspace</Badge>
-            <h1 className="text-7xl font-headline tracking-tighter italic">Studio Control</h1>
+            <h1 className="text-7xl font-headline tracking-tighter italic text-primary">Studio Control</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              <Card className="rounded-none border bg-card p-10 space-y-4">
                <TrendingUp className="h-6 w-6 opacity-20" />
                <p className="text-4xl font-headline italic tracking-tighter">82.4K</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Today's Studio Revenue</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Today's Studio Revenue ({getCurrency()})</p>
              </Card>
              <Card className="rounded-none border bg-card p-10 space-y-4">
                <Users className="h-6 w-6 opacity-20" />
@@ -209,7 +207,6 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      {/* Courier Onboarding Sheet */}
       <Sheet open={isCourierSheetOpen} onOpenChange={setIsCourierSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-none h-[85vh] md:h-auto border-t-0 p-20 bg-primary text-white">
           <div className="max-w-xl mx-auto space-y-12">
@@ -241,7 +238,6 @@ export default function PartnerPortalPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Guest Check-in Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
         <SheetContent side="bottom" className="rounded-t-none border-t-0 p-20">
           {selectedArrival && (

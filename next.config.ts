@@ -1,8 +1,7 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Configuration refresh to resolve Turbopack chunk loading issues
   typescript: {
     ignoreBuildErrors: true,
   },

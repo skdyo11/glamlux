@@ -14,10 +14,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFirebase, useUser } from '@/firebase';
+import { useFirebase, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
@@ -32,11 +31,9 @@ export default function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   
-  // Shadow Profile State
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  // Inspiration State
   const [inspirationImage, setInspirationImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<{description: string, productIds: string[]} | null>(null);
@@ -90,14 +87,13 @@ export default function CartPage() {
 
     try {
       let currentUser = user;
-      if (!currentUser) {
+      if (!currentUser && auth) {
         const cred = await signInAnonymously(auth);
         currentUser = cred.user;
       }
 
-      if (!currentUser) throw new Error("Auth failed");
+      if (!currentUser || !firestore) throw new Error("Services not ready");
 
-      // Shadow Profile - Non-blocking update
       const userRef = doc(firestore, 'localUsers', currentUser.uid);
       setDocumentNonBlocking(userRef, {
         id: currentUser.uid,
@@ -106,9 +102,12 @@ export default function CartPage() {
         lastActiveAt: new Date().toISOString()
       }, { merge: true });
 
-      // Create Booking - Optimistic Pattern
       const refCode = Math.random().toString(36).substring(7).toUpperCase();
+      const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
+      const newBookingRef = doc(bookingsCol);
+      
       const bookingData = {
+        id: newBookingRef.id,
         localUserId: currentUser.uid,
         user_phone: phoneNumber,
         referenceCode: refCode,
@@ -125,9 +124,7 @@ export default function CartPage() {
         vendor_id: cart[0]?.vendor_id || 'v1'
       };
 
-      const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
-      const newBookingRef = doc(bookingsCol);
-      setDocumentNonBlocking(newBookingRef, bookingData, {});
+      setDocumentNonBlocking(newBookingRef, bookingData, { merge: false });
       
       clearCart();
       router.push(`/booking/${newBookingRef.id}?uid=${currentUser.uid}`);
@@ -253,14 +250,16 @@ export default function CartPage() {
                       <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
                     </div>
                     <div className="flex-grow">
-                      <p className="text-[8px] uppercase font-black text-primary/40 tracking-[0.2em] flex items-center gap-2">
-                        {item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-[8px] uppercase font-black text-primary/40 tracking-[0.2em]">
+                          {item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}
+                        </p>
                         {item.type === 'deal' && item.quantity > 1 && (
                           <Badge variant="outline" className="text-[8px] h-4 py-0 flex gap-1 items-center border-secondary/30 text-secondary">
                              <Users className="h-2.5 w-2.5" /> Group of {item.quantity}
                           </Badge>
                         )}
-                      </p>
+                      </div>
                       <h3 className="font-headline text-2xl">{item.name}</h3>
                       <p className="font-bold">{getCurrency()} {item.price.toLocaleString()}</p>
                     </div>

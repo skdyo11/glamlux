@@ -1,8 +1,10 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
+import { StoreProvider } from '@/app/lib/store';
 
 export const metadata: Metadata = {
   title: 'GlamLux | Timeless Elegance',
@@ -29,9 +31,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <div className="wavy-bg" />
-            {children}
-            <Toaster />
+            <StoreProvider>
+              <div className="wavy-bg" />
+              {children}
+              <Toaster />
+            </StoreProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
       </body>
