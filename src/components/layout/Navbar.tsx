@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -34,8 +33,8 @@ export function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/40 backdrop-blur-2xl transition-all duration-700 hidden md:block">
-        <div className="w-full px-2 h-20 flex items-center justify-between">
+      <nav className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/10 backdrop-blur-2xl transition-all duration-700 hidden md:block">
+        <div className="w-full px-6 h-20 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
@@ -58,28 +57,28 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-0">
+          <div className="flex items-center space-x-2">
             {mounted && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-primary hover:bg-white/10 backdrop-blur-md rounded-none h-10 w-10"
+                className="h-10 w-10 border border-white/20 bg-white/5"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-white/10 backdrop-blur-md px-2 h-10 rounded-none">
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary border border-white/20 bg-white/5 h-10 px-3">
               <MapPin className="h-4 w-4 text-accent-foreground" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-white/10 backdrop-blur-md rounded-none h-10 w-10">
+              <Button variant="ghost" size="icon" className="relative h-10 w-10 border border-white/20 bg-white/5">
                 <ShoppingBag className="h-6 w-6" />
                 {mounted && cartCount > 0 && (
-                  <Badge className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black rounded-none border-2 border-background">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black border-2 border-background">
                     {cartCount}
                   </Badge>
                 )}
@@ -90,33 +89,33 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 border-b bg-background/40 backdrop-blur-2xl md:hidden flex items-center justify-between px-2 transition-all duration-700">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/20 bg-white/10 backdrop-blur-2xl md:hidden flex items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-1.5 group">
           <Sparkles className="h-5 w-5 text-accent-foreground" />
           <span className="font-headline text-xl tracking-tighter text-primary italic">GlamLux</span>
         </Link>
 
-        <div className="flex items-center">
+        <div className="flex items-center space-x-1">
           {mounted && (
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="h-10 w-10 text-primary rounded-none hover:bg-white/10 backdrop-blur-md"
+              className="h-9 w-9 bg-white/5 border border-white/20"
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
           )}
 
-          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-2 text-[9px] font-black uppercase tracking-widest text-primary rounded-none hover:bg-white/10 backdrop-blur-md">
+          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-2 text-[9px] font-black uppercase tracking-widest text-primary bg-white/5 border border-white/20">
             {region === 'PK' ? 'PKR' : 'INR'}
           </Button>
 
           <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative h-10 w-10 text-primary rounded-none hover:bg-white/10 backdrop-blur-md">
-              <ShoppingBag className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 bg-white/5 border border-white/20">
+              <ShoppingBag className="h-4 w-4" />
               {mounted && cartCount > 0 && (
-                <Badge className="absolute top-1.5 right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black rounded-none border border-background">
+                <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black border border-background">
                   {cartCount}
                 </Badge>
               )}
@@ -125,16 +124,16 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-2xl border-t border-white/10 md:hidden flex items-center justify-around h-14 px-2 transition-all duration-700">
+      {/* Mobile Bottom Bar - Smaller & Glassy */}
+      <nav className="fixed bottom-4 left-4 right-4 z-50 bg-white/10 backdrop-blur-3xl border border-white/30 rounded-full md:hidden flex items-center justify-around h-14 px-4 shadow-[0_8px_32px_0_rgba(0,0,0,0.2)]">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-0.5 transition-all">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center h-full gap-0.5 transition-all">
               <div className={cn(
-                "p-1.5 transition-all duration-500 rounded-lg",
-                isActive ? "text-accent-foreground scale-110 bg-white/10 backdrop-blur-md" : "text-muted-foreground/60 hover:text-primary"
+                "p-2 transition-all duration-500 rounded-full",
+                isActive ? "text-accent-foreground scale-110 bg-white/20 shadow-lg border border-white/40" : "text-muted-foreground/60 hover:text-primary"
               )}>
                 <Icon className={cn("h-4 w-4", isActive && "stroke-[2.5px]")} />
               </div>
