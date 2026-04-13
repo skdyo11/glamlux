@@ -35,7 +35,7 @@ export function Navbar() {
     <>
       {/* Desktop Navbar - Professional Minimalist */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
-        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <div className="w-full px-4 h-20 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
@@ -89,18 +89,54 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar - Sleek & Semi-Transparent */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-20 px-2 transition-all duration-700">
+      {/* Mobile Top Utility Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 border-b bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 transition-all duration-700">
+        <Link href="/" className="flex items-center space-x-1.5 group">
+          <Sparkles className="h-5 w-5 text-accent-foreground" />
+          <span className="font-headline text-xl tracking-tighter text-primary italic">GlamLux</span>
+        </Link>
+
+        <div className="flex items-center gap-0.5">
+          {mounted && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="h-10 w-10 text-primary rounded-none"
+            >
+              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          )}
+
+          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-2 text-[9px] font-black uppercase tracking-widest text-primary rounded-none">
+            {region === 'PK' ? 'PKR' : 'INR'}
+          </Button>
+
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="relative h-10 w-10 text-primary rounded-none">
+              <ShoppingBag className="h-5 w-5" />
+              {mounted && cartCount > 0 && (
+                <Badge className="absolute top-1.5 right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black rounded-none border border-background">
+                  {cartCount}
+                </Badge>
+              )}
+            </Button>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Mobile Bottom Bar - Smaller & Sleek */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-16 px-2 transition-all duration-700">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1 transition-all">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-0.5 transition-all">
               <div className={cn(
-                "p-2 transition-all duration-500",
+                "p-1.5 transition-all duration-500",
                 isActive ? "text-accent-foreground scale-110" : "text-muted-foreground/60 hover:text-primary"
               )}>
-                <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
+                <Icon className={cn("h-4 w-4", isActive && "stroke-[2.5px]")} />
               </div>
               <span className={cn(
                 "text-[7px] font-black uppercase tracking-[0.1em]",
@@ -111,30 +147,6 @@ export function Navbar() {
             </Link>
           );
         })}
-
-        {/* Mobile Theme Toggle */}
-        {mounted && (
-          <button 
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex flex-col items-center justify-center w-full h-full gap-1 transition-all text-muted-foreground/60"
-          >
-            <div className="p-2">
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </div>
-            <span className="text-[7px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
-              {theme === 'dark' ? 'Light' : 'Dark'}
-            </span>
-          </button>
-        )}
-        
-        {/* Mobile Cart floating bubble */}
-        {mounted && cartCount > 0 && (
-          <Link href="/cart" className="absolute -top-16 right-6">
-             <div className="bg-destructive text-white h-12 w-12 rounded-none flex items-center justify-center text-xs font-black shadow-2xl">
-               {cartCount}
-             </div>
-          </Link>
-        )}
       </nav>
     </>
   );
