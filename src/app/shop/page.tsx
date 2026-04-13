@@ -101,9 +101,10 @@ export default function ShopPage() {
                     />
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
                     <Button 
+                      variant="default"
                       size="icon" 
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="absolute bottom-8 right-8 h-14 w-14 rounded-none bg-white text-primary hover:bg-primary hover:text-white shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
+                      className="absolute bottom-8 right-8 h-14 w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
                     >
                       <ShoppingBag className="h-6 w-6" />
                     </Button>
