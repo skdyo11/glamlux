@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,7 +12,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export function Navbar() {
-  const { cart, region, toggleRegion } = useStore();
+  const { cart, region, toggleRegion, getCurrency } = useStore();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -36,7 +37,7 @@ export function Navbar() {
       {/* Desktop Navbar - Glassmorphism */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/20 bg-white/5 backdrop-blur-2xl transition-all duration-700 hidden md:block">
         <div className="w-full px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center -ml-4">
+          <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
               <span className="font-headline text-2xl tracking-tighter text-primary italic">GlamLux</span>
@@ -63,20 +64,18 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {mounted && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="h-10 w-10 border border-white/20 bg-white/10 backdrop-blur-md rounded-full hover:scale-110 transition-all duration-300"
-              >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="h-10 w-10 border border-white/20 bg-white/10 backdrop-blur-md rounded-full hover:scale-110 transition-all duration-300"
+            >
+              {mounted ? (theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <Sun className="h-5 w-5 opacity-0" />}
+            </Button>
 
             <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary border border-white/20 bg-white/10 backdrop-blur-md h-10 px-4 rounded-full hover:scale-105 transition-all duration-300">
               <MapPin className="h-3.5 w-3.5 text-accent-foreground" />
-              {region === 'PK' ? 'PKR' : 'INR'}
+              {mounted ? getCurrency() : 'PKR'}
             </Button>
 
             <Link href="/cart">
@@ -101,19 +100,17 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center space-x-2">
-          {mounted && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="h-9 w-9 bg-white/10 backdrop-blur-md border border-white/30 rounded-full active:scale-90 transition-all"
-            >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-          )}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="h-9 w-9 bg-white/10 backdrop-blur-md border border-white/30 rounded-full active:scale-90 transition-all"
+          >
+            {mounted ? (theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />) : <Sun className="h-4 w-4 opacity-0" />}
+          </Button>
 
           <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 text-[9px] font-black uppercase tracking-widest text-primary bg-white/10 backdrop-blur-md border border-white/30 rounded-full active:scale-95 transition-all">
-            {region === 'PK' ? 'PKR' : 'INR'}
+            {mounted ? getCurrency() : 'PKR'}
           </Button>
 
           <Link href="/cart">
@@ -132,8 +129,8 @@ export function Navbar() {
       {/* Mobile Bottom Bar - Floating Glass Pill with Dynamic Home Button */}
       <nav className="fixed bottom-6 left-6 right-6 z-50 bg-white/10 backdrop-blur-3xl border border-white/40 rounded-full md:hidden flex items-center justify-around h-14 px-4 shadow-[0_12px_40px_rgba(0,0,0,0.15)] ring-1 ring-white/20">
         
-        {/* Conditional Home Button */}
-        {!isHome && (
+        {/* Dynamic Home Button - Only appears on other pages */}
+        {mounted && !isHome && (
           <Link href="/" className="flex flex-col items-center justify-center h-full gap-0.5 animate-in slide-in-from-bottom-2 fade-in duration-500">
             <div className="p-2 transition-all duration-500 rounded-full text-muted-foreground/60 active:scale-95 bg-white/10 border border-white/30">
               <Home className="h-4 w-4" />
