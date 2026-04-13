@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -29,32 +30,32 @@ export default function DealsPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 md:py-16">
+      <main className="container mx-auto px-4 py-8 md:py-16 pb-32">
         <header className="max-w-3xl mb-12 space-y-4 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/30 border border-secondary/50 backdrop-blur-sm mx-auto md:mx-0">
             <Sparkles className="h-4 w-4 text-accent-foreground" />
-            <span className="text-[10px] uppercase tracking-[0.2em] font-black text-accent-foreground">Limited Invitations</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] font-black text-accent-foreground">Special Treats</span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-headline text-primary tracking-tighter italic">Elite <br />Transformations</h1>
+          <h1 className="text-5xl md:text-8xl font-headline text-primary tracking-tighter italic">Cool Parlours</h1>
           <p className="text-lg md:text-xl text-muted-foreground font-body italic">
-            Exclusive experiences at the region's most prestigious artisans.
+            Find the best places to look amazing and feel happy.
           </p>
         </header>
 
         {/* Search and Filter Section */}
-        <section className="mb-12 flex flex-col md:flex-row gap-4 items-center bg-white/40 p-4 md:p-6 rounded-[2rem] border border-white/60 backdrop-blur-xl shadow-xl shadow-primary/5">
+        <section className="mb-12 flex flex-col md:flex-row gap-4 items-center bg-white/40 p-4 md:p-6 rounded-[2.5rem] border border-white/60 backdrop-blur-xl shadow-xl shadow-primary/5">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/40" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/40" />
             <Input 
-              placeholder="Search transformation..." 
-              className="pl-12 h-14 bg-white/60 border-none focus-visible:ring-secondary/20 rounded-2xl font-body text-lg"
+              placeholder="Search for a treat..." 
+              className="pl-14 h-16 bg-white/60 border-none focus-visible:ring-secondary/20 rounded-3xl font-body text-lg"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-14 w-full md:w-[200px] bg-white/60 border-none rounded-2xl font-bold font-body">
+              <SelectTrigger className="h-16 w-full md:w-[200px] bg-white/60 border-none rounded-3xl font-black text-[10px] uppercase tracking-widest">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent className="rounded-2xl font-body border-none shadow-2xl">
@@ -72,22 +73,17 @@ export default function DealsPage() {
               const vendor = VENDORS.find(v => v.id === deal.vendor_id);
               return (
                 <Link key={deal.id} href={`/deals/${deal.id}`} className="group block">
-                  <Card className="overflow-hidden border-none bg-white/40 backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-700 rounded-[2.5rem] active:scale-[0.98]">
+                  <Card className="overflow-hidden border-none bg-white shadow-lg hover:shadow-2xl transition-all duration-700 rounded-[3rem] active:scale-[0.98]">
                     <div className="relative h-64 md:h-80 overflow-hidden">
                       <Image 
                         src={vendor?.images[0] || 'https://picsum.photos/seed/vendor/800/600'} 
                         alt={deal.name}
                         fill
-                        className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
+                        className="object-cover group-hover:scale-110 transition-all duration-1000"
                       />
                       <div className="absolute top-6 left-6">
-                        <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none text-[10px] uppercase font-black px-4 py-1.5 tracking-tighter rounded-none">
+                        <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none text-[10px] uppercase font-black px-4 py-2 tracking-tighter rounded-full">
                           {deal.category}
-                        </Badge>
-                      </div>
-                      <div className="absolute bottom-6 right-6">
-                        <Badge className="bg-destructive text-white font-bold text-sm px-3 py-1 rounded-none shadow-lg">
-                          -{Math.round((1 - deal.discount_price / deal.base_price) * 100)}%
                         </Badge>
                       </div>
                     </div>
@@ -102,16 +98,15 @@ export default function DealsPage() {
                     </CardHeader>
                     <CardContent className="flex items-baseline gap-4">
                       <span className="text-2xl md:text-3xl font-bold text-primary italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
-                      <span className="text-xs md:text-sm text-muted-foreground line-through opacity-30">{getCurrency()} {deal.base_price.toLocaleString()}</span>
                     </CardContent>
-                    <CardFooter className="pt-6 border-t border-white/40 flex justify-between items-center bg-secondary/20 px-8">
+                    <CardFooter className="pt-6 border-t border-muted/20 flex justify-between items-center bg-muted/5 px-8">
                       <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
                         <Star className="h-3 w-3 fill-accent-foreground" />
-                        {vendor?.rating} Artisan
+                        {vendor?.rating} Rating
                       </div>
                       <div className="flex items-center gap-1.5 text-[9px] font-black text-destructive uppercase tracking-widest italic">
                         <Clock className="h-3 w-3" />
-                        Limited Slots
+                        Book Fast!
                       </div>
                     </CardFooter>
                   </Card>
@@ -124,8 +119,8 @@ export default function DealsPage() {
             <div className="bg-primary/5 w-24 h-24 rounded-full flex items-center justify-center mx-auto">
               <Search className="h-10 w-10 text-primary/20" />
             </div>
-            <h3 className="text-4xl font-headline italic">The Search Continues</h3>
-            <p className="text-muted-foreground font-body max-w-xs mx-auto">Try refining your filters or search keywords.</p>
+            <h3 className="text-4xl font-headline italic">No Treats Found</h3>
+            <p className="text-muted-foreground font-body max-w-xs mx-auto">Try searching for something else like "Hair" or "Makeup".</p>
           </div>
         )}
       </main>

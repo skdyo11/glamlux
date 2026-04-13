@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun, MessageSquare } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Home, Store, Scissors, Moon, Sun, MessageSquare, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,30 +23,33 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
+  // Simplified navigation for everyone
   const navLinks = [
-    { href: '/deals', label: 'Deals', icon: Scissors },
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/deals', label: 'Parlours', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
-    { href: '/messages', label: 'Chats', icon: MessageSquare },
-    { href: '/portal', label: 'Portal', icon: LayoutDashboard },
+    { href: '/messages', label: 'Chat', icon: MessageSquare },
+    { href: '/portal', label: 'Business', icon: LayoutDashboard },
   ];
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-colors duration-500">
+      {/* Desktop Navbar */}
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-colors duration-500 hidden md:block">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 group">
             <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform" />
             <span className="font-headline text-xl md:text-2xl tracking-tighter text-primary">GlamLux</span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <div className="flex items-center space-x-8 text-sm font-medium">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href} 
                 className={cn(
-                  "hover:text-accent-foreground transition-colors flex items-center gap-1",
-                  pathname === link.href ? "text-accent-foreground font-bold" : "text-muted-foreground"
+                  "hover:text-accent-foreground transition-colors flex items-center gap-1 uppercase tracking-widest text-[10px] font-black",
+                  pathname === link.href ? "text-accent-foreground" : "text-muted-foreground"
                 )}
               >
                 {link.label}
@@ -66,18 +69,10 @@ export function Navbar() {
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary hover:bg-accent/30">
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-2 text-xs font-bold text-primary hover:bg-accent/30">
               <MapPin className="h-3 w-3 text-accent-foreground" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
-
-            {pathname !== '/' && (
-              <Link href="/">
-                <Button variant="ghost" size="icon" className="text-primary hover:bg-accent/30 rounded-full">
-                  <Home className="h-5 w-5" />
-                </Button>
-              </Link>
-            )}
 
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/30 rounded-full">
@@ -93,27 +88,37 @@ export function Navbar() {
         </div>
       </nav>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t md:hidden flex items-center justify-around h-20 px-2 pb-safe transition-colors duration-500">
+      {/* Mobile Bottom Bar - Redesigned for kids and adults alike */}
+      <nav className="fixed bottom-6 left-4 right-4 z-50 bg-background/90 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12)] md:hidden flex items-center justify-around h-20 px-2 rounded-[2rem] transition-all duration-500">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1.5 transition-all">
               <div className={cn(
-                "p-2 rounded-2xl transition-all duration-300",
-                isActive ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20 scale-110" : "text-muted-foreground"
+                "p-3 rounded-2xl transition-all duration-500",
+                isActive ? "bg-primary text-white scale-110 shadow-xl shadow-primary/20" : "text-muted-foreground hover:text-primary"
               )}>
                 <Icon className="h-6 w-6" />
               </div>
               <span className={cn(
-                "text-[10px] font-bold uppercase tracking-widest",
-                isActive ? "text-accent-foreground" : "text-muted-foreground"
+                "text-[9px] font-black uppercase tracking-[0.1em]",
+                isActive ? "text-primary" : "text-muted-foreground/60"
               )}>
                 {link.label}
               </span>
             </Link>
           );
         })}
+        
+        {/* Mobile Cart floating bubble */}
+        {cartCount > 0 && (
+          <Link href="/cart" className="absolute -top-4 right-4">
+             <div className="bg-destructive text-white h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-black shadow-lg animate-bounce">
+               {cartCount}
+             </div>
+          </Link>
+        )}
       </nav>
     </>
   );
