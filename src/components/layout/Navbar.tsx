@@ -58,25 +58,25 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1">
             {mounted && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-primary hover:bg-accent/20 rounded-none h-12 w-12"
+                className="text-primary hover:bg-accent/20 rounded-none h-10 w-10"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-accent/20 px-4 h-12 rounded-none">
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-accent/20 px-3 h-10 rounded-none">
               <MapPin className="h-4 w-4 text-accent-foreground" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/20 rounded-none h-12 w-12">
+              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/20 rounded-none h-10 w-10">
                 <ShoppingBag className="h-6 w-6" />
                 {mounted && cartCount > 0 && (
                   <Badge className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black rounded-none border-2 border-background">
