@@ -57,6 +57,7 @@ export type Booking = {
   createdAt: string;
   paymentStatus: string;
   verifiedAt?: string;
+  inspirationImageUrl?: string | null;
   parlourOwnerIdsInBooking?: string[];
 };
 

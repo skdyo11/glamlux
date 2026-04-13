@@ -8,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone, Plus, Minus, Users } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone, Plus, Minus, Users, Camera, Sparkles, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFirestore, useUser } from '@/firebase';
 import { doc, setDoc, collection } from 'firebase/firestore';
@@ -19,9 +20,11 @@ import { signInAnonymously } from 'firebase/auth';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
+import { PRODUCTS } from '@/app/lib/mock-data';
 
 export default function CartPage() {
-  const { cart, region, removeFromCart, updateQuantity, getCurrency, clearCart } = useStore();
+  const { cart, region, removeFromCart, updateQuantity, getCurrency, clearCart, addToCart } = useStore();
   const router = useRouter();
   const { toast } = useToast();
   const { auth, firestore } = useFirestore();
@@ -32,9 +35,63 @@ export default function CartPage() {
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  // Inspiration State
+  const [inspirationImage, setInspirationImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<{description: string, productIds: string[]} | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = cart.some(i => i.type === 'product') ? (region === 'PK' ? 250 : 150) : 0;
   const totalDueNow = subtotal + shipping;
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        setInspirationImage(base64String);
+        analyzeInspiration(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const analyzeInspiration = async (imageUri: string) => {
+    setIsAnalyzing(true);
+    try {
+      const result = await getMatchingProducts({ photoDataUri: imageUri });
+      setAiSuggestions({
+        description: result.bundleDescription,
+        productIds: result.recommendedProductIds
+      });
+    } catch (error) {
+      console.error("AI Analysis failed", error);
+      toast({
+        variant: "destructive",
+        title: "Analysis Failed",
+        description: "Could not analyze your inspiration photo."
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleAddSuggested = (productId: string) => {
+    const product = PRODUCTS.find(p => p.id === productId);
+    if (product) {
+      addToCart({
+        id: product.id,
+        type: 'product',
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: product.image
+      });
+      toast({ title: "Bundle Item Added", description: `${product.name} added to your cart.` });
+    }
+  };
 
   const handleCheckout = async () => {
     if (isCheckingOut) return;
@@ -65,7 +122,7 @@ export default function CartPage() {
         id: currentUser.uid,
         name: userName,
         phoneNumber: phoneNumber,
-        deviceIdentifier: navigator.userAgent,
+        deviceIdentifier: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
         lastActiveAt: new Date().toISOString()
       }, { merge: true });
 
@@ -81,6 +138,7 @@ export default function CartPage() {
         createdAt: new Date().toISOString(),
         paymentStatus: 'Paid',
         cartItems: cart,
+        inspirationImageUrl: inspirationImage,
         parlourOwnerIdsInBooking: cart.filter(i => i.type === 'deal').map(i => 'ADMIN_UID')
       };
 
@@ -162,6 +220,93 @@ export default function CartPage() {
                     />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* AI Inspiration Reference */}
+            <Card className="border-none shadow-sm overflow-hidden bg-secondary/5 border-secondary/20">
+              <CardHeader>
+                <CardTitle className="font-headline text-2xl flex items-center gap-2 italic">
+                  <Camera className="h-6 w-6 text-secondary" /> 
+                  Inspiration Reference
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <p className="text-sm text-muted-foreground italic">Upload a photo of a look you love. Our AI will suggest a matching product bundle to help you maintain that glow.</p>
+                
+                {!inspirationImage ? (
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-secondary/30 rounded-3xl p-12 text-center cursor-pointer hover:bg-secondary/10 transition-colors group"
+                  >
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      ref={fileInputRef} 
+                      onChange={handleImageUpload}
+                    />
+                    <div className="bg-secondary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Camera className="h-8 w-8 text-secondary" />
+                    </div>
+                    <span className="font-bold text-secondary uppercase tracking-widest text-xs">Upload Photo</span>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl">
+                      <Image src={inspirationImage} alt="Inspiration" fill className="object-cover" />
+                      <Button 
+                        variant="destructive" 
+                        size="icon" 
+                        className="absolute top-4 right-4 rounded-full"
+                        onClick={() => { setInspirationImage(null); setAiSuggestions(null); }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    {isAnalyzing ? (
+                      <div className="flex items-center gap-3 p-6 bg-white rounded-2xl shadow-sm">
+                        <Sparkles className="h-5 w-5 text-secondary animate-pulse" />
+                        <span className="font-bold italic text-primary">AI is analyzing your look...</span>
+                      </div>
+                    ) : aiSuggestions && (
+                      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                        <div className="p-6 bg-white rounded-3xl shadow-sm border border-secondary/20">
+                          <h4 className="font-headline text-xl mb-2 flex items-center gap-2">
+                            <Sparkles className="h-5 w-5 text-secondary" />
+                            Matching Product Bundle
+                          </h4>
+                          <p className="text-sm text-muted-foreground italic mb-6">{aiSuggestions.description}</p>
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {aiSuggestions.productIds.map(pid => {
+                              const p = PRODUCTS.find(prod => prod.id === pid);
+                              if (!p) return null;
+                              return (
+                                <div key={pid} className="group relative">
+                                  <div className="aspect-square rounded-2xl overflow-hidden mb-2 relative shadow-sm">
+                                    <Image src={p.image} alt={p.name} fill className="object-cover" />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                  </div>
+                                  <p className="text-[10px] font-bold truncate">{p.name}</p>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="w-full mt-2 h-8 rounded-xl text-[10px] border-secondary/20 hover:bg-secondary/10"
+                                    onClick={() => handleAddSuggested(p.id)}
+                                  >
+                                    Add Bundle
+                                  </Button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
