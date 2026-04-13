@@ -56,7 +56,7 @@ export default function Home() {
               <Badge className="bg-accent/30 text-accent-foreground backdrop-blur-md px-5 py-2 uppercase tracking-widest text-[10px] font-black border-none shadow-sm rounded-none">
                 Best Beauty Deals
               </Badge>
-              <h1 className="text-8xl md:text-[10rem] font-headline leading-[1.1] text-white drop-shadow-2xl py-2">
+              <h1 className="text-6xl md:text-8xl font-headline leading-[1.1] text-white drop-shadow-2xl py-2">
                 Look <br />
                 <span className="italic text-accent-foreground">Great.</span>
               </h1>

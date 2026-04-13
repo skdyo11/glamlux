@@ -64,6 +64,15 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-3">
+            {/* Desktop Home Button - Only shows when away from home */}
+            {!isHome && mounted && (
+              <Link href="/" className="animate-in slide-in-from-right-4 fade-in duration-500">
+                <Button variant="ghost" size="icon" className="h-10 w-10 border border-white/20 bg-white/10 backdrop-blur-3xl rounded-full hover:scale-110 transition-all duration-500 hover:shadow-lg">
+                  <Home className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
+
             <Button 
               variant="ghost" 
               size="icon" 
@@ -79,10 +88,10 @@ export function Navbar() {
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative h-10 w-10 border border-white/20 bg-white/10 backdrop-blur-3xl rounded-full hover:scale-110 transition-all duration-500 hover:shadow-lg">
+              <Button variant="ghost" size="icon" className="relative h-10 w-10 border border-white/20 bg-white/10 backdrop-blur-3xl rounded-full hover:scale-110 transition-all duration-500 hover:shadow-lg overflow-visible">
                 <ShoppingBag className="h-5 w-5" />
                 {mounted && cartCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black border-2 border-background animate-in zoom-in-50">
+                  <Badge className="absolute -top-1.5 -right-1.5 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black border-2 border-background animate-in zoom-in-50 z-10 shadow-lg">
                     {cartCount}
                   </Badge>
                 )}
@@ -93,7 +102,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar - Floating Pill Layout */}
-      <nav className="fixed top-4 left-4 right-4 z-50 h-14 border border-white/40 bg-white/10 backdrop-blur-3xl md:hidden flex items-center justify-between px-4 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-2xl ring-1 ring-white/20 overflow-hidden">
+      <nav className="fixed top-4 left-4 right-4 z-50 h-14 border border-white/40 bg-white/10 backdrop-blur-3xl md:hidden flex items-center justify-between px-4 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-2xl ring-1 ring-white/20 overflow-visible">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center space-x-1.5 group">
             <Sparkles className="h-5 w-5 text-accent-foreground" />
@@ -124,10 +133,10 @@ export function Navbar() {
           </Button>
 
           <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative h-10 w-10 bg-white/10 backdrop-blur-md border border-white/30 rounded-full active:scale-90 transition-all">
+            <Button variant="ghost" size="icon" className="relative h-10 w-10 bg-white/10 backdrop-blur-md border border-white/30 rounded-full active:scale-90 transition-all overflow-visible">
               <ShoppingBag className="h-4 w-4" />
               {mounted && cartCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black border border-background">
+                <Badge className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black border border-background z-10 shadow-lg">
                   {cartCount}
                 </Badge>
               )}
