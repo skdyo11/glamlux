@@ -30,37 +30,37 @@ export default function DealsPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 md:py-16 pb-32">
-        <header className="max-w-3xl mb-12 space-y-4 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/30 border border-secondary/50 backdrop-blur-sm mx-auto md:mx-0">
+      <main className="container mx-auto px-6 py-16 md:py-24 pb-32">
+        <header className="max-w-4xl mb-20 space-y-6">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-none bg-accent/20 border border-accent/40 backdrop-blur-sm">
             <Sparkles className="h-4 w-4 text-accent-foreground" />
-            <span className="text-[10px] uppercase tracking-[0.2em] font-black text-accent-foreground">Special Treats</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] font-black text-accent-foreground">Artisan Network</span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-headline text-primary tracking-tighter italic">Cool Parlours</h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-body italic">
-            Find the best places to look amazing and feel happy.
+          <h1 className="text-6xl md:text-8xl font-headline text-primary tracking-tighter italic leading-none">Elite Transformations</h1>
+          <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
+            A curated selection of premium beauty services from the region's most celebrated studios.
           </p>
         </header>
 
         {/* Search and Filter Section */}
-        <section className="mb-12 flex flex-col md:flex-row gap-4 items-center bg-white/40 p-4 md:p-6 rounded-[2.5rem] border border-white/60 backdrop-blur-xl shadow-xl shadow-primary/5">
+        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/30 p-6 md:p-8 rounded-none border border-white/60 backdrop-blur-xl shadow-2xl">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/40" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
-              placeholder="Search for a treat..." 
-              className="pl-14 h-16 bg-white/60 border-none focus-visible:ring-secondary/20 rounded-3xl font-body text-lg"
+              placeholder="Find your next transformation..." 
+              className="pl-16 h-16 bg-white/60 border-none focus-visible:ring-accent/20 rounded-none font-body text-lg italic"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[200px] bg-white/60 border-none rounded-3xl font-black text-[10px] uppercase tracking-widest">
-                <SelectValue placeholder="Category" />
+              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/60 border-none rounded-none font-black text-[10px] uppercase tracking-[0.2em]">
+                <SelectValue placeholder="Specialization" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl font-body border-none shadow-2xl">
+              <SelectContent className="rounded-none font-body border-none shadow-2xl">
                 {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat} className="font-medium">{cat}</SelectItem>
+                  <SelectItem key={cat} value={cat} className="font-bold text-[10px] uppercase tracking-widest">{cat}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -68,45 +68,45 @@ export default function DealsPage() {
         </section>
 
         {filteredDeals.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {filteredDeals.map((deal) => {
               const vendor = VENDORS.find(v => v.id === deal.vendor_id);
               return (
                 <Link key={deal.id} href={`/deals/${deal.id}`} className="group block">
-                  <Card className="overflow-hidden border-none bg-white shadow-lg hover:shadow-2xl transition-all duration-700 rounded-[3rem] active:scale-[0.98]">
-                    <div className="relative h-64 md:h-80 overflow-hidden">
+                  <Card className="overflow-hidden border-none bg-white shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-none active:scale-[0.99]">
+                    <div className="relative h-72 md:h-96 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000">
                       <Image 
                         src={vendor?.images[0] || 'https://picsum.photos/seed/vendor/800/600'} 
                         alt={deal.name}
                         fill
                         className="object-cover group-hover:scale-110 transition-all duration-1000"
                       />
-                      <div className="absolute top-6 left-6">
-                        <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none text-[10px] uppercase font-black px-4 py-2 tracking-tighter rounded-full">
+                      <div className="absolute top-8 left-8">
+                        <Badge className="bg-white/95 backdrop-blur-sm text-primary border-none text-[9px] uppercase font-black px-5 py-2.5 tracking-[0.2em] rounded-none">
                           {deal.category}
                         </Badge>
                       </div>
                     </div>
-                    <CardHeader className="pb-4 space-y-2">
-                      <div className="flex items-center gap-2 text-[10px] text-accent-foreground font-black uppercase tracking-[0.2em]">
-                        <MapPin className="h-3 w-3 text-destructive" />
+                    <CardHeader className="p-10 pb-6 space-y-4">
+                      <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
+                        <MapPin className="h-4 w-4 text-destructive" />
                         {vendor?.area_tag}
                       </div>
-                      <CardTitle className="text-2xl md:text-3xl font-headline group-hover:text-destructive transition-colors leading-none italic">
+                      <CardTitle className="text-3xl md:text-4xl font-headline group-hover:text-destructive transition-colors leading-none italic">
                         {deal.name}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-baseline gap-4">
-                      <span className="text-2xl md:text-3xl font-bold text-primary italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
+                    <CardContent className="px-10 flex items-baseline gap-6">
+                      <span className="text-3xl md:text-4xl font-bold text-primary italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
                     </CardContent>
-                    <CardFooter className="pt-6 border-t border-muted/20 flex justify-between items-center bg-muted/5 px-8">
-                      <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
-                        <Star className="h-3 w-3 fill-accent-foreground" />
-                        {vendor?.rating} Rating
+                    <CardFooter className="mt-8 pt-8 border-t border-muted/20 flex justify-between items-center bg-muted/5 px-10 h-20">
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
+                        <Star className="h-4 w-4 fill-accent-foreground" />
+                        {vendor?.rating} Registry
                       </div>
-                      <div className="flex items-center gap-1.5 text-[9px] font-black text-destructive uppercase tracking-widest italic">
-                        <Clock className="h-3 w-3" />
-                        Book Fast!
+                      <div className="flex items-center gap-2 text-[9px] font-black text-destructive uppercase tracking-[0.2em] italic">
+                        <Clock className="h-4 w-4" />
+                        Limited Slots
                       </div>
                     </CardFooter>
                   </Card>
@@ -115,12 +115,12 @@ export default function DealsPage() {
             })}
           </div>
         ) : (
-          <div className="py-32 text-center space-y-6">
-            <div className="bg-primary/5 w-24 h-24 rounded-full flex items-center justify-center mx-auto">
-              <Search className="h-10 w-10 text-primary/20" />
+          <div className="py-40 text-center space-y-8">
+            <div className="bg-primary/5 w-32 h-32 rounded-none flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
+              <Search className="h-12 w-12 text-primary/20" />
             </div>
-            <h3 className="text-4xl font-headline italic">No Treats Found</h3>
-            <p className="text-muted-foreground font-body max-w-xs mx-auto">Try searching for something else like "Hair" or "Makeup".</p>
+            <h3 className="text-5xl font-headline italic">The Search Continues</h3>
+            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">No matching transformations were found. Try adjusting your specialization or search keywords.</p>
           </div>
         )}
       </main>
