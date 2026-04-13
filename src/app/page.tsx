@@ -55,7 +55,7 @@ export default function Home() {
               <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-bold border-none">
                 B2B2C Elite Marketplace
               </Badge>
-              <h1 className="text-7xl md:text-9xl font-headline leading-tight text-white drop-shadow-xl">
+              <h1 className="text-7xl md:text-9xl font-headline leading-[1.1] text-white drop-shadow-xl py-4">
                 Pure <br />
                 <span className="italic">Artistry.</span>
               </h1>
