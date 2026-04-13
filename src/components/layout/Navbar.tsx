@@ -33,9 +33,9 @@ export function Navbar() {
 
   return (
     <>
-      {/* Desktop Navbar - Professional Minimalist */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
-        <div className="w-full px-4 h-20 flex items-center justify-between">
+      {/* Desktop Navbar */}
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/40 backdrop-blur-2xl transition-all duration-700 hidden md:block">
+        <div className="w-full px-2 h-20 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
@@ -58,25 +58,25 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0">
             {mounted && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-primary hover:bg-accent/20 rounded-none h-10 w-10"
+                className="text-primary hover:bg-white/10 backdrop-blur-md rounded-none h-10 w-10"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-accent/20 px-3 h-10 rounded-none">
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-white/10 backdrop-blur-md px-2 h-10 rounded-none">
               <MapPin className="h-4 w-4 text-accent-foreground" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/20 rounded-none h-10 w-10">
+              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-white/10 backdrop-blur-md rounded-none h-10 w-10">
                 <ShoppingBag className="h-6 w-6" />
                 {mounted && cartCount > 0 && (
                   <Badge className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black rounded-none border-2 border-background">
@@ -90,30 +90,30 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 border-b bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 transition-all duration-700">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 border-b bg-background/40 backdrop-blur-2xl md:hidden flex items-center justify-between px-2 transition-all duration-700">
         <Link href="/" className="flex items-center space-x-1.5 group">
           <Sparkles className="h-5 w-5 text-accent-foreground" />
           <span className="font-headline text-xl tracking-tighter text-primary italic">GlamLux</span>
         </Link>
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center">
           {mounted && (
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="h-10 w-10 text-primary rounded-none"
+              className="h-10 w-10 text-primary rounded-none hover:bg-white/10 backdrop-blur-md"
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
           )}
 
-          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-2 text-[9px] font-black uppercase tracking-widest text-primary rounded-none">
+          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-2 text-[9px] font-black uppercase tracking-widest text-primary rounded-none hover:bg-white/10 backdrop-blur-md">
             {region === 'PK' ? 'PKR' : 'INR'}
           </Button>
 
           <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative h-10 w-10 text-primary rounded-none">
+            <Button variant="ghost" size="icon" className="relative h-10 w-10 text-primary rounded-none hover:bg-white/10 backdrop-blur-md">
               <ShoppingBag className="h-5 w-5" />
               {mounted && cartCount > 0 && (
                 <Badge className="absolute top-1.5 right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[8px] font-black rounded-none border border-background">
@@ -125,16 +125,16 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar - Smaller & Sleek */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-16 px-2 transition-all duration-700">
+      {/* Mobile Bottom Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-2xl border-t border-white/10 md:hidden flex items-center justify-around h-14 px-2 transition-all duration-700">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
             <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-0.5 transition-all">
               <div className={cn(
-                "p-1.5 transition-all duration-500",
-                isActive ? "text-accent-foreground scale-110" : "text-muted-foreground/60 hover:text-primary"
+                "p-1.5 transition-all duration-500 rounded-lg",
+                isActive ? "text-accent-foreground scale-110 bg-white/10 backdrop-blur-md" : "text-muted-foreground/60 hover:text-primary"
               )}>
                 <Icon className={cn("h-4 w-4", isActive && "stroke-[2.5px]")} />
               </div>
