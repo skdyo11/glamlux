@@ -47,7 +47,7 @@ export const DEALS: Deal[] = [
     discount_price: 32000,
     deposit_percent: 10,
     is_offpeak_active: true,
-    expiry_date: new Date(Date.now() + 86400000 * 2).toISOString(),
+    expiry_date: "2025-12-31T23:59:59Z",
     upsell_product_id: 'prod1',
   },
   {
@@ -59,7 +59,7 @@ export const DEALS: Deal[] = [
     discount_price: 4500,
     deposit_percent: 10,
     is_offpeak_active: false,
-    expiry_date: new Date(Date.now() + 3600000 * 4).toISOString(),
+    expiry_date: "2025-12-31T23:59:59Z",
     upsell_product_id: 'prod3',
   },
   {
@@ -71,7 +71,7 @@ export const DEALS: Deal[] = [
     discount_price: 8500,
     deposit_percent: 10,
     is_offpeak_active: true,
-    expiry_date: new Date(Date.now() + 86400000 * 7).toISOString(),
+    expiry_date: "2025-12-31T23:59:59Z",
     upsell_product_id: 'prod4',
   }
 ];
@@ -94,5 +94,23 @@ export const PRODUCTS: Product[] = [
     price: 2400,
     stock: 50,
     image: 'https://picsum.photos/seed/luxury-lipstick-swatch/400/500',
+  },
+  {
+    id: 'prod3',
+    vendor_id: 'v1',
+    name: 'Gold Infused Face Oil',
+    brand: 'GlamLux Couture',
+    price: 3500,
+    stock: 15,
+    image: 'https://picsum.photos/seed/luxury-skincare-serum/400/500',
+  },
+  {
+    id: 'prod4',
+    vendor_id: 'v2',
+    name: 'Illuminating Priming Veil',
+    brand: 'GlamLux Couture',
+    price: 3200,
+    stock: 20,
+    image: 'https://picsum.photos/seed/luxury-makeup-primer/400/500',
   }
 ];

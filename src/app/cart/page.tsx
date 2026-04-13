@@ -4,20 +4,20 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, Banknote, User as UserIcon, Phone, Plus, Minus, Users, Camera, Sparkles, X, Info } from 'lucide-react';
+import { Trash2, ShieldCheck, ShoppingBag, Plus, Minus, Users, Camera, Sparkles, X, Info, Banknote } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFirebase, useUser } from '@/firebase';
-import { doc, setDoc, collection } from 'firebase/firestore';
+import { doc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
@@ -30,6 +30,7 @@ export default function CartPage() {
   const { auth, firestore } = useFirebase();
   const { user } = useUser();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   // Shadow Profile State
   const [userName, setUserName] = useState('');
@@ -41,8 +42,12 @@ export default function CartPage() {
   const [aiSuggestions, setAiSuggestions] = useState<{description: string, productIds: string[]} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const commission = subtotal * 0.15; // 15% platform commission
+  const commission = subtotal * 0.15; 
   const totalDueNow = subtotal;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,15 +97,16 @@ export default function CartPage() {
 
       if (!currentUser) throw new Error("Auth failed");
 
-      // Shadow Profile
-      await setDoc(doc(firestore, 'localUsers', currentUser.uid), {
+      // Shadow Profile - Non-blocking update
+      const userRef = doc(firestore, 'localUsers', currentUser.uid);
+      setDocumentNonBlocking(userRef, {
         id: currentUser.uid,
         name: userName,
         phoneNumber: phoneNumber,
         lastActiveAt: new Date().toISOString()
       }, { merge: true });
 
-      // Create Booking/Order
+      // Create Booking - Optimistic Pattern
       const refCode = Math.random().toString(36).substring(7).toUpperCase();
       const bookingData = {
         localUserId: currentUser.uid,
@@ -120,18 +126,19 @@ export default function CartPage() {
       };
 
       const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
-      const docRef = await addDocumentNonBlocking(bookingsCol, bookingData);
+      const newBookingRef = doc(bookingsCol);
+      setDocumentNonBlocking(newBookingRef, bookingData, {});
       
-      if (docRef) {
-        clearCart();
-        router.push(`/booking/${docRef.id}?uid=${currentUser.uid}`);
-      }
+      clearCart();
+      router.push(`/booking/${newBookingRef.id}?uid=${currentUser.uid}`);
     } catch (error) {
       console.error("Checkout failed", error);
       setIsCheckingOut(false);
       toast({ variant: "destructive", title: "Transaction Error", description: "Could not process your secure booking." });
     }
   };
+
+  if (!isMounted) return null;
 
   if (cart.length === 0) {
     return (
@@ -155,11 +162,10 @@ export default function CartPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <h1 className="text-5xl font-headline tracking-tighter mb-16 italic">Elite Checkout</h1>
+        <h1 className="text-5xl font-headline tracking-tighter mb-16 italic text-primary">Elite Checkout</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-16">
-            {/* Identity Form */}
             <section className="space-y-6">
               <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">1. Local Identity</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -184,7 +190,6 @@ export default function CartPage() {
               </div>
             </section>
 
-            {/* Inspiration */}
             <section className="space-y-6">
               <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">2. Inspiration Reference</h2>
               {!inspirationImage ? (
@@ -239,7 +244,6 @@ export default function CartPage() {
               )}
             </section>
 
-            {/* Items */}
             <section className="space-y-6">
               <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">3. Your Selection</h2>
               <div className="space-y-4">
@@ -249,7 +253,14 @@ export default function CartPage() {
                       <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
                     </div>
                     <div className="flex-grow">
-                      <p className="text-[8px] uppercase font-black text-primary/40 tracking-[0.2em]">{item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}</p>
+                      <p className="text-[8px] uppercase font-black text-primary/40 tracking-[0.2em] flex items-center gap-2">
+                        {item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}
+                        {item.type === 'deal' && item.quantity > 1 && (
+                          <Badge variant="outline" className="text-[8px] h-4 py-0 flex gap-1 items-center border-secondary/30 text-secondary">
+                             <Users className="h-2.5 w-2.5" /> Group of {item.quantity}
+                          </Badge>
+                        )}
+                      </p>
                       <h3 className="font-headline text-2xl">{item.name}</h3>
                       <p className="font-bold">{getCurrency()} {item.price.toLocaleString()}</p>
                     </div>
@@ -267,7 +278,6 @@ export default function CartPage() {
             </section>
           </div>
 
-          {/* Summary */}
           <div className="space-y-12">
             <Card className="border-none rounded-none bg-primary text-white p-10 space-y-8">
               <CardTitle className="font-headline text-3xl italic">Financials</CardTitle>
