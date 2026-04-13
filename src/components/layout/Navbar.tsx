@@ -35,7 +35,7 @@ export function Navbar() {
     <>
       {/* Desktop Navbar - Professional Minimalist */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
-        <div className="container mx-auto px-0 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
@@ -58,7 +58,7 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-0.5">
+          <div className="flex items-center space-x-1">
             {mounted && (
               <Button 
                 variant="ghost" 
@@ -90,20 +90,20 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Bar - Sleek & Semi-Transparent */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-20 px-4 transition-all duration-700">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-20 px-2 transition-all duration-700">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-2 transition-all">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1 transition-all">
               <div className={cn(
-                "p-2.5 transition-all duration-500",
+                "p-2 transition-all duration-500",
                 isActive ? "text-accent-foreground scale-110" : "text-muted-foreground/60 hover:text-primary"
               )}>
-                <Icon className={cn("h-6 w-6", isActive && "stroke-[2.5px]")} />
+                <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
               </div>
               <span className={cn(
-                "text-[8px] font-black uppercase tracking-[0.15em]",
+                "text-[7px] font-black uppercase tracking-[0.1em]",
                 isActive ? "text-accent-foreground" : "text-muted-foreground/40"
               )}>
                 {link.label}
@@ -111,6 +111,21 @@ export function Navbar() {
             </Link>
           );
         })}
+
+        {/* Mobile Theme Toggle */}
+        {mounted && (
+          <button 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex flex-col items-center justify-center w-full h-full gap-1 transition-all text-muted-foreground/60"
+          >
+            <div className="p-2">
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </div>
+            <span className="text-[7px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </span>
+          </button>
+        )}
         
         {/* Mobile Cart floating bubble */}
         {mounted && cartCount > 0 && (
