@@ -12,12 +12,13 @@ import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
 
 export default function BookingSuccessPage() {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const uid = searchParams.get('uid');
-  const { firestore } = useFirestore();
+  const firestore = useFirestore();
 
   const bookingRef = useMemoFirebase(() => {
     if (!firestore || !uid || !id) return null;

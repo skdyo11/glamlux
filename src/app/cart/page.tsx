@@ -9,12 +9,12 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone, Plus, Minus, Users, Camera, Sparkles, X } from 'lucide-react';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User as UserIcon, Phone, Plus, Minus, Users, Camera, Sparkles, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFirestore, useUser } from '@/firebase';
+import { useFirebase, useUser } from '@/firebase';
 import { doc, setDoc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -27,7 +27,7 @@ export default function CartPage() {
   const { cart, region, removeFromCart, updateQuantity, getCurrency, clearCart, addToCart } = useStore();
   const router = useRouter();
   const { toast } = useToast();
-  const { auth, firestore } = useFirestore();
+  const { auth, firestore } = useFirebase();
   const { user } = useUser();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   
@@ -195,7 +195,7 @@ export default function CartPage() {
             <Card className="border-none shadow-sm overflow-hidden bg-primary/5">
               <CardHeader>
                 <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                  <User className="h-6 w-6 text-primary" /> 
+                  <UserIcon className="h-6 w-6 text-primary" /> 
                   Guest Information
                 </CardTitle>
               </CardHeader>

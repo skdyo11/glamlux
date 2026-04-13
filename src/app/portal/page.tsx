@@ -65,7 +65,7 @@ const MOCK_BUSINESS_MESSAGES = [
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
-  const { firestore } = useFirestore();
+  const firestore = useFirestore();
   
   // View States
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
