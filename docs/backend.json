@@ -3,29 +3,29 @@
   "entities": {
     "LocalUser": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "LocalUser",
+      "title": "Guest User",
       "type": "object",
-      "description": "Stores basic user information locally on the device for guest browsing and to remember user history without full authentication.",
+      "description": "Stores basic info for visitors so they can see their history without a password.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the LocalUser entity."
+          "description": "Unique ID for the user."
         },
         "name": {
           "type": "string",
-          "description": "The full name of the user."
+          "description": "The user's full name."
         },
         "phoneNumber": {
           "type": "string",
-          "description": "The user's contact phone number."
+          "description": "The user's mobile number."
         },
         "deviceIdentifier": {
           "type": "string",
-          "description": "A unique identifier representing the user's specific device."
+          "description": "ID for the user's phone or computer."
         },
         "lastActiveAt": {
           "type": "string",
-          "description": "Timestamp of last activity.",
+          "description": "When the user last used the app.",
           "format": "date-time"
         }
       },
@@ -38,44 +38,44 @@
     },
     "Parlour": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Parlour",
+      "title": "Beauty Parlour",
       "type": "object",
-      "description": "Represents a beauty parlour offering services.",
+      "description": "A beauty shop or parlour that offers services.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Parlour entity."
+          "description": "Unique ID for the parlour."
         },
         "name": {
           "type": "string",
-          "description": "The official name of the beauty parlour."
+          "description": "The name of the parlour."
         },
         "latitude": {
           "type": "number",
-          "description": "Geographical latitude."
+          "description": "Map location (lat)."
         },
         "longitude": {
           "type": "number",
-          "description": "Geographical longitude."
+          "description": "Map location (long)."
         },
         "areaTag": {
           "type": "string",
-          "description": "Geographical area or locality."
+          "description": "The city or neighborhood name."
         },
         "rating": {
           "type": "number",
-          "description": "Average rating."
+          "description": "Average stars out of 5."
         },
         "imageUrls": {
           "type": "array",
-          "description": "Images of the parlour.",
+          "description": "Photos of the parlour.",
           "items": {
             "type": "string"
           }
         },
         "ownerDashboardStyle": {
           "type": "string",
-          "description": "Preferred dashboard style: 'list' or 'grid'.",
+          "description": "How the owner sees their schedule: 'list' or 'grid'.",
           "enum": ["list", "grid"]
         }
       },
@@ -89,50 +89,50 @@
     },
     "Deal": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Deal",
+      "title": "Service Deal",
       "type": "object",
-      "description": "Represents a specific beauty service or package.",
+      "description": "A special offer for a beauty service like a facial or hair cut.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier."
+          "description": "Unique ID."
         },
         "parlourId": {
           "type": "string",
-          "description": "Reference to Parlour."
+          "description": "Which parlour offers this deal."
         },
         "name": {
           "type": "string",
-          "description": "Deal title."
+          "description": "The name of the service (e.g., Bridal Glow)."
         },
         "category": {
           "type": "string",
-          "description": "Deal category (Bridal, Hair, Skin)."
+          "description": "Type of service: Bridal, Hair, or Skin."
         },
         "originalPrice": {
           "type": "number",
-          "description": "Full price."
+          "description": "Old price."
         },
         "discountPrice": {
           "type": "number",
-          "description": "Discounted price."
+          "description": "New low price."
         },
         "currency": {
           "type": "string",
-          "description": "Price currency."
+          "description": "PKR or INR."
         },
         "expiryDate": {
           "type": "string",
-          "description": "Expiration date.",
+          "description": "When the deal ends.",
           "format": "date-time"
         },
         "depositPercent": {
           "type": "number",
-          "description": "Upfront deposit percentage."
+          "description": "Money to pay now to book (percentage)."
         },
         "upsellProductId": {
           "type": "string",
-          "description": "Complementary makeup product ID."
+          "description": "A makeup product that goes well with this service."
         }
       },
       "required": [
@@ -149,41 +149,41 @@
     },
     "Product": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Product",
+      "title": "Makeup Item",
       "type": "object",
-      "description": "Represents a makeup product.",
+      "description": "A makeup or beauty product for sale.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier."
+          "description": "Unique ID."
         },
         "name": {
           "type": "string",
-          "description": "Product name."
+          "description": "The name of the item."
         },
         "brand": {
           "type": "string",
-          "description": "Brand name."
+          "description": "Company name."
         },
         "basePrice": {
           "type": "number",
-          "description": "Price before discounts."
+          "description": "Price of the item."
         },
         "currency": {
           "type": "string",
-          "description": "Currency code."
+          "description": "PKR or INR."
         },
         "stockCount": {
           "type": "number",
-          "description": "Units in stock."
+          "description": "How many items are left."
         },
         "weightKg": {
           "type": "number",
-          "description": "Weight for delivery fee calculation."
+          "description": "Weight for delivery costs."
         },
         "imageUrl": {
           "type": "string",
-          "description": "Product image URL."
+          "description": "Photo of the item."
         }
       },
       "required": [
@@ -197,47 +197,47 @@
     },
     "Booking": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Booking",
+      "title": "Booking & Order",
       "type": "object",
-      "description": "Represents a user's consolidated booking or order.",
+      "description": "Information about a user's service booking or product order.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier."
+          "description": "Unique ID."
         },
         "localUserId": {
           "type": "string",
-          "description": "Owning user ID."
+          "description": "The user who booked this."
         },
         "referenceCode": {
           "type": "string",
-          "description": "User-facing reference code."
+          "description": "Code to show at the parlour."
         },
         "totalPrice": {
           "type": "number",
-          "description": "Total order value."
+          "description": "Total amount."
         },
         "currency": {
           "type": "string",
-          "description": "Currency code."
+          "description": "PKR or INR."
         },
         "qrVerificationStatus": {
           "type": "boolean",
-          "description": "Verified by parlour."
+          "description": "Has the parlour checked the code?"
         },
         "deliveryStatus": {
           "type": "string",
-          "description": "Tracking status for product orders.",
+          "description": "Is the item on the way?",
           "enum": ["Pending", "Picked Up", "Delivered"]
         },
         "createdAt": {
           "type": "string",
-          "description": "Creation timestamp.",
+          "description": "When this was made.",
           "format": "date-time"
         },
         "paymentStatus": {
           "type": "string",
-          "description": "Payment state."
+          "description": "Paid or Unpaid."
         }
       },
       "required": [
@@ -262,19 +262,19 @@
   "firestore": {
     "/parlours/{parlourId}": {
       "schema": { "$ref": "#/backend/entities/Parlour" },
-      "description": "Parlour metadata."
+      "description": "Info about beauty parlours."
     },
     "/deals/{dealId}": {
       "schema": { "$ref": "#/backend/entities/Deal" },
-      "description": "Service deals."
+      "description": "Special service offers."
     },
     "/products/{productId}": {
       "schema": { "$ref": "#/backend/entities/Product" },
-      "description": "Shop products."
+      "description": "Makeup items in the shop."
     },
     "/localUsers/{localUserId}/bookings/{bookingId}": {
       "schema": { "$ref": "#/backend/entities/Booking" },
-      "description": "User orders and bookings."
+      "description": "Your saved bookings and orders."
     }
   }
 }

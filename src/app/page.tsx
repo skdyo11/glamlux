@@ -29,7 +29,7 @@ export default function Home() {
     });
     toast({
       title: "Added to Bag",
-      description: `${product.name} is now in your collection.`,
+      description: `${product.name} is now in your bag.`,
     });
   };
 
@@ -38,7 +38,7 @@ export default function Home() {
       <Navbar />
       
       <main className="max-w-[100vw] overflow-x-hidden">
-        {/* Hero Section - Editorial Luxury */}
+        {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center overflow-hidden py-24">
           <div className="absolute inset-0 z-0">
             <Image 
@@ -54,34 +54,34 @@ export default function Home() {
           <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-2xl space-y-10">
               <Badge className="bg-accent/30 text-accent-foreground backdrop-blur-md px-5 py-2 uppercase tracking-widest text-[10px] font-black border-none shadow-sm rounded-none">
-                Exclusive Beauty Curators
+                Best Beauty Deals
               </Badge>
               <h1 className="text-8xl md:text-[10rem] font-headline leading-[1.1] text-white drop-shadow-2xl py-2">
-                Timeless <br />
-                <span className="italic text-accent-foreground">Elegance.</span>
+                Look <br />
+                <span className="italic text-accent-foreground">Great.</span>
               </h1>
               <p className="text-xl md:text-2xl text-white/90 font-body max-w-xl italic leading-relaxed">
-                The premier destination for luxury beauty in Pakistan & India. Professional artistry and curated collection.
+                The best place for makeup and parlour services in Pakistan & India.
               </p>
               <div className="flex flex-wrap gap-4 pt-8">
                 <Button asChild size="lg" className="bg-white text-black hover:bg-accent rounded-none px-12 h-16 font-black uppercase tracking-widest text-[10px] transition-all shadow-xl">
-                  <Link href="/deals">Book Transformation</Link>
+                  <Link href="/deals">Book Now</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10 rounded-none px-12 h-16 font-black uppercase tracking-widest text-[10px]">
-                  <Link href="/shop">View Boutique</Link>
+                  <Link href="/shop">Buy Makeup</Link>
                 </Button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Discovery Feed: Nearby Artisans */}
+        {/* Nearby Parlours */}
         <section className="py-32 bg-white/30 backdrop-blur-sm">
           <div className="container mx-auto px-6">
             <div className="flex justify-between items-end mb-16">
               <div className="space-y-2">
-                <h2 className="text-5xl font-headline tracking-tighter">Nearby Artisans</h2>
-                <p className="text-muted-foreground italic">Elite beauty hubs in your local area.</p>
+                <h2 className="text-5xl font-headline tracking-tighter">Nearby Parlours</h2>
+                <p className="text-muted-foreground italic">The best parlours in your area.</p>
               </div>
               <Link href="/vendors" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
                 See All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -115,13 +115,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Signature Deals */}
+        {/* Best Deals */}
         <section className="py-32 charcoal-gradient text-white rounded-none">
           <div className="container mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-6">
               <div className="space-y-2">
-                <h2 className="text-6xl font-headline tracking-tighter text-white italic leading-none">Elite Transformations</h2>
-                <p className="text-accent italic text-lg opacity-80">Curated service packages for the modern professional.</p>
+                <h2 className="text-6xl font-headline tracking-tighter text-white italic leading-none">Best Beauty Deals</h2>
+                <p className="text-accent italic text-lg opacity-80">Special offers for you.</p>
               </div>
             </div>
 
@@ -142,7 +142,7 @@ export default function Home() {
                       <h3 className="text-4xl font-headline leading-tight italic group-hover:text-accent transition-colors">{deal.name}</h3>
                       <div className="flex justify-between items-end pt-6 border-t border-white/10">
                         <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-black text-white/30 tracking-widest">Starting At</span>
+                          <span className="text-[10px] uppercase font-black text-white/30 tracking-widest">Starts At</span>
                           <span className="text-3xl font-bold text-accent italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
                         </div>
                         <Button variant="ghost" className="text-white hover:text-accent p-0 h-auto">
@@ -166,28 +166,28 @@ export default function Home() {
               <span className="font-headline text-4xl tracking-tighter">GlamLux</span>
             </div>
             <p className="text-sm text-muted-foreground font-body italic leading-relaxed max-w-sm">
-              An elite digital hub for timeless elegance and professional artistry across the sub-continent.
+              The best place for makeup and beauty services.
             </p>
           </div>
           <div className="space-y-6">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Concierge</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Help</h4>
             <ul className="space-y-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-              <li><Link href="/portal" className="hover:text-accent-foreground transition-colors">Merchant Portal</Link></li>
-              <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">Support Registry</Link></li>
-              <li><Link href="/messages" className="hover:text-accent-foreground transition-colors">Artisan Chat</Link></li>
+              <li><Link href="/portal" className="hover:text-accent-foreground transition-colors">Parlour Owner Area</Link></li>
+              <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">Support</Link></li>
+              <li><Link href="/messages" className="hover:text-accent-foreground transition-colors">Chat with Us</Link></li>
             </ul>
           </div>
           <div className="space-y-6">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Discover</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Explore</h4>
             <ul className="space-y-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Transformations</Link></li>
-              <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">The Boutique</Link></li>
-              <li><Link href="/vendors" className="hover:text-accent-foreground transition-colors">Artisan Network</Link></li>
+              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Beauty Deals</Link></li>
+              <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">Makeup Shop</Link></li>
+              <li><Link href="/vendors" className="hover:text-accent-foreground transition-colors">Parlour List</Link></li>
             </ul>
           </div>
         </div>
         <div className="container mx-auto px-6 mt-32 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-accent-foreground/30">Timeless Elegance • Since 2024</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-accent-foreground/30">GlamLux • Since 2024</p>
         </div>
       </footer>
     </div>

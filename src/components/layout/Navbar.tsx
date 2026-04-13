@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -27,15 +28,15 @@ export function Navbar() {
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
     { href: '/vendors', label: 'Parlours', icon: MapPin },
-    { href: '/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/portal', label: 'Portal', icon: LayoutDashboard },
+    { href: '/messages', label: 'Chat', icon: MessageSquare },
+    { href: '/portal', label: 'My Shop', icon: LayoutDashboard },
   ];
 
   return (
     <>
       {/* Desktop Navbar - High-Intensity Glass */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/20 bg-white/5 backdrop-blur-3xl transition-all duration-700 hidden md:block">
-        <div className="w-full px-8 h-20 flex items-center justify-between">
+        <div className="w-full px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
