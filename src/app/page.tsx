@@ -48,22 +48,22 @@ export default function Home() {
               className="object-cover opacity-90"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-2xl space-y-8">
-              <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-bold border-none">
+              <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-bold border-none shadow-sm">
                 Exclusive Beauty Curators
               </Badge>
               <h1 className="text-7xl md:text-9xl font-headline leading-[1.1] text-white drop-shadow-xl py-4">
                 Timeless <br />
-                <span className="italic">Elegance.</span>
+                <span className="italic text-accent">Elegance.</span>
               </h1>
               <p className="text-lg text-white/90 font-body max-w-sm italic">
                 The premier destination for luxury beauty in Pakistan & India. Professional artistry and curated designer collections.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button asChild size="lg" className="bg-white text-black hover:bg-white/90 rounded-none px-10 h-14 font-bold uppercase tracking-widest text-[10px]">
+                <Button asChild size="lg" className="bg-white text-black hover:bg-accent rounded-none px-10 h-14 font-bold uppercase tracking-widest text-[10px] transition-colors">
                   <Link href="/deals">Book Transformation</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10 rounded-none px-10 h-14 font-bold uppercase tracking-widest text-[10px]">
@@ -82,7 +82,7 @@ export default function Home() {
                 <h2 className="text-5xl font-headline tracking-tighter">Nearby Artisans</h2>
                 <p className="text-muted-foreground italic">Elite parlours within your reach.</p>
               </div>
-              <Link href="/deals" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-primary">
+              <Link href="/deals" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
                 View All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -91,23 +91,23 @@ export default function Home() {
               {VENDORS.slice(0, 3).map((vendor) => (
                 <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group">
                   <Card className="border-none shadow-none overflow-hidden bg-transparent">
-                    <div className="relative aspect-[16/10] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700">
+                    <div className="relative aspect-[16/10] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
                       <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/90 text-black border-none text-[8px] uppercase font-black px-2 py-1">
+                        <Badge className="bg-white/90 text-accent-foreground border-none text-[8px] uppercase font-black px-2 py-1 shadow-sm">
                           {vendor.area_tag}
                         </Badge>
                       </div>
                     </div>
                     <div className="pt-6 space-y-2">
                       <div className="flex justify-between items-start">
-                        <h3 className="text-2xl font-headline leading-none">{vendor.name}</h3>
-                        <div className="flex items-center gap-1 text-[10px] font-bold">
-                          <Star className="h-3 w-3 fill-primary" /> {vendor.rating}
+                        <h3 className="text-2xl font-headline leading-none group-hover:text-accent-foreground transition-colors">{vendor.name}</h3>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-accent-foreground">
+                          <Star className="h-3 w-3 fill-accent-foreground" /> {vendor.rating}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
-                        <Navigation className="h-3 w-3" /> 2.4 km away
+                        <Navigation className="h-3 w-3 text-destructive" /> 2.4 km away
                       </div>
                     </div>
                   </Card>
@@ -140,13 +140,13 @@ export default function Home() {
                       />
                       {deal.is_offpeak_active && (
                         <div className="absolute bottom-4 left-4">
-                          <Badge className="bg-accent text-black border-none text-[8px] uppercase font-black">Off-Peak Active</Badge>
+                          <Badge className="bg-destructive text-white border-none text-[8px] uppercase font-black shadow-lg">Off-Peak Active</Badge>
                         </div>
                       )}
                     </div>
                     <div className="p-8 space-y-6">
-                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-accent/60">{deal.category}</p>
-                      <h3 className="text-3xl font-headline leading-tight italic">{deal.name}</h3>
+                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-accent/80">{deal.category}</p>
+                      <h3 className="text-3xl font-headline leading-tight italic group-hover:text-accent transition-colors">{deal.name}</h3>
                       <div className="flex justify-between items-end pt-4 border-t border-white/10">
                         <div className="flex flex-col">
                           <span className="text-[10px] uppercase font-bold text-white/40">Starts from</span>
@@ -154,7 +154,7 @@ export default function Home() {
                         </div>
                         <div className="flex flex-col text-right">
                           <span className="text-[10px] uppercase font-bold text-white/40">Secure Now</span>
-                          <span className="text-sm font-bold">{deal.deposit_percent}% Deposit</span>
+                          <span className="text-sm font-bold text-destructive">{deal.deposit_percent}% Deposit</span>
                         </div>
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export default function Home() {
                 <h2 className="text-5xl font-headline tracking-tighter">The Boutique</h2>
                 <p className="text-muted-foreground italic">Professional essentials used by our artisans.</p>
               </div>
-              <Link href="/shop" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-primary">
+              <Link href="/shop" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
                 Explore Shop <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -187,15 +187,15 @@ export default function Home() {
                       <Button 
                         size="icon" 
                         onClick={(e) => handleAddToCart(e, product)}
-                        className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-white text-black hover:bg-black hover:text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-white text-destructive hover:bg-destructive hover:text-white shadow-xl opacity-0 group-hover:opacity-100 transition-all"
                       >
                         <ShoppingBag className="h-5 w-5" />
                       </Button>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] uppercase font-bold text-primary/40 tracking-widest">{product.brand}</p>
-                      <h3 className="font-headline text-xl leading-none">{product.name}</h3>
-                      <p className="font-bold text-lg">{getCurrency()} {product.price.toLocaleString()}</p>
+                      <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">{product.brand}</p>
+                      <h3 className="font-headline text-xl leading-none group-hover:text-destructive transition-colors">{product.name}</h3>
+                      <p className="font-bold text-lg text-primary">{getCurrency()} {product.price.toLocaleString()}</p>
                     </div>
                   </div>
                 </Link>
@@ -209,7 +209,7 @@ export default function Home() {
         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           <div className="space-y-4">
             <div className="flex items-center gap-2 justify-center md:justify-start">
-              <Sparkles className="h-6 w-6 text-primary" />
+              <Sparkles className="h-6 w-6 text-accent-foreground" />
               <span className="font-headline text-3xl tracking-tighter">GlamLux</span>
             </div>
             <p className="text-xs text-muted-foreground font-body italic">
@@ -219,22 +219,22 @@ export default function Home() {
           <div className="space-y-4">
             <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Partners</h4>
             <ul className="space-y-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-              <li><Link href="/portal" className="hover:text-primary">Artisan Portal</Link></li>
-              <li><Link href="/portal" className="hover:text-primary">List your Parlour</Link></li>
-              <li><Link href="/portal" className="hover:text-primary">Merchant Support</Link></li>
+              <li><Link href="/portal" className="hover:text-accent-foreground transition-colors">Artisan Portal</Link></li>
+              <li><Link href="/portal" className="hover:text-accent-foreground transition-colors">List your Parlour</Link></li>
+              <li><Link href="/portal" className="hover:text-accent-foreground transition-colors">Merchant Support</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
             <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Discover</h4>
             <ul className="space-y-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-              <li><Link href="/deals" className="hover:text-primary">Top Rated</Link></li>
-              <li><Link href="/shop" className="hover:text-primary">Artisan Shop</Link></li>
-              <li><Link href="/cart" className="hover:text-primary">Your Collection</Link></li>
+              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Top Rated</Link></li>
+              <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">Artisan Shop</Link></li>
+              <li><Link href="/cart" className="hover:text-accent-foreground transition-colors">Your Collection</Link></li>
             </ul>
           </div>
         </div>
         <div className="container mx-auto px-6 mt-16 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/30">© 2024 GLAMLUX LUXURY NETWORK</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-accent-foreground/40">© 2024 GLAMLUX LUXURY NETWORK</p>
         </div>
       </footer>
     </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -33,8 +34,8 @@ export function Navbar() {
     <>
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-colors duration-500">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+          <Link href="/" className="flex items-center space-x-2 group">
+            <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform" />
             <span className="font-headline text-xl md:text-2xl tracking-tighter text-primary">GlamLux</span>
           </Link>
 
@@ -44,8 +45,8 @@ export function Navbar() {
                 key={link.href} 
                 href={link.href} 
                 className={cn(
-                  "hover:text-primary transition-colors flex items-center gap-1",
-                  pathname === link.href ? "text-primary font-bold" : "text-muted-foreground"
+                  "hover:text-accent-foreground transition-colors flex items-center gap-1",
+                  pathname === link.href ? "text-accent-foreground font-bold" : "text-muted-foreground"
                 )}
               >
                 {link.label}
@@ -59,31 +60,30 @@ export function Navbar() {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-primary hover:bg-primary/10 rounded-full"
+                className="text-primary hover:bg-accent/30 rounded-full"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary hover:bg-primary/10">
-              <MapPin className="h-3 w-3" />
+            <Button variant="ghost" size="sm" onClick={toggleRegion} className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary hover:bg-accent/30">
+              <MapPin className="h-3 w-3 text-accent-foreground" />
               {region === 'PK' ? 'PKR' : 'INR'}
             </Button>
 
-            {/* Back to Home Button - Only show when not on the home page */}
             {pathname !== '/' && (
               <Link href="/">
-                <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 rounded-full">
+                <Button variant="ghost" size="icon" className="text-primary hover:bg-accent/30 rounded-full">
                   <Home className="h-5 w-5" />
                 </Button>
               </Link>
             )}
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-primary/10 rounded-full">
+              <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/30 rounded-full">
                 <ShoppingBag className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[10px] rounded-full border-2 border-background">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[10px] rounded-full border-2 border-background">
                     {cartCount}
                   </Badge>
                 )}
@@ -101,13 +101,13 @@ export function Navbar() {
             <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center w-full h-full gap-1">
               <div className={cn(
                 "p-2 rounded-2xl transition-all duration-300",
-                isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-110" : "text-muted-foreground"
+                isActive ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20 scale-110" : "text-muted-foreground"
               )}>
                 <Icon className="h-6 w-6" />
               </div>
               <span className={cn(
                 "text-[10px] font-bold uppercase tracking-widest",
-                isActive ? "text-primary" : "text-muted-foreground"
+                isActive ? "text-accent-foreground" : "text-muted-foreground"
               )}>
                 {link.label}
               </span>

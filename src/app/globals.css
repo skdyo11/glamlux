@@ -13,17 +13,17 @@
     --popover-foreground: 0 0% 15%;
     --primary: 0 0% 15%; /* Charcoal */
     --primary-foreground: 35 30% 96%;
-    --secondary: 30 15% 85%; /* Muted Taupe */
+    --secondary: 340 10% 90%; /* Blush Taupe */
     --secondary-foreground: 0 0% 15%;
     --muted: 30 10% 90%;
     --muted-foreground: 30 5% 45%;
-    --accent: 35 40% 85%; /* Golden Sand */
-    --accent-foreground: 0 0% 15%;
-    --destructive: 0 84.2% 60.2%;
+    --accent: 350 35% 92%; /* Dusty Rose */
+    --accent-foreground: 350 50% 30%; /* Deep Rose/Red */
+    --destructive: 350 80% 45%; /* Berry Red */
     --destructive-foreground: 0 0% 98%;
     --border: 30 10% 85%;
     --input: 30 10% 85%;
-    --ring: 0 0% 15%;
+    --ring: 350 40% 50%;
     --radius: 0.75rem;
   }
 
@@ -36,15 +36,15 @@
     --popover-foreground: 35 30% 96%;
     --primary: 35 30% 96%;
     --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 35 30% 96%;
+    --secondary: 350 10% 20%;
+    --secondary-foreground: 350 20% 90%;
     --muted: 0 0% 15%;
     --muted-foreground: 35 10% 70%;
-    --accent: 0 0% 25%;
-    --accent-foreground: 35 30% 96%;
+    --accent: 350 20% 25%;
+    --accent-foreground: 350 40% 90%;
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 35 30% 96%;
+    --ring: 350 40% 70%;
   }
 }
 
@@ -61,9 +61,9 @@
 }
 
 .luxury-gradient {
-  background: linear-gradient(135deg, hsla(35, 30%, 96%, 1) 0%, hsla(30, 15%, 85%, 1) 100%);
+  background: linear-gradient(135deg, hsla(35, 30%, 96%, 1) 0%, hsla(350, 20%, 90%, 1) 100%);
 }
 
 .charcoal-gradient {
-  background: linear-gradient(135deg, hsla(0, 0%, 15%, 1) 0%, hsla(0, 0%, 5%, 1) 100%);
+  background: linear-gradient(135deg, hsla(0, 0%, 15%, 1) 0%, hsla(350, 40%, 10%, 1) 100%);
 }
