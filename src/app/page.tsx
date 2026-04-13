@@ -39,7 +39,7 @@ export default function Home() {
       
       <main className="max-w-[100vw] overflow-x-hidden">
         {/* Hero Section */}
-        <section className="relative h-[80vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[90vh] flex items-center overflow-hidden py-24">
           <div className="absolute inset-0 z-0">
             <Image 
               src="https://picsum.photos/seed/glam-makeup-hero-final/1920/1080" 
@@ -51,7 +51,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
-            <div className="max-w-2xl space-y-6">
+            <div className="max-w-2xl space-y-8">
               <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-bold border-none">
                 B2B2C Elite Marketplace
               </Badge>
@@ -62,7 +62,7 @@ export default function Home() {
               <p className="text-lg text-white/90 font-body max-w-sm italic">
                 The Uber for Beauty in Pakistan & India. Professional parlour deals and designer makeup collection.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4 pt-4">
                 <Button asChild size="lg" className="bg-white text-black hover:bg-white/90 rounded-none px-10 h-14 font-bold uppercase tracking-widest text-[10px]">
                   <Link href="/deals">Book Transformation</Link>
                 </Button>
