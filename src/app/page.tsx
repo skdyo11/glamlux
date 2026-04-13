@@ -8,7 +8,7 @@ import { DEALS, PRODUCTS, VENDORS } from '@/app/lib/mock-data';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, Sparkles, ArrowRight, ShoppingBag, Heart } from 'lucide-react';
+import { Star, MapPin, Sparkles, ArrowRight, ShoppingBag } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
 
@@ -39,30 +39,31 @@ export default function Home() {
       
       <main className="max-w-[100vw] overflow-x-hidden">
         {/* Hero Section - Editorial Luxury */}
-        <section className="relative min-h-[85vh] flex items-center overflow-hidden py-12">
+        <section className="relative min-h-[90vh] flex items-center overflow-hidden py-24">
           <div className="absolute inset-0 z-0">
             <Image 
-              src="https://picsum.photos/seed/glam-makeup-hero-final/1920/1080" 
+              src="https://picsum.photos/seed/glam-luxury-nature/1920/1080" 
               alt="Elite Beauty" 
               fill 
-              className="object-cover grayscale"
+              className="object-cover grayscale brightness-75"
               priority
+              data-ai-hint="luxury beauty"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
-            <div className="max-w-2xl space-y-8">
-              <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-black border-none shadow-sm">
-                Elite Marketplace
+            <div className="max-w-2xl space-y-10">
+              <Badge className="bg-accent/30 text-accent-foreground backdrop-blur-md px-5 py-2 uppercase tracking-widest text-[10px] font-black border-none shadow-sm rounded-none">
+                Exclusive Beauty Curators
               </Badge>
-              <h1 className="text-7xl md:text-9xl font-headline leading-[1.1] text-white drop-shadow-2xl py-2">
-                Pure <br />
-                <span className="italic text-accent">Artistry.</span>
+              <h1 className="text-8xl md:text-[10rem] font-headline leading-[0.9] text-white drop-shadow-2xl py-2">
+                Timeless <br />
+                <span className="italic text-accent-foreground">Elegance.</span>
               </h1>
-              <p className="text-xl text-white/80 font-body max-w-sm italic leading-relaxed">
-                Discover the region's premier network of beauty artisans and professional-grade boutiques.
+              <p className="text-xl md:text-2xl text-white/90 font-body max-w-xl italic leading-relaxed">
+                The premier destination for luxury beauty in Pakistan & India. Professional artistry and curated collection.
               </p>
-              <div className="flex flex-wrap gap-4 pt-6">
+              <div className="flex flex-wrap gap-4 pt-8">
                 <Button asChild size="lg" className="bg-white text-black hover:bg-accent rounded-none px-12 h-16 font-black uppercase tracking-widest text-[10px] transition-all shadow-xl">
                   <Link href="/deals">Book Transformation</Link>
                 </Button>
@@ -150,45 +151,6 @@ export default function Home() {
                       </div>
                     </div>
                   </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* The Boutique */}
-        <section className="py-32">
-          <div className="container mx-auto px-6">
-            <div className="flex justify-between items-end mb-16">
-              <div className="space-y-2">
-                <h2 className="text-6xl font-headline tracking-tighter italic">Professional Boutique</h2>
-                <p className="text-muted-foreground italic text-lg">Artisan essentials for professional results.</p>
-              </div>
-              <Link href="/shop" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
-                Explore All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-              {PRODUCTS.map((product) => (
-                <Link key={product.id} href={`/shop/${product.id}`} className="group block">
-                  <div className="space-y-6 text-center">
-                    <div className="relative aspect-[4/5] overflow-hidden rounded-none bg-muted/20 shadow-xl grayscale group-hover:grayscale-0 transition-all duration-1000">
-                      <Image src={product.image} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
-                      <Button 
-                        size="icon" 
-                        onClick={(e) => handleAddToCart(e, product)}
-                        className="absolute bottom-6 right-6 h-14 w-14 rounded-none bg-white text-destructive hover:bg-destructive hover:text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100"
-                      >
-                        <ShoppingBag className="h-6 w-6" />
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-[10px] uppercase font-black text-accent-foreground tracking-[0.2em]">{product.brand}</p>
-                      <h3 className="font-headline text-2xl leading-none group-hover:text-destructive transition-colors">{product.name}</h3>
-                      <p className="font-bold text-xl text-primary">{getCurrency()} {product.price.toLocaleString()}</p>
-                    </div>
-                  </div>
                 </Link>
               ))}
             </div>

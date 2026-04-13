@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export function Navbar() {
   const { cart, region, toggleRegion } = useStore();
@@ -24,10 +25,9 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/deals', label: 'Transformations', icon: Scissors },
-    { href: '/shop', label: 'Boutique', icon: Store },
-    { href: '/messages', label: 'Messages', icon: MessageSquare },
+    { href: '/deals', label: 'Deals', icon: Scissors },
+    { href: '/shop', label: 'Shop', icon: Store },
+    { href: '/messages', label: 'Chats', icon: MessageSquare },
     { href: '/portal', label: 'Portal', icon: LayoutDashboard },
   ];
 
@@ -36,12 +36,18 @@ export function Navbar() {
       {/* Desktop Navbar - Professional Minimalist */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
         <div className="container mx-auto px-8 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-3 group">
-            <Sparkles className="h-7 w-7 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
-            <span className="font-headline text-3xl tracking-tighter text-primary italic">GlamLux</span>
-          </Link>
+          <div className="flex items-center gap-8">
+            <Avatar className="h-10 w-10 border-none bg-primary text-white">
+              <AvatarFallback className="bg-primary text-white font-body text-sm">N</AvatarFallback>
+            </Avatar>
+            
+            <Link href="/" className="flex items-center space-x-2 group">
+              <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
+              <span className="font-headline text-2xl tracking-tighter text-primary italic">GlamLux</span>
+            </Link>
+          </div>
 
-          <div className="flex items-center space-x-12 text-sm font-medium">
+          <div className="flex items-center space-x-10 text-sm font-medium">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
@@ -76,7 +82,7 @@ export function Navbar() {
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative text-primary hover:bg-accent/20 rounded-none h-12 w-12">
                 <ShoppingBag className="h-6 w-6" />
-                {cartCount > 0 && (
+                {mounted && cartCount > 0 && (
                   <Badge className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-white text-[9px] font-black rounded-none border-2 border-background">
                     {cartCount}
                   </Badge>
@@ -89,7 +95,7 @@ export function Navbar() {
 
       {/* Mobile Bottom Bar - Sleek & Semi-Transparent */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-t border-white/20 md:hidden flex items-center justify-around h-20 px-4 transition-all duration-700">
-        {navLinks.map((link) => {
+        {[...navLinks, { href: '/', label: 'Home', icon: Home }].map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
@@ -104,16 +110,16 @@ export function Navbar() {
                 "text-[8px] font-black uppercase tracking-[0.15em]",
                 isActive ? "text-accent-foreground" : "text-muted-foreground/40"
               )}>
-                {link.label === 'Transformations' ? 'Artisan' : link.label}
+                {link.label}
               </span>
             </Link>
           );
         })}
         
         {/* Mobile Cart floating bubble */}
-        {cartCount > 0 && (
+        {mounted && cartCount > 0 && (
           <Link href="/cart" className="absolute -top-16 right-6">
-             <div className="bg-destructive text-white h-12 w-12 rounded-none flex items-center justify-center text-xs font-black shadow-2xl animate-pulse">
+             <div className="bg-destructive text-white h-12 w-12 rounded-none flex items-center justify-center text-xs font-black shadow-2xl">
                {cartCount}
              </div>
           </Link>
