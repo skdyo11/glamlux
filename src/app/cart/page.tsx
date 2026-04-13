@@ -6,7 +6,9 @@ import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -14,14 +16,20 @@ import { useRouter } from 'next/navigation';
 import { useAuth, useFirestore, useUser } from '@/firebase';
 import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
-import { setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CartPage() {
   const { cart, region, removeFromCart, getCurrency, clearCart } = useStore();
   const router = useRouter();
+  const { toast } = useToast();
   const { auth, firestore } = useFirestore();
   const { user } = useUser();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  
+  // Shadow Profile State
+  const [userName, setUserName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = cart.some(i => i.type === 'product') ? (region === 'PK' ? 250 : 150) : 0;
@@ -29,6 +37,16 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (isCheckingOut) return;
+    
+    if (!userName.trim() || !phoneNumber.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Information Required",
+        description: "Please provide your name and phone number for the booking."
+      });
+      return;
+    }
+
     setIsCheckingOut(true);
 
     try {
@@ -40,11 +58,12 @@ export default function CartPage() {
 
       if (!currentUser) throw new Error("Authentication failed");
 
-      // Ensure local user profile exists
+      // Save shadow profile
       const userRef = doc(firestore, 'localUsers', currentUser.uid);
-      setDoc(userRef, {
+      await setDoc(userRef, {
         id: currentUser.uid,
-        name: 'Guest User',
+        name: userName,
+        phoneNumber: phoneNumber,
         deviceIdentifier: navigator.userAgent,
         lastActiveAt: new Date().toISOString()
       }, { merge: true });
@@ -61,13 +80,12 @@ export default function CartPage() {
         createdAt: new Date().toISOString(),
         paymentStatus: 'Paid',
         cartItems: cart,
-        parlourOwnerIdsInBooking: cart.filter(i => i.type === 'deal').map(i => 'ADMIN_UID') // For collection group rules
+        parlourOwnerIdsInBooking: cart.filter(i => i.type === 'deal').map(i => 'ADMIN_UID')
       };
 
       const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
-      const newBookingPromise = addDocumentNonBlocking(bookingsCol, bookingData);
+      const docRef = await addDocumentNonBlocking(bookingsCol, bookingData);
       
-      const docRef = await newBookingPromise;
       if (docRef) {
         clearCart();
         router.push(`/booking/${docRef.id}?uid=${currentUser.uid}`);
@@ -75,6 +93,11 @@ export default function CartPage() {
     } catch (error) {
       console.error("Checkout failed", error);
       setIsCheckingOut(false);
+      toast({
+        variant: "destructive",
+        title: "Checkout Error",
+        description: "Could not complete your purchase. Please try again."
+      });
     }
   };
 
@@ -102,43 +125,79 @@ export default function CartPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pb-32">
         <h1 className="text-4xl font-headline mb-12">Glam Checkout</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-6">
-            {cart.map((item) => (
-              <Card key={item.id} className="border-none shadow-sm overflow-hidden group">
-                <CardContent className="p-0 flex items-center">
-                  <div className="relative w-32 h-32 flex-shrink-0">
-                    <Image src={item.image || 'https://picsum.photos/seed/placeholder/400/400'} alt={item.name} fill className="object-cover" />
+          {/* Form and Cart Items */}
+          <div className="lg:col-span-2 space-y-12">
+            
+            {/* Shadow Profile Form */}
+            <Card className="border-none shadow-sm overflow-hidden bg-primary/5">
+              <CardHeader>
+                <CardTitle className="font-headline text-2xl flex items-center gap-2">
+                  <User className="h-6 w-6 text-primary" /> 
+                  Guest Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary">Your Name</Label>
+                    <Input 
+                      placeholder="e.g. Sara Ahmed" 
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      className="h-12 rounded-xl border-primary/10"
+                    />
                   </div>
-                  <div className="flex-grow px-6 py-4 flex justify-between items-center">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                        {item.type === 'deal' ? 'Parlour Booking' : 'Product Purchase'}
-                      </span>
-                      <h3 className="text-lg font-headline">{item.name}</h3>
-                      <div className="space-y-1">
-                        <p className="text-sm font-bold text-primary">
-                          {item.type === 'deal' ? 'Upfront Deposit: ' : ''}
-                          {getCurrency()} {item.price.toLocaleString()}
-                        </p>
-                        {item.type === 'deal' && item.full_price && (
-                          <p className="text-[10px] text-muted-foreground italic font-medium">
-                            Remaining {getCurrency()} {(item.full_price - item.price).toLocaleString()} payable at salon
-                          </p>
-                        )}
-                      </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary">Phone Number</Label>
+                    <Input 
+                      placeholder="+92 300 1234567" 
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="h-12 rounded-xl border-primary/10"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-6">
+              <h2 className="text-2xl font-headline italic">Your Selection</h2>
+              {cart.map((item) => (
+                <Card key={item.id} className="border-none shadow-sm overflow-hidden group">
+                  <CardContent className="p-0 flex items-center">
+                    <div className="relative w-32 h-32 flex-shrink-0">
+                      <Image src={item.image || 'https://picsum.photos/seed/placeholder/400/400'} alt={item.name} fill className="object-cover" />
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                      <Trash2 className="h-5 w-5" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="flex-grow px-6 py-4 flex justify-between items-center">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                          {item.type === 'deal' ? 'Parlour Booking' : 'Product Purchase'}
+                        </span>
+                        <h3 className="text-lg font-headline">{item.name}</h3>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-primary">
+                            {item.type === 'deal' ? 'Upfront Deposit: ' : ''}
+                            {getCurrency()} {item.price.toLocaleString()}
+                          </p>
+                          {item.type === 'deal' && item.full_price && (
+                            <p className="text-[10px] text-muted-foreground italic font-medium">
+                              Remaining {getCurrency()} {(item.full_price - item.price).toLocaleString()} payable at salon
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
             <div className="p-6 bg-primary/5 rounded-xl border border-primary/10 space-y-4">
               <div className="flex items-center gap-3 text-sm font-medium">

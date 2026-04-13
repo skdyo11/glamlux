@@ -80,28 +80,43 @@ export default function PartnerPortalPage() {
   const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
     if (activeTab === 'scanner') {
       setIsScanning(true);
-      const scanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        /* verbose= */ false
-      );
-      scanner.render(onScanSuccess, onScanFailure);
-      scannerRef.current = scanner;
+      // Wait for the DOM to be ready and the "reader" element to be mounted by TabsContent
+      timer = setTimeout(() => {
+        const readerElement = document.getElementById("reader");
+        if (readerElement && !scannerRef.current) {
+          const scanner = new Html5QrcodeScanner(
+            "reader",
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            /* verbose= */ false
+          );
+          scanner.render(onScanSuccess, onScanFailure);
+          scannerRef.current = scanner;
+        }
+      }, 500);
     } else {
       setIsScanning(false);
       if (scannerRef.current) {
-        scannerRef.current.clear().catch(err => console.error("Failed to clear scanner", err));
+        scannerRef.current.clear().catch(err => console.warn("Failed to clear scanner", err));
         scannerRef.current = null;
       }
     }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(err => console.warn("Cleanup clear failed", err));
+        scannerRef.current = null;
+      }
+    };
   }, [activeTab]);
 
   async function onScanSuccess(decodedText: string) {
     if (!firestore) return;
     
-    // Scanned text is the referenceCode
     toast({ title: "Validating Code...", description: `Reference: ${decodedText}` });
     
     try {
@@ -217,7 +232,7 @@ export default function PartnerPortalPage() {
                   <CardDescription>Position the client's QR code within the frame to verify entry.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center p-8">
-                   <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-primary/20 bg-white" />
+                   <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-primary/20 bg-white min-h-[250px]" />
                    <div className="mt-8 flex items-center gap-2 text-primary font-bold animate-pulse">
                       <QrCode className="h-6 w-6" />
                       <span className="text-xs uppercase tracking-widest">Searching for Voucher...</span>
