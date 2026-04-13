@@ -4,13 +4,12 @@
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
-import { DEALS, PARLOURS, PRODUCTS } from '@/app/lib/mock-data';
+import { DEALS, VENDORS, PRODUCTS } from '@/app/lib/mock-data';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare, ShieldCheck, Users, Plus, Minus } from 'lucide-react';
+import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, ShieldCheck, Users, Plus, Minus, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
@@ -24,7 +23,7 @@ export default function DealPage() {
   const [personCount, setPersonCount] = useState(1);
 
   const deal = DEALS.find(d => d.id === id);
-  const parlour = PARLOURS.find(p => p.id === deal?.parlour_id);
+  const vendor = VENDORS.find(v => v.id === deal?.vendor_id);
 
   useEffect(() => {
     async function getRecommendations() {
@@ -37,7 +36,7 @@ export default function DealPage() {
         });
         setRecommendedProductNames(result.recommendedProducts);
       } catch (error) {
-        console.error('Failed to get AI recommendations', error);
+        console.error('AI rec failed', error);
       } finally {
         setIsLoadingRecs(false);
       }
@@ -45,30 +44,20 @@ export default function DealPage() {
     getRecommendations();
   }, [deal]);
 
-  if (!deal || !parlour) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center p-6 text-center space-y-4">
-          <h1 className="text-4xl font-headline">Transformation Not Found</h1>
-          <p className="text-muted-foreground">This exclusive deal may have expired or is currently unavailable.</p>
-          <Button asChild className="rounded-full px-8">
-            <Link href="/deals">Explore Other Deals</Link>
-          </Button>
-        </main>
-      </div>
-    );
-  }
+  if (!deal || !vendor) return null;
+
+  const depositAmount = (deal.discount_price * deal.deposit_percent) / 100;
 
   const handleAddToCart = () => {
     addToCart({
       id: deal.id,
       type: 'deal',
       name: deal.name,
-      price: deal.deposit_amount,
-      full_price: deal.discounted_price,
+      price: depositAmount,
+      full_price: deal.discount_price,
       quantity: personCount,
-      image: parlour.images[0]
+      image: vendor.images[0],
+      vendor_id: vendor.id
     });
     router.push('/cart');
   };
@@ -77,169 +66,111 @@ export default function DealPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 md:py-16">
-        <Button asChild variant="ghost" className="mb-8 -ml-2 text-muted-foreground hover:text-primary">
-          <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Deals</Link>
+      <main className="container mx-auto px-6 py-12">
+        <Button asChild variant="ghost" className="mb-12 -ml-4 text-muted-foreground hover:text-primary rounded-none">
+          <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> All Transformations</Link>
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Images */}
-          <div className="space-y-4">
-            <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/40">
-              <Image 
-                src={parlour.images[0]} 
-                alt={deal.name} 
-                fill 
-                className="object-cover"
-                priority
-                data-ai-hint="luxury salon"
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          {/* Visuals */}
+          <div className="space-y-6">
+            <div className="relative aspect-square bg-muted grayscale hover:grayscale-0 transition-all duration-1000">
+              <Image src={vendor.images[0]} alt={deal.name} fill className="object-cover" priority />
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="relative aspect-square rounded-2xl overflow-hidden border border-white/20 bg-white/20 backdrop-blur-sm">
-                  <Image 
-                    src={`https://picsum.photos/seed/parlour-detail-${n}/400/400`} 
-                    alt="Detail" 
-                    fill 
-                    className="object-cover opacity-80"
-                  />
+            <div className="grid grid-cols-3 gap-6">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="relative aspect-square bg-muted opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
+                   <Image src={`https://picsum.photos/seed/parlour-${i}/400/400`} alt="Detail" fill className="object-cover" />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Info */}
-          <div className="space-y-8 py-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Badge className="bg-secondary text-secondary-foreground font-black text-[10px] uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border-none shadow-sm">
+          {/* Details */}
+          <div className="space-y-12">
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Badge className="bg-accent text-black rounded-none px-4 py-1 uppercase tracking-widest text-[8px] font-black border-none">
                   {deal.category}
                 </Badge>
-                <div className="flex items-center gap-1 text-sm font-bold text-primary">
-                  <Star className="h-4 w-4 fill-primary" />
-                  {parlour.rating} • Verified Excellence
+                <div className="flex items-center gap-1 text-[10px] font-bold">
+                  <Star className="h-3 w-3 fill-primary" /> {vendor.rating} • Artisan Verified
                 </div>
               </div>
-              <div className="flex justify-between items-start">
-                <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary leading-tight">
-                  {deal.name}
-                </h1>
-                <Button asChild variant="ghost" size="icon" className="h-14 w-14 rounded-full bg-primary/5 text-primary">
-                  <Link href="/messages">
-                    <MessageSquare className="h-6 w-6" />
-                  </Link>
-                </Button>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground italic font-medium">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span>{parlour.name} — {parlour.area_tag}</span>
+              <h1 className="text-7xl font-headline tracking-tighter leading-tight italic">{deal.name}</h1>
+              <div className="flex items-center gap-2 text-muted-foreground text-sm italic">
+                <MapPin className="h-4 w-4" /> {vendor.name} — {vendor.area_tag}
               </div>
             </div>
 
-            <Separator className="opacity-50" />
+            <Separator className="opacity-20" />
 
-            <div className="space-y-6">
-              <div className="flex flex-col gap-1">
+            <div className="space-y-8">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-baseline gap-4">
-                  <span className="text-5xl font-bold italic text-primary tabular-nums">
-                    {getCurrency()} {deal.discounted_price.toLocaleString()}
-                  </span>
-                  <span className="text-xl text-muted-foreground line-through opacity-30 tabular-nums">
-                    {getCurrency()} {deal.price.toLocaleString()}
-                  </span>
+                  <span className="text-6xl font-headline italic tracking-tighter">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
+                  <span className="text-xl text-muted-foreground line-through opacity-30">{getCurrency()} {deal.base_price.toLocaleString()}</span>
                 </div>
-                <p className="text-sm font-bold text-secondary flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4" />
-                  Only {getCurrency()} {deal.deposit_amount.toLocaleString()} required per person
+                <p className="text-[10px] uppercase font-bold text-primary flex items-center gap-2 tracking-widest">
+                  <ShieldCheck className="h-4 w-4" /> Secure now with {getCurrency()} {depositAmount.toLocaleString()} deposit
                 </p>
               </div>
 
-              {/* Multi-Person Selection */}
-              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 flex items-center justify-between">
+              {/* Group Size */}
+              <div className="p-8 border rounded-none flex items-center justify-between bg-muted/5">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-primary font-bold">
-                    <Users className="h-4 w-4" />
-                    <span className="text-sm uppercase tracking-wider">Group Booking</span>
+                  <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-widest">
+                    <Users className="h-4 w-4" /> Group Booking
                   </div>
-                  <p className="text-xs text-muted-foreground">Select number of guests for this transformation</p>
+                  <p className="text-[10px] text-muted-foreground italic">Coordinate slots for your party</p>
                 </div>
-                <div className="flex items-center gap-4 bg-white rounded-2xl p-2 shadow-sm border">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => setPersonCount(prev => Math.max(1, prev - 1))}
-                    className="h-8 w-8 text-primary hover:bg-primary/10"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="font-headline text-2xl w-6 text-center">{personCount}</span>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => setPersonCount(prev => prev + 1)}
-                    className="h-8 w-8 text-primary hover:bg-primary/10"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                <div className="flex items-center gap-6 bg-white border px-4 py-2">
+                  <Button variant="ghost" size="icon" onClick={() => setPersonCount(Math.max(1, personCount - 1))} className="h-8 w-8 hover:bg-transparent"><Minus className="h-3 w-3" /></Button>
+                  <span className="font-headline text-3xl">{personCount}</span>
+                  <Button variant="ghost" size="icon" onClick={() => setPersonCount(personCount + 1)} className="h-8 w-8 hover:bg-transparent"><Plus className="h-3 w-3" /></Button>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-secondary/10 border border-secondary/20 space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Deposit for {personCount} {personCount === 1 ? 'person' : 'people'}</span>
-                  <span className="font-bold text-primary">{getCurrency()} {(deal.deposit_amount * personCount).toLocaleString()}</span>
+              <div className="p-8 bg-muted/20 space-y-4">
+                <div className="flex justify-between items-baseline italic">
+                  <span className="text-sm">Combined Deposit</span>
+                  <span className="text-2xl font-headline">{(depositAmount * personCount).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Balance due at salon</span>
-                  <span className="font-bold text-muted-foreground">{getCurrency()} {((deal.discounted_price - deal.deposit_amount) * personCount).toLocaleString()}</span>
-                </div>
+                <p className="text-[9px] uppercase font-black opacity-30 tracking-[0.2em] flex items-center gap-1">
+                  <Info className="h-3 w-3" /> Remaining balance paid directly to {vendor.name}
+                </p>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Button size="lg" className="flex-1 h-16 bg-primary text-white rounded-[2rem] text-xl font-bold shadow-2xl shadow-primary/30 group" onClick={handleAddToCart}>
-                Secure Booking
-                <ShoppingCart className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button asChild variant="outline" size="lg" className="h-16 w-16 rounded-[2rem] border-primary/20 text-primary">
-                <Link href="/messages">
-                  <MessageSquare className="h-6 w-6" />
-                </Link>
-              </Button>
-            </div>
+            <Button size="lg" className="w-full h-20 bg-primary text-white rounded-none text-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl group" onClick={handleAddToCart}>
+              Secure Transformation
+              <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
         </div>
 
-        {/* Upsell Section - AI Recommended Products */}
-        <section className="mt-24 space-y-12">
-          <div className="text-center md:text-left space-y-2">
-            <h3 className="text-4xl md:text-5xl font-headline italic tracking-tighter">Glamour Extensions</h3>
-            <p className="text-muted-foreground italic font-body text-lg">Curated essentials to maintain your new {deal.category.toLowerCase()} glow.</p>
-            <div className="h-1 w-24 bg-secondary mx-auto md:mx-0" />
+        {/* Upsell: Products Used */}
+        <section className="mt-32 space-y-12">
+          <div className="space-y-2">
+            <h3 className="text-5xl font-headline italic tracking-tighter">Products Used in this Look</h3>
+            <p className="text-muted-foreground italic">Artisan essentials for professional results at home.</p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {isLoadingRecs ? (
-              [1, 2, 3, 4].map(n => <div key={n} className="h-80 bg-white/40 animate-pulse rounded-[2rem]" />)
+              [1, 2, 3, 4].map(n => <div key={n} className="aspect-[4/5] bg-muted/20 animate-pulse" />)
             ) : (
-              PRODUCTS.slice(0, 4).map((product, idx) => (
-                <Link key={product.id} href={`/shop/${product.id}`} className="block group">
-                  <Card className="border-none shadow-lg bg-white/40 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden">
-                    <div className="relative aspect-square overflow-hidden">
-                      <Image src={product.image} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
-                      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
+              PRODUCTS.map((p) => (
+                <Link key={p.id} href={`/shop/${p.id}`} className="group">
+                  <Card className="rounded-none border-none bg-transparent space-y-4 text-center">
+                    <div className="relative aspect-[4/5] grayscale group-hover:grayscale-0 transition-all overflow-hidden bg-muted/10">
+                      <Image src={p.image} alt={p.name} fill className="object-cover" />
                     </div>
-                    <CardContent className="p-6 space-y-3 text-center">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-primary/60 font-black">{product.brand}</p>
-                      <h4 className="font-headline text-xl leading-tight truncate">{recommendedProductNames[idx] || product.name}</h4>
-                      <div className="flex justify-between items-center pt-2">
-                        <span className="font-bold text-primary italic text-lg">{getCurrency()} {product.price.toLocaleString()}</span>
-                        <div className="text-secondary group-hover:translate-x-1 transition-transform">
-                          <ArrowRight className="h-5 w-5" />
-                        </div>
-                      </div>
-                    </CardContent>
+                    <div className="space-y-1">
+                       <p className="text-[8px] uppercase font-black opacity-40 tracking-widest">{p.brand}</p>
+                       <h4 className="font-headline text-xl leading-none">{p.name}</h4>
+                       <p className="font-bold text-lg">{getCurrency()} {p.price.toLocaleString()}</p>
+                    </div>
                   </Card>
                 </Link>
               ))

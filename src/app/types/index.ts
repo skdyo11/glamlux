@@ -1,5 +1,7 @@
 
-export type Parlour = {
+export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
+
+export type Vendor = {
   id: string;
   name: string;
   lat: number;
@@ -7,29 +9,32 @@ export type Parlour = {
   area_tag: string;
   rating: number;
   images: string[];
+  owner_currency: 'PKR' | 'INR';
+  commission_rate: number; // e.g. 0.15 for 15%
 };
 
 export type DealCategory = 'Bridal' | 'Hair' | 'Skin';
 
 export type Deal = {
   id: string;
-  parlour_id: string;
+  vendor_id: string;
   name: string;
   category: DealCategory;
-  price: number;
-  discounted_price: number;
-  deposit_amount: number;
+  base_price: number;
+  discount_price: number;
+  deposit_percent: number; // e.g. 10 for 10%
+  is_offpeak_active: boolean;
   expiry_date: string;
   upsell_product_id?: string;
 };
 
 export type Product = {
   id: string;
+  vendor_id: string;
   name: string;
   brand: string;
   price: number;
   stock: number;
-  delivery_fee_base: number;
   image: string;
 };
 
@@ -37,28 +42,29 @@ export type CartItem = {
   id: string;
   type: 'deal' | 'product';
   name: string;
-  price: number; // This is the amount to be paid NOW (deposit for deals, full for products)
-  full_price?: number; // Only for deals, to show total value
+  price: number; // Upfront price (deposit for deals, full for products)
+  full_price?: number;
   quantity: number;
   image?: string;
+  vendor_id?: string;
 };
-
-export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
 
 export type Booking = {
   id: string;
   localUserId: string;
+  vendor_id: string;
+  user_phone: string;
   referenceCode: string;
   cartItems: CartItem[];
-  totalPrice: number;
+  total_price: number; // Total amount paid at checkout
+  platform_commission: number; // 15% of checkout price
   currency: string;
-  qrVerificationStatus: boolean;
+  qr_verified: boolean;
   deliveryStatus: DeliveryStatus;
   createdAt: string;
   paymentStatus: string;
-  verifiedAt?: string;
-  inspirationImageUrl?: string | null;
-  parlourOwnerIdsInBooking?: string[];
+  group_size: number;
+  arrival_time?: string;
 };
 
 export type ChatMessage = {

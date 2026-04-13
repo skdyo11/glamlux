@@ -17,7 +17,6 @@ import {
   SheetHeader, 
   SheetTitle, 
   SheetDescription,
-  SheetFooter,
   SheetClose
 } from '@/components/ui/sheet';
 import { 
@@ -29,13 +28,12 @@ import {
   Plus, 
   CheckCircle2, 
   Package, 
-  Scissors, 
-  MessageSquare,
   QrCode,
   Truck,
   Edit3,
   Camera,
-  Navigation
+  Navigation,
+  CalendarDays
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -46,67 +44,37 @@ import { useFirebase } from '@/firebase';
 import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
-const MOCK_ARRIVALS = [
-  { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
-  { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
-  { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '02:30 PM', status: 'In-Progress' },
-];
-
-const MOCK_ORDERS = [
-  { id: 'ORD-101', client: 'Hina Pervez', product: 'Silk Radiance Foundation', price: 4800, status: 'Pending' as DeliveryStatus },
-  { id: 'ORD-102', client: 'Mehak Ali', product: 'Velvet Matte Lip Ink', price: 2400, status: 'Picked Up' as DeliveryStatus },
-  { id: 'ORD-103', client: 'Sana Javed', product: 'Gold Infused Face Oil', price: 5500, status: 'Delivered' as DeliveryStatus },
-];
-
-const MOCK_BUSINESS_MESSAGES = [
-  { id: 'b1', client: 'Sara Khan', text: 'Can we add a hair trial as well?', time: 'Just now', unread: true },
-  { id: 'b2', client: 'Amna Ahmed', text: 'Confirming my arrival for 12:00 PM.', time: '10 mins ago', unread: false },
-  { id: 'b3', client: 'Hiba Ali', text: 'Do you have the Golden Serum in stock?', time: '1 hour ago', unread: false },
-];
-
 export default function PartnerPortalPage() {
   const { toast } = useToast();
   const { firestore } = useFirebase();
   
-  // View States
-  const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
-  const [isDealSheetOpen, setIsDealSheetOpen] = useState(false);
-  const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('queue');
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [editingItem, setEditingItem] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('queue');
-
-  // Scanner State
+  const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    
     if (activeTab === 'scanner') {
       timer = setTimeout(() => {
         const readerElement = document.getElementById("reader");
         if (readerElement && !scannerRef.current) {
-          const scanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            false
-          );
+          const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
           scanner.render(onScanSuccess, onScanFailure);
           scannerRef.current = scanner;
         }
       }, 500);
     } else {
       if (scannerRef.current) {
-        scannerRef.current.clear().catch(err => console.warn("Failed to clear scanner", err));
+        scannerRef.current.clear().catch(() => {});
         scannerRef.current = null;
       }
     }
-
     return () => {
       if (timer) clearTimeout(timer);
       if (scannerRef.current) {
-        scannerRef.current.clear().catch(err => console.warn("Cleanup clear failed", err));
+        scannerRef.current.clear().catch(() => {});
         scannerRef.current = null;
       }
     };
@@ -114,276 +82,127 @@ export default function PartnerPortalPage() {
 
   async function onScanSuccess(decodedText: string) {
     if (!firestore) return;
-    
-    toast({ title: "Validating Code...", description: `Reference: ${decodedText}` });
-    
+    toast({ title: "Validating Artistry Code", description: `Ref: ${decodedText}` });
     try {
-      const bookingsQuery = query(
-        collectionGroup(firestore, 'bookings'),
-        where('referenceCode', '==', decodedText)
-      );
-      
-      const querySnapshot = await getDocs(bookingsQuery);
-      
-      if (querySnapshot.empty) {
-        toast({ variant: "destructive", title: "Invalid Voucher", description: "No booking found for this code." });
+      const q = query(collectionGroup(firestore, 'bookings'), where('referenceCode', '==', decodedText));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        toast({ variant: "destructive", title: "Invalid Voucher", description: "No booking found." });
         return;
       }
-
-      const bookingDoc = querySnapshot.docs[0];
-      const bookingData = bookingDoc.data();
-
-      if (bookingData.qrVerificationStatus) {
-        toast({ title: "Already Verified", description: "This voucher has already been used." });
-        return;
-      }
-
-      await updateDoc(bookingDoc.ref, {
-        qrVerificationStatus: true,
-        verifiedAt: new Date().toISOString()
-      });
-
-      toast({ 
-        title: "Access Granted", 
-        description: `Verified for ${bookingData.referenceCode}. User notified.` 
-      });
+      const docRef = snap.docs[0];
+      await updateDoc(docRef.ref, { qr_verified: true, arrival_time: new Date().toISOString() });
+      toast({ title: "Entry Verified", description: "The transformation journey may begin." });
       setActiveTab('queue');
     } catch (error) {
-      console.error("Verification error", error);
-      toast({ variant: "destructive", title: "Scan Error", description: "Could not verify voucher. Check logs." });
+      toast({ variant: "destructive", title: "Scan Failure" });
     }
   }
 
   function onScanFailure() {}
 
-  const handleAction = (title: string, desc: string) => {
-    toast({ title, description: desc });
-    setIsProductSheetOpen(false);
-    setIsDealSheetOpen(false);
-    setIsCourierSheetOpen(false);
-    setSelectedOrder(null);
-    setEditingItem(null);
-  };
-
-  const updateOrderStatus = (newStatus: DeliveryStatus) => {
-    if (selectedOrder) {
-      handleAction('Status Updated', `Order ${selectedOrder.id} is now ${newStatus}.`);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-transparent pb-32 md:pb-12">
+    <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-8 md:py-12">
-        <header className="flex flex-col gap-6 mb-12">
-          <div className="space-y-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-              <Sparkles className="h-3 w-3 text-primary" />
-              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-primary">Business Studio</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-headline text-primary tracking-tighter">Management</h1>
+      <main className="container mx-auto px-6 py-12">
+        <header className="flex flex-col gap-12 mb-20">
+          <div className="space-y-4">
+            <Badge className="bg-primary text-white rounded-none px-4 py-1 uppercase tracking-widest text-[10px]">Merchant Workspace</Badge>
+            <h1 className="text-7xl font-headline tracking-tighter italic">Studio Control</h1>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-             <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-white">
-               <Users className="h-6 w-6 mb-3 opacity-60" />
-               <p className="text-3xl font-bold font-headline">08</p>
-               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Check-ins</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             <Card className="rounded-none border bg-card p-10 space-y-4">
+               <TrendingUp className="h-6 w-6 opacity-20" />
+               <p className="text-4xl font-headline italic tracking-tighter">82.4K</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Today's Studio Revenue</p>
              </Card>
-             <Card className="bg-card p-6 rounded-[2rem] border-none shadow-xl text-foreground">
-               <TrendingUp className="h-6 w-6 mb-3 opacity-60 text-secondary" />
-               <p className="text-3xl font-bold font-headline">82.4K</p>
-               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Today's Revenue</p>
+             <Card className="rounded-none border bg-card p-10 space-y-4">
+               <Users className="h-6 w-6 opacity-20" />
+               <p className="text-4xl font-headline italic tracking-tighter">14</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Confirmed Artisans</p>
              </Card>
-             <Card className="hidden lg:flex bg-secondary p-6 rounded-[2rem] border-none shadow-xl text-secondary-foreground items-center justify-center cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsCourierSheetOpen(true)}>
-                <div className="text-center">
-                  <Navigation className="h-6 w-6 mb-2 mx-auto opacity-60" />
-                  <p className="text-[10px] uppercase font-black tracking-widest">Join Glam Dispatch</p>
-                </div>
+             <Card className="rounded-none border bg-primary text-white p-10 space-y-4 cursor-pointer hover:bg-primary/90 transition-colors" onClick={() => setIsCourierSheetOpen(true)}>
+                <Navigation className="h-6 w-6 opacity-40" />
+                <p className="text-[10px] uppercase font-black tracking-widest">Join Glam Dispatch</p>
+                <p className="text-xs italic opacity-60">Represent our luxury fleet</p>
              </Card>
-          </div>
-
-          <div className="lg:hidden">
-            <Button 
-              onClick={() => setIsCourierSheetOpen(true)}
-              className="w-full h-14 rounded-2xl bg-secondary text-secondary-foreground font-bold text-xs uppercase tracking-widest shadow-xl shadow-secondary/10"
-            >
-              <Navigation className="h-4 w-4 mr-2" /> Become an Elite Courier
-            </Button>
           </div>
         </header>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="bg-muted/40 backdrop-blur-md p-1 h-16 border border-border/60 rounded-2xl w-full flex overflow-x-auto">
-            <TabsTrigger value="queue" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Queue
-            </TabsTrigger>
-            <TabsTrigger value="scanner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest flex gap-2">
-              <Camera className="h-3 w-3" /> Scan
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Orders
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Chats
-            </TabsTrigger>
-            <TabsTrigger value="inventory" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Shop
-            </TabsTrigger>
-            <TabsTrigger value="services" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Deals
-            </TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
+          <TabsList className="bg-transparent p-0 h-auto gap-12 border-b w-full justify-start rounded-none overflow-x-auto scrollbar-hide">
+            {['queue', 'scanner', 'planner', 'boutique', 'services'].map((t) => (
+              <TabsTrigger 
+                key={t} value={t} 
+                className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] transition-all"
+              >
+                {t}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          <TabsContent value="scanner" className="space-y-4">
-             <Card className="rounded-[2.5rem] border-none shadow-2xl overflow-hidden bg-black/5">
-                <CardHeader>
-                  <CardTitle className="font-headline text-3xl">Owner Check-in Scanner</CardTitle>
-                  <CardDescription>Position the client's QR code within the frame to verify entry.</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center p-8">
-                   <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-primary/20 bg-white min-h-[250px]" />
-                   <div className="mt-8 flex items-center gap-2 text-primary font-bold animate-pulse">
-                      <QrCode className="h-6 w-6" />
-                      <span className="text-xs uppercase tracking-widest">Searching for Voucher...</span>
-                   </div>
-                </CardContent>
-             </Card>
+          <TabsContent value="scanner" className="space-y-4 max-w-xl mx-auto text-center">
+             <div className="space-y-8">
+                <div id="reader" className="w-full aspect-square grayscale border-4 border-primary/10 bg-muted/20" />
+                <div className="flex items-center justify-center gap-3 animate-pulse italic text-primary/60">
+                   <QrCode className="h-5 w-5" />
+                   <span className="text-[10px] uppercase font-bold tracking-widest">Awaiting Artisan Voucher</span>
+                </div>
+             </div>
           </TabsContent>
 
-          <TabsContent value="queue" className="space-y-4">
-            <div className="space-y-4">
-              {MOCK_ARRIVALS.map((arrival) => (
-                <Card 
-                  key={arrival.id} 
-                  onClick={() => setSelectedArrival(arrival)}
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
-                >
+          <TabsContent value="queue" className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="rounded-none border-none bg-muted/20 p-8 space-y-6 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => setSelectedArrival({ id: i, name: 'Artisan Guest', service: 'Bridal Transformation', time: '10:30 AM', status: 'Pending' })}>
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
-                        <Clock className="h-3 w-3" /> {arrival.time}
-                      </div>
-                      <h4 className="font-headline text-2xl leading-none text-foreground">{arrival.name}</h4>
-                      <p className="text-xs text-muted-foreground italic">{arrival.service}</p>
+                      <p className="text-[10px] font-bold text-primary opacity-40">Scheduled {10 + i}:30 AM</p>
+                      <h4 className="font-headline text-3xl">Sara Khan</h4>
+                      <p className="text-xs italic text-muted-foreground">Royal Bridal Glow Up</p>
                     </div>
-                    <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-white border-none' : 'border-primary/20 text-primary'}>
-                      {arrival.status}
-                    </Badge>
+                    <Badge variant="outline" className="rounded-none uppercase text-[8px] font-black tracking-widest px-3">Pending</Badge>
                   </div>
                 </Card>
               ))}
             </div>
           </TabsContent>
 
-          <TabsContent value="orders" className="space-y-4">
-            <div className="space-y-4">
-              {MOCK_ORDERS.map((order) => (
-                <Card 
-                  key={order.id} 
-                  onClick={() => setSelectedOrder(order)}
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
-                        <Package className="h-3 w-3" /> {order.id}
-                      </div>
-                      <h4 className="font-headline text-2xl leading-none text-foreground">{order.client}</h4>
-                      <p className="text-xs text-muted-foreground italic">{order.product}</p>
-                    </div>
-                    <Badge className={cn(
-                      "border-none px-3 py-1",
-                      order.status === 'Delivered' ? 'bg-green-500/10 text-green-600' : 
-                      order.status === 'Picked Up' ? 'bg-blue-500/10 text-blue-600' : 
-                      'bg-orange-500/10 text-orange-600'
-                    )}>
-                      {order.status}
-                    </Badge>
-                  </div>
-                </Card>
+          <TabsContent value="planner" className="space-y-12">
+            <div className="flex justify-between items-center">
+               <h3 className="text-4xl font-headline tracking-tighter italic">Weekly Diary Grid</h3>
+               <Badge className="bg-accent text-black rounded-none">High Demand Period</Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                <div key={day} className="border p-6 space-y-4 bg-white/50 text-center">
+                   <p className="text-[10px] font-black uppercase tracking-widest opacity-40">{day}</p>
+                   <p className="font-headline text-2xl">8/12</p>
+                   <p className="text-[8px] uppercase font-bold opacity-60">Slots Used</p>
+                </div>
               ))}
             </div>
           </TabsContent>
 
-          <TabsContent value="messages" className="space-y-4">
-            <div className="space-y-4">
-              {MOCK_BUSINESS_MESSAGES.map((msg) => (
-                <Card 
-                  key={msg.id} 
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-card/60 backdrop-blur-md flex items-center gap-4 group hover:shadow-xl transition-all cursor-pointer"
-                >
-                  <Avatar className="h-14 w-14 border-2 border-primary/10">
-                    <AvatarFallback className="bg-primary/5 text-primary font-headline text-xl">{msg.client[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-grow min-w-0">
-                    <div className="flex justify-between items-center mb-1">
-                      <h4 className="font-headline text-2xl leading-none">{msg.client}</h4>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.time}</span>
-                    </div>
-                    <p className={cn("text-xs truncate", msg.unread ? "font-bold text-primary" : "text-muted-foreground")}>
-                      {msg.text}
-                    </p>
-                  </div>
-                  <div className="text-primary group-hover:translate-x-1 transition-transform">
-                    <ChevronRight className="h-5 w-5" />
-                  </div>
-                </Card>
-              ))}
+          <TabsContent value="boutique" className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h3 className="text-4xl font-headline tracking-tighter italic">Stock Inventory</h3>
+              <Button className="rounded-none h-10 px-8 font-bold text-[10px] uppercase tracking-widest"><Plus className="h-4 w-4 mr-2" /> Add Item</Button>
             </div>
-          </TabsContent>
-
-          <TabsContent value="inventory" className="space-y-6">
-            <div className="flex justify-between items-center px-2">
-              <h3 className="font-headline text-3xl italic">Shop Inventory</h3>
-              <Button onClick={() => setIsProductSheetOpen(true)} size="sm" className="rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                <Plus className="h-4 w-4 mr-1" /> Add Product
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {PRODUCTS.map((product) => (
-                <Card key={product.id} className="p-4 rounded-[2rem] border-none shadow-md bg-card/40 backdrop-blur-sm flex items-center gap-4">
-                  <div className="relative h-16 w-16 rounded-2xl overflow-hidden flex-shrink-0">
-                    <Image src={product.image} alt={product.name} fill className="object-cover" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {PRODUCTS.map((p) => (
+                <div key={p.id} className="group relative">
+                  <div className="relative aspect-square grayscale group-hover:grayscale-0 transition-all">
+                    <Image src={p.image} alt={p.name} fill className="object-cover" />
                   </div>
-                  <div className="flex-grow min-w-0">
-                    <h4 className="font-headline text-xl truncate leading-tight">{product.name}</h4>
-                    <p className="text-[10px] font-bold text-primary uppercase">{product.brand}</p>
-                    <p className="text-xs font-bold mt-1">Stock: {product.stock}</p>
+                  <div className="pt-4 space-y-1">
+                    <h4 className="font-headline text-xl">{p.name}</h4>
+                    <p className="text-[10px] font-bold opacity-40 uppercase">{p.brand}</p>
+                    <p className="text-xs font-bold">In Stock: {p.stock}</p>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => { setEditingItem(product); setIsProductSheetOpen(true); }}>
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="services" className="space-y-6">
-            <div className="flex justify-between items-center px-2">
-              <h3 className="font-headline text-3xl italic">Live Deals</h3>
-              <Button onClick={() => setIsDealSheetOpen(true)} size="sm" className="rounded-full bg-primary text-white hover:bg-primary/90">
-                <Plus className="h-4 w-4 mr-1" /> New Transformation
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {DEALS.map((deal) => (
-                <Card key={deal.id} className="p-6 rounded-[2.5rem] border-none shadow-md bg-card/40 backdrop-blur-sm space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <Badge className="bg-secondary/20 text-secondary-foreground border-none text-[8px] uppercase font-black">{deal.category}</Badge>
-                      <h4 className="font-headline text-2xl leading-none pt-1">{deal.name}</h4>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="icon" className="rounded-full h-8 w-8 border-primary/20" onClick={() => { setEditingItem(deal); setIsDealSheetOpen(true); }}>
-                        <Edit3 className="h-3.5 w-3.5 text-primary" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+                </div>
               ))}
             </div>
           </TabsContent>
@@ -392,31 +211,29 @@ export default function PartnerPortalPage() {
 
       {/* Courier Onboarding Sheet */}
       <Sheet open={isCourierSheetOpen} onOpenChange={setIsCourierSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-y-auto">
-          <div className="max-w-xl mx-auto space-y-6 py-4">
-            <SheetHeader className="space-y-3">
-              <div className="bg-secondary/20 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <Navigation className="h-8 w-8 text-secondary" />
-              </div>
-              <SheetTitle className="text-5xl font-headline italic text-center">Join Glam Dispatch</SheetTitle>
-              <SheetDescription className="text-lg text-center font-body">Represent our luxury fleet. Deliver the finest beauty products across the city with elegance and precision.</SheetDescription>
-            </SheetHeader>
-            <div className="space-y-6 pt-4">
+        <SheetContent side="bottom" className="rounded-t-none h-[85vh] md:h-auto border-t-0 p-20 bg-primary text-white">
+          <div className="max-w-xl mx-auto space-y-12">
+            <div className="space-y-4 text-center">
+              <Navigation className="h-12 w-12 mx-auto text-accent" />
+              <SheetTitle className="text-6xl font-headline italic text-white tracking-tighter">Glam Dispatch</SheetTitle>
+              <SheetDescription className="text-accent italic text-lg font-body">Represent our luxury fleet. Deliver the finest beauty products across the city with elegance and precision.</SheetDescription>
+            </div>
+            <div className="space-y-8">
                <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Full Legal Name</Label>
-                <Input placeholder="e.g. Zahid Abbas" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+                <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Full Legal Name</Label>
+                <Input placeholder="Reference name" className="rounded-none h-14 bg-white/10 border-white/20 text-white placeholder:text-white/20" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Contact Number</Label>
-                  <Input placeholder="+92 3XX XXXXXXX" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Contact Number</Label>
+                  <Input placeholder="+92 / +91 number" className="rounded-none h-14 bg-white/10 border-white/20 text-white placeholder:text-white/20" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Vehicle Type</Label>
-                  <Input placeholder="e.g. Scooter / Car" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Fleet Vehicle</Label>
+                  <Input placeholder="e.g. Scooter, Luxury Sedan" className="rounded-none h-14 bg-white/10 border-white/20 text-white placeholder:text-white/20" />
                 </div>
               </div>
-              <Button onClick={() => handleAction('Application Received', 'Our logistics team will contact you for dispatch training.')} className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-xl shadow-secondary/10 text-lg">
+              <Button onClick={() => setIsCourierSheetOpen(false)} className="w-full h-16 bg-accent text-black hover:bg-white rounded-none font-bold uppercase tracking-[0.3em] text-[10px]">
                 Submit Fleet Application
               </Button>
             </div>
@@ -424,131 +241,32 @@ export default function PartnerPortalPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Order Status Management Sheet */}
-      <Sheet open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem]">
-          {selectedOrder && (
-            <div className="max-w-xl mx-auto space-y-8 py-4">
-              <SheetHeader className="space-y-3">
-                <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2 bg-primary/10 px-3 py-1 rounded-full">
-                  <Truck className="h-4 w-4" /> Logistics Manager
-                </div>
-                <SheetTitle className="text-5xl font-headline leading-none">{selectedOrder.client}</SheetTitle>
-                <SheetDescription className="italic text-lg">Managing delivery for {selectedOrder.product}</SheetDescription>
-              </SheetHeader>
-              
-              <div className="bg-primary/5 p-8 rounded-[2rem] space-y-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Order Ref</span>
-                  <span className="font-mono font-bold text-primary text-xl">{selectedOrder.id}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Current Status</span>
-                  <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[10px]">{selectedOrder.status}</Badge>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 pb-8">
-                <Button onClick={() => updateOrderStatus('Pending')} variant="outline" className={cn("h-14 font-bold rounded-xl", selectedOrder.status === 'Pending' && "bg-primary/10 border-primary")}>
-                  Mark as Pending
-                </Button>
-                <Button onClick={() => updateOrderStatus('Picked Up')} variant="outline" className={cn("h-14 font-bold rounded-xl", selectedOrder.status === 'Picked Up' && "bg-primary/10 border-primary")}>
-                  Mark as Picked Up
-                </Button>
-                <Button onClick={() => updateOrderStatus('Delivered')} className="h-16 bg-primary text-white font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
-                  Confirm Delivery
-                </Button>
-              </div>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
-
-      {/* Product Add/Edit Sheet */}
-      <Sheet open={isProductSheetOpen} onOpenChange={(open) => { if(!open) setEditingItem(null); setIsProductSheetOpen(open); }}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[90vh] md:h-auto overflow-y-auto">
-          <div className="max-w-xl mx-auto space-y-6 py-4">
-            <SheetHeader>
-              <SheetTitle className="text-4xl font-headline italic">{editingItem ? 'Edit Product' : 'Add New Product'}</SheetTitle>
-              <SheetDescription>List a luxury item in your boutique shop.</SheetDescription>
-            </SheetHeader>
-            <div className="space-y-6 pt-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Product Name</Label>
-                  <Input defaultValue={editingItem?.name} placeholder="e.g. Silk Radiance Foundation" className="rounded-2xl h-14 bg-primary/5 border-primary/10" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Price (PKR)</Label>
-                    <Input defaultValue={editingItem?.price} type="number" placeholder="4800" className="rounded-2xl h-14 bg-primary/5 border-primary/10" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Initial Stock</Label>
-                    <Input defaultValue={editingItem?.stock} type="number" placeholder="25" className="rounded-2xl h-14 bg-primary/5 border-primary/10" />
-                  </div>
-                </div>
-              </div>
-              <Button onClick={() => handleAction('Inventory Updated', 'The product list has been refreshed.')} className="w-full h-16 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg">
-                {editingItem ? 'Update Collection' : 'Add to Collection'}
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Deal Add/Edit Sheet */}
-      <Sheet open={isDealSheetOpen} onOpenChange={(open) => { if(!open) setEditingItem(null); setIsDealSheetOpen(open); }}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[90vh] md:h-auto overflow-y-auto">
-          <div className="max-w-xl mx-auto space-y-6 py-4">
-            <SheetHeader>
-              <SheetTitle className="text-4xl font-headline italic">{editingItem ? 'Edit Transformation' : 'New Parlour Deal'}</SheetTitle>
-              <SheetDescription>Create an exclusive limited-time service offer.</SheetDescription>
-            </SheetHeader>
-            <div className="space-y-6 pt-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Deal Name</Label>
-                <Input defaultValue={editingItem?.name} placeholder="e.g. Royal Bridal Glow Up" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Standard Price</Label>
-                  <Input defaultValue={editingItem?.price} type="number" placeholder="45000" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60">Discounted Price</Label>
-                  <Input defaultValue={editingItem?.discounted_price} type="number" placeholder="32000" className="rounded-2xl h-14 bg-secondary/10 border-secondary/20" />
-                </div>
-              </div>
-              <Button onClick={() => handleAction('Service Published', 'Your transformation is now live on the marketplace.')} className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-xl shadow-secondary/10 text-lg">
-                {editingItem ? 'Update Live Deal' : 'Publish to Marketplace'}
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Guest Entry Drawer */}
+      {/* Guest Check-in Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem]">
+        <SheetContent side="bottom" className="rounded-t-none border-t-0 p-20">
           {selectedArrival && (
-            <div className="max-w-xl mx-auto space-y-8 py-4">
-              <SheetHeader>
-                <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2 bg-primary/10 px-3 py-1 rounded-full">
-                  <CheckCircle2 className="h-4 w-4" /> Guest Check-In
+            <div className="max-w-xl mx-auto space-y-12">
+              <div className="space-y-2">
+                <Badge className="bg-primary text-white rounded-none uppercase tracking-widest text-[8px] font-black">Guest Arrival Check</Badge>
+                <SheetTitle className="text-7xl font-headline leading-none italic">{selectedArrival.name}</SheetTitle>
+                <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
+              </div>
+              
+              <div className="p-10 bg-muted/20 space-y-6">
+                <div className="flex justify-between items-baseline">
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Scheduled Time</span>
+                  <span className="font-headline text-3xl">{selectedArrival.time}</span>
                 </div>
-                <SheetTitle className="text-5xl font-headline leading-none">{selectedArrival.name}</SheetTitle>
-                <SheetDescription className="italic text-lg">{selectedArrival.service}</SheetDescription>
-              </SheetHeader>
-              <div className="grid grid-cols-1 gap-4 pb-8">
-                <Button onClick={() => handleAction('Guest Verified', `${selectedArrival.name} has been checked in.`)} className="h-16 bg-primary text-white font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
+                <div className="flex justify-between items-baseline">
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Booking Reference</span>
+                  <span className="font-mono font-bold tracking-tighter">GL-9382-AR</span>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <Button onClick={() => setSelectedArrival(null)} className="flex-1 h-16 bg-primary text-white font-bold rounded-none uppercase tracking-[0.3em] text-[10px]">
                   Verify & Grant Entry
                 </Button>
-                <SheetClose asChild>
-                  <Button variant="ghost" className="h-14 font-bold text-muted-foreground uppercase tracking-widest text-[10px]">
-                    Dismiss
-                  </Button>
-                </SheetClose>
               </div>
             </div>
           )}
