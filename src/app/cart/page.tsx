@@ -6,7 +6,7 @@ import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Wallet } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ export default function CartPage() {
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = cart.some(i => i.type === 'product') ? (region === 'PK' ? 250 : 150) : 0;
-  const total = subtotal + shipping;
+  const totalDueNow = subtotal + shipping;
 
   const handleCheckout = () => {
     setIsCheckingOut(true);
@@ -69,11 +69,21 @@ export default function CartPage() {
                   </div>
                   <div className="flex-grow px-6 py-4 flex justify-between items-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">{item.type === 'deal' ? 'Parlour Service' : 'Product'}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                        {item.type === 'deal' ? 'Parlour Booking' : 'Product Purchase'}
+                      </span>
                       <h3 className="text-lg font-headline">{item.name}</h3>
-                      <p className="text-sm font-bold text-primary">
-                        {item.quantity} x {getCurrency()} {item.price.toLocaleString()}
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-primary">
+                          {item.type === 'deal' ? 'Upfront Deposit: ' : ''}
+                          {getCurrency()} {item.price.toLocaleString()}
+                        </p>
+                        {item.type === 'deal' && item.full_price && (
+                          <p className="text-[10px] text-muted-foreground italic font-medium">
+                            Remaining {getCurrency()} {(item.full_price - item.price).toLocaleString()} payable at salon
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors">
                       <Trash2 className="h-5 w-5" />
@@ -86,11 +96,11 @@ export default function CartPage() {
             <div className="p-6 bg-primary/5 rounded-xl border border-primary/10 space-y-4">
               <div className="flex items-center gap-3 text-sm font-medium">
                 <ShieldCheck className="h-5 w-5 text-secondary" />
-                <span>All parlour bookings are verified via QR code for your security.</span>
+                <span>Secure {region === 'PK' ? 'JazzCash' : 'UPI'} enabled for instant confirmation.</span>
               </div>
               <div className="flex items-center gap-3 text-sm font-medium">
-                <Truck className="h-5 w-5 text-secondary" />
-                <span>Makeup products are delivered within 2-4 business days.</span>
+                <CreditCard className="h-5 w-5 text-secondary" />
+                <span>You only pay the deposit for parlour bookings today.</span>
               </div>
             </div>
           </div>
@@ -103,39 +113,44 @@ export default function CartPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between text-sm text-white/70">
-                  <span>Subtotal</span>
+                  <span>Cart Items Total</span>
                   <span className="tabular-nums font-bold">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm text-white/70">
-                  <span>Shipping Fee</span>
-                  <span className="tabular-nums font-bold">{getCurrency()} {shipping.toLocaleString()}</span>
-                </div>
+                {cart.some(i => i.type === 'product') && (
+                  <div className="flex justify-between text-sm text-white/70">
+                    <span>Shipping (Products)</span>
+                    <span className="tabular-nums font-bold">{getCurrency()} {shipping.toLocaleString()}</span>
+                  </div>
+                )}
                 <Separator className="bg-white/10" />
-                <div className="flex justify-between text-xl font-headline">
-                  <span>Total</span>
-                  <span className="text-secondary tabular-nums">{getCurrency()} {total.toLocaleString()}</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex justify-between text-xl font-headline">
+                    <span>Total Due Now</span>
+                    <span className="text-secondary tabular-nums">{getCurrency()} {totalDueNow.toLocaleString()}</span>
+                  </div>
+                  <p className="text-[10px] text-white/40 uppercase tracking-widest text-right font-bold">Secure Online Payment</p>
                 </div>
               </CardContent>
             </Card>
 
             <div className="space-y-4">
-              <h4 className="font-headline text-lg">Select Payment Method</h4>
+              <h4 className="font-headline text-lg">Select Gateway</h4>
               <div className="grid grid-cols-2 gap-4">
                 {region === 'PK' ? (
                   <>
                     <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5">
                       <span className="text-xs font-bold text-muted-foreground">JazzCash</span>
-                      <span className="text-[10px] text-muted-foreground opacity-60">Instant Secure</span>
+                      <span className="text-[10px] text-muted-foreground opacity-60 italic">Mobile Wallet</span>
                     </Button>
                     <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5">
                       <span className="text-xs font-bold text-muted-foreground">EasyPaisa</span>
-                      <span className="text-[10px] text-muted-foreground opacity-60">One-Tap Pay</span>
+                      <span className="text-[10px] text-muted-foreground opacity-60 italic">Scan & Pay</span>
                     </Button>
                   </>
                 ) : (
                   <Button variant="outline" className="h-16 flex flex-col gap-1 border-secondary/20 hover:border-secondary hover:bg-secondary/5 w-full col-span-2">
-                    <span className="text-xs font-bold text-muted-foreground">Unified Payments Interface (UPI)</span>
-                    <span className="text-[10px] text-muted-foreground opacity-60">GPay, PhonePe, Paytm</span>
+                    <span className="text-xs font-bold text-muted-foreground">UPI (Unified Payments)</span>
+                    <span className="text-[10px] text-muted-foreground opacity-60 italic">Paytm, GPay, PhonePe</span>
                   </Button>
                 )}
               </div>

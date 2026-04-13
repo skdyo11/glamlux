@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare } from 'lucide-react';
+import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
@@ -64,7 +64,8 @@ export default function DealPage() {
       id: deal.id,
       type: 'deal',
       name: deal.name,
-      price: deal.discounted_price,
+      price: deal.deposit_amount, // Charge only deposit
+      full_price: deal.discounted_price,
       quantity: 1,
       image: parlour.images[0]
     });
@@ -137,17 +138,31 @@ export default function DealPage() {
 
             <Separator className="opacity-50" />
 
-            <div className="space-y-4">
-              <div className="flex items-baseline gap-4">
-                <span className="text-5xl font-bold italic text-primary tabular-nums">
-                  {getCurrency()} {deal.discounted_price.toLocaleString()}
-                </span>
-                <span className="text-xl text-muted-foreground line-through opacity-30 tabular-nums">
-                  {getCurrency()} {deal.price.toLocaleString()}
-                </span>
-                <Badge variant="outline" className="border-secondary text-secondary text-[10px] font-black uppercase px-3 rounded-sm">
-                  SAVE {Math.round((1 - deal.discounted_price / deal.price) * 100)}%
-                </Badge>
+            <div className="space-y-6">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-baseline gap-4">
+                  <span className="text-5xl font-bold italic text-primary tabular-nums">
+                    {getCurrency()} {deal.discounted_price.toLocaleString()}
+                  </span>
+                  <span className="text-xl text-muted-foreground line-through opacity-30 tabular-nums">
+                    {getCurrency()} {deal.price.toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-secondary flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4" />
+                  Only {getCurrency()} {deal.deposit_amount.toLocaleString()} required to secure booking
+                </p>
+              </div>
+
+              <div className="p-6 rounded-3xl bg-secondary/10 border border-secondary/20 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-muted-foreground">Upfront Deposit ({Math.round((deal.deposit_amount / deal.discounted_price) * 100)}%)</span>
+                  <span className="font-bold text-primary">{getCurrency()} {deal.deposit_amount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-muted-foreground">Pay at Parlour</span>
+                  <span className="font-bold text-muted-foreground">{getCurrency()} {(deal.discounted_price - deal.deposit_amount).toLocaleString()}</span>
+                </div>
               </div>
             </div>
 

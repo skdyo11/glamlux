@@ -18,6 +18,7 @@ export type Deal = {
   category: DealCategory;
   price: number;
   discounted_price: number;
+  deposit_amount: number;
   expiry_date: string;
   upsell_product_id?: string;
 };
@@ -36,7 +37,8 @@ export type CartItem = {
   id: string;
   type: 'deal' | 'product';
   name: string;
-  price: number;
+  price: number; // This is the amount to be paid NOW (deposit for deals, full for products)
+  full_price?: number; // Only for deals, to show total value
   quantity: number;
   image?: string;
 };

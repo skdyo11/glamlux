@@ -39,6 +39,7 @@ export const DEALS: Deal[] = [
     category: 'Bridal',
     price: 45000,
     discounted_price: 32000,
+    deposit_amount: 4800, // 15% deposit
     expiry_date: new Date(Date.now() + 86400000 * 2).toISOString(),
     upsell_product_id: 'prod1',
   },
@@ -49,6 +50,7 @@ export const DEALS: Deal[] = [
     category: 'Hair',
     price: 8500,
     discounted_price: 4500,
+    deposit_amount: 900, // 20% deposit
     expiry_date: new Date(Date.now() + 3600000 * 4).toISOString(),
     upsell_product_id: 'prod3',
   },
@@ -59,6 +61,7 @@ export const DEALS: Deal[] = [
     category: 'Skin',
     price: 12500,
     discounted_price: 8500,
+    deposit_amount: 850, // 10% deposit
     expiry_date: new Date(Date.now() + 86400000 * 7).toISOString(),
     upsell_product_id: 'prod4',
   },
@@ -69,6 +72,7 @@ export const DEALS: Deal[] = [
     category: 'Bridal',
     price: 15000,
     discounted_price: 9500,
+    deposit_amount: 1425, // 15% deposit
     expiry_date: new Date(Date.now() + 86400000 * 1).toISOString(),
     upsell_product_id: 'prod2',
   }
