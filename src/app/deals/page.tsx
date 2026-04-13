@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -80,7 +79,6 @@ export default function DealsPage() {
                         alt={deal.name}
                         fill
                         className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
-                        data-ai-hint="luxury salon"
                       />
                       <div className="absolute top-6 left-6">
                         <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none text-[10px] uppercase font-black px-4 py-1.5 tracking-tighter rounded-none">

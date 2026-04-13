@@ -1,4 +1,3 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -6,8 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'GlamLux | Premium Beauty',
-  description: 'Elite parlour deals and designer makeup collection.',
+  title: 'GlamLux | Timeless Elegance',
+  description: 'Exclusive beauty curators and elite marketplace for professional artistry.',
 };
 
 export default function RootLayout({

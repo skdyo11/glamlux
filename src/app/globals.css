@@ -66,3 +66,9 @@
 .charcoal-gradient {
   background: linear-gradient(135deg, hsla(0, 0%, 15%, 1) 0%, hsla(350, 40%, 15%, 1) 100%);
 }
+
+.wavy-bg {
+  @apply fixed inset-0 -z-10 opacity-20 pointer-events-none;
+  background-image: radial-gradient(circle at 2px 2px, hsl(var(--accent-foreground)) 1px, transparent 0);
+  background-size: 40px 40px;
+}
