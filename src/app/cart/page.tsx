@@ -8,19 +8,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone } from 'lucide-react';
+import { Trash2, ShieldCheck, Truck, ShoppingBag, ArrowRight, CreditCard, Banknote, User, Phone, Plus, Minus, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useUser } from '@/firebase';
-import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser } from '@/firebase';
+import { doc, setDoc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function CartPage() {
-  const { cart, region, removeFromCart, getCurrency, clearCart } = useStore();
+  const { cart, region, removeFromCart, updateQuantity, getCurrency, clearCart } = useStore();
   const router = useRouter();
   const { toast } = useToast();
   const { auth, firestore } = useFirestore();
@@ -174,25 +175,59 @@ export default function CartPage() {
                     </div>
                     <div className="flex-grow px-6 py-4 flex justify-between items-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                          {item.type === 'deal' ? 'Parlour Booking' : 'Product Purchase'}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                            {item.type === 'deal' ? 'Parlour Booking' : 'Product Purchase'}
+                          </span>
+                          {item.quantity > 1 && (
+                            <Badge variant="outline" className="text-[8px] h-4 py-0 flex gap-1 items-center border-secondary/30 text-secondary">
+                              <Users className="h-2.5 w-2.5" /> Group of {item.quantity}
+                            </Badge>
+                          )}
+                        </div>
                         <h3 className="text-lg font-headline">{item.name}</h3>
                         <div className="space-y-1">
                           <p className="text-sm font-bold text-primary">
-                            {item.type === 'deal' ? 'Upfront Deposit: ' : ''}
-                            {getCurrency()} {item.price.toLocaleString()}
+                            {item.type === 'deal' ? 'Deposit: ' : ''}
+                            {getCurrency()} {(item.price * item.quantity).toLocaleString()}
                           </p>
                           {item.type === 'deal' && item.full_price && (
                             <p className="text-[10px] text-muted-foreground italic font-medium">
-                              Remaining {getCurrency()} {(item.full_price - item.price).toLocaleString()} payable at salon
+                              Remaining {getCurrency()} {((item.full_price - item.price) * item.quantity).toLocaleString()} at salon
                             </p>
                           )}
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
+                      
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 bg-primary/5 rounded-full p-1 border border-primary/10">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="h-7 w-7 rounded-full text-primary hover:bg-primary/20"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="font-bold text-sm min-w-4 text-center">{item.quantity}</span>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="h-7 w-7 rounded-full text-primary hover:bg-primary/20"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => removeFromCart(item.id)} 
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

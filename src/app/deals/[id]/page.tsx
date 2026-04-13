@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare, ShieldCheck } from 'lucide-react';
+import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, MessageSquare, ShieldCheck, Users, Plus, Minus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
@@ -21,6 +21,7 @@ export default function DealPage() {
   const { addToCart, getCurrency } = useStore();
   const [recommendedProductNames, setRecommendedProductNames] = useState<string[]>([]);
   const [isLoadingRecs, setIsLoadingRecs] = useState(true);
+  const [personCount, setPersonCount] = useState(1);
 
   const deal = DEALS.find(d => d.id === id);
   const parlour = PARLOURS.find(p => p.id === deal?.parlour_id);
@@ -64,9 +65,9 @@ export default function DealPage() {
       id: deal.id,
       type: 'deal',
       name: deal.name,
-      price: deal.deposit_amount, // Charge only deposit
+      price: deal.deposit_amount,
       full_price: deal.discounted_price,
-      quantity: 1,
+      quantity: personCount,
       image: parlour.images[0]
     });
     router.push('/cart');
@@ -150,18 +151,48 @@ export default function DealPage() {
                 </div>
                 <p className="text-sm font-bold text-secondary flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4" />
-                  Only {getCurrency()} {deal.deposit_amount.toLocaleString()} required to secure booking
+                  Only {getCurrency()} {deal.deposit_amount.toLocaleString()} required per person
                 </p>
+              </div>
+
+              {/* Multi-Person Selection */}
+              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-primary font-bold">
+                    <Users className="h-4 w-4" />
+                    <span className="text-sm uppercase tracking-wider">Group Booking</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Select number of guests for this transformation</p>
+                </div>
+                <div className="flex items-center gap-4 bg-white rounded-2xl p-2 shadow-sm border">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => setPersonCount(prev => Math.max(1, prev - 1))}
+                    className="h-8 w-8 text-primary hover:bg-primary/10"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="font-headline text-2xl w-6 text-center">{personCount}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => setPersonCount(prev => prev + 1)}
+                    className="h-8 w-8 text-primary hover:bg-primary/10"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
               <div className="p-6 rounded-3xl bg-secondary/10 border border-secondary/20 space-y-3">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Upfront Deposit ({Math.round((deal.deposit_amount / deal.discounted_price) * 100)}%)</span>
-                  <span className="font-bold text-primary">{getCurrency()} {deal.deposit_amount.toLocaleString()}</span>
+                  <span className="font-medium text-muted-foreground">Deposit for {personCount} {personCount === 1 ? 'person' : 'people'}</span>
+                  <span className="font-bold text-primary">{getCurrency()} {(deal.deposit_amount * personCount).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Pay at Parlour</span>
-                  <span className="font-bold text-muted-foreground">{getCurrency()} {(deal.discounted_price - deal.deposit_amount).toLocaleString()}</span>
+                  <span className="font-medium text-muted-foreground">Balance due at salon</span>
+                  <span className="font-bold text-muted-foreground">{getCurrency()} {((deal.discounted_price - deal.deposit_amount) * personCount).toLocaleString()}</span>
                 </div>
               </div>
             </div>

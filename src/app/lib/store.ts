@@ -20,10 +20,24 @@ export const useStore = () => {
       const existing = prev.find(i => i.id === item.id);
       let next;
       if (existing) {
-        next = prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+        next = prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i);
       } else {
         next = [...prev, item];
       }
+      localStorage.setItem('glam_cart', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const updateQuantity = (id: string, delta: number) => {
+    setCart(prev => {
+      const next = prev.map(item => {
+        if (item.id === id) {
+          const newQty = Math.max(1, item.quantity + delta);
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      });
       localStorage.setItem('glam_cart', JSON.stringify(next));
       return next;
     });
@@ -50,5 +64,5 @@ export const useStore = () => {
 
   const getCurrency = () => region === 'PK' ? 'PKR' : 'INR';
 
-  return { cart, region, addToCart, removeFromCart, clearCart, toggleRegion, getCurrency };
+  return { cart, region, addToCart, updateQuantity, removeFromCart, clearCart, toggleRegion, getCurrency };
 };
