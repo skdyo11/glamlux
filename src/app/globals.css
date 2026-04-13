@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,6 +74,25 @@
   background-size: 40px 40px;
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.glass-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-shimmer::after {
+  content: "";
+  @apply absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 transition-opacity duration-700 pointer-events-none;
+}
+
+.glass-shimmer:hover::after {
+  @apply opacity-100;
+}
+
 .glass-morphism {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl;
+  @apply bg-white/10 backdrop-blur-3xl border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/20;
 }
