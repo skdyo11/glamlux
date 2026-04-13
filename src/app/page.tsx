@@ -53,14 +53,14 @@ export default function Home() {
           <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-2xl space-y-8">
               <Badge className="bg-accent text-accent-foreground px-4 py-1.5 uppercase tracking-widest text-[10px] font-bold border-none">
-                B2B2C Elite Marketplace
+                Exclusive Beauty Curators
               </Badge>
               <h1 className="text-7xl md:text-9xl font-headline leading-[1.1] text-white drop-shadow-xl py-4">
-                Pure <br />
-                <span className="italic">Artistry.</span>
+                Timeless <br />
+                <span className="italic">Elegance.</span>
               </h1>
               <p className="text-lg text-white/90 font-body max-w-sm italic">
-                The Uber for Beauty in Pakistan & India. Professional parlour deals and designer makeup collection.
+                The premier destination for luxury beauty in Pakistan & India. Professional artistry and curated designer collections.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button asChild size="lg" className="bg-white text-black hover:bg-white/90 rounded-none px-10 h-14 font-bold uppercase tracking-widest text-[10px]">
@@ -213,7 +213,7 @@ export default function Home() {
               <span className="font-headline text-3xl tracking-tighter">GlamLux</span>
             </div>
             <p className="text-xs text-muted-foreground font-body italic">
-              Elite beauty marketplace connecting artisans with connoisseurs. Pakistan & India.
+              Elite beauty destination connecting artisans with connoisseurs. Pakistan & India.
             </p>
           </div>
           <div className="space-y-4">
@@ -234,7 +234,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container mx-auto px-6 mt-16 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/30">© 2024 GLAMLUX B2B2C PLATFORM</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/30">© 2024 GLAMLUX LUXURY NETWORK</p>
         </div>
       </footer>
     </div>
