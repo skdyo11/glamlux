@@ -47,13 +47,17 @@ export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
 
 export type Booking = {
   id: string;
-  booking_ref_code: string;
-  cart_items: CartItem[];
-  total_price: number;
-  qr_verification_status: boolean;
-  delivery_status: DeliveryStatus;
-  region: 'PK' | 'IN';
-  created_at: string;
+  localUserId: string;
+  referenceCode: string;
+  cartItems: CartItem[];
+  totalPrice: number;
+  currency: string;
+  qrVerificationStatus: boolean;
+  deliveryStatus: DeliveryStatus;
+  createdAt: string;
+  paymentStatus: string;
+  verifiedAt?: string;
+  parlourOwnerIdsInBooking?: string[];
 };
 
 export type ChatMessage = {

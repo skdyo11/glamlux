@@ -11,24 +11,71 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth, useFirestore, useUser } from '@/firebase';
+import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
+import { setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 export default function CartPage() {
   const { cart, region, removeFromCart, getCurrency, clearCart } = useStore();
   const router = useRouter();
+  const { auth, firestore } = useFirestore();
+  const { user } = useUser();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = cart.some(i => i.type === 'product') ? (region === 'PK' ? 250 : 150) : 0;
   const totalDueNow = subtotal + shipping;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    if (isCheckingOut) return;
     setIsCheckingOut(true);
-    // Simulate booking creation
-    setTimeout(() => {
-      const bookingId = Math.random().toString(36).substring(7).toUpperCase();
-      clearCart();
-      router.push(`/booking/${bookingId}`);
-    }, 1500);
+
+    try {
+      let currentUser = user;
+      if (!currentUser) {
+        const cred = await signInAnonymously(auth);
+        currentUser = cred.user;
+      }
+
+      if (!currentUser) throw new Error("Authentication failed");
+
+      // Ensure local user profile exists
+      const userRef = doc(firestore, 'localUsers', currentUser.uid);
+      setDoc(userRef, {
+        id: currentUser.uid,
+        name: 'Guest User',
+        deviceIdentifier: navigator.userAgent,
+        lastActiveAt: new Date().toISOString()
+      }, { merge: true });
+
+      // Create booking
+      const referenceCode = Math.random().toString(36).substring(7).toUpperCase();
+      const bookingData = {
+        localUserId: currentUser.uid,
+        referenceCode,
+        totalPrice: totalDueNow,
+        currency: getCurrency(),
+        qrVerificationStatus: false,
+        deliveryStatus: 'Pending',
+        createdAt: new Date().toISOString(),
+        paymentStatus: 'Paid',
+        cartItems: cart,
+        parlourOwnerIdsInBooking: cart.filter(i => i.type === 'deal').map(i => 'ADMIN_UID') // For collection group rules
+      };
+
+      const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
+      const newBookingPromise = addDocumentNonBlocking(bookingsCol, bookingData);
+      
+      const docRef = await newBookingPromise;
+      if (docRef) {
+        clearCart();
+        router.push(`/booking/${docRef.id}?uid=${currentUser.uid}`);
+      }
+    } catch (error) {
+      console.error("Checkout failed", error);
+      setIsCheckingOut(false);
+    }
   };
 
   if (cart.length === 0) {

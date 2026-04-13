@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { 
@@ -32,16 +31,19 @@ import {
   Package, 
   Scissors, 
   MessageSquare,
-  Send,
+  QrCode,
+  Truck,
   Edit3,
-  Trash2,
-  Truck
+  Camera
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
 import Image from 'next/image';
 import { DeliveryStatus } from '@/app/types';
+import { useFirestore } from '@/firebase';
+import { collectionGroup, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 const MOCK_ARRIVALS = [
   { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
@@ -63,6 +65,7 @@ const MOCK_BUSINESS_MESSAGES = [
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
+  const { firestore } = useFirestore();
   
   // View States
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
@@ -70,6 +73,77 @@ export default function PartnerPortalPage() {
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('queue');
+
+  // Scanner State
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'scanner') {
+      setIsScanning(true);
+      const scanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        /* verbose= */ false
+      );
+      scanner.render(onScanSuccess, onScanFailure);
+      scannerRef.current = scanner;
+    } else {
+      setIsScanning(false);
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(err => console.error("Failed to clear scanner", err));
+        scannerRef.current = null;
+      }
+    }
+  }, [activeTab]);
+
+  async function onScanSuccess(decodedText: string) {
+    if (!firestore) return;
+    
+    // Scanned text is the referenceCode
+    toast({ title: "Validating Code...", description: `Reference: ${decodedText}` });
+    
+    try {
+      const bookingsQuery = query(
+        collectionGroup(firestore, 'bookings'),
+        where('referenceCode', '==', decodedText)
+      );
+      
+      const querySnapshot = await getDocs(bookingsQuery);
+      
+      if (querySnapshot.empty) {
+        toast({ variant: "destructive", title: "Invalid Voucher", description: "No booking found for this code." });
+        return;
+      }
+
+      const bookingDoc = querySnapshot.docs[0];
+      const bookingData = bookingDoc.data();
+
+      if (bookingData.qrVerificationStatus) {
+        toast({ title: "Already Verified", description: "This voucher has already been used." });
+        return;
+      }
+
+      await updateDoc(bookingDoc.ref, {
+        qrVerificationStatus: true,
+        verifiedAt: new Date().toISOString()
+      });
+
+      toast({ 
+        title: "Access Granted", 
+        description: `Verified for ${bookingData.referenceCode}. User notified.` 
+      });
+      setActiveTab('queue');
+    } catch (error) {
+      console.error("Verification error", error);
+      toast({ variant: "destructive", title: "Scan Error", description: "Could not verify voucher. Check logs." });
+    }
+  }
+
+  function onScanFailure(error: any) {
+    // Silently handle scan failures
+  }
 
   const handleAction = (title: string, desc: string) => {
     toast({ title, description: desc });
@@ -113,16 +187,19 @@ export default function PartnerPortalPage() {
           </div>
         </header>
 
-        <Tabs defaultValue="queue" className="space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="bg-muted/40 backdrop-blur-md p-1 h-16 border border-border/60 rounded-2xl w-full flex overflow-x-auto">
             <TabsTrigger value="queue" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
               Queue
+            </TabsTrigger>
+            <TabsTrigger value="scanner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest flex gap-2">
+              <Camera className="h-3 w-3" /> Scan
             </TabsTrigger>
             <TabsTrigger value="orders" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
               Orders
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
-              Messages
+              Chats
             </TabsTrigger>
             <TabsTrigger value="inventory" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-[10px] uppercase tracking-widest">
               Shop
@@ -131,6 +208,23 @@ export default function PartnerPortalPage() {
               Deals
             </TabsTrigger>
           </TabsList>
+
+          {/* SCANNER TAB */}
+          <TabsContent value="scanner" className="space-y-4">
+             <Card className="rounded-[2.5rem] border-none shadow-2xl overflow-hidden bg-black/5">
+                <CardHeader>
+                  <CardTitle className="font-headline text-3xl">Owner Check-in Scanner</CardTitle>
+                  <CardDescription>Position the client's QR code within the frame to verify entry.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center p-8">
+                   <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-primary/20 bg-white" />
+                   <div className="mt-8 flex items-center gap-2 text-primary font-bold animate-pulse">
+                      <QrCode className="h-6 w-6" />
+                      <span className="text-xs uppercase tracking-widest">Searching for Voucher...</span>
+                   </div>
+                </CardContent>
+             </Card>
+          </TabsContent>
 
           {/* QUEUE TAB */}
           <TabsContent value="queue" className="space-y-4">
