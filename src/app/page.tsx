@@ -56,7 +56,7 @@ export default function Home() {
               <Badge className="bg-accent/30 text-accent-foreground backdrop-blur-md px-5 py-2 uppercase tracking-widest text-[10px] font-black border-none shadow-sm rounded-none">
                 Exclusive Beauty Curators
               </Badge>
-              <h1 className="text-8xl md:text-[10rem] font-headline leading-[0.9] text-white drop-shadow-2xl py-2">
+              <h1 className="text-8xl md:text-[10rem] font-headline leading-[1.1] text-white drop-shadow-2xl py-2">
                 Timeless <br />
                 <span className="italic text-accent-foreground">Elegance.</span>
               </h1>
@@ -83,7 +83,7 @@ export default function Home() {
                 <h2 className="text-5xl font-headline tracking-tighter">Nearby Artisans</h2>
                 <p className="text-muted-foreground italic">Elite beauty hubs in your local area.</p>
               </div>
-              <Link href="/deals" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
+              <Link href="/vendors" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
                 See All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -182,7 +182,7 @@ export default function Home() {
             <ul className="space-y-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
               <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Transformations</Link></li>
               <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">The Boutique</Link></li>
-              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Artisan Network</Link></li>
+              <li><Link href="/vendors" className="hover:text-accent-foreground transition-colors">Artisan Network</Link></li>
             </ul>
           </div>
         </div>

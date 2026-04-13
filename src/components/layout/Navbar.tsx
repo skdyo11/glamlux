@@ -27,7 +27,8 @@ export function Navbar() {
   const navLinks = [
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
-    { href: '/messages', label: 'Chats', icon: MessageSquare },
+    { href: '/vendors', label: 'Parlours', icon: MapPin },
+    { href: '/messages', label: 'Messages', icon: MessageSquare },
     { href: '/portal', label: 'Portal', icon: LayoutDashboard },
   ];
 
