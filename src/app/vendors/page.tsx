@@ -39,35 +39,35 @@ export default function VendorsPage() {
       
       <main className="container mx-auto px-6 py-16 md:py-24">
         <header className="max-w-4xl mb-20 space-y-6">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-none bg-primary/10 border border-primary/20 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-none bg-primary/10 border border-primary/20 dark:border-white/10 backdrop-blur-3xl shadow-xl">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Artisan Network</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Beauty Network</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-headline text-primary tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
+          <h1 className="text-6xl md:text-8xl font-headline text-foreground tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
             The most prestigious parlours and independent artists in your region, curated for professional results.
           </p>
         </header>
 
         {/* Search and Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/10 p-6 md:p-8 rounded-none border border-white/30 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
+        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/10 dark:bg-white/5 p-6 md:p-8 rounded-none border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
           <div className="relative flex-grow w-full">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
               placeholder="Search sanctuaries by name or area..." 
-              className="pl-16 h-16 bg-white/20 border-none focus-visible:ring-primary/10 rounded-none font-body text-lg italic placeholder:text-primary/20"
+              className="pl-16 h-16 bg-white/20 dark:bg-white/5 border-none focus-visible:ring-primary/10 rounded-none font-body text-lg italic placeholder:text-muted-foreground/60 text-foreground"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={areaFilter} onValueChange={setAreaFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/20 border-none rounded-none font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md">
+              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/20 dark:bg-white/5 border-none rounded-none font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md text-foreground">
                 <SelectValue placeholder="All Regions" />
               </SelectTrigger>
-              <SelectContent className="rounded-none font-body border-none shadow-2xl backdrop-blur-xl bg-white/80">
+              <SelectContent className="rounded-none font-body border border-border/10 shadow-2xl backdrop-blur-3xl bg-background/95">
                 {uniqueAreas.map((area) => (
-                  <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest">{area}</SelectItem>
+                  <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest hover:bg-accent hover:text-accent-foreground">{area}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -78,7 +78,7 @@ export default function VendorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {filteredVendors.map((vendor) => (
               <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block">
-                <Card className="overflow-hidden border-none bg-white/20 backdrop-blur-3xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-none active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40">
+                <Card className="overflow-hidden border-none bg-white/40 dark:bg-white/5 backdrop-blur-3xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-none active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40">
                   <div className="relative h-72 md:h-80 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000">
                     <Image 
                       src={vendor.images[0]} 
@@ -87,7 +87,7 @@ export default function VendorsPage() {
                       className="object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute top-8 left-8">
-                      <Badge className="bg-white/95 backdrop-blur-md text-primary border-none text-[9px] uppercase font-black px-5 py-2.5 tracking-[0.2em] rounded-none shadow-lg">
+                      <Badge className="bg-white/95 dark:bg-black/80 text-foreground border border-white/20 text-[9px] uppercase font-black px-5 py-2.5 tracking-[0.2em] rounded-none shadow-2xl backdrop-blur-md">
                         Elite Partner
                       </Badge>
                     </div>
@@ -97,11 +97,11 @@ export default function VendorsPage() {
                       <MapPin className="h-4 w-4 text-destructive" />
                       {vendor.area_tag}
                     </div>
-                    <CardTitle className="text-3xl md:text-4xl font-headline group-hover:text-primary transition-colors leading-none italic">
+                    <CardTitle className="text-3xl md:text-4xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-foreground">
                       {vendor.name}
                     </CardTitle>
                   </CardHeader>
-                  <CardFooter className="mt-8 pt-8 border-t border-white/20 flex justify-between items-center bg-white/10 px-10 h-20 backdrop-blur-md">
+                  <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-20 backdrop-blur-md">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
                       <Star className="h-4 w-4 fill-accent-foreground" />
                       {vendor.rating} Registry
@@ -115,11 +115,11 @@ export default function VendorsPage() {
             ))}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8 bg-white/10 backdrop-blur-3xl border border-dashed border-white/30 rounded-none">
+          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-3xl border border-dashed border-white/20 rounded-none">
             <div className="bg-primary/5 w-32 h-32 rounded-none flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
               <Navigation className="h-12 w-12 text-primary/20" />
             </div>
-            <h3 className="text-5xl font-headline italic">Sanctuary Not Found</h3>
+            <h3 className="text-5xl font-headline italic text-foreground">Sanctuary Not Found</h3>
             <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">No artisan locations matched your search. Try a different region or studio name.</p>
           </div>
         )}

@@ -1,50 +1,51 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* Light Theme - Soft Editorial Palette */
     --background: 35 30% 96%; /* Soft Sand */
-    --foreground: 0 0% 15%; /* Charcoal */
+    --foreground: 0 0% 12%; /* Deep Charcoal */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
+    --card-foreground: 0 0% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-    --primary: 0 0% 15%; /* Charcoal */
+    --popover-foreground: 0 0% 12%;
+    --primary: 0 0% 12%; 
     --primary-foreground: 35 30% 96%;
     --secondary: 350 25% 92%; /* Soft Blush Pink */
-    --secondary-foreground: 350 50% 20%; /* Deep Rose Text */
+    --secondary-foreground: 350 60% 25%; /* Deep Berry */
     --muted: 30 10% 90%;
-    --muted-foreground: 30 5% 45%;
-    --accent: 350 50% 94%; /* Prominent Soft Pink */
-    --accent-foreground: 350 40% 35%; /* Muted Berry Red */
-    --destructive: 350 60% 45%; /* Softened Berry Red */
+    --muted-foreground: 0 0% 40%; /* Accessible Grey */
+    --accent: 350 50% 94%; 
+    --accent-foreground: 350 70% 35%; /* High Contrast Berry */
+    --destructive: 350 70% 45%; 
     --destructive-foreground: 0 0% 98%;
     --border: 30 10% 85%;
     --input: 30 10% 85%;
-    --ring: 350 40% 50%;
+    --ring: 350 60% 50%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 35 30% 96%;
-    --card: 0 0% 12%;
-    --card-foreground: 35 30% 96%;
-    --popover: 0 0% 12%;
-    --popover-foreground: 35 30% 96%;
-    --primary: 35 30% 96%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 350 20% 15%;
-    --secondary-foreground: 350 40% 90%;
+    /* Dark Theme - High Intensity Luxury */
+    --background: 0 0% 8%; /* Pure Night */
+    --foreground: 35 20% 94%; /* Off-white Sand */
+    --card: 0 0% 10%;
+    --card-foreground: 35 20% 94%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 35 20% 94%;
+    --primary: 35 20% 94%;
+    --primary-foreground: 0 0% 8%;
+    --secondary: 350 30% 15%;
+    --secondary-foreground: 350 80% 85%;
     --muted: 0 0% 15%;
-    --muted-foreground: 35 10% 70%;
-    --accent: 350 30% 20%;
-    --accent-foreground: 350 50% 90%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 350 40% 70%;
+    --muted-foreground: 0 0% 65%; /* Readable Grey on Black */
+    --accent: 350 40% 18%;
+    --accent-foreground: 350 90% 80%; /* Vibrant Pink on Black */
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 350 70% 70%;
   }
 }
 
@@ -56,7 +57,7 @@
     @apply bg-background text-foreground font-body overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline font-medium tracking-tight;
+    @apply font-headline font-medium tracking-tight text-foreground;
   }
 }
 
@@ -69,7 +70,7 @@
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-20 pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.15] dark:opacity-[0.05] pointer-events-none;
   background-image: radial-gradient(circle at 2px 2px, hsl(var(--accent-foreground)) 1px, transparent 0);
   background-size: 40px 40px;
 }
@@ -79,20 +80,6 @@
   100% { transform: translateX(100%); }
 }
 
-.glass-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.glass-shimmer::after {
-  content: "";
-  @apply absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 transition-opacity duration-700 pointer-events-none;
-}
-
-.glass-shimmer:hover::after {
-  @apply opacity-100;
-}
-
 .glass-morphism {
-  @apply bg-white/10 backdrop-blur-3xl border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/20;
+  @apply bg-white/10 dark:bg-white/5 backdrop-blur-3xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/10;
 }
