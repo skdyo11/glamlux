@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export function Navbar() {
   const { cart, region, toggleRegion } = useStore();
@@ -38,10 +37,6 @@ export function Navbar() {
       <nav className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl transition-all duration-700 hidden md:block">
         <div className="container mx-auto px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Avatar className="h-10 w-10 border-none bg-primary text-white">
-              <AvatarFallback className="bg-primary text-white font-body text-sm">N</AvatarFallback>
-            </Avatar>
-            
             <Link href="/" className="flex items-center space-x-2 group">
               <Sparkles className="h-6 w-6 text-accent-foreground group-hover:scale-110 transition-transform duration-500" />
               <span className="font-headline text-2xl tracking-tighter text-primary italic">GlamLux</span>
