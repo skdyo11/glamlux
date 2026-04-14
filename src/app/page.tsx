@@ -47,7 +47,7 @@ export default function Home() {
                 <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] shadow-2xl border-none">
                   <Link href="/deals">Book Now</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-white/30 bg-white/10 backdrop-blur-md text-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] hover:bg-white/20 transition-all">
+                <Button asChild variant="outline" size="lg" className="border-white/30 bg-white/10 backdrop-blur-xl text-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] hover:bg-white/20 transition-all">
                   <Link href="/shop">Buy Makeup</Link>
                 </Button>
               </div>
@@ -72,10 +72,10 @@ export default function Home() {
               {VENDORS.slice(0, 3).map((vendor) => (
                 <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group interactive-element">
                   <Card className="border-none shadow-none overflow-hidden bg-transparent rounded-[3rem]">
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-[3rem] transition-all duration-500 shadow-xl ring-1 ring-black/5 dark:ring-white/10">
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-[3rem] transition-all duration-300 shadow-xl ring-1 ring-black/5 dark:ring-white/10">
                       <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover soft-focus" />
                       <div className="absolute top-6 left-6">
-                        <Badge className="bg-white/90 dark:bg-black/80 text-primary border-none text-[8px] font-black px-4 py-2 shadow-lg uppercase tracking-widest backdrop-blur-md rounded-full">
+                        <Badge className="bg-white/90 dark:bg-black/80 text-primary border-none text-[8px] font-black px-4 py-2 shadow-lg uppercase tracking-widest backdrop-blur-xl rounded-full">
                           {vendor.area_tag}
                         </Badge>
                       </div>
@@ -106,7 +106,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
               {DEALS.map((deal) => (
                 <Link key={deal.id} href={`/deals/${deal.id}`} className="group block interactive-element">
-                  <Card className="liquid-glass rounded-[3rem] overflow-hidden group-hover:bg-white/40 dark:group-hover:bg-black/40 transition-all duration-300 shadow-2xl ring-1 ring-white/10 border-none h-full flex flex-col">
+                  <Card className="liquid-glass rounded-[3rem] overflow-hidden group-hover:bg-white/40 dark:group-hover:bg-black/40 transition-all duration-300 shadow-xl border-none h-full flex flex-col">
                     <div className="relative h-72 overflow-hidden">
                       <Image 
                         src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -35,7 +34,7 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-white/10 dark:bg-white/5 backdrop-blur-2xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
+    <div className="flex items-center p-1 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
       {!isHome && (
         <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white/10 transition-all">
@@ -59,7 +58,7 @@ export function Navbar() {
       </Button>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-white/10 transition-all overflow-visible">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-white/10 transition-all">
           <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
           {cartCount > 0 && (
             <Badge className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border-2 border-background animate-in zoom-in-50 z-10 rounded-full">
@@ -74,7 +73,7 @@ export function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/20 dark:border-white/5 bg-white/5 dark:bg-black/40 backdrop-blur-3xl transition-all duration-300 hidden md:block">
+      <nav className="fixed top-0 z-50 w-full border-b border-white/20 dark:border-white/5 bg-white/5 dark:bg-black/40 backdrop-blur-xl transition-all duration-300 hidden md:block">
         <div className="w-full px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center space-x-2 group">
@@ -109,7 +108,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-3 right-3 z-50 h-12 border border-white/40 dark:border-white/10 bg-white/10 dark:bg-black/40 backdrop-blur-3xl md:hidden flex items-center justify-between px-3 shadow-xl rounded-2xl ring-1 ring-white/10">
+      <nav className="fixed top-3 left-3 right-3 z-50 h-12 border border-white/40 dark:border-white/10 bg-white/10 dark:bg-black/40 backdrop-blur-xl md:hidden flex items-center justify-between px-3 shadow-lg rounded-2xl">
         <Link href="/" className="flex items-center space-x-1.5 group">
           <Sparkles className="h-4 w-4 text-accent-foreground" />
           <span className="font-headline text-base tracking-tighter text-foreground italic">GlamLux</span>
@@ -121,17 +120,17 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-white/10 dark:bg-black/60 backdrop-blur-3xl border border-white/40 dark:border-white/10 rounded-full md:hidden flex items-center justify-around h-11 px-2 shadow-xl ring-1 ring-white/20 overflow-hidden">
+      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-white/10 dark:bg-black/60 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-full md:hidden flex items-center justify-around h-11 px-2 shadow-lg overflow-hidden">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
             <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center h-full transition-all">
               <div className={cn(
-                "p-2 transition-all duration-300 rounded-full",
+                "p-2 transition-all duration-200 rounded-full",
                 isActive 
-                  ? "text-accent-foreground scale-105 bg-white/20 dark:bg-white/10 border border-white/40 ring-1 ring-accent-foreground/10" 
-                  : "text-muted-foreground/60 active:scale-90"
+                  ? "text-accent-foreground scale-105 bg-white/20 dark:bg-white/10 border border-white/40" 
+                  : "text-muted-foreground/60 active:scale-95"
               )}>
                 <Icon className={cn("h-3.5 w-3.5", isActive && "stroke-[2.5px]")} />
               </div>
