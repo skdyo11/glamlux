@@ -6,19 +6,25 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Download, Share2, CheckCircle2, QrCode, AlertCircle } from 'lucide-react';
+import { Sparkles, Download, Share2, CheckCircle2, QrCode, Truck, Package, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 export default function BookingSuccessPage() {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const uid = searchParams.get('uid');
   const firestore = useFirestore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const bookingRef = useMemoFirebase(() => {
     if (!firestore || !uid || !id) return null;
@@ -27,120 +33,118 @@ export default function BookingSuccessPage() {
 
   const { data: booking, isLoading } = useDoc(bookingRef);
 
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
-      <div className="min-h-screen bg-primary flex items-center justify-center">
-        <Sparkles className="h-12 w-12 text-white animate-pulse" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Sparkles className="h-12 w-12 text-primary animate-pulse" />
       </div>
     );
   }
 
+  const hasProducts = booking?.cartItems?.some((item: any) => item.type === 'product');
+  const steps = [
+    { label: 'Order Placed', icon: Package, date: 'Today', status: 'completed' },
+    { label: 'Processing', icon: Clock, date: 'Pending', status: booking?.deliveryStatus === 'Pending' ? 'current' : 'completed' },
+    { label: 'Shipped', icon: Truck, date: 'Soon', status: booking?.deliveryStatus === 'Picked Up' ? 'current' : booking?.deliveryStatus === 'Delivered' ? 'completed' : 'upcoming' },
+    { label: 'Delivered', icon: CheckCircle2, date: 'Expected 2-4 days', status: booking?.deliveryStatus === 'Delivered' ? 'current' : 'upcoming' },
+  ];
+
   return (
-    <div className="min-h-screen bg-primary">
+    <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-16 flex flex-col items-center">
-        <div className="max-w-md w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <main className="container mx-auto px-6 py-12 flex flex-col items-center">
+        <div className="max-w-2xl w-full space-y-12">
+          {/* Header */}
           <div className="text-center space-y-4">
-            <div className="bg-secondary h-16 w-16 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-secondary/20">
+            <div className="bg-primary/5 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-xl ring-1 ring-primary/10">
               <CheckCircle2 className="h-10 w-10 text-primary" />
             </div>
-            <h1 className="text-4xl font-headline text-white">Purchase Confirmed</h1>
-            <p className="text-white/60">Your luxury journey with GlamLux begins now.</p>
+            <h1 className="text-5xl font-headline text-primary italic tracking-tighter">Order Confirmed</h1>
+            <p className="text-muted-foreground italic text-sm">Your luxury collection is being prepared.</p>
           </div>
 
-          {booking?.qrVerificationStatus && (
-            <Alert className="bg-green-500/20 border-green-500/40 text-white animate-bounce">
-              <CheckCircle2 className="h-4 w-4 text-green-400" />
-              <AlertTitle className="font-headline text-xl">Verified Entry!</AlertTitle>
-              <AlertDescription className="font-body italic opacity-80">
-                Thank you for visiting! You can now leave a verified review.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <Card className="border-none overflow-hidden relative shadow-2xl">
-            <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-primary z-10" />
-            <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-primary z-10" />
-            
-            <CardHeader className="bg-secondary text-primary-foreground py-8 text-center relative">
-              <div className="flex justify-center items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">Digital Glam Voucher</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            {/* Voucher Card */}
+            <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden bg-white/40 backdrop-blur-xl">
+              <div className="bg-primary p-8 text-center space-y-2">
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/60">Digital Ticket</span>
+                <h2 className="font-headline text-3xl text-white italic">Elite Access Pass</h2>
               </div>
-              <CardTitle className="font-headline text-3xl">GlamLux Elite Pass</CardTitle>
-            </CardHeader>
-            
-            <CardContent className="p-8 pt-12 text-center space-y-8">
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Booking Reference</p>
-                <p className="text-2xl font-bold tracking-tighter text-primary font-mono">{booking?.referenceCode || id}</p>
-              </div>
-
-              <div className="bg-white p-6 inline-block rounded-2xl border-2 border-primary/5 shadow-inner">
-                 <div className="p-2 bg-white rounded-lg">
-                   {booking?.referenceCode ? (
-                     <QRCodeCanvas 
-                        value={booking.referenceCode} 
-                        size={192} 
-                        level="H"
-                        includeMargin={true}
-                        imageSettings={{
-                          src: "/favicon.ico",
-                          x: undefined,
-                          y: undefined,
-                          height: 24,
-                          width: 24,
-                          excavate: true,
-                        }}
-                     />
-                   ) : (
-                     <div className="w-48 h-48 bg-primary/5 rounded-lg flex items-center justify-center border-4 border-dashed border-primary/20">
-                       <QrCode className="w-32 h-32 text-primary opacity-80" />
-                     </div>
-                   )}
-                 </div>
-                 <p className="mt-4 text-[10px] text-muted-foreground uppercase font-bold">Present at Parlour for Verification</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-left border-t pt-8 border-dashed border-muted">
+              <CardContent className="p-10 space-y-8 text-center">
+                <div className="bg-white p-4 inline-block rounded-[2rem] shadow-inner ring-1 ring-black/5">
+                  {booking?.referenceCode ? (
+                    <QRCodeCanvas value={booking.referenceCode} size={160} level="H" includeMargin={true} />
+                  ) : (
+                    <div className="w-40 h-40 flex items-center justify-center bg-muted rounded-2xl"><QrCode className="h-20 w-20 opacity-10" /></div>
+                  )}
+                </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold">Client</p>
-                  <p className="text-sm font-bold">Valued Guest</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Reference Code</p>
+                  <p className="font-mono font-bold text-xl text-primary">{booking?.referenceCode || id}</p>
                 </div>
-                <div className="space-y-1 text-right">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold">Status</p>
-                  <p className={cn(
-                    "text-sm font-bold",
-                    booking?.qrVerificationStatus ? "text-green-500" : "text-orange-500"
-                  )}>
-                    {booking?.qrVerificationStatus ? 'Verified' : 'Active'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                {booking?.qrVerificationStatus ? (
-                  <Button className="w-full bg-primary text-white font-bold h-12 rounded-xl">
-                    Write Verified Review
+                <div className="flex gap-4 pt-4">
+                  <Button variant="outline" className="flex-1 rounded-full h-12 text-[10px] uppercase font-bold tracking-widest border-primary/10">
+                    <Download className="h-4 w-4 mr-2" /> Save
                   </Button>
-                ) : (
-                  <>
-                    <Button variant="outline" className="flex-1 border-primary/20 hover:border-primary">
-                      <Download className="h-4 w-4 mr-2" /> Save PDF
-                    </Button>
-                    <Button variant="outline" className="flex-1 border-primary/20 hover:border-primary">
-                      <Share2 className="h-4 w-4 mr-2" /> Share
-                    </Button>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  <Button variant="outline" className="flex-1 rounded-full h-12 text-[10px] uppercase font-bold tracking-widest border-primary/10">
+                    <Share2 className="h-4 w-4 mr-2" /> Share
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
-          <div className="text-center space-y-4 pt-4">
-            <Button asChild variant="link" className="text-white/60 hover:text-white">
-              <Link href="/">Return to Marketplace</Link>
+            {/* Delivery Tracker (Daraz Style) */}
+            <Card className="rounded-[3rem] border-none shadow-2xl bg-white/40 backdrop-blur-xl p-10 space-y-8">
+              <div className="flex items-center justify-between">
+                <h3 className="font-headline text-3xl italic text-primary">Delivery Updates</h3>
+                <Badge variant="outline" className="rounded-full bg-primary/5 border-none text-[8px] font-black uppercase px-3 py-1 text-primary">
+                  {booking?.deliveryStatus || 'Pending'}
+                </Badge>
+              </div>
+
+              <div className="space-y-8">
+                {steps.map((step, idx) => (
+                  <div key={idx} className="flex gap-6 relative">
+                    {idx !== steps.length - 1 && (
+                      <div className={cn(
+                        "absolute left-[1.125rem] top-8 w-0.5 h-12",
+                        step.status === 'completed' ? "bg-primary" : "bg-muted"
+                      )} />
+                    )}
+                    <div className={cn(
+                      "h-9 w-9 rounded-full flex items-center justify-center shrink-0 z-10",
+                      step.status === 'completed' ? "bg-primary text-white" : 
+                      step.status === 'current' ? "bg-accent text-primary animate-pulse shadow-lg ring-2 ring-primary/20" : 
+                      "bg-muted text-muted-foreground"
+                    )}>
+                      <step.icon className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <p className={cn(
+                        "text-sm font-bold",
+                        step.status === 'upcoming' ? "text-muted-foreground" : "text-primary"
+                      )}>{step.label}</p>
+                      <p className="text-[10px] uppercase font-bold opacity-40 tracking-widest">{step.date}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-6 border-t border-primary/5 space-y-4">
+                 <div className="flex items-center gap-3 text-primary/60 italic text-xs">
+                   <MapPin className="h-4 w-4" /> Delivered to: {booking?.user_phone}
+                 </div>
+                 <Button asChild variant="ghost" className="w-full h-12 rounded-full font-bold text-[10px] uppercase tracking-widest text-primary hover:bg-primary/5">
+                   <Link href="/messages">Chat with Support</Link>
+                 </Button>
+              </div>
+            </Card>
+          </div>
+
+          <div className="text-center pt-8">
+            <Button asChild variant="link" className="text-primary hover:text-accent-foreground font-bold italic">
+              <Link href="/">Back to Marketplace</Link>
             </Button>
           </div>
         </div>
