@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -110,23 +111,23 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none">
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none liquid-glass">
                <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Sales ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none">
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none liquid-glass">
                <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Workers Today</p>
              </Card>
              <Card 
-                className="rounded-[3rem] border-none bg-primary text-white p-10 space-y-4 cursor-pointer hover:bg-primary/90 transition-all duration-500 shadow-2xl ring-1 ring-white/20 group liquid-glass"
+                className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 cursor-pointer hover:bg-white/10 transition-all duration-500 shadow-2xl ring-1 ring-white/10 group liquid-glass"
                 onClick={() => setIsCourierSheetOpen(true)}
              >
-                <Navigation className="h-6 w-6 opacity-60 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                <p className="text-[10px] uppercase font-black tracking-widest">Join Delivery Team</p>
-                <p className="text-xs italic opacity-60">Help us deliver makeup</p>
+                <Navigation className="h-6 w-6 opacity-60 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform text-primary" />
+                <p className="text-[10px] uppercase font-black tracking-widest text-primary">Join Delivery Team</p>
+                <p className="text-xs italic opacity-60 text-primary">Help us deliver makeup</p>
              </Card>
           </div>
         </header>
@@ -164,7 +165,7 @@ export default function PartnerPortalPage() {
               {[1, 2, 3].map((i) => (
                 <Card 
                   key={i} 
-                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-500 cursor-pointer shadow-xl ring-1 ring-white/5 group" 
+                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-500 cursor-pointer shadow-xl ring-1 ring-white/5 group liquid-glass" 
                   onClick={() => setSelectedArrival({ id: i, name: 'Customer', service: 'Bridal Service', time: '10:30 AM', status: 'Pending' })}
                 >
                   <div className="flex justify-between items-start">
@@ -187,7 +188,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-500 group ring-1 ring-white/5 rounded-[2rem]">
+                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-500 group ring-1 ring-white/5 rounded-[2rem] liquid-glass">
                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity text-primary">{day}</p>
                    <p className="font-headline text-2xl text-primary italic">8/12</p>
                    <p className="text-[8px] uppercase font-bold opacity-60 text-primary">Slots Full</p>
@@ -205,7 +206,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 rounded-[3rem] transition-all duration-700 hover:bg-white/10 shadow-xl ring-1 ring-white/5">
+                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 rounded-[3rem] transition-all duration-700 hover:bg-white/10 shadow-xl ring-1 ring-white/5 liquid-glass">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
                     <Image src={p.image} alt={p.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
                   </div>
