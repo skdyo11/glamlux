@@ -63,27 +63,27 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       <main className={cn(
-        "container mx-auto max-w-screen-2xl px-0 md:px-4 md:py-8 h-[calc(100vh-64px)] flex",
+        "container mx-auto max-w-screen-2xl px-0 md:px-4 pt-24 md:pt-24 pb-24 md:pb-8 h-screen flex transition-all duration-300",
         activeConversation ? "flex-col md:flex-row" : "flex-col"
       )}>
-        {/* Conversation List - Narrower to make chat bigger */}
+        {/* Conversation List */}
         <div className={cn(
-          "w-full md:w-64 lg:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl",
+          "w-full md:w-64 lg:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden",
           activeConversation ? "hidden md:flex" : "flex"
         )}>
           <div className="p-6 space-y-4">
-            <h1 className="text-3xl font-headline italic">Customer Chat</h1>
+            <h1 className="text-3xl font-headline italic text-primary">Customer Chat</h1>
             <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Talk to parlours and support</p>
             <div className="relative">
-              <Input placeholder="Search messages..." className="rounded-2xl bg-white/60 border-none h-12" />
+              <Input placeholder="Search messages..." className="rounded-2xl bg-white/60 border-none h-12 px-4 text-xs" />
             </div>
           </div>
           <ScrollArea className="flex-1">
-            <div className="px-2 space-y-2 pb-20 md:pb-4">
+            <div className="px-2 space-y-2 pb-4">
               {MOCK_CONVERSATIONS.map((conv) => (
                 <button
                   key={conv.id}
@@ -119,12 +119,12 @@ export default function MessagesPage() {
           </ScrollArea>
         </div>
 
-        {/* Chat Window - Now fills the rest of the 2xl container */}
+        {/* Chat Window */}
         {activeConversation && (
-          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden">
+          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl">
             {/* Chat Header */}
             <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md">
-              <Button variant="ghost" size="icon" onClick={() => setActiveConversation(null)} className="md:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setActiveConversation(null)} className="md:hidden text-primary">
                 <ChevronLeft className="h-6 w-6" />
               </Button>
               <Avatar className="h-10 w-10">
@@ -132,27 +132,27 @@ export default function MessagesPage() {
                 <AvatarFallback>{activeConversation.participantName[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <h3 className="font-headline text-xl leading-none">{activeConversation.participantName}</h3>
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest">Active Now</p>
+                <h3 className="font-headline text-xl leading-none text-primary italic">{activeConversation.participantName}</h3>
+                <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">Active Now</p>
               </div>
-              <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="text-primary/40"><MoreVertical className="h-5 w-5" /></Button>
             </div>
 
             {/* Messages Area */}
             <ScrollArea className="flex-1 p-4 md:p-8">
               <div className="space-y-6">
                 <div className="flex justify-center">
-                  <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-3 py-1 rounded-full">Secure Messaging</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-4 py-1.5 rounded-full border border-primary/10">Secure Messaging</span>
                 </div>
                 {activeConversation.messages.map((msg) => (
-                  <div key={msg.id} className={cn("flex flex-col max-w-[80%] space-y-1", msg.isMe ? "ml-auto items-end" : "items-start")}>
+                  <div key={msg.id} className={cn("flex flex-col max-w-[85%] space-y-1", msg.isMe ? "ml-auto items-end" : "items-start")}>
                     <div className={cn(
                       "p-4 rounded-[1.5rem] shadow-sm",
                       msg.isMe ? "bg-primary text-white rounded-tr-none" : "bg-white/60 text-foreground rounded-tl-none backdrop-blur-sm border border-white/40"
                     )}>
-                      <p className="text-sm font-body">{msg.text}</p>
+                      <p className="text-sm font-body leading-relaxed">{msg.text}</p>
                     </div>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.timestamp}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50">{msg.timestamp}</span>
                   </div>
                 ))}
               </div>
@@ -166,10 +166,10 @@ export default function MessagesPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Type a message..." 
-                  className="rounded-full h-14 bg-white/80 border-none px-6 text-lg" 
+                  className="rounded-full h-14 bg-white/80 border-none px-6 text-sm shadow-inner" 
                 />
-                <Button onClick={handleSendMessage} size="icon" className="h-14 w-14 rounded-full bg-primary text-white shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
-                  <Send className="h-6 w-6" />
+                <Button onClick={handleSendMessage} size="icon" className="h-14 w-14 rounded-full bg-primary text-white shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                  <Send className="h-5 w-5" />
                 </Button>
               </div>
             </div>
