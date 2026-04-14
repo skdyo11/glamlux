@@ -67,7 +67,7 @@ export default function MessagesPage() {
       <Navbar />
       
       <main className={cn(
-        "container mx-auto max-w-screen-2xl px-0 md:px-4 pt-20 md:pt-24 pb-32 md:pb-8 flex flex-1 h-[calc(100vh-20px)] transition-all duration-300",
+        "container mx-auto max-w-screen-2xl px-0 md:px-4 flex flex-1 h-[calc(100dvh-120px)] md:h-[calc(100vh-100px)] transition-all duration-300",
         activeConversation ? "flex-col md:flex-row" : "flex-col"
       )}>
         {/* Conversation List */}
@@ -123,7 +123,7 @@ export default function MessagesPage() {
         {activeConversation && (
           <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative">
             {/* Chat Header */}
-            <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md z-10">
+            <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md z-10 sticky top-0">
               <Button variant="ghost" size="icon" onClick={() => setActiveConversation(null)} className="md:hidden text-primary">
                 <ChevronLeft className="h-6 w-6" />
               </Button>
@@ -140,7 +140,7 @@ export default function MessagesPage() {
 
             {/* Messages Area */}
             <ScrollArea className="flex-1 p-4 md:p-8">
-              <div className="space-y-6 pb-32">
+              <div className="space-y-6 pb-20">
                 <div className="flex justify-center">
                   <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-4 py-1.5 rounded-full border border-primary/10">Secure Messaging</span>
                 </div>
@@ -158,8 +158,8 @@ export default function MessagesPage() {
               </div>
             </ScrollArea>
 
-            {/* Input Area */}
-            <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t z-10 pb-8 md:pb-6">
+            {/* Input Area - Pinned above bottom nav */}
+            <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t z-10 pb-20 md:pb-6">
               <div className="flex gap-2 max-w-4xl mx-auto">
                 <Input 
                   value={newMessage}
