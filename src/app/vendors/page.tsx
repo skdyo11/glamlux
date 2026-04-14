@@ -39,33 +39,33 @@ export default function VendorsPage() {
       
       <main className="container mx-auto px-6 py-16 md:py-24">
         <header className="max-w-4xl mb-20 space-y-6">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-none bg-primary/10 border border-primary/20 dark:border-white/10 backdrop-blur-3xl shadow-xl">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 dark:border-white/10 backdrop-blur-3xl shadow-xl">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Beauty Network</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-headline text-foreground tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
+          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
             The most prestigious parlours and independent artists in your region, curated for professional results.
           </p>
         </header>
 
         {/* Search and Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/10 dark:bg-white/5 p-6 md:p-8 rounded-none border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
+        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/20 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
               placeholder="Search sanctuaries by name or area..." 
-              className="pl-16 h-16 bg-white/20 dark:bg-white/5 border-none focus-visible:ring-primary/10 rounded-none font-body text-lg italic placeholder:text-muted-foreground/60 text-foreground"
+              className="pl-20 h-16 bg-white/40 dark:bg-white/5 border-none focus-visible:ring-primary/10 rounded-full font-body text-lg italic placeholder:text-muted-foreground/60 text-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={areaFilter} onValueChange={setAreaFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/20 dark:bg-white/5 border-none rounded-none font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md text-foreground">
+              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/40 dark:bg-white/5 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md text-primary px-10">
                 <SelectValue placeholder="All Regions" />
               </SelectTrigger>
-              <SelectContent className="rounded-none font-body border border-border/10 shadow-2xl backdrop-blur-3xl bg-background/95">
+              <SelectContent className="rounded-3xl font-body border border-border/10 shadow-2xl backdrop-blur-3xl bg-background/95">
                 {uniqueAreas.map((area) => (
                   <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest hover:bg-accent hover:text-accent-foreground">{area}</SelectItem>
                 ))}
@@ -77,31 +77,31 @@ export default function VendorsPage() {
         {filteredVendors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {filteredVendors.map((vendor) => (
-              <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block">
-                <Card className="overflow-hidden border-none bg-white/40 dark:bg-white/5 backdrop-blur-3xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-none active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40">
-                  <div className="relative h-72 md:h-80 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000">
+              <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block interactive-element">
+                <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-3xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
+                  <div className="relative h-80 md:h-96 overflow-hidden">
                     <Image 
                       src={vendor.images[0]} 
                       alt={vendor.name}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                      className="object-cover soft-focus group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute top-8 left-8">
-                      <Badge className="bg-white/95 dark:bg-black/80 text-foreground border border-white/20 text-[9px] uppercase font-black px-5 py-2.5 tracking-[0.2em] rounded-none shadow-2xl backdrop-blur-md">
+                      <Badge className="bg-white/95 dark:bg-black/80 text-primary border border-white/20 text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-2xl backdrop-blur-md">
                         Elite Partner
                       </Badge>
                     </div>
                   </div>
-                  <CardHeader className="p-10 pb-6 space-y-4">
+                  <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
                     <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
                       <MapPin className="h-4 w-4 text-destructive" />
                       {vendor.area_tag}
                     </div>
-                    <CardTitle className="text-3xl md:text-4xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-foreground">
+                    <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
                       {vendor.name}
                     </CardTitle>
                   </CardHeader>
-                  <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-20 backdrop-blur-md">
+                  <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-24 backdrop-blur-md">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
                       <Star className="h-4 w-4 fill-accent-foreground" />
                       {vendor.rating} Registry
@@ -115,11 +115,11 @@ export default function VendorsPage() {
             ))}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-3xl border border-dashed border-white/20 rounded-none">
-            <div className="bg-primary/5 w-32 h-32 rounded-none flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
+          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-3xl border border-dashed border-white/20 rounded-[3rem]">
+            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
               <Navigation className="h-12 w-12 text-primary/20" />
             </div>
-            <h3 className="text-5xl font-headline italic text-foreground">Sanctuary Not Found</h3>
+            <h3 className="text-5xl font-headline italic text-primary">Sanctuary Not Found</h3>
             <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">No artisan locations matched your search. Try a different region or studio name.</p>
           </div>
         )}

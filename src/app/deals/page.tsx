@@ -31,33 +31,33 @@ export default function DealsPage() {
       
       <main className="container mx-auto px-6 py-16 md:py-24 pb-32">
         <header className="max-w-4xl mb-20 space-y-6">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground border border-secondary/20 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-secondary/50 text-primary border border-primary/10 backdrop-blur-sm">
             <Sparkles className="h-4 w-4" />
             <span className="text-[10px] uppercase tracking-[0.3em] font-black">Beauty Deals</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-headline text-primary tracking-tighter italic leading-none">Beauty Deals</h1>
+          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter italic leading-none">Beauty Deals</h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
             Pick the best beauty services from the most famous studios.
           </p>
         </header>
 
         {/* Search and Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[2.5rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
+        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
               placeholder="Search for a service..." 
-              className="pl-16 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
+              className="pl-20 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[220px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-8">
+              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-10">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl font-body border-none shadow-2xl">
+              <SelectContent className="rounded-3xl font-body border-none shadow-2xl bg-white/90 backdrop-blur-xl">
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat} className="font-bold text-[10px] uppercase tracking-widest">{cat}</SelectItem>
                 ))}
@@ -72,38 +72,38 @@ export default function DealsPage() {
               const vendor = VENDORS.find(v => v.id === deal.vendor_id);
               return (
                 <Link key={deal.id} href={`/deals/${deal.id}`} className="group block interactive-element">
-                  <Card className="overflow-hidden border-none bg-white dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[2.5rem]">
-                    <div className="relative h-72 md:h-80 overflow-hidden">
+                  <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] h-full flex flex-col">
+                    <div className="relative h-80 md:h-96 overflow-hidden">
                       <Image 
                         src={vendor?.images[0] || 'https://picsum.photos/seed/vendor/800/600'} 
                         alt={deal.name}
                         fill
                         className="object-cover soft-focus group-hover:scale-110"
                       />
-                      <div className="absolute top-6 left-6">
-                        <Badge className="bg-white/95 backdrop-blur-sm text-primary border-none text-[9px] uppercase font-black px-5 py-2.5 tracking-[0.2em] rounded-full">
+                      <div className="absolute top-8 left-8">
+                        <Badge className="bg-white/95 backdrop-blur-md text-primary border-none text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-lg">
                           {deal.category}
                         </Badge>
                       </div>
                     </div>
-                    <CardHeader className="p-10 pb-6 space-y-4">
+                    <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
                       <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
                         <MapPin className="h-4 w-4 text-accent-foreground" />
                         {vendor?.area_tag}
                       </div>
-                      <CardTitle className="text-3xl md:text-4xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic">
+                      <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
                         {deal.name}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-10 flex items-baseline gap-6">
-                      <span className="text-3xl md:text-4xl font-bold text-primary italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
+                    <CardContent className="px-10 pb-4 flex items-baseline gap-6">
+                      <span className="text-4xl md:text-5xl font-bold text-primary italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
                     </CardContent>
-                    <CardFooter className="mt-8 pt-8 border-t border-muted/20 flex justify-between items-center bg-muted/5 px-10 h-20">
+                    <CardFooter className="mt-8 pt-8 border-t border-muted/10 flex justify-between items-center bg-muted/5 px-10 h-24">
                       <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
                         <Star className="h-4 w-4 fill-accent-foreground" />
                         {vendor?.rating} Rating
                       </div>
-                      <div className="flex items-center gap-2 text-[9px] font-black text-accent-foreground uppercase tracking-[0.2em] italic">
+                      <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">
                         <Clock className="h-4 w-4" />
                         Limited Slots
                       </div>
