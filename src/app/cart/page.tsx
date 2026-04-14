@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -143,9 +142,9 @@ export default function CartPage() {
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center space-y-6 max-w-sm px-4">
-            <h1 className="text-4xl font-headline italic">Your collection is empty</h1>
-            <p className="text-muted-foreground text-sm">Discover elite transformations and professional artistry products today.</p>
-            <Button asChild className="rounded-none px-8 font-bold text-[10px] uppercase tracking-widest">
+            <h1 className="text-4xl font-headline italic text-primary">Your collection is empty</h1>
+            <p className="text-muted-foreground text-sm italic">Discover elite transformations and professional artistry products today.</p>
+            <Button asChild className="rounded-full px-8 font-bold text-[10px] uppercase tracking-widest">
               <Link href="/">Back to Discovery</Link>
             </Button>
           </div>
@@ -167,21 +166,21 @@ export default function CartPage() {
               <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">1. Local Identity</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase">Full Name</Label>
+                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Full Name</Label>
                   <Input 
                     placeholder="Artisan reference name" 
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-0 h-12"
+                    className="rounded-full border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 h-12"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase">Phone Number</Label>
+                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Phone Number</Label>
                   <Input 
                     placeholder="+92 / +91 number" 
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-0 h-12"
+                    className="rounded-full border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 h-12"
                   />
                 </div>
               </div>
@@ -192,19 +191,19 @@ export default function CartPage() {
               {!inspirationImage ? (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-muted rounded-none p-16 text-center cursor-pointer hover:bg-muted/10 transition-colors"
+                  className="border-2 border-dashed border-primary/20 rounded-[3rem] p-16 text-center cursor-pointer hover:bg-primary/5 transition-colors bg-white/40 backdrop-blur-md"
                 >
                   <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                  <Camera className="h-8 w-8 mx-auto mb-4 opacity-20" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Upload Look Inspiration</span>
+                  <Camera className="h-8 w-8 mx-auto mb-4 text-primary opacity-20" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Upload Look Inspiration</span>
                 </div>
               ) : (
                 <div className="space-y-8">
-                  <div className="relative aspect-video bg-muted group overflow-hidden">
+                  <div className="relative aspect-video bg-muted group overflow-hidden rounded-[3rem] shadow-xl">
                     <Image src={inspirationImage} alt="Reference" fill className="object-cover" />
                     <Button 
                       variant="destructive" size="icon" 
-                      className="absolute top-4 right-4 rounded-none h-10 w-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-6 right-6 rounded-full h-10 w-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => { setInspirationImage(null); setAiSuggestions(null); }}
                     >
                       <X className="h-4 w-4" />
@@ -216,8 +215,8 @@ export default function CartPage() {
                       <span>Curating suggested bundle based on look...</span>
                     </div>
                   ) : aiSuggestions && (
-                    <Card className="rounded-none border-none bg-accent/20 p-8 space-y-6">
-                      <h4 className="font-headline text-2xl">Suggested Artisan Bundle</h4>
+                    <Card className="rounded-[3rem] border-none bg-accent/20 p-8 space-y-6 shadow-lg">
+                      <h4 className="font-headline text-2xl text-primary italic">Suggested Artisan Bundle</h4>
                       <p className="text-sm italic text-muted-foreground">{aiSuggestions.description}</p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {aiSuggestions.productIds.map(pid => {
@@ -225,10 +224,10 @@ export default function CartPage() {
                           if (!p) return null;
                           return (
                             <div key={pid} className="space-y-2">
-                              <div className="relative aspect-square grayscale hover:grayscale-0 transition-all">
-                                <Image src={p.image} alt={p.name} fill className="object-cover" />
+                              <div className="relative aspect-square rounded-[1.5rem] overflow-hidden shadow-md">
+                                <Image src={p.image} alt={p.name} fill className="object-cover soft-focus" />
                               </div>
-                              <Button variant="outline" size="sm" className="w-full text-[8px] h-8 rounded-none uppercase font-bold" onClick={() => addToCart({ id: p.id, type: 'product', name: p.name, price: p.price, quantity: 1, image: p.image })}>
+                              <Button variant="outline" size="sm" className="w-full text-[8px] h-8 rounded-full uppercase font-bold" onClick={() => addToCart({ id: p.id, type: 'product', name: p.name, price: p.price, quantity: 1, image: p.image })}>
                                 Add Item
                               </Button>
                             </div>
@@ -245,9 +244,9 @@ export default function CartPage() {
               <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">3. Your Selection</h2>
               <div className="space-y-4">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-6 items-center border-b pb-6">
-                    <div className="relative w-24 h-24 bg-muted grayscale">
-                      <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
+                  <div key={item.id} className="flex gap-6 items-center border-b border-primary/10 pb-6">
+                    <div className="relative w-24 h-24 bg-muted rounded-[1.5rem] overflow-hidden shadow-sm">
+                      <Image src={item.image || ''} alt={item.name} fill className="object-cover soft-focus" />
                     </div>
                     <div className="flex-grow">
                       <div className="flex items-center gap-2 mb-1">
@@ -255,21 +254,21 @@ export default function CartPage() {
                           {item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}
                         </p>
                         {item.type === 'deal' && item.quantity > 1 && (
-                          <Badge variant="outline" className="text-[8px] h-4 py-0 flex gap-1 items-center border-secondary/30 text-secondary">
+                          <Badge variant="outline" className="text-[8px] h-4 py-0 flex gap-1 items-center border-rose-500/30 text-rose-500 rounded-full">
                              <Users className="h-2.5 w-2.5" /> Group of {item.quantity}
                           </Badge>
                         )}
                       </div>
-                      <h3 className="font-headline text-2xl">{item.name}</h3>
-                      <p className="font-bold">{getCurrency()} {item.price.toLocaleString()}</p>
+                      <h3 className="font-headline text-2xl text-primary italic leading-none">{item.name}</h3>
+                      <p className="font-bold text-accent-foreground">{getCurrency()} {item.price.toLocaleString()}</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center border rounded-none p-1">
-                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, -1)} className="h-8 w-8 hover:bg-transparent"><Minus className="h-3 w-3" /></Button>
-                        <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
-                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, 1)} className="h-8 w-8 hover:bg-transparent"><Plus className="h-3 w-3" /></Button>
+                      <div className="flex items-center border border-primary/10 rounded-full p-1 bg-white/20">
+                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, -1)} className="h-8 w-8 hover:bg-transparent text-primary"><Minus className="h-3 w-3" /></Button>
+                        <span className="w-8 text-center text-xs font-bold text-primary">{item.quantity}</span>
+                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, 1)} className="h-8 w-8 hover:bg-transparent text-primary"><Plus className="h-3 w-3" /></Button>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
                 ))}
@@ -278,7 +277,7 @@ export default function CartPage() {
           </div>
 
           <div className="space-y-12">
-            <Card className="border-none rounded-none bg-primary text-white p-10 space-y-8">
+            <Card className="border-none rounded-[3rem] bg-primary text-white p-10 space-y-8 shadow-2xl">
               <CardTitle className="font-headline text-3xl italic">Financials</CardTitle>
               <div className="space-y-4 text-xs font-bold uppercase tracking-widest text-white/60">
                 <div className="flex justify-between items-center">
@@ -298,27 +297,27 @@ export default function CartPage() {
               <Button 
                 onClick={handleCheckout} 
                 disabled={isCheckingOut}
-                className="w-full h-14 bg-accent text-black hover:bg-white rounded-none font-bold uppercase tracking-[0.2em] text-[10px]"
+                className="w-full h-14 bg-accent text-primary hover:bg-white rounded-full font-bold uppercase tracking-[0.2em] text-[10px] border-none shadow-lg"
               >
                 {isCheckingOut ? 'Securing Transaction...' : 'Complete Payment'}
               </Button>
             </Card>
 
             <div className="space-y-4">
-              <h4 className="text-[10px] font-black uppercase tracking-widest">Secure Gateways</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-primary ml-4">Secure Gateways</h4>
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="rounded-none h-20 flex-col gap-2 font-bold text-[8px] uppercase tracking-widest opacity-60 hover:opacity-100" onClick={handleCheckout} disabled={isCheckingOut}>
+                <Button variant="outline" className="rounded-[2rem] h-20 flex-col gap-2 font-bold text-[8px] uppercase tracking-widest opacity-60 hover:opacity-100 border-primary/20 bg-white/40" onClick={handleCheckout} disabled={isCheckingOut}>
                   {region === 'PK' ? 'JazzCash' : 'Paytm / UPI'}
                 </Button>
-                <Button variant="outline" className="rounded-none h-20 flex-col gap-2 font-bold text-[8px] uppercase tracking-widest opacity-60 hover:opacity-100" onClick={handleCheckout} disabled={isCheckingOut}>
-                  <Banknote className="h-5 w-5" /> Cash on Delivery
+                <Button variant="outline" className="rounded-[2rem] h-20 flex-col gap-2 font-bold text-[8px] uppercase tracking-widest opacity-60 hover:opacity-100 border-primary/20 bg-white/40" onClick={handleCheckout} disabled={isCheckingOut}>
+                  <Banknote className="h-5 w-5 text-primary" /> Cash on Delivery
                 </Button>
               </div>
             </div>
 
-            <div className="p-6 bg-muted/20 space-y-3">
-              <div className="flex items-center gap-2 text-[10px] font-bold">
-                <ShieldCheck className="h-4 w-4 text-primary" /> 24-Hour Artisan Guard Enabled
+            <div className="p-8 bg-muted/20 space-y-3 rounded-[3rem] border border-primary/5">
+              <div className="flex items-center gap-2 text-[10px] font-bold text-primary">
+                <ShieldCheck className="h-4 w-4" /> 24-Hour Artisan Guard Enabled
               </div>
               <p className="text-[9px] text-muted-foreground italic leading-relaxed">
                 Cancellations within 24 hours of scheduled slots are subject to artisan approval. Deposits are platform-secured.

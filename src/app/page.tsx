@@ -36,7 +36,7 @@ export default function Home() {
               <Badge className="bg-secondary/40 text-primary backdrop-blur-xl px-4 py-1.5 uppercase tracking-widest text-[9px] font-black border border-white/20 rounded-full">
                 <Sparkles className="h-3 w-3 mr-2 inline text-accent-foreground" /> Best Beauty Deals
               </Badge>
-              <h1 className="text-6xl md:text-8xl font-headline leading-none text-white tracking-tighter">
+              <h1 className="text-5xl md:text-7xl font-headline leading-none text-white tracking-tighter">
                 Look <br />
                 <span className="italic text-secondary">Great.</span>
               </h1>
@@ -61,7 +61,7 @@ export default function Home() {
             <div className="flex justify-between items-end mb-12">
               <div className="space-y-1">
                 <h2 className="text-4xl font-headline tracking-tighter text-primary italic">Nearby Parlours</h2>
-                <p className="text-muted-foreground text-sm italic">The best parlours in your area.</p>
+                <p className="text-muted-foreground text-sm italic text-[12px]">The best parlours in your area.</p>
               </div>
               <Link href="/vendors" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-accent-foreground">
                 See All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -100,7 +100,7 @@ export default function Home() {
           <div className="container mx-auto px-6">
             <div className="mb-16">
               <h2 className="text-5xl font-headline tracking-tighter text-primary italic leading-none">Best Beauty Deals</h2>
-              <p className="text-accent-foreground italic text-base opacity-70 mt-2">Special offers picked for you.</p>
+              <p className="text-accent-foreground italic text-base opacity-70 mt-2 text-[12px]">Special offers picked for you.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -145,7 +145,7 @@ export default function Home() {
               <Sparkles className="h-6 w-6 text-accent-foreground" />
               <span className="font-headline text-3xl tracking-tighter text-primary italic">GlamLux</span>
             </div>
-            <p className="text-sm text-muted-foreground font-body italic leading-relaxed max-w-sm">
+            <p className="text-sm text-muted-foreground font-body italic leading-relaxed max-w-sm text-[12px]">
               The best place for makeup and beauty services. Simple, fast, and professional.
             </p>
           </div>

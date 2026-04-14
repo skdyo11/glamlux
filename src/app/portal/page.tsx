@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -105,24 +104,24 @@ export default function PartnerPortalPage() {
       
       <main className="container mx-auto px-6 py-12">
         <header className="flex flex-col gap-12 mb-20">
-          <div className="space-y-4">
-            <Badge className="bg-primary/20 backdrop-blur-md text-primary border-white/20 rounded-none px-4 py-1 uppercase tracking-widest text-[10px]">Owner Area</Badge>
-            <h1 className="text-7xl font-headline tracking-tighter italic text-primary">Manage My Shop</h1>
+          <div className="space-y-4 text-center md:text-left">
+            <Badge className="bg-primary/20 backdrop-blur-md text-primary border-white/20 rounded-full px-4 py-1 uppercase tracking-widest text-[10px]">Owner Area</Badge>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary">Manage My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-none border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500">
-               <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform" />
-               <p className="text-4xl font-headline italic tracking-tighter">82.4K</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Today's Sales ({getCurrency()})</p>
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none">
+               <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
+               <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Sales ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-none border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500">
-               <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform" />
-               <p className="text-4xl font-headline italic tracking-tighter">14</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Workers Today</p>
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none">
+               <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
+               <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Workers Today</p>
              </Card>
              <Card 
-                className="rounded-none border-white/30 bg-primary/20 backdrop-blur-3xl text-white p-10 space-y-4 cursor-pointer hover:bg-primary/30 transition-all duration-500 shadow-2xl ring-1 ring-white/20 group"
+                className="rounded-[3rem] border-none bg-primary text-white p-10 space-y-4 cursor-pointer hover:bg-primary/90 transition-all duration-500 shadow-2xl ring-1 ring-white/20 group liquid-glass"
                 onClick={() => setIsCourierSheetOpen(true)}
              >
                 <Navigation className="h-6 w-6 opacity-60 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -143,7 +142,7 @@ export default function PartnerPortalPage() {
             ].map((t) => (
               <TabsTrigger 
                 key={t.id} value={t.id} 
-                className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] transition-all"
+                className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] transition-all text-primary"
               >
                 {t.label}
               </TabsTrigger>
@@ -152,7 +151,7 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="scanner" className="space-y-4 max-w-xl mx-auto text-center">
              <div className="space-y-8">
-                <div id="reader" className="w-full aspect-square grayscale border-4 border-white/10 bg-white/5 backdrop-blur-3xl shadow-2xl" />
+                <div id="reader" className="w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 bg-white/5 backdrop-blur-3xl shadow-2xl" />
                 <div className="flex items-center justify-center gap-3 animate-pulse italic text-primary/60">
                    <QrCode className="h-5 w-5" />
                    <span className="text-[10px] uppercase font-bold tracking-widest">Scanning Customer Ticket</span>
@@ -165,16 +164,16 @@ export default function PartnerPortalPage() {
               {[1, 2, 3].map((i) => (
                 <Card 
                   key={i} 
-                  className="rounded-none border-white/10 bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-500 cursor-pointer shadow-xl ring-1 ring-white/5 group" 
+                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-500 cursor-pointer shadow-xl ring-1 ring-white/5 group" 
                   onClick={() => setSelectedArrival({ id: i, name: 'Customer', service: 'Bridal Service', time: '10:30 AM', status: 'Pending' })}
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
-                      <h4 className="font-headline text-3xl group-hover:text-accent-foreground transition-colors">Sara Khan</h4>
+                      <h4 className="font-headline text-3xl group-hover:text-rose-500 transition-colors text-primary italic">Sara Khan</h4>
                       <p className="text-xs italic text-muted-foreground">Royal Bridal Special</p>
                     </div>
-                    <Badge variant="outline" className="rounded-none uppercase text-[8px] font-black tracking-widest px-3 border-white/20 bg-white/10 backdrop-blur-md">Waiting</Badge>
+                    <Badge variant="outline" className="rounded-full uppercase text-[8px] font-black tracking-widest px-3 border-white/20 bg-white/10 backdrop-blur-md text-primary">Waiting</Badge>
                   </div>
                 </Card>
               ))}
@@ -183,15 +182,15 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="schedule" className="space-y-12">
             <div className="flex justify-between items-center">
-               <h3 className="text-4xl font-headline tracking-tighter italic">Weekly Schedule</h3>
-               <Badge className="bg-accent/20 backdrop-blur-md text-accent-foreground border-accent/30 rounded-none px-4 py-1 uppercase tracking-widest text-[8px] font-black">Very Busy Soon</Badge>
+               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Weekly Schedule</h3>
+               <Badge className="bg-accent/20 backdrop-blur-md text-accent-foreground border-accent/30 rounded-full px-4 py-1 uppercase tracking-widest text-[8px] font-black">Very Busy Soon</Badge>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-500 group ring-1 ring-white/5">
-                   <p className="text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">{day}</p>
-                   <p className="font-headline text-2xl">8/12</p>
-                   <p className="text-[8px] uppercase font-bold opacity-60">Slots Full</p>
+                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-500 group ring-1 ring-white/5 rounded-[2rem]">
+                   <p className="text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity text-primary">{day}</p>
+                   <p className="font-headline text-2xl text-primary italic">8/12</p>
+                   <p className="text-[8px] uppercase font-bold opacity-60 text-primary">Slots Full</p>
                 </div>
               ))}
             </div>
@@ -199,21 +198,21 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="items" className="space-y-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic">My Stock</h3>
-              <Button className="rounded-none h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/20 backdrop-blur-3xl border border-white/20 hover:bg-primary/30 transition-all duration-500">
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Stock</h3>
+              <Button className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-500 text-primary">
                 <Plus className="h-4 w-4 mr-2" /> Add Makeup
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 transition-all duration-700 hover:bg-white/10 shadow-xl ring-1 ring-white/5">
-                  <div className="relative aspect-square grayscale group-hover:grayscale-0 transition-all duration-1000">
-                    <Image src={p.image} alt={p.name} fill className="object-cover" />
+                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 rounded-[3rem] transition-all duration-700 hover:bg-white/10 shadow-xl ring-1 ring-white/5">
+                  <div className="relative aspect-square rounded-[2rem] overflow-hidden">
+                    <Image src={p.image} alt={p.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
                   </div>
                   <div className="pt-6 space-y-1">
-                    <h4 className="font-headline text-2xl group-hover:text-accent-foreground transition-colors">{p.name}</h4>
-                    <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest">{p.brand}</p>
-                    <p className="text-xs font-bold pt-2">Left in Shop: {p.stock}</p>
+                    <h4 className="font-headline text-2xl group-hover:text-rose-500 transition-colors text-primary italic">{p.name}</h4>
+                    <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest text-primary">{p.brand}</p>
+                    <p className="text-xs font-bold pt-2 text-primary">Left in Shop: {p.stock}</p>
                   </div>
                 </div>
               ))}
@@ -224,29 +223,31 @@ export default function PartnerPortalPage() {
 
       {/* Courier Sheet */}
       <Sheet open={isCourierSheetOpen} onOpenChange={setIsCourierSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-none h-[85vh] md:h-auto border-t-0 p-20 bg-primary/20 backdrop-blur-3xl text-white">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-primary/20 backdrop-blur-3xl text-white">
           <div className="max-w-xl mx-auto space-y-12">
             <div className="space-y-4 text-center">
-              <Navigation className="h-12 w-12 mx-auto text-accent animate-bounce" />
-              <SheetTitle className="text-6xl font-headline italic text-white tracking-tighter">Delivery Team</SheetTitle>
-              <SheetDescription className="text-accent italic text-lg font-body">Help us deliver beauty products across the city.</SheetDescription>
+              <div className="bg-white/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-md">
+                <Navigation className="h-10 w-10 text-rose-300 animate-pulse" />
+              </div>
+              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-white tracking-tighter">Delivery Team</SheetTitle>
+              <SheetDescription className="text-rose-200 italic text-lg font-body">Help us deliver beauty products across the city.</SheetDescription>
             </div>
             <div className="space-y-8">
                <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Full Name</Label>
-                <Input placeholder="Enter your name" className="rounded-none h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all" />
+                <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60 ml-2">Full Name</Label>
+                <Input placeholder="Enter your name" className="rounded-full h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all px-8" />
               </div>
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Phone Number</Label>
-                  <Input placeholder="Mobile number" className="rounded-none h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all" />
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60 ml-2">Phone Number</Label>
+                  <Input placeholder="Mobile number" className="rounded-full h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all px-8" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60">Vehicle Type</Label>
-                  <Input placeholder="Bike, Rickshaw, or Car" className="rounded-none h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all" />
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-white/60 ml-2">Vehicle Type</Label>
+                  <Input placeholder="Bike, Rickshaw, or Car" className="rounded-full h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all px-8" />
                 </div>
               </div>
-              <Button onClick={() => setIsCourierSheetOpen(false)} className="w-full h-16 bg-accent/20 backdrop-blur-xl text-accent-foreground hover:bg-accent/30 rounded-none font-bold uppercase tracking-[0.3em] text-[10px] border border-accent/30 shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+              <Button onClick={() => setIsCourierSheetOpen(false)} className="w-full h-16 bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border border-white/30 shadow-2xl transition-all duration-500 hover:scale-[1.02]">
                 Join Now
               </Button>
             </div>
@@ -256,28 +257,28 @@ export default function PartnerPortalPage() {
 
       {/* Guest Check Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-none border-t-0 p-20 bg-white/5 backdrop-blur-3xl">
+        <SheetContent side="bottom" className="rounded-t-[3rem] border-t-0 p-12 md:p-20 bg-white/60 backdrop-blur-3xl">
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-12">
-              <div className="space-y-2">
-                <Badge className="bg-primary/20 backdrop-blur-md text-primary-foreground rounded-none uppercase tracking-widest text-[8px] font-black border-white/20 px-4 py-1">Customer Check-in</Badge>
-                <SheetTitle className="text-7xl font-headline leading-none italic text-primary">{selectedArrival.name}</SheetTitle>
+              <div className="space-y-2 text-center">
+                <Badge className="bg-primary/20 backdrop-blur-md text-primary rounded-full uppercase tracking-widest text-[8px] font-black border-white/20 px-4 py-1">Customer Check-in</Badge>
+                <SheetTitle className="text-6xl md:text-7xl font-headline leading-none italic text-primary">{selectedArrival.name}</SheetTitle>
                 <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
               </div>
               
-              <div className="p-10 bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl space-y-6 ring-1 ring-white/5">
+              <div className="p-10 bg-white/20 backdrop-blur-xl border border-white/40 shadow-2xl space-y-6 ring-1 ring-white/5 rounded-[3rem]">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Booking Time</span>
-                  <span className="font-headline text-3xl">{selectedArrival.time}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Booking Time</span>
+                  <span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Ticket Code</span>
-                  <span className="font-mono font-bold tracking-tighter text-xl">GL-9382-AR</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Ticket Code</span>
+                  <span className="font-mono font-bold tracking-tighter text-xl text-primary">GL-9382-AR</span>
                 </div>
               </div>
 
               <div className="flex gap-4">
-                <Button onClick={() => setSelectedArrival(null)} className="flex-1 h-16 bg-primary/20 backdrop-blur-xl text-primary-foreground hover:bg-primary/30 rounded-none font-bold uppercase tracking-[0.3em] text-[10px] border border-white/20 shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+                <Button onClick={() => setSelectedArrival(null)} className="flex-1 h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-500 hover:scale-[1.02]">
                   Check Code & Start
                 </Button>
               </div>
