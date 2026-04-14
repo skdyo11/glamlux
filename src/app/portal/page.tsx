@@ -35,7 +35,8 @@ import {
   ArrowRight,
   Package,
   MessageSquare,
-  Send
+  Send,
+  Calendar
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -46,8 +47,18 @@ import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/fire
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 const MOCK_BUSINESS_CHATS = [
-  { id: 'b1', name: 'GlamLux Logistics', lastMsg: 'Driver assigned to your store.', time: '9:00 AM' },
-  { id: 'b2', name: 'Artistry Brands Co.', lastMsg: 'Bulk foundation order ready.', time: 'Yesterday' }
+  { id: 'b1', name: 'GlamLux Help', lastMsg: 'Your driver is on the way.', time: '9:00 AM' },
+  { id: 'b2', name: 'Beauty Brands', lastMsg: 'Your new products are ready.', time: 'Yesterday' }
+];
+
+const WEEKLY_PLAN = [
+  { day: 'Mon', slots: 12, demand: 'Medium' },
+  { day: 'Tue', slots: 12, demand: 'Medium' },
+  { day: 'Wed', slots: 12, demand: 'Medium' },
+  { day: 'Thu', slots: 24, demand: 'High' },
+  { day: 'Fri', slots: 24, demand: 'High' },
+  { day: 'Sat', slots: 12, demand: 'High' },
+  { day: 'Sun', slots: 0, demand: 'Closed' },
 ];
 
 export default function PartnerPortalPage() {
@@ -78,7 +89,7 @@ export default function PartnerPortalPage() {
             console.error("Scanner init error", e);
           }
         }
-      }, 1000);
+      }, 500);
     } else {
       if (scannerRef.current) {
         scannerRef.current.clear().catch(() => {});
@@ -96,20 +107,20 @@ export default function PartnerPortalPage() {
 
   async function onScanSuccess(decodedText: string) {
     if (!firestore) return;
-    toast({ title: "Checking Code", description: `Reference: ${decodedText}` });
+    toast({ title: "Checking Ticket...", description: `Code: ${decodedText}` });
     try {
       const q = query(collectionGroup(firestore, 'bookings'), where('referenceCode', '==', decodedText));
       const snap = await getDocs(q);
       if (snap.empty) {
-        toast({ variant: "destructive", title: "Wrong Code", description: "No booking found with this code." });
+        toast({ variant: "destructive", title: "Wrong Ticket", description: "We can't find this booking." });
         return;
       }
       const docRef = snap.docs[0];
       await updateDoc(docRef.ref, { qr_verified: true, arrival_time: new Date().toISOString() });
-      toast({ title: "Welcome!", description: "The customer can now enjoy their service." });
+      toast({ title: "Welcome!", description: "The customer is ready for their service." });
       setActiveTab('bookings');
     } catch (error) {
-      toast({ variant: "destructive", title: "Error Scanning" });
+      toast({ variant: "destructive", title: "Scan Error" });
     }
   }
 
@@ -130,12 +141,12 @@ export default function PartnerPortalPage() {
              <Card className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 liquid-glass">
                <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Sales ({getCurrency()})</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Money ({getCurrency()})</p>
              </Card>
              <Card className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 liquid-glass">
                <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Workers Today</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
              </Card>
              <Card 
                 className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 cursor-pointer hover:bg-white/10 transition-all duration-300 shadow-2xl ring-1 ring-white/10 group liquid-glass"
@@ -143,7 +154,7 @@ export default function PartnerPortalPage() {
              >
                 <Navigation className="h-6 w-6 opacity-60 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform text-primary" />
                 <p className="text-[10px] uppercase font-black tracking-widest text-primary">Join Delivery Team</p>
-                <p className="text-xs italic opacity-80 text-primary/70">Help us deliver makeup</p>
+                <p className="text-xs italic opacity-80 text-primary/70">Help us deliver makeup to homes</p>
              </Card>
           </div>
         </header>
@@ -165,6 +176,63 @@ export default function PartnerPortalPage() {
               </TabsTrigger>
             ))}
           </TabsList>
+
+          <TabsContent value="bookings" className="space-y-16">
+            {/* Weekly Schedule Section */}
+            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-3">
+                <CalendarDays className="h-6 w-6 text-primary/40" />
+                <h3 className="text-3xl font-headline italic text-primary">My Weekly Plan</h3>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {WEEKLY_PLAN.map((item) => (
+                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-xl flex flex-col items-center gap-2 shadow-xl liquid-glass group hover:bg-white/60 transition-all">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
+                    <span className="font-headline text-3xl italic text-primary">
+                      {item.slots > 0 ? `${item.slots} Slots` : 'Closed'}
+                    </span>
+                    <Badge variant="outline" className={cn(
+                      "text-[8px] font-black uppercase tracking-widest border-none px-2 py-0.5 mt-2 rounded-full",
+                      item.demand === 'High' ? "bg-rose-500/10 text-rose-500" : 
+                      item.demand === 'Closed' ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"
+                    )}>
+                      {item.demand}
+                    </Badge>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Current Arrivals Section */}
+            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <div className="flex items-center gap-3">
+                <Clock className="h-6 w-6 text-primary/40" />
+                <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <Card 
+                    key={i} 
+                    className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-300 cursor-pointer shadow-xl ring-1 ring-white/5 group liquid-glass" 
+                    onClick={() => setSelectedArrival({ id: i, name: i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik', service: i === 1 ? 'Royal Bridal' : i === 2 ? 'Silk Hair Spa' : 'Skin Facial', time: `${10 + i}:30 AM`, status: 'Waiting' })}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
+                        <h4 className="font-headline text-3xl group-hover:text-rose-500 transition-colors text-primary italic">
+                          {i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik'}
+                        </h4>
+                        <p className="text-xs italic text-muted-foreground">
+                          {i === 1 ? 'Royal Bridal Special' : i === 2 ? 'Silk Therapy Spa' : 'Crystal Clear Facial'}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="rounded-full uppercase text-[8px] font-black tracking-widest px-3 border-white/20 bg-white/10 backdrop-blur-md text-primary">Waiting</Badge>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          </TabsContent>
 
           <TabsContent value="scanner" className="space-y-4 max-w-xl mx-auto text-center">
              <div className="space-y-8">
@@ -203,46 +271,25 @@ export default function PartnerPortalPage() {
                       <AvatarFallback>G</AvatarFallback>
                     </Avatar>
                     <div className="flex-grow">
-                       <p className="font-headline text-xl italic text-primary">GlamLux Logistics</p>
+                       <p className="font-headline text-xl italic text-primary">GlamLux Help</p>
                        <p className="text-[8px] uppercase font-black text-rose-500 tracking-widest">Support Channel</p>
                     </div>
                  </div>
                  <ScrollArea className="flex-1 p-8">
                     <div className="space-y-4">
                        <div className="bg-primary/5 p-4 rounded-3xl rounded-tl-none max-w-[80%]">
-                          <p className="text-sm italic">Hello! A delivery partner has been assigned to collect your makeup orders scheduled for today.</p>
+                          <p className="text-sm italic">Hello! Your delivery driver is now assigned to pick up your makeup orders.</p>
                           <span className="text-[8px] uppercase font-black opacity-30 mt-2 block">9:00 AM</span>
                        </div>
                     </div>
                  </ScrollArea>
                  <div className="p-6 border-t bg-white/20">
                     <div className="flex gap-2">
-                       <Input placeholder="Message logistics team..." className="rounded-full bg-white/60 border-none h-12 px-6" />
+                       <Input placeholder="Message help team..." className="rounded-full bg-white/60 border-none h-12 px-6" />
                        <Button size="icon" className="h-12 w-12 rounded-full"><Send className="h-5 w-5" /></Button>
                     </div>
                  </div>
               </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="bookings" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <Card 
-                  key={i} 
-                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-300 cursor-pointer shadow-xl ring-1 ring-white/5 group liquid-glass" 
-                  onClick={() => setSelectedArrival({ id: i, name: 'Customer', service: 'Bridal Service', time: '10:30 AM', status: 'Pending' })}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
-                      <h4 className="font-headline text-3xl group-hover:text-rose-500 transition-colors text-primary italic">Sara Khan</h4>
-                      <p className="text-xs italic text-muted-foreground">Royal Bridal Special</p>
-                    </div>
-                    <Badge variant="outline" className="rounded-full uppercase text-[8px] font-black tracking-widest px-3 border-white/20 bg-white/10 backdrop-blur-md text-primary">Waiting</Badge>
-                  </div>
-                </Card>
-              ))}
             </div>
           </TabsContent>
 
