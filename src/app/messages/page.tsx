@@ -43,7 +43,8 @@ const MOCK_CONVERSATIONS: Conversation[] = [
 ];
 
 export default function MessagesPage() {
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
+  // Default to first conversation on PC to make the chat feel "bigger" and more active immediately
+  const [activeConversation, setActiveConversation] = useState<Conversation | null>(MOCK_CONVERSATIONS[0]);
   const [newMessage, setNewMessage] = useState('');
 
   const handleSendMessage = () => {
@@ -66,12 +67,12 @@ export default function MessagesPage() {
       <Navbar />
       
       <main className={cn(
-        "container mx-auto px-0 md:px-4 md:py-8 h-[calc(100vh-64px)] flex",
+        "container mx-auto max-w-screen-2xl px-0 md:px-4 md:py-8 h-[calc(100vh-64px)] flex",
         activeConversation ? "flex-col md:flex-row" : "flex-col"
       )}>
-        {/* Conversation List */}
+        {/* Conversation List - Narrower to make chat bigger */}
         <div className={cn(
-          "w-full md:w-80 lg:w-96 border-r flex flex-col bg-white/40 backdrop-blur-xl",
+          "w-full md:w-64 lg:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl",
           activeConversation ? "hidden md:flex" : "flex"
         )}>
           <div className="p-6 space-y-4">
@@ -118,8 +119,8 @@ export default function MessagesPage() {
           </ScrollArea>
         </div>
 
-        {/* Chat Window */}
-        {activeConversation ? (
+        {/* Chat Window - Now fills the rest of the 2xl container */}
+        {activeConversation && (
           <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden">
             {/* Chat Header */}
             <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md">
@@ -171,16 +172,6 @@ export default function MessagesPage() {
                   <Send className="h-6 w-6" />
                 </Button>
               </div>
-            </div>
-          </div>
-        ) : (
-          <div className="hidden md:flex flex-grow items-center justify-center flex-col space-y-6 text-center">
-            <div className="h-32 w-32 bg-primary/5 rounded-full flex items-center justify-center">
-              <MessageSquare className="h-16 w-16 text-primary/20" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-headline italic">Customer Support</h2>
-              <p className="text-muted-foreground font-body max-w-xs mx-auto">Ask about your bookings or makeup orders here.</p>
             </div>
           </div>
         )}
