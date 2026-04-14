@@ -29,29 +29,29 @@
 
   .dark {
     /* Dark Theme - High Intensity Luxury */
-    --background: 0 0% 8%; /* Pure Night */
-    --foreground: 35 20% 94%; /* Off-white Sand */
-    --card: 0 0% 10%;
-    --card-foreground: 35 20% 94%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 35 20% 94%;
-    --primary: 35 20% 94%;
-    --primary-foreground: 0 0% 8%;
-    --secondary: 350 30% 15%;
-    --secondary-foreground: 350 80% 85%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%; /* Readable Grey on Black */
-    --accent: 350 40% 18%;
-    --accent-foreground: 350 90% 80%; /* Vibrant Pink on Black */
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
+    --background: 0 0% 5%; /* Deepest Black */
+    --foreground: 35 20% 98%; /* Bright Sand */
+    --card: 0 0% 8%;
+    --card-foreground: 35 20% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 35 20% 98%;
+    --primary: 35 20% 98%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 350 30% 12%;
+    --secondary-foreground: 350 80% 90%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 75%; 
+    --accent: 350 40% 15%;
+    --accent-foreground: 350 95% 85%; 
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
     --ring: 350 70% 70%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border transition-colors duration-300;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-body overflow-x-hidden;
@@ -70,7 +70,7 @@
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.15] dark:opacity-[0.05] pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.1] dark:opacity-[0.05] pointer-events-none;
   background-image: radial-gradient(circle at 2px 2px, hsl(var(--accent-foreground)) 1px, transparent 0);
   background-size: 40px 40px;
 }
@@ -81,5 +81,10 @@
 }
 
 .glass-morphism {
-  @apply bg-white/10 dark:bg-white/5 backdrop-blur-3xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/10;
+  @apply bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/10;
+}
+
+/* Snappy transitions for interactive elements */
+.interactive-glass {
+  @apply transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98];
 }
