@@ -3,13 +3,15 @@
 
 import { Navbar } from '@/components/layout/Navbar';
 import { useStore } from '@/app/lib/store';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { 
   Sheet, 
@@ -31,7 +33,9 @@ import {
   CalendarDays,
   Scissors,
   ArrowRight,
-  Package
+  Package,
+  MessageSquare,
+  Send
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -40,6 +44,11 @@ import Image from 'next/image';
 import { useFirebase } from '@/firebase';
 import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+
+const MOCK_BUSINESS_CHATS = [
+  { id: 'b1', name: 'GlamLux Logistics', lastMsg: 'Driver assigned to your store.', time: '9:00 AM' },
+  { id: 'b2', name: 'Artistry Brands Co.', lastMsg: 'Bulk foundation order ready.', time: 'Yesterday' }
+];
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
@@ -53,7 +62,6 @@ export default function PartnerPortalPage() {
   const [isAddProductSheetOpen, setIsAddProductSheetOpen] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  // Filter deals for the portal view (mocking "My Services")
   const myServices = DEALS.filter(d => d.vendor_id === 'v1');
 
   useEffect(() => {
@@ -115,16 +123,16 @@ export default function PartnerPortalPage() {
         <header className="flex flex-col gap-12 mb-20">
           <div className="space-y-4 text-center md:text-left">
             <Badge className="bg-primary/20 backdrop-blur-md text-primary border-white/20 rounded-full px-4 py-1 uppercase tracking-widest text-[10px]">Owner Area</Badge>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary">Manage My Shop</h1>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary">My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 border-none liquid-glass">
+             <Card className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 liquid-glass">
                <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Sales ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 border-none liquid-glass">
+             <Card className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 liquid-glass">
                <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Workers Today</p>
@@ -143,9 +151,9 @@ export default function PartnerPortalPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
           <TabsList className="bg-transparent p-0 h-auto gap-12 border-b w-full justify-start rounded-none overflow-x-auto scrollbar-hide">
             {[
-              { id: 'bookings', label: 'Bookings' },
+              { id: 'bookings', label: 'Queue' },
               { id: 'scanner', label: 'Scan Code' },
-              { id: 'schedule', label: 'Schedule' },
+              { id: 'chat', label: 'Business Chat' },
               { id: 'items', label: 'Products' },
               { id: 'services', label: 'Services' }
             ].map((t) => (
@@ -168,6 +176,55 @@ export default function PartnerPortalPage() {
              </div>
           </TabsContent>
 
+          <TabsContent value="chat" className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <Card className="rounded-[3rem] border-none bg-white/40 backdrop-blur-xl p-8 space-y-6 shadow-xl liquid-glass">
+                <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
+                <div className="space-y-4">
+                  {MOCK_BUSINESS_CHATS.map(chat => (
+                    <button key={chat.id} className="w-full flex items-center gap-4 p-4 rounded-3xl hover:bg-primary/5 transition-all text-left">
+                      <Avatar className="h-12 w-12 border-2 border-primary/10">
+                        <AvatarFallback>{chat.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex justify-between items-baseline">
+                          <p className="font-bold text-sm truncate text-primary">{chat.name}</p>
+                          <span className="text-[8px] uppercase opacity-40 font-black">{chat.time}</span>
+                        </div>
+                        <p className="text-xs truncate text-muted-foreground italic">{chat.lastMsg}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+              <Card className="lg:col-span-2 rounded-[3rem] border-none bg-white/40 backdrop-blur-xl h-[500px] flex flex-col shadow-xl liquid-glass overflow-hidden">
+                 <div className="p-6 border-b flex items-center gap-4 bg-white/20">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback>G</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-grow">
+                       <p className="font-headline text-xl italic text-primary">GlamLux Logistics</p>
+                       <p className="text-[8px] uppercase font-black text-rose-500 tracking-widest">Support Channel</p>
+                    </div>
+                 </div>
+                 <ScrollArea className="flex-1 p-8">
+                    <div className="space-y-4">
+                       <div className="bg-primary/5 p-4 rounded-3xl rounded-tl-none max-w-[80%]">
+                          <p className="text-sm italic">Hello! A delivery partner has been assigned to collect your makeup orders scheduled for today.</p>
+                          <span className="text-[8px] uppercase font-black opacity-30 mt-2 block">9:00 AM</span>
+                       </div>
+                    </div>
+                 </ScrollArea>
+                 <div className="p-6 border-t bg-white/20">
+                    <div className="flex gap-2">
+                       <Input placeholder="Message logistics team..." className="rounded-full bg-white/60 border-none h-12 px-6" />
+                       <Button size="icon" className="h-12 w-12 rounded-full"><Send className="h-5 w-5" /></Button>
+                    </div>
+                 </div>
+              </Card>
+            </div>
+          </TabsContent>
+
           <TabsContent value="bookings" className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
@@ -185,22 +242,6 @@ export default function PartnerPortalPage() {
                     <Badge variant="outline" className="rounded-full uppercase text-[8px] font-black tracking-widest px-3 border-white/20 bg-white/10 backdrop-blur-md text-primary">Waiting</Badge>
                   </div>
                 </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="schedule" className="space-y-12">
-            <div className="flex justify-between items-center">
-               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Weekly Schedule</h3>
-               <Badge className="bg-accent/20 backdrop-blur-md text-accent-foreground border-accent/30 rounded-full px-4 py-1 uppercase tracking-widest text-[8px] font-black">Very Busy Soon</Badge>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-300 group ring-1 ring-white/5 rounded-[2rem] liquid-glass">
-                   <p className="text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity text-primary">{day}</p>
-                   <p className="font-headline text-2xl text-primary italic">8/12</p>
-                   <p className="text-[8px] uppercase font-bold opacity-60 text-primary">Slots Full</p>
-                </div>
               ))}
             </div>
           </TabsContent>
@@ -307,7 +348,7 @@ export default function PartnerPortalPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary">
           <div className="max-w-xl mx-auto space-y-12">
             <div className="space-y-4 text-center">
-              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Service Deal</SheetTitle>
+              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Beauty Deal</SheetTitle>
               <SheetDescription className="text-muted-foreground italic text-lg font-body">Create a new special offer for your customers.</SheetDescription>
             </div>
             <div className="space-y-8">
@@ -348,7 +389,7 @@ export default function PartnerPortalPage() {
                 <Package className="h-10 w-10 text-primary" />
               </div>
               <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Product Entry</SheetTitle>
-              <SheetDescription className="text-muted-foreground italic text-lg font-body">Add a professional makeup item to your boutique.</SheetDescription>
+              <SheetDescription className="text-muted-foreground italic text-lg font-body">Add a makeup item to your shop.</SheetDescription>
             </div>
             <div className="space-y-8">
               <div className="space-y-2">
@@ -385,14 +426,14 @@ export default function PartnerPortalPage() {
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-12">
               <div className="space-y-2 text-center">
-                <Badge className="bg-primary/20 backdrop-blur-md text-primary rounded-full uppercase tracking-widest text-[8px] font-black border-white/20 px-4 py-1">Customer Check-in</Badge>
+                <Badge className="bg-primary/20 backdrop-blur-md text-primary rounded-full uppercase tracking-widest text-[8px] font-black border-white/20 px-4 py-1">Customer Arrival</Badge>
                 <SheetTitle className="text-6xl md:text-7xl font-headline leading-none italic text-primary">{selectedArrival.name}</SheetTitle>
                 <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
               </div>
               
               <div className="p-10 bg-white/20 backdrop-blur-xl border border-white/40 shadow-2xl space-y-6 ring-1 ring-white/5 rounded-[3rem]">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Booking Time</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Arrival Time</span>
                   <span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span>
                 </div>
                 <div className="flex justify-between items-baseline">

@@ -30,13 +30,13 @@ const MOCK_CONVERSATIONS: Conversation[] = [
   {
     id: 'c2',
     participantId: 'p2',
-    participantName: 'GlamLux Support',
+    participantName: 'GlamLux Help',
     participantImage: 'https://picsum.photos/seed/glam-makeup-hero-final/100/100',
     lastMessage: 'Your order #GL938-X has been shipped.',
     lastTimestamp: 'Yesterday',
     unreadCount: 0,
     messages: [
-      { id: 'm4', senderId: 'p2', text: 'Welcome to GlamLux Support.', timestamp: 'Yesterday', isMe: false },
+      { id: 'm4', senderId: 'p2', text: 'Welcome to GlamLux Help.', timestamp: 'Yesterday', isMe: false },
       { id: 'm5', senderId: 'p2', text: 'Your order #GL938-X has been shipped.', timestamp: 'Yesterday', isMe: false },
     ]
   }
@@ -75,9 +75,10 @@ export default function MessagesPage() {
           activeConversation ? "hidden md:flex" : "flex"
         )}>
           <div className="p-6 space-y-4">
-            <h1 className="text-3xl font-headline italic">Glam Messages</h1>
+            <h1 className="text-3xl font-headline italic">Customer Chat</h1>
+            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Talk to parlours and support</p>
             <div className="relative">
-              <Input placeholder="Search chats..." className="rounded-2xl bg-white/60 border-none h-12" />
+              <Input placeholder="Search messages..." className="rounded-2xl bg-white/60 border-none h-12" />
             </div>
           </div>
           <ScrollArea className="flex-1">
@@ -131,7 +132,7 @@ export default function MessagesPage() {
               </Avatar>
               <div className="flex-grow">
                 <h3 className="font-headline text-xl leading-none">{activeConversation.participantName}</h3>
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest">Online Now</p>
+                <p className="text-[10px] uppercase font-bold text-primary tracking-widest">Active Now</p>
               </div>
               <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5" /></Button>
             </div>
@@ -140,7 +141,7 @@ export default function MessagesPage() {
             <ScrollArea className="flex-1 p-4 md:p-8">
               <div className="space-y-6">
                 <div className="flex justify-center">
-                  <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-3 py-1 rounded-full">Secure Artistry Channel</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-3 py-1 rounded-full">Secure Messaging</span>
                 </div>
                 {activeConversation.messages.map((msg) => (
                   <div key={msg.id} className={cn("flex flex-col max-w-[80%] space-y-1", msg.isMe ? "ml-auto items-end" : "items-start")}>
@@ -178,8 +179,8 @@ export default function MessagesPage() {
               <MessageSquare className="h-16 w-16 text-primary/20" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-3xl font-headline italic">The Design Studio</h2>
-              <p className="text-muted-foreground font-body max-w-xs mx-auto">Select an expert to discuss your next luxury transformation.</p>
+              <h2 className="text-3xl font-headline italic">Customer Support</h2>
+              <p className="text-muted-foreground font-body max-w-xs mx-auto">Ask about your bookings or makeup orders here.</p>
             </div>
           </div>
         )}
