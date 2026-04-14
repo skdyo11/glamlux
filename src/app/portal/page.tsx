@@ -28,11 +28,13 @@ import {
   Plus, 
   QrCode,
   Navigation,
-  CalendarDays
+  CalendarDays,
+  Scissors,
+  ArrowRight
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { PRODUCTS } from '@/app/lib/mock-data';
+import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
 import Image from 'next/image';
 import { useFirebase } from '@/firebase';
 import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
@@ -46,7 +48,11 @@ export default function PartnerPortalPage() {
   const [activeTab, setActiveTab] = useState('bookings');
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
+  const [isAddServiceSheetOpen, setIsAddServiceSheetOpen] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
+  // Filter deals for the portal view (mocking "My Services")
+  const myServices = DEALS.filter(d => d.vendor_id === 'v1');
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -111,23 +117,23 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none liquid-glass">
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 border-none liquid-glass">
                <TrendingUp className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Sales ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-500 border-none liquid-glass">
+             <Card className="rounded-[3rem] border-white/20 bg-white/5 backdrop-blur-3xl p-10 space-y-4 shadow-2xl ring-1 ring-white/10 group hover:bg-white/10 transition-all duration-300 border-none liquid-glass">
                <Users className="h-6 w-6 opacity-40 group-hover:scale-110 transition-transform text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Workers Today</p>
              </Card>
              <Card 
-                className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 cursor-pointer hover:bg-white/10 transition-all duration-500 shadow-2xl ring-1 ring-white/10 group liquid-glass"
+                className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-10 space-y-4 cursor-pointer hover:bg-white/10 transition-all duration-300 shadow-2xl ring-1 ring-white/10 group liquid-glass"
                 onClick={() => setIsCourierSheetOpen(true)}
              >
                 <Navigation className="h-6 w-6 opacity-60 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform text-primary" />
                 <p className="text-[10px] uppercase font-black tracking-widest text-primary">Join Delivery Team</p>
-                <p className="text-xs italic opacity-60 text-primary">Help us deliver makeup</p>
+                <p className="text-xs italic opacity-80 text-primary/70">Help us deliver makeup</p>
              </Card>
           </div>
         </header>
@@ -138,7 +144,7 @@ export default function PartnerPortalPage() {
               { id: 'bookings', label: 'Bookings' },
               { id: 'scanner', label: 'Scan Code' },
               { id: 'schedule', label: 'Schedule' },
-              { id: 'items', label: 'My Items' },
+              { id: 'items', label: 'Products' },
               { id: 'services', label: 'Services' }
             ].map((t) => (
               <TabsTrigger 
@@ -165,7 +171,7 @@ export default function PartnerPortalPage() {
               {[1, 2, 3].map((i) => (
                 <Card 
                   key={i} 
-                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-500 cursor-pointer shadow-xl ring-1 ring-white/5 group liquid-glass" 
+                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 space-y-6 hover:bg-white/10 transition-all duration-300 cursor-pointer shadow-xl ring-1 ring-white/5 group liquid-glass" 
                   onClick={() => setSelectedArrival({ id: i, name: 'Customer', service: 'Bridal Service', time: '10:30 AM', status: 'Pending' })}
                 >
                   <div className="flex justify-between items-start">
@@ -188,7 +194,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-500 group ring-1 ring-white/5 rounded-[2rem] liquid-glass">
+                <div key={day} className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 space-y-4 text-center shadow-lg hover:bg-white/10 transition-all duration-300 group ring-1 ring-white/5 rounded-[2rem] liquid-glass">
                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity text-primary">{day}</p>
                    <p className="font-headline text-2xl text-primary italic">8/12</p>
                    <p className="text-[8px] uppercase font-bold opacity-60 text-primary">Slots Full</p>
@@ -199,23 +205,58 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="items" className="space-y-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Stock</h3>
-              <Button className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-500 text-primary">
-                <Plus className="h-4 w-4 mr-2" /> Add Makeup
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Products</h3>
+              <Button className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-300 text-primary">
+                <Plus className="h-4 w-4 mr-2" /> Add Product
               </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 rounded-[3rem] transition-all duration-700 hover:bg-white/10 shadow-xl ring-1 ring-white/5 liquid-glass">
+                <div key={p.id} className="group relative bg-white/5 backdrop-blur-xl border border-white/5 p-6 rounded-[3rem] transition-all duration-300 hover:bg-white/10 shadow-xl ring-1 ring-white/5 liquid-glass">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
-                    <Image src={p.image} alt={p.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
+                    <Image src={p.image} alt={p.name} fill className="object-cover soft-focus transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <div className="pt-6 space-y-1">
                     <h4 className="font-headline text-2xl group-hover:text-rose-500 transition-colors text-primary italic">{p.name}</h4>
                     <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest text-primary">{p.brand}</p>
-                    <p className="text-xs font-bold pt-2 text-primary">Left in Shop: {p.stock}</p>
+                    <p className="text-xs font-bold pt-2 text-primary">Stock: {p.stock}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="services" className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Services</h3>
+              <Button 
+                onClick={() => setIsAddServiceSheetOpen(true)}
+                className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-300 text-primary"
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add Service
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {myServices.map((service) => (
+                <Card 
+                  key={service.id} 
+                  className="rounded-[3rem] border-none bg-white/5 backdrop-blur-3xl p-8 flex gap-6 items-center hover:bg-white/10 transition-all duration-300 shadow-xl ring-1 ring-white/5 group liquid-glass"
+                >
+                  <div className="h-24 w-24 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+                    <Scissors className="h-10 w-10" />
+                  </div>
+                  <div className="flex-grow space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/20 text-primary rounded-full">{service.category}</Badge>
+                      <span className="text-[10px] font-bold text-primary opacity-40 uppercase tracking-widest">Active</span>
+                    </div>
+                    <h4 className="font-headline text-3xl text-primary italic leading-none">{service.name}</h4>
+                    <p className="font-bold text-lg text-accent-foreground">{getCurrency()} {service.discount_price.toLocaleString()}</p>
+                  </div>
+                  <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 rounded-full">
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Card>
               ))}
             </div>
           </TabsContent>
@@ -248,8 +289,45 @@ export default function PartnerPortalPage() {
                   <Input placeholder="Bike, Rickshaw, or Car" className="rounded-full h-14 bg-white/5 backdrop-blur-md border-white/20 text-white placeholder:text-white/20 focus:bg-white/10 transition-all px-8" />
                 </div>
               </div>
-              <Button onClick={() => setIsCourierSheetOpen(false)} className="w-full h-16 bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border border-white/30 shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+              <Button onClick={() => setIsCourierSheetOpen(false)} className="w-full h-16 bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border border-white/30 shadow-2xl transition-all duration-300 hover:scale-[1.02]">
                 Join Now
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Add Service Sheet */}
+      <Sheet open={isAddServiceSheetOpen} onOpenChange={setIsAddServiceSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary">
+          <div className="max-w-xl mx-auto space-y-12">
+            <div className="space-y-4 text-center">
+              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Service Deal</SheetTitle>
+              <SheetDescription className="text-muted-foreground italic text-lg font-body">Create a new special offer for your customers.</SheetDescription>
+            </div>
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Service Name</Label>
+                <Input placeholder="e.g. Royal Wedding Glow" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Deal Price ({getCurrency()})</Label>
+                  <Input placeholder="0.00" type="number" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Original Price ({getCurrency()})</Label>
+                  <Input placeholder="0.00" type="number" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+                </div>
+              </div>
+              <Button 
+                onClick={() => {
+                  toast({ title: "Service Created", description: "Your new beauty deal is now live." });
+                  setIsAddServiceSheetOpen(false);
+                }} 
+                className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+              >
+                Create Deal
               </Button>
             </div>
           </div>
@@ -279,7 +357,7 @@ export default function PartnerPortalPage() {
               </div>
 
               <div className="flex gap-4">
-                <Button onClick={() => setSelectedArrival(null)} className="flex-1 h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+                <Button onClick={() => setSelectedArrival(null)} className="flex-1 h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-300 hover:scale-[1.02]">
                   Check Code & Start
                 </Button>
               </div>
