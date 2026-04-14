@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,11 +9,13 @@ import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, MapPin, Sparkles, Search, ArrowRight, Navigation } from 'lucide-react';
+import { Star, MapPin, Search, ArrowRight, Navigation, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export default function VendorsPage() {
-  const { getCurrency } = useStore();
+  const { getCurrency, isFavoriteVendor, toggleFavoriteVendor } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [areaFilter, setAreaFilter] = useState('All');
   const [isMounted, setIsMounted] = useState(false);
@@ -31,6 +32,12 @@ export default function VendorsPage() {
     const matchesArea = areaFilter === 'All' || v.area_tag.includes(areaFilter);
     return matchesSearch && matchesArea;
   });
+
+  const handleFavoriteToggle = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavoriteVendor(id);
+  };
 
   if (!isMounted) return null;
 
@@ -77,46 +84,61 @@ export default function VendorsPage() {
 
         {filteredVendors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-            {filteredVendors.map((vendor) => (
-              <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block interactive-element">
-                <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-3xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
-                  <div className="relative h-80 md:h-96 overflow-hidden">
-                    <Image 
-                      src={vendor.images[0]} 
-                      alt={vendor.name}
-                      fill
-                      className="object-cover soft-focus group-hover:scale-110 transition-transform duration-1000"
-                    />
-                    <div className="absolute top-8 left-8">
-                      <Badge className="bg-white/95 dark:bg-black/80 text-primary border border-white/20 text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-2xl backdrop-blur-md">
-                        Elite Partner
-                      </Badge>
+            {filteredVendors.map((vendor) => {
+              const isFav = isFavoriteVendor(vendor.id);
+              return (
+                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block interactive-element">
+                  <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
+                    <div className="relative h-80 md:h-96 overflow-hidden">
+                      <Image 
+                        src={vendor.images[0]} 
+                        alt={vendor.name}
+                        fill
+                        className="object-cover soft-focus group-hover:scale-110 transition-transform duration-1000"
+                      />
+                      <div className="absolute top-8 left-8 flex items-center gap-3">
+                        <Badge className="bg-white/95 dark:bg-black/80 text-primary border border-white/20 text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-2xl backdrop-blur-md">
+                          Elite Partner
+                        </Badge>
+                      </div>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => handleFavoriteToggle(e, vendor.id)}
+                        className={cn(
+                          "absolute top-8 right-8 h-12 w-12 rounded-full backdrop-blur-md z-20 transition-all",
+                          isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
+                        )}
+                      >
+                        <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
+                      </Button>
                     </div>
-                  </div>
-                  <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
-                    <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
-                      <MapPin className="h-4 w-4 text-destructive" />
-                      {vendor.area_tag}
-                    </div>
-                    <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
-                      {vendor.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-24 backdrop-blur-md">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
-                      <Star className="h-4 w-4 fill-accent-foreground" />
-                      {vendor.rating} Registry
-                    </div>
-                    <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">
-                      Explore Profile <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
+                    <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
+                      <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
+                        <MapPin className="h-4 w-4 text-destructive" />
+                        {vendor.area_tag}
+                      </div>
+                      <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
+                        {vendor.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-24 backdrop-blur-md">
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
+                        <Star className="h-4 w-4 fill-accent-foreground" />
+                        {vendor.rating} Registry
+                      </div>
+                      <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">
+                        Explore Profile <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-3xl border border-dashed border-white/20 rounded-[3rem]">
+          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-xl border border-dashed border-white/20 rounded-[3rem]">
             <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
               <Navigation className="h-12 w-12 text-primary/20" />
             </div>

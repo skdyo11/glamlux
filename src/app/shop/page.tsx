@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -6,16 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { PRODUCTS } from '@/app/lib/mock-data';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, ShoppingBag, Search } from 'lucide-react';
+import { Search, ShoppingBag, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function ShopPage() {
-  const { addToCart, getCurrency } = useStore();
+  const { addToCart, getCurrency, isFavoriteProduct, toggleFavoriteProduct } = useStore();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
@@ -46,8 +46,14 @@ export default function ShopPage() {
     });
   };
 
+  const handleFavoriteToggle = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavoriteProduct(id);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
       <main className="container mx-auto px-6 py-16 md:py-24">
@@ -89,38 +95,54 @@ export default function ShopPage() {
 
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/shop/${product.id}`} className="group block interactive-element h-full">
-                <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden active:scale-[0.99] h-full flex flex-col">
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <Image 
-                      src={product.image} 
-                      alt={product.name}
-                      fill
-                      className="object-cover soft-focus group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-                    <Button 
-                      variant="secondary"
-                      size="icon" 
-                      onClick={(e) => handleAddToCart(e, product)}
-                      className="absolute bottom-8 right-8 h-14 w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
-                    >
-                      <ShoppingBag className="h-6 w-6" />
-                    </Button>
-                  </div>
-                  <CardHeader className="space-y-4 p-8 text-center flex-grow">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-primary/40 font-black">{product.brand}</p>
-                    <CardTitle className="text-2xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
-                      {product.name}
-                    </CardTitle>
-                    <div className="flex justify-center items-center gap-3 pt-4 border-t border-border/5 mt-4">
-                       <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price.toLocaleString()}</p>
+            {filteredProducts.map((product) => {
+              const isFav = isFavoriteProduct(product.id);
+              return (
+                <Link key={product.id} href={`/shop/${product.id}`} className="group block interactive-element h-full">
+                  <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden active:scale-[0.99] h-full flex flex-col">
+                    <div className="relative aspect-[4/5] overflow-hidden">
+                      <Image 
+                        src={product.image} 
+                        alt={product.name}
+                        fill
+                        className="object-cover soft-focus group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => handleFavoriteToggle(e, product.id)}
+                        className={cn(
+                          "absolute top-6 right-6 h-10 w-10 rounded-full backdrop-blur-md z-20 transition-all",
+                          isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
+                        )}
+                      >
+                        <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
+                      </Button>
+
+                      <Button 
+                        variant="secondary"
+                        size="icon" 
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="absolute bottom-8 right-8 h-14 w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
+                      >
+                        <ShoppingBag className="h-6 w-6" />
+                      </Button>
                     </div>
-                  </CardHeader>
-                </Card>
-              </Link>
-            ))}
+                    <CardHeader className="space-y-4 p-8 text-center flex-grow">
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-primary/40 font-black">{product.brand}</p>
+                      <CardTitle className="text-xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
+                        {product.name}
+                      </CardTitle>
+                      <div className="flex justify-center items-center gap-3 pt-4 border-t border-border/5 mt-4">
+                         <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price.toLocaleString()}</p>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="py-40 text-center space-y-8">

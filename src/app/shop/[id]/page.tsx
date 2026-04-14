@@ -1,25 +1,27 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
-import { PRODUCTS } from '@/app/lib/mock-data';
+import { PRODUCTS, VENDORS } from '@/app/lib/mock-data';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, ShieldCheck, Truck, ArrowLeft, Star, Heart } from 'lucide-react';
+import { ShoppingCart, ShieldCheck, Truck, ArrowLeft, Star, Heart, Store } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { addToCart, getCurrency } = useStore();
+  const { addToCart, getCurrency, toggleFavoriteProduct, isFavoriteProduct } = useStore();
   const { toast } = useToast();
 
   const product = PRODUCTS.find(p => p.id === id);
+  const vendor = VENDORS.find(v => v.id === product?.vendor_id);
+  const isFav = product ? isFavoriteProduct(product.id) : false;
 
   if (!product) {
     return (
@@ -55,9 +57,9 @@ export default function ProductDetailPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 md:py-16">
+      <main className="container mx-auto px-4 py-8 md:py-16 pb-32">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-          <Button asChild variant="ghost" className="-ml-2 text-muted-foreground hover:text-primary">
+          <Button asChild variant="ghost" className="-ml-2 text-muted-foreground hover:text-primary rounded-full">
             <Link href="/shop"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Collection</Link>
           </Button>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
@@ -80,9 +82,13 @@ export default function ProductDetailPage() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="absolute top-6 right-6 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40"
+              onClick={() => toggleFavoriteProduct(product.id)}
+              className={cn(
+                "absolute top-6 right-6 rounded-full backdrop-blur-md transition-all h-12 w-12",
+                isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
+              )}
             >
-              <Heart className="h-5 w-5" />
+              <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
             </Button>
           </div>
 
@@ -101,13 +107,26 @@ export default function ProductDetailPage() {
               <h1 className="text-5xl md:text-7xl font-headline leading-tight tracking-tighter text-primary">
                 {product.name}
               </h1>
-              <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-bold italic text-primary">
-                  {getCurrency()} {product.price.toLocaleString()}
-                </span>
-                <span className="text-sm text-muted-foreground uppercase font-bold tracking-widest">
-                  In Stock ({product.stock})
-                </span>
+              
+              <div className="flex flex-col gap-4">
+                <div className="flex items-baseline gap-4">
+                  <span className="text-4xl font-bold italic text-primary">
+                    {getCurrency()} {product.price.toLocaleString()}
+                  </span>
+                  <span className="text-xs text-muted-foreground uppercase font-bold tracking-widest">
+                    In Stock ({product.stock})
+                  </span>
+                </div>
+                
+                {vendor && (
+                  <Link href={`/vendors/${vendor.id}`} className="inline-flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all w-fit group">
+                    <Store className="h-5 w-5 text-primary opacity-40 group-hover:scale-110 transition-transform" />
+                    <div className="text-left">
+                      <p className="text-[8px] uppercase font-black tracking-widest opacity-40 leading-none mb-1">Authentic Product Owned By</p>
+                      <p className="text-sm font-headline italic text-primary group-hover:translate-x-1 transition-transform">{vendor.name}</p>
+                    </div>
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -136,7 +155,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <Button size="lg" className="w-full h-16 bg-primary text-white rounded-[2rem] text-xl font-bold shadow-2xl shadow-primary/30 group" onClick={handleAddToCart}>
+            <Button size="lg" className="w-full h-16 bg-primary text-primary-foreground rounded-[2rem] text-xl font-bold shadow-2xl shadow-primary/30 group" onClick={handleAddToCart}>
               Add to Glam Cart
               <ShoppingCart className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
             </Button>

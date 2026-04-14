@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -9,23 +8,26 @@ import { useStore } from '@/app/lib/store';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function VendorProfilePage() {
   const { id } = useParams();
-  const { getCurrency } = useStore();
+  const { getCurrency, toggleFavoriteVendor, isFavoriteVendor } = useStore();
   const vendor = VENDORS.find(v => v.id === id);
   const vendorDeals = DEALS.filter(d => d.vendor_id === id);
   const vendorProducts = PRODUCTS.filter(p => p.vendor_id === id);
 
   if (!vendor) return null;
 
+  const isFav = isFavoriteVendor(vendor.id);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main>
+      <main className="pb-32">
         {/* Vendor Hero - High Intensity Glass */}
         <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden">
           <Image 
@@ -40,11 +42,22 @@ export default function VendorProfilePage() {
           <div className="container mx-auto px-6 relative z-10">
              <div className="max-w-4xl space-y-6">
                 <div className="flex flex-col gap-4">
-                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-3xl border border-white/20 px-3 py-1 rounded-full shadow-2xl self-start">
-                    <div className="w-1 h-1 rounded-full bg-primary" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Parlours Section</span>
+                  <div className="flex items-center gap-4">
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-3 py-1 rounded-full shadow-2xl">
+                      <div className="w-1 h-1 rounded-full bg-primary" />
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Parlours Section</span>
+                    </div>
+                    <Button 
+                      onClick={() => toggleFavoriteVendor(vendor.id)}
+                      className={cn(
+                        "rounded-full h-10 w-10 p-0 backdrop-blur-md transition-all shadow-xl",
+                        isFav ? "bg-primary text-primary-foreground" : "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                      )}
+                    >
+                      <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
+                    </Button>
                   </div>
-                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-3xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl self-start">
+                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl self-start">
                     <Sparkles className="h-3 w-3 text-accent-foreground" />
                     <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Elite Artisan Registry</span>
                   </div>
@@ -77,7 +90,7 @@ export default function VendorProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {vendorDeals.map((deal) => (
                 <Link key={deal.id} href={`/deals/${deal.id}`} className="group">
-                  <Card className="rounded-[3rem] border-none bg-white/20 backdrop-blur-3xl flex flex-col md:flex-row overflow-hidden hover:bg-white/30 transition-all duration-700 ring-1 ring-white/20 hover:ring-white/50 shadow-2xl">
+                  <Card className="rounded-[3rem] border-none bg-white/20 backdrop-blur-xl flex flex-col md:flex-row overflow-hidden hover:bg-white/30 transition-all duration-700 ring-1 ring-white/20 hover:ring-white/50 shadow-2xl">
                     <div className="relative w-full md:w-64 h-64 overflow-hidden">
                       <Image src={`https://picsum.photos/seed/deal-${deal.id}/600/600`} alt={deal.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-105" />
                     </div>
@@ -108,7 +121,7 @@ export default function VendorProfilePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
               {vendorProducts.map((product) => (
                 <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6">
-                  <div className="relative aspect-square overflow-hidden rounded-[3rem] bg-white/20 backdrop-blur-3xl ring-1 ring-white/20 shadow-xl">
+                  <div className="relative aspect-square overflow-hidden rounded-[3rem] bg-white/20 backdrop-blur-xl ring-1 ring-white/20 shadow-xl">
                     <Image src={product.image} alt={product.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
                   </div>
