@@ -78,10 +78,10 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
-      <main className="container mx-auto max-w-screen-2xl flex flex-1 h-[calc(100dvh-120px)] md:h-[calc(100vh-100px)] pt-20 md:pt-8 transition-all duration-300">
+      <main className="container mx-auto max-w-screen-2xl flex flex-1 h-[calc(100dvh-120px)] md:h-[calc(100vh-100px)] pt-20 md:pt-24 pb-4 md:pb-8 transition-all duration-300">
         {/* Sidebar List */}
         <div className={cn(
-          "w-full md:w-80 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
+          "w-full md:w-80 border-r flex flex-col bg-white/40 dark:bg-white/5 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
           activeConversationId ? "hidden md:flex" : "flex"
         )}>
           <div className="p-6 space-y-1">
@@ -95,7 +95,7 @@ export default function MessagesPage() {
                 onClick={() => setActiveConversationId(conv.id)}
                 className={cn(
                   "w-full p-4 rounded-3xl flex items-center gap-4 transition-all active:scale-[0.98] mb-2",
-                  activeConversationId === conv.id ? "bg-primary text-white shadow-lg" : "hover:bg-primary/5"
+                  activeConversationId === conv.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
                 )}
               >
                 <Avatar className="h-12 w-12 border-2 border-white/20"><AvatarImage src={conv.participantImage} /></Avatar>
@@ -109,9 +109,9 @@ export default function MessagesPage() {
         </div>
 
         {/* Chat Window */}
-        {activeConversation ? (
-          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative">
-            <div className="p-4 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md z-10">
+        {activeConversation && (
+          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative border-l dark:border-white/10">
+            <div className="p-4 border-b flex items-center gap-4 bg-white/60 dark:bg-black/20 backdrop-blur-md z-10">
               <Button variant="ghost" size="icon" onClick={() => setActiveConversationId(null)} className="md:hidden text-primary"><ChevronLeft className="h-6 w-6" /></Button>
               <Avatar className="h-10 w-10"><AvatarImage src={activeConversation.participantImage} /></Avatar>
               <div className="flex-grow">
@@ -125,7 +125,10 @@ export default function MessagesPage() {
               <div className="space-y-6 pb-32">
                 {activeConversation.messages.map((msg) => (
                   <div key={msg.id} className={cn("flex flex-col max-w-[85%] space-y-1", msg.isMe ? "ml-auto items-end" : "items-start")}>
-                    <div className={cn("p-4 rounded-[1.5rem] shadow-sm text-sm", msg.isMe ? "bg-primary text-white rounded-tr-none" : "bg-white/60 text-foreground rounded-tl-none border border-white/40")}>
+                    <div className={cn(
+                      "p-4 rounded-[1.5rem] shadow-sm text-sm", 
+                      msg.isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-white/60 dark:bg-white/10 text-foreground rounded-tl-none border border-white/40 dark:border-white/10"
+                    )}>
                       {msg.text}
                     </div>
                     <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50">{msg.timestamp}</span>
@@ -135,22 +138,18 @@ export default function MessagesPage() {
             </ScrollArea>
 
             {/* Input Bar pinned above bottom nav */}
-            <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t z-10 pb-[calc(1.5rem+env(safe-area-inset-bottom)+3.5rem)] md:pb-6">
+            <div className="p-4 md:p-6 bg-white/40 dark:bg-black/40 backdrop-blur-md border-t z-10 pb-[calc(1rem+env(safe-area-inset-bottom)+3.5rem)] md:pb-6">
               <div className="flex gap-2 max-w-4xl mx-auto">
                 <Input 
                   value={newMessage} 
                   onChange={(e) => setNewMessage(e.target.value)} 
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} 
                   placeholder="Write your message..." 
-                  className="rounded-full h-14 bg-white/80 border-none px-6 text-sm" 
+                  className="rounded-full h-14 bg-white/80 dark:bg-white/5 border-none px-6 text-sm" 
                 />
-                <Button onClick={handleSendMessage} size="icon" className="h-14 w-14 rounded-full bg-primary text-white shadow-xl hover:scale-105 transition-all"><Send className="h-5 w-5" /></Button>
+                <Button onClick={handleSendMessage} size="icon" className="h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-xl hover:scale-105 transition-all"><Send className="h-5 w-5" /></Button>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="hidden md:flex flex-grow items-center justify-center bg-white/20 md:rounded-r-[3rem]">
-             <p className="text-muted-foreground italic">Select a conversation to start chatting.</p>
           </div>
         )}
       </main>

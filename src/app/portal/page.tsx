@@ -130,18 +130,18 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-none liquid-glass p-10 space-y-4 shadow-xl">
+             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
                <TrendingUp className="h-6 w-6 opacity-40 text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Money ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-none liquid-glass p-10 space-y-4 shadow-xl">
+             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
                <Users className="h-6 w-6 opacity-40 text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
              </Card>
              <Card 
-                className="rounded-[3rem] border-none liquid-glass p-10 space-y-4 cursor-pointer hover:bg-white/10 transition-all shadow-xl group"
+                className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
                 onClick={() => setActiveSheet('delivery')}
              >
                 <Navigation className="h-6 w-6 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -171,7 +171,7 @@ export default function PartnerPortalPage() {
               </div>
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {WEEKLY_PLAN.map((item) => (
-                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none liquid-glass flex flex-col items-center gap-2 shadow-xl hover:bg-white/40 transition-all">
+                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl flex flex-col items-center gap-2 shadow-xl hover:bg-primary/10 transition-all">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
                     <span className="font-headline text-3xl italic text-primary">{item.slots > 0 ? `${item.slots} Slots` : 'Closed'}</span>
                     <Badge variant="outline" className={cn(
@@ -192,7 +192,7 @@ export default function PartnerPortalPage() {
                 {[1, 2, 3].map((i) => (
                   <Card 
                     key={i} 
-                    className="rounded-[3rem] border-none liquid-glass p-8 space-y-6 hover:bg-white/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
+                    className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
                     onClick={() => setSelectedArrival({ id: i, name: i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik', service: i === 1 ? 'Royal Bridal' : i === 2 ? 'Silk Hair Spa' : 'Skin Facial', time: `${10 + i}:30 AM`, status: 'Waiting' })}
                   >
                     <div className="flex justify-between items-start">
@@ -218,7 +218,7 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in duration-300">
-            <Card className="rounded-[3rem] border-none liquid-glass p-8 space-y-6 shadow-xl">
+            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 shadow-xl">
               <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
               <div className="space-y-2">
                 {[{id: 'b1', name: 'GlamLux Help', msg: 'Driver is on the way.'}, {id: 'b2', name: 'Beauty Brands', msg: 'Products ready.'}].map(chat => (
@@ -232,8 +232,8 @@ export default function PartnerPortalPage() {
                 ))}
               </div>
             </Card>
-            <Card className="lg:col-span-2 rounded-[3rem] border-none liquid-glass h-[500px] flex flex-col shadow-xl overflow-hidden">
-               <div className="p-6 border-b flex items-center gap-4 bg-white/20">
+            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl h-[500px] flex flex-col shadow-xl overflow-hidden">
+               <div className="p-6 border-b flex items-center gap-4 bg-white/20 dark:bg-white/5">
                   <Avatar className="h-10 w-10"><AvatarFallback>G</AvatarFallback></Avatar>
                   <div>
                      <p className="font-headline text-xl italic text-primary">GlamLux Help</p>
@@ -241,11 +241,11 @@ export default function PartnerPortalPage() {
                   </div>
                </div>
                <ScrollArea className="flex-1 p-8">
-                  <div className="bg-primary/5 p-4 rounded-3xl rounded-tl-none max-w-[80%] text-sm italic">Hello! Your delivery driver is now assigned.</div>
+                  <div className="bg-primary/5 dark:bg-white/5 p-4 rounded-3xl rounded-tl-none max-w-[80%] text-sm italic">Hello! Your delivery driver is now assigned.</div>
                </ScrollArea>
-               <div className="p-6 border-t bg-white/20 flex gap-2">
-                  <Input placeholder="Message help team..." className="rounded-full bg-white/60 border-none h-12 px-6" />
-                  <Button size="icon" className="h-12 w-12 rounded-full"><Send className="h-5 w-5" /></Button>
+               <div className="p-6 border-t bg-white/20 dark:bg-white/5 flex gap-2">
+                  <Input placeholder="Message help team..." className="rounded-full bg-white/60 dark:bg-white/10 border-none h-12 px-6" />
+                  <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground"><Send className="h-5 w-5" /></Button>
                </div>
             </Card>
           </TabsContent>
@@ -259,7 +259,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative liquid-glass p-6 rounded-[3rem] transition-all hover:bg-white/10 shadow-xl">
+                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-6 rounded-[3rem] transition-all hover:bg-primary/10 shadow-xl">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
                     <Image src={p.image} alt={p.name} fill className="object-cover soft-focus group-hover:scale-105 transition-transform" />
                   </div>
@@ -282,7 +282,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myServices.map((service) => (
-                <Card key={service.id} className="rounded-[3rem] border-none liquid-glass p-8 flex gap-6 items-center hover:bg-white/10 transition-all shadow-xl group">
+                <Card key={service.id} className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-xl group">
                   <div className="h-24 w-24 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform"><Scissors className="h-10 w-10" /></div>
                   <div className="flex-grow space-y-2">
                     <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/20 text-primary rounded-full">{service.category}</Badge>
@@ -314,19 +314,19 @@ export default function PartnerPortalPage() {
               <div className="space-y-8">
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
-                  <Input placeholder="Enter name..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                  <Input placeholder="Enter name..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Detail</Label>
-                    <Input placeholder="Enter info..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                    <Input placeholder="Enter info..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value</Label>
-                    <Input placeholder="Enter value..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                    <Input placeholder="Enter value..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
                   </div>
                 </div>
-                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">
+                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">
                   Submit Details
                 </Button>
               </div>
@@ -337,7 +337,7 @@ export default function PartnerPortalPage() {
 
       {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 backdrop-blur-xl border-none">
+        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none">
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
               <div className="space-y-2 text-center">
@@ -345,11 +345,11 @@ export default function PartnerPortalPage() {
                 <SheetTitle className="text-6xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                 <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
               </div>
-              <div className="p-10 bg-white/40 backdrop-blur-xl border border-white/40 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
+              <div className="p-10 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
                 <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
                 <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
               </div>
-              <Button onClick={() => setSelectedArrival(null)} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">Verify & Start</Button>
+              <Button onClick={() => setSelectedArrival(null)} className="w-full h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">Verify & Start</Button>
             </div>
           )}
         </SheetContent>
