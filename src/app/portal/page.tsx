@@ -30,7 +30,8 @@ import {
   Navigation,
   CalendarDays,
   Scissors,
-  ArrowRight
+  ArrowRight,
+  Package
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +50,7 @@ export default function PartnerPortalPage() {
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [isCourierSheetOpen, setIsCourierSheetOpen] = useState(false);
   const [isAddServiceSheetOpen, setIsAddServiceSheetOpen] = useState(false);
+  const [isAddProductSheetOpen, setIsAddProductSheetOpen] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   // Filter deals for the portal view (mocking "My Services")
@@ -206,7 +208,10 @@ export default function PartnerPortalPage() {
           <TabsContent value="items" className="space-y-8">
             <div className="flex justify-between items-center">
               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Products</h3>
-              <Button className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-300 text-primary">
+              <Button 
+                onClick={() => setIsAddProductSheetOpen(true)}
+                className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-3xl border border-white/20 hover:bg-primary/20 transition-all duration-300 text-primary"
+              >
                 <Plus className="h-4 w-4 mr-2" /> Add Product
               </Button>
             </div>
@@ -328,6 +333,46 @@ export default function PartnerPortalPage() {
                 className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-300 hover:scale-[1.02]"
               >
                 Create Deal
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Add Product Sheet */}
+      <Sheet open={isAddProductSheetOpen} onOpenChange={setIsAddProductSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary">
+          <div className="max-w-xl mx-auto space-y-12">
+            <div className="space-y-4 text-center">
+              <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="h-10 w-10 text-primary" />
+              </div>
+              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Product Entry</SheetTitle>
+              <SheetDescription className="text-muted-foreground italic text-lg font-body">Add a professional makeup item to your boutique.</SheetDescription>
+            </div>
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Product Name</Label>
+                <Input placeholder="e.g. Silk Foundation" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Brand Name</Label>
+                  <Input placeholder="Brand name" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Price ({getCurrency()})</Label>
+                  <Input placeholder="0.00" type="number" className="rounded-full h-14 bg-white/40 backdrop-blur-md border-primary/20 text-primary px-8" />
+                </div>
+              </div>
+              <Button 
+                onClick={() => {
+                  toast({ title: "Product Added", description: "Your item is now available in the shop." });
+                  setIsAddProductSheetOpen(false);
+                }} 
+                className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+              >
+                Add Product
               </Button>
             </div>
           </div>
