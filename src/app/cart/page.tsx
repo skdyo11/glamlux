@@ -14,8 +14,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFirebase, useUser, setDocumentNonBlocking } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { useFirebase, useUser, setDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
+import { doc, collection, query, orderBy, limit } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -42,6 +42,20 @@ export default function CartPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Fetch latest active order for persistent tracking
+  const bookingsQuery = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return query(
+      collection(firestore, 'localUsers', user.uid, 'bookings'),
+      orderBy('createdAt', 'desc'),
+      limit(1)
+    );
+  }, [firestore, user?.uid]);
+
+  const { data: latestBookings } = useCollection(bookingsQuery);
+  const latestOrder = latestBookings?.[0];
+  const showTracker = latestOrder && latestOrder.deliveryStatus !== 'Delivered';
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const commission = subtotal * 0.15; 
@@ -148,15 +162,35 @@ export default function CartPage() {
               <p className="text-muted-foreground text-sm italic">Discover elite transformations and professional artistry products today.</p>
             </div>
             
-            <div className="p-10 rounded-[3rem] bg-primary/5 dark:bg-white/5 border border-primary/10 space-y-6">
-              <div className="flex items-center justify-center gap-3 text-primary font-black uppercase text-[10px] tracking-widest">
-                <Truck className="h-5 w-5" /> Track Active Orders
+            {showTracker ? (
+              <Card className="rounded-[3rem] border-none bg-primary text-primary-foreground p-10 space-y-6 shadow-2xl">
+                <div className="flex items-center justify-center gap-3 font-black uppercase text-[10px] tracking-widest">
+                  <Truck className="h-5 w-5" /> Current Order: {latestOrder.referenceCode}
+                </div>
+                <div className="space-y-2">
+                  <div className="h-1 w-full bg-white/20 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-accent transition-all duration-1000"
+                      style={{ width: latestOrder.deliveryStatus === 'Pending' ? '25%' : latestOrder.deliveryStatus === 'Picked Up' ? '75%' : '100%' }}
+                    />
+                  </div>
+                  <p className="text-[8px] uppercase font-black tracking-widest opacity-60">Status: {latestOrder.deliveryStatus}</p>
+                </div>
+                <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-accent text-accent-foreground shadow-lg">
+                  <Link href={`/booking/${latestOrder.id}?uid=${user?.uid}`}>View Full Tracker</Link>
+                </Button>
+              </Card>
+            ) : (
+              <div className="p-10 rounded-[3rem] bg-primary/5 dark:bg-white/5 border border-primary/10 space-y-6">
+                <div className="flex items-center justify-center gap-3 text-primary font-black uppercase text-[10px] tracking-widest">
+                  <Truck className="h-5 w-5" /> Track Active Orders
+                </div>
+                <p className="text-xs italic opacity-60">Already made a purchase? Check your delivery updates here.</p>
+                <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-primary text-primary-foreground shadow-lg">
+                  <Link href="/messages">View Order History</Link>
+                </Button>
               </div>
-              <p className="text-xs italic opacity-60">Already made a purchase? Check your delivery updates here.</p>
-              <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-primary text-primary-foreground shadow-lg">
-                <Link href="/messages">View Order History</Link>
-              </Button>
-            </div>
+            )}
 
             <Button asChild variant="ghost" className="rounded-full px-8 font-bold text-[10px] uppercase tracking-widest text-primary">
               <Link href="/">Return to Discovery</Link>
@@ -172,6 +206,41 @@ export default function CartPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
+        {/* Persistent Tracker Banner */}
+        {showTracker && (
+          <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+            <Card className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl ring-1 ring-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <Package className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-headline text-2xl italic text-primary">Recent Order: {latestOrder.referenceCode}</h3>
+                  <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Shipment Status: {latestOrder.deliveryStatus}</p>
+                </div>
+              </div>
+              
+              <div className="flex-grow max-w-md w-full px-4 hidden md:block">
+                  <div className="relative h-1 bg-muted rounded-full overflow-hidden">
+                     <div 
+                       className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000"
+                       style={{ width: latestOrder.deliveryStatus === 'Pending' ? '25%' : latestOrder.deliveryStatus === 'Picked Up' ? '75%' : '100%' }}
+                     />
+                  </div>
+                  <div className="flex justify-between mt-2 text-[8px] font-black uppercase tracking-[0.2em] opacity-30">
+                    <span>Placed</span>
+                    <span>Shipped</span>
+                    <span>Arriving</span>
+                  </div>
+              </div>
+
+              <Button asChild variant="outline" className="rounded-full border-primary/20 text-primary font-bold text-[10px] uppercase tracking-widest h-10 px-6">
+                <Link href={`/booking/${latestOrder.id}?uid=${user?.uid}`}>Track Order</Link>
+              </Button>
+            </Card>
+          </div>
+        )}
+
         <header className="mb-16 space-y-2">
           <Badge className="bg-primary/5 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[8px] font-black border-none">Checkout Stage</Badge>
           <h1 className="text-6xl font-headline tracking-tighter italic text-primary">Elite Checkout</h1>
