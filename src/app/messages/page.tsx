@@ -63,16 +63,16 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
       <main className={cn(
-        "container mx-auto max-w-screen-2xl px-0 md:px-4 pt-24 md:pt-24 pb-24 md:pb-8 h-screen flex transition-all duration-300",
+        "container mx-auto max-w-screen-2xl px-0 md:px-4 pt-20 md:pt-24 pb-32 md:pb-8 flex flex-1 h-[calc(100vh-20px)] transition-all duration-300",
         activeConversation ? "flex-col md:flex-row" : "flex-col"
       )}>
         {/* Conversation List */}
         <div className={cn(
-          "w-full md:w-64 lg:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden",
+          "w-full md:w-64 lg:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
           activeConversation ? "hidden md:flex" : "flex"
         )}>
           <div className="p-6 space-y-4">
@@ -83,7 +83,7 @@ export default function MessagesPage() {
             </div>
           </div>
           <ScrollArea className="flex-1">
-            <div className="px-2 space-y-2 pb-4">
+            <div className="px-2 space-y-2 pb-24">
               {MOCK_CONVERSATIONS.map((conv) => (
                 <button
                   key={conv.id}
@@ -121,9 +121,9 @@ export default function MessagesPage() {
 
         {/* Chat Window */}
         {activeConversation && (
-          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl">
+          <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative">
             {/* Chat Header */}
-            <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md">
+            <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md z-10">
               <Button variant="ghost" size="icon" onClick={() => setActiveConversation(null)} className="md:hidden text-primary">
                 <ChevronLeft className="h-6 w-6" />
               </Button>
@@ -131,16 +131,16 @@ export default function MessagesPage() {
                 <AvatarImage src={activeConversation.participantImage} />
                 <AvatarFallback>{activeConversation.participantName[0]}</AvatarFallback>
               </Avatar>
-              <div className="flex-grow">
+              <div className="flex-grow text-left">
                 <h3 className="font-headline text-xl leading-none text-primary italic">{activeConversation.participantName}</h3>
-                <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">Active Now</p>
+                <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest mt-1">Active Now</p>
               </div>
               <Button variant="ghost" size="icon" className="text-primary/40"><MoreVertical className="h-5 w-5" /></Button>
             </div>
 
             {/* Messages Area */}
             <ScrollArea className="flex-1 p-4 md:p-8">
-              <div className="space-y-6">
+              <div className="space-y-6 pb-32">
                 <div className="flex justify-center">
                   <span className="text-[10px] uppercase font-bold tracking-widest bg-primary/5 text-primary/40 px-4 py-1.5 rounded-full border border-primary/10">Secure Messaging</span>
                 </div>
@@ -159,7 +159,7 @@ export default function MessagesPage() {
             </ScrollArea>
 
             {/* Input Area */}
-            <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t">
+            <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t z-10 pb-8 md:pb-6">
               <div className="flex gap-2 max-w-4xl mx-auto">
                 <Input 
                   value={newMessage}
