@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -33,6 +34,43 @@ export function Navbar() {
 
   if (!mounted) return null;
 
+  const UtilityGroup = () => (
+    <div className="flex items-center p-1 bg-white/10 dark:bg-white/5 backdrop-blur-2xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
+      {!isHome && (
+        <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white/10 transition-all">
+            <Home className="h-3.5 w-3.5 text-foreground" />
+          </Button>
+        </Link>
+      )}
+
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
+      >
+        {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" /> : <Moon className="h-3.5 w-3.5 text-foreground" />}
+      </Button>
+
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground hover:bg-white/10 transition-all">
+        <MapPin className="h-3 w-3 mr-2 text-accent-foreground" />
+        {getCurrency()}
+      </Button>
+
+      <Link href="/cart">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-white/10 transition-all overflow-visible">
+          <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
+          {cartCount > 0 && (
+            <Badge className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border-2 border-background animate-in zoom-in-50 z-10 rounded-full">
+              {cartCount}
+            </Badge>
+          )}
+        </Button>
+      </Link>
+    </div>
+  );
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -65,40 +103,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="flex items-center p-1 bg-white/10 dark:bg-white/5 backdrop-blur-2xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
-              {!isHome && (
-                <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white/10 transition-all">
-                    <Home className="h-3.5 w-3.5 text-foreground" />
-                  </Button>
-                </Link>
-              )}
-
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
-              >
-                {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" /> : <Moon className="h-3.5 w-3.5 text-foreground" />}
-              </Button>
-
-              <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground hover:bg-white/10 transition-all">
-                <MapPin className="h-3 w-3 mr-2 text-accent-foreground" />
-                {getCurrency()}
-              </Button>
-
-              <Link href="/cart">
-                <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-white/10 transition-all overflow-visible">
-                  <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
-                  {cartCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border-2 border-background animate-in zoom-in-50 z-10">
-                      {cartCount}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
-            </div>
+            <UtilityGroup />
           </div>
         </div>
       </nav>
@@ -110,38 +115,8 @@ export function Navbar() {
           <span className="font-headline text-base tracking-tighter text-foreground italic">GlamLux</span>
         </Link>
 
-        <div className="flex items-center space-x-1 p-0.5 bg-white/10 dark:bg-white/5 rounded-full ring-1 ring-white/10">
-          {!isHome && (
-            <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
-              <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/10 border border-white/20 rounded-full active:scale-90 transition-all">
-                <Home className="h-3 w-3 text-foreground" />
-              </Button>
-            </Link>
-          )}
-
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="h-8 w-8 bg-white/10 border border-white/20 rounded-full active:scale-90 transition-all"
-          >
-            {theme === 'dark' ? <Sun className="h-3 w-3 text-foreground" /> : <Moon className="h-3 w-3 text-foreground" />}
-          </Button>
-
-          <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-8 px-2 text-[7px] font-black uppercase tracking-widest text-foreground bg-white/10 border border-white/20 rounded-full active:scale-95 transition-all">
-            {getCurrency()}
-          </Button>
-
-          <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative h-8 w-8 bg-white/10 border border-white/20 rounded-full active:scale-90 transition-all overflow-visible">
-              <ShoppingBag className="h-3 w-3 text-foreground" />
-              {cartCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-3 w-3 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border border-background z-10">
-                  {cartCount}
-                </Badge>
-              )}
-            </Button>
-          </Link>
+        <div className="flex items-center space-x-1">
+          <UtilityGroup />
         </div>
       </nav>
 

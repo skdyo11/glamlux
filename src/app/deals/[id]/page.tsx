@@ -9,6 +9,7 @@ import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Card } from '@/components/ui/card';
 import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, ShieldCheck, Users, Plus, Minus, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
@@ -68,13 +69,13 @@ export default function DealPage() {
       
       <main className="container mx-auto px-6 py-12">
         <Button asChild variant="ghost" className="mb-12 -ml-4 text-muted-foreground hover:text-primary rounded-none">
-          <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> All Transformations</Link>
+          <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> All Beauty Deals</Link>
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           {/* Visuals */}
           <div className="space-y-6">
-            <div className="relative aspect-square bg-muted grayscale hover:grayscale-0 transition-all duration-1000">
+            <div className="relative aspect-square bg-muted grayscale hover:grayscale-0 transition-all duration-300">
               <Image src={vendor.images[0]} alt={deal.name} fill className="object-cover" priority />
             </div>
             <div className="grid grid-cols-3 gap-6">
@@ -94,7 +95,7 @@ export default function DealPage() {
                   {deal.category}
                 </Badge>
                 <div className="flex items-center gap-1 text-[10px] font-bold">
-                  <Star className="h-3 w-3 fill-primary" /> {vendor.rating} • Artisan Verified
+                  <Star className="h-3 w-3 fill-primary" /> {vendor.rating} • Verified Parlour
                 </div>
               </div>
               <h1 className="text-7xl font-headline tracking-tighter leading-tight italic">{deal.name}</h1>
@@ -112,7 +113,7 @@ export default function DealPage() {
                   <span className="text-xl text-muted-foreground line-through opacity-30">{getCurrency()} {deal.base_price.toLocaleString()}</span>
                 </div>
                 <p className="text-[10px] uppercase font-bold text-primary flex items-center gap-2 tracking-widest">
-                  <ShieldCheck className="h-4 w-4" /> Secure now with {getCurrency()} {depositAmount.toLocaleString()} deposit
+                  <ShieldCheck className="h-4 w-4" /> Pay only {getCurrency()} {depositAmount.toLocaleString()} to book
                 </p>
               </div>
 
@@ -120,9 +121,9 @@ export default function DealPage() {
               <div className="p-8 border rounded-none flex items-center justify-between bg-muted/5">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-widest">
-                    <Users className="h-4 w-4" /> Group Booking
+                    <Users className="h-4 w-4" /> How many people?
                   </div>
-                  <p className="text-[10px] text-muted-foreground italic">Coordinate slots for your party</p>
+                  <p className="text-[10px] text-muted-foreground italic">Book for you and your friends</p>
                 </div>
                 <div className="flex items-center gap-6 bg-white border px-4 py-2">
                   <Button variant="ghost" size="icon" onClick={() => setPersonCount(Math.max(1, personCount - 1))} className="h-8 w-8 hover:bg-transparent"><Minus className="h-3 w-3" /></Button>
@@ -133,17 +134,17 @@ export default function DealPage() {
 
               <div className="p-8 bg-muted/20 space-y-4">
                 <div className="flex justify-between items-baseline italic">
-                  <span className="text-sm">Combined Deposit</span>
+                  <span className="text-sm">Deposit to Pay Now</span>
                   <span className="text-2xl font-headline">{(depositAmount * personCount).toLocaleString()}</span>
                 </div>
                 <p className="text-[9px] uppercase font-black opacity-30 tracking-[0.2em] flex items-center gap-1">
-                  <Info className="h-3 w-3" /> Remaining balance paid directly to {vendor.name}
+                  <Info className="h-3 w-3" /> Pay the rest at {vendor.name}
                 </p>
               </div>
             </div>
 
             <Button size="lg" className="w-full h-20 bg-primary text-white rounded-none text-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl group" onClick={handleAddToCart}>
-              Secure Transformation
+              Book Now
               <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -152,8 +153,8 @@ export default function DealPage() {
         {/* Upsell: Products Used */}
         <section className="mt-32 space-y-12">
           <div className="space-y-2">
-            <h3 className="text-5xl font-headline italic tracking-tighter">Products Used in this Look</h3>
-            <p className="text-muted-foreground italic">Artisan essentials for professional results at home.</p>
+            <h3 className="text-5xl font-headline italic tracking-tighter">Pro Makeup Used</h3>
+            <p className="text-muted-foreground italic">Everything used to get this look.</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
