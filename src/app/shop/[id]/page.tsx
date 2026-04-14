@@ -56,9 +56,15 @@ export default function ProductDetailPage() {
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 md:py-16">
-        <Button asChild variant="ghost" className="mb-8 -ml-2 text-muted-foreground hover:text-primary">
-          <Link href="/shop"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Collection</Link>
-        </Button>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+          <Button asChild variant="ghost" className="-ml-2 text-muted-foreground hover:text-primary">
+            <Link href="/shop"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Collection</Link>
+          </Button>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+            <div className="w-1 h-1 rounded-full bg-primary" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Products Section</span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Product Image */}

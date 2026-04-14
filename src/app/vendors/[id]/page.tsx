@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -38,9 +39,15 @@ export default function VendorProfilePage() {
           
           <div className="container mx-auto px-6 relative z-10">
              <div className="max-w-4xl space-y-6">
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-3xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl">
-                  <Sparkles className="h-3 w-3 text-accent-foreground" />
-                  <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Elite Artisan Registry</span>
+                <div className="flex flex-col gap-4">
+                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-3xl border border-white/20 px-3 py-1 rounded-full shadow-2xl self-start">
+                    <div className="w-1 h-1 rounded-full bg-primary" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Parlours Section</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-3xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl self-start">
+                    <Sparkles className="h-3 w-3 text-accent-foreground" />
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Elite Artisan Registry</span>
+                  </div>
                 </div>
                 <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary leading-none">
                   {vendor.name}

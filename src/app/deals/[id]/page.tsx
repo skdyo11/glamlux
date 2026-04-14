@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -67,9 +68,15 @@ export default function DealPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <Button asChild variant="ghost" className="mb-12 -ml-4 text-muted-foreground hover:text-primary rounded-full">
-          <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> All Beauty Deals</Link>
-        </Button>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+          <Button asChild variant="ghost" className="-ml-4 text-muted-foreground hover:text-primary rounded-full">
+            <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> All Beauty Deals</Link>
+          </Button>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+            <div className="w-1 h-1 rounded-full bg-primary" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Deals Section</span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           {/* Visuals */}

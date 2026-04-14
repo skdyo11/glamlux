@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -31,9 +32,9 @@ export default function DealsPage() {
       
       <main className="container mx-auto px-6 py-16 md:py-24 pb-32">
         <header className="max-w-4xl mb-20 space-y-6">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-secondary/50 text-primary border border-primary/10 backdrop-blur-sm">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-[10px] uppercase tracking-[0.3em] font-black">Beauty Deals</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-top-2 duration-500">
+            <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Deals Section</span>
           </div>
           <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter italic leading-none">Beauty Deals</h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
