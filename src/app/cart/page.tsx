@@ -153,7 +153,7 @@ export default function CartPage() {
                 <Truck className="h-5 w-5" /> Track Active Orders
               </div>
               <p className="text-xs italic opacity-60">Already made a purchase? Check your delivery updates here.</p>
-              <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-primary text-white shadow-lg">
+              <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-primary text-primary-foreground shadow-lg">
                 <Link href="/messages">View Order History</Link>
               </Button>
             </div>
@@ -295,23 +295,23 @@ export default function CartPage() {
           </div>
 
           <div className="space-y-12">
-            <Card className="border-none rounded-[3.5rem] bg-primary text-white p-12 space-y-8 shadow-2xl">
+            <Card className="border-none rounded-[3.5rem] bg-primary text-primary-foreground p-12 space-y-8 shadow-2xl">
               <CardTitle className="font-headline text-4xl italic">Financials</CardTitle>
-              <div className="space-y-4 text-[10px] font-bold uppercase tracking-widest text-white/50">
+              <div className="space-y-4 text-[10px] font-bold uppercase tracking-widest text-primary-foreground/60">
                 <div className="flex justify-between items-center">
                   <span>Checkout Subtotal</span>
-                  <span className="text-white">{getCurrency()} {subtotal.toLocaleString()}</span>
+                  <span className="text-primary-foreground">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Service Fee</span>
-                  <span className="text-white">{getCurrency()} {commission.toLocaleString()}</span>
+                  <span className="text-primary-foreground">{getCurrency()} {commission.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-accent">
                   <span className="flex items-center gap-2"><Package className="h-3 w-3" /> Delivery</span>
                   <span>FREE</span>
                 </div>
-                <Separator className="bg-white/10" />
-                <div className="flex justify-between items-center text-2xl text-white font-headline italic pt-2">
+                <Separator className="bg-primary-foreground/10" />
+                <div className="flex justify-between items-center text-2xl text-primary-foreground font-headline italic pt-2">
                   <span>Total Due</span>
                   <span className="text-accent">{getCurrency()} {totalDueNow.toLocaleString()}</span>
                 </div>
@@ -319,7 +319,7 @@ export default function CartPage() {
               <Button 
                 onClick={handleCheckout} 
                 disabled={isCheckingOut}
-                className="w-full h-16 bg-accent text-primary-foreground hover:bg-white rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border-none shadow-xl transition-all"
+                className="w-full h-16 bg-accent text-accent-foreground hover:bg-white rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border-none shadow-xl transition-all"
               >
                 {isCheckingOut ? 'Securing Transaction...' : 'Complete Payment'}
               </Button>

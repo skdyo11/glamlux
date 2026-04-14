@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -80,12 +81,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-white">
+             <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-primary-foreground">
                <Users className="h-6 w-6 mb-3 opacity-60" />
                <p className="text-3xl font-bold font-headline">12</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Guests Today</p>
              </Card>
-             <Card className="bg-white p-6 rounded-[2rem] border-none shadow-xl text-primary">
+             <Card className="bg-white dark:bg-card p-6 rounded-[2rem] border-none shadow-xl text-primary">
                <TrendingUp className="h-6 w-6 mb-3 opacity-60 text-secondary" />
                <p className="text-3xl font-bold font-headline">142.5K</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">PKR Revenue</p>
@@ -95,7 +96,7 @@ export default function DashboardPage() {
           <div className="flex gap-3">
             <Button 
               onClick={() => setIsParlourSheetOpen(true)}
-              className="flex-1 rounded-2xl h-16 bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
+              className="flex-1 rounded-2xl h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
             >
               <Plus className="h-5 w-5 mr-2" /> Add Parlour
             </Button>
@@ -111,10 +112,10 @@ export default function DashboardPage() {
 
         <Tabs defaultValue="arrivals" className="space-y-8">
           <TabsList className="bg-white/40 backdrop-blur-md p-1 h-16 border border-white/60 rounded-2xl w-full flex">
-            <TabsTrigger value="arrivals" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
+            <TabsTrigger value="arrivals" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
               Queue
             </TabsTrigger>
-            <TabsTrigger value="planner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
+            <TabsTrigger value="planner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
               Capacity
             </TabsTrigger>
           </TabsList>
@@ -126,7 +127,7 @@ export default function DashboardPage() {
                 <Card 
                   key={arrival.id} 
                   onClick={() => setSelectedArrival(arrival)}
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-white/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
+                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-white/60 dark:bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
@@ -136,7 +137,7 @@ export default function DashboardPage() {
                       <h4 className="font-headline text-2xl leading-none">{arrival.name}</h4>
                       <p className="text-xs text-muted-foreground italic">{arrival.service}</p>
                     </div>
-                    <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-white border-none' : 'border-primary/20 text-primary'}>
+                    <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-primary-foreground border-none' : 'border-primary/20 text-primary'}>
                       {arrival.status}
                     </Badge>
                   </div>
@@ -148,7 +149,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Desktop Table View */}
-            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-white overflow-hidden">
+            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-card overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent bg-primary/5">
@@ -189,7 +190,7 @@ export default function DashboardPage() {
 
           <TabsContent value="planner" className="space-y-6">
              <div className="grid grid-cols-1 gap-8">
-               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 backdrop-blur-md">
+               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 dark:bg-card/60 backdrop-blur-md">
                  <div className="flex items-center justify-between mb-8">
                    <div className="space-y-1">
                      <h3 className="font-headline text-3xl tracking-tighter">Weekly Availability</h3>
@@ -202,7 +203,7 @@ export default function DashboardPage() {
                  
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
-                     <div key={day} className="flex items-center justify-between p-6 rounded-3xl bg-white/40 border border-white/60 group hover:bg-primary/5 transition-all shadow-sm">
+                     <div key={day} className="flex items-center justify-between p-6 rounded-3xl bg-white/40 dark:bg-white/5 border border-white/60 group hover:bg-primary/5 transition-all shadow-sm">
                        <div className="space-y-1">
                          <span className="font-headline text-2xl">{day}</span>
                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
@@ -257,7 +258,7 @@ export default function DashboardPage() {
                 <Label htmlFor="parlour-description" className="text-xs uppercase font-black tracking-widest text-primary/60">About the Studio</Label>
                 <Textarea id="parlour-description" placeholder="Describe your luxury environment..." className="rounded-2xl border-primary/20 bg-primary/5 min-h-[120px]" required />
               </div>
-              <Button type="submit" className="w-full h-16 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg">
+              <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg">
                 Submit Registration
               </Button>
             </form>
@@ -319,7 +320,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid grid-cols-1 gap-4 pb-8">
-                <Button onClick={handleVerifyEntry} className="h-16 bg-primary text-white font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
+                <Button onClick={handleVerifyEntry} className="h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
                   Verify & Grant Entry
                 </Button>
                 <SheetClose asChild>

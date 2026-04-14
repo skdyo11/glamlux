@@ -68,8 +68,8 @@ export default function BookingSuccessPage() {
             {/* Voucher Card */}
             <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden bg-white/40 backdrop-blur-xl">
               <div className="bg-primary p-8 text-center space-y-2">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/60">Digital Ticket</span>
-                <h2 className="font-headline text-3xl text-white italic">Elite Access Pass</h2>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-primary-foreground/60">Digital Ticket</span>
+                <h2 className="font-headline text-3xl text-primary-foreground italic">Elite Access Pass</h2>
               </div>
               <CardContent className="p-10 space-y-8 text-center">
                 <div className="bg-white p-4 inline-block rounded-[2rem] shadow-inner ring-1 ring-black/5">
@@ -114,7 +114,7 @@ export default function BookingSuccessPage() {
                     )}
                     <div className={cn(
                       "h-9 w-9 rounded-full flex items-center justify-center shrink-0 z-10",
-                      step.status === 'completed' ? "bg-primary text-white" : 
+                      step.status === 'completed' ? "bg-primary text-primary-foreground" : 
                       step.status === 'current' ? "bg-accent text-primary animate-pulse shadow-lg ring-2 ring-primary/20" : 
                       "bg-muted text-muted-foreground"
                     )}>
