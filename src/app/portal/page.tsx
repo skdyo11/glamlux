@@ -358,7 +358,7 @@ export default function PartnerPortalPage() {
 
       {/* Courier Sheet */}
       <Sheet open={isCourierSheetOpen} onOpenChange={setIsCourierSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-primary/20 backdrop-blur-3xl text-white">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-primary/20 backdrop-blur-3xl text-white overflow-y-auto">
           <div className="max-w-xl mx-auto space-y-12">
             <div className="space-y-4 text-center">
               <div className="bg-white/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-md">
@@ -392,7 +392,7 @@ export default function PartnerPortalPage() {
 
       {/* Add Service Sheet */}
       <Sheet open={isAddServiceSheetOpen} onOpenChange={setIsAddServiceSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary overflow-y-auto">
           <div className="max-w-xl mx-auto space-y-12">
             <div className="space-y-4 text-center">
               <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">New Beauty Deal</SheetTitle>
@@ -429,7 +429,7 @@ export default function PartnerPortalPage() {
 
       {/* Add Product Sheet */}
       <Sheet open={isAddProductSheetOpen} onOpenChange={setIsAddProductSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto border-t-0 p-12 md:p-20 bg-background/90 backdrop-blur-3xl text-primary overflow-y-auto">
           <div className="max-w-xl mx-auto space-y-12">
             <div className="space-y-4 text-center">
               <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -469,7 +469,7 @@ export default function PartnerPortalPage() {
 
       {/* Guest Check Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] border-t-0 p-12 md:p-20 bg-white/60 backdrop-blur-3xl">
+        <SheetContent side="bottom" className="rounded-t-[3rem] border-t-0 p-12 md:p-20 bg-white/60 backdrop-blur-3xl overflow-y-auto">
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-12">
               <div className="space-y-2 text-center">
