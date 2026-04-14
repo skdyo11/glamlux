@@ -19,35 +19,35 @@ export default function Home() {
       
       <main className="max-w-[100vw] overflow-x-hidden">
         {/* Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center overflow-hidden py-24">
+        <section className="relative min-h-[85vh] flex items-center overflow-hidden py-24">
           <div className="absolute inset-0 z-0">
             <Image 
               src="https://picsum.photos/seed/glam-luxury-nature/1920/1080" 
               alt="Elite Beauty" 
               fill 
-              className="object-cover grayscale brightness-[0.5] dark:brightness-[0.3]"
+              className="object-cover brightness-[0.6] dark:brightness-[0.4]"
               priority
               data-ai-hint="luxury beauty"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-2xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <Badge className="bg-accent-foreground/20 text-white backdrop-blur-xl px-4 py-1.5 uppercase tracking-widest text-[9px] font-black border border-white/10 rounded-none">
-                <Sparkles className="h-3 w-3 mr-2 inline" /> Best Beauty Deals
+              <Badge className="bg-accent-foreground/30 text-white backdrop-blur-xl px-4 py-1.5 uppercase tracking-widest text-[9px] font-black border border-white/10 rounded-full">
+                <Sparkles className="h-3 w-3 mr-2 inline text-secondary" /> Best Beauty Deals
               </Badge>
-              <h1 className="text-5xl md:text-6xl font-headline leading-tight text-white">
+              <h1 className="text-4xl md:text-5xl font-headline leading-tight text-white">
                 Look <br />
-                <span className="italic text-accent-foreground">Great.</span>
+                <span className="italic text-secondary">Great.</span>
               </h1>
-              <p className="text-base md:text-lg text-white/80 font-body max-w-xl italic leading-relaxed">
+              <p className="text-base md:text-lg text-white/90 font-body max-w-xl italic leading-relaxed">
                 The best place for makeup and parlour services in Pakistan & India.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button asChild size="lg" className="bg-white text-black hover:bg-accent rounded-none px-10 h-14 font-black uppercase tracking-widest text-[10px] shadow-2xl">
+                <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] shadow-2xl border-none">
                   <Link href="/deals">Book Now</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-white/20 bg-white/5 backdrop-blur-md text-white rounded-none px-10 h-14 font-black uppercase tracking-widest text-[10px]">
+                <Button asChild variant="outline" size="lg" className="border-white/30 bg-white/5 backdrop-blur-md text-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] hover:bg-white/10">
                   <Link href="/shop">Buy Makeup</Link>
                 </Button>
               </div>
@@ -70,17 +70,17 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {VENDORS.slice(0, 3).map((vendor) => (
-                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group interactive-glass">
+                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group interactive-element">
                   <Card className="border-none shadow-none overflow-hidden bg-transparent">
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-none grayscale group-hover:grayscale-0 transition-all duration-500 shadow-xl ring-1 ring-white/10">
-                      <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-[2rem] transition-all duration-500 shadow-xl ring-1 ring-black/5 dark:ring-white/10">
+                      <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover soft-focus" />
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/90 dark:bg-black/70 text-foreground border-none text-[8px] font-black px-3 py-1.5 shadow-lg uppercase tracking-widest backdrop-blur-md">
+                        <Badge className="bg-white/95 dark:bg-black/70 text-foreground border-none text-[8px] font-black px-3 py-1.5 shadow-lg uppercase tracking-widest backdrop-blur-md rounded-full">
                           {vendor.area_tag}
                         </Badge>
                       </div>
                     </div>
-                    <div className="pt-6 space-y-2">
+                    <div className="pt-6 px-2 space-y-2">
                       <div className="flex justify-between items-start">
                         <h3 className="text-2xl font-headline italic leading-none group-hover:text-accent-foreground transition-colors text-foreground">{vendor.name}</h3>
                         <div className="flex items-center gap-1.5 text-[9px] font-black text-accent-foreground uppercase">
@@ -96,23 +96,23 @@ export default function Home() {
         </section>
 
         {/* Best Deals */}
-        <section className="py-24 bg-primary/5 dark:bg-white/5 border-y border-border/5">
+        <section className="py-24 bg-secondary/20 dark:bg-white/5 border-y border-border/10">
           <div className="container mx-auto px-6">
             <div className="mb-16">
               <h2 className="text-4xl md:text-5xl font-headline tracking-tighter text-foreground italic leading-none">Best Beauty Deals</h2>
-              <p className="text-accent-foreground italic text-base opacity-80 mt-2">Special offers curated for you.</p>
+              <p className="text-accent-foreground italic text-base opacity-80 mt-2">Special offers picked for you.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
               {DEALS.map((deal) => (
-                <Link key={deal.id} href={`/deals/${deal.id}`} className="group block interactive-glass">
-                  <Card className="bg-white/10 dark:bg-black/30 border border-white/20 dark:border-white/5 rounded-none overflow-hidden backdrop-blur-xl group-hover:bg-white/20 transition-all duration-300 shadow-2xl ring-1 ring-white/10">
-                    <div className="relative h-64 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                <Link key={deal.id} href={`/deals/${deal.id}`} className="group block interactive-element">
+                  <Card className="liquid-glass rounded-[2.5rem] overflow-hidden group-hover:bg-white/30 dark:group-hover:bg-black/40 transition-all duration-300 shadow-2xl ring-1 ring-white/10 border-none">
+                    <div className="relative h-64 overflow-hidden">
                       <Image 
                         src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 
                         alt={deal.name} 
                         fill 
-                        className="object-cover opacity-60 dark:opacity-40 group-hover:opacity-100 transition-opacity" 
+                        className="object-cover soft-focus opacity-90 group-hover:opacity-100" 
                       />
                     </div>
                     <div className="p-8 space-y-6">
@@ -123,7 +123,9 @@ export default function Home() {
                           <span className="text-[9px] uppercase font-black text-muted-foreground tracking-widest">Starts At</span>
                           <span className="text-2xl font-bold text-accent-foreground italic">{getCurrency()} {deal.discount_price.toLocaleString()}</span>
                         </div>
-                        <ArrowRight className="h-6 w-6 text-foreground group-hover:text-accent-foreground transition-transform group-hover:translate-x-1" />
+                        <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                          <ArrowRight className="h-5 w-5" />
+                        </div>
                       </div>
                     </div>
                   </Card>
@@ -142,7 +144,7 @@ export default function Home() {
               <span className="font-headline text-3xl tracking-tighter text-foreground">GlamLux</span>
             </div>
             <p className="text-xs text-muted-foreground font-body italic leading-relaxed max-w-sm">
-              The best place for makeup and beauty services. Professional results, simple experience.
+              The best place for makeup and beauty services. Simple, fast, and professional.
             </p>
           </div>
           <div className="space-y-4">

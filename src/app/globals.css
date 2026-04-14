@@ -4,47 +4,47 @@
 
 @layer base {
   :root {
-    /* Light Theme - Soft Editorial Palette */
-    --background: 35 30% 96%; /* Soft Sand */
-    --foreground: 0 0% 12%; /* Deep Charcoal */
+    /* Soft Beauty Palette - Pink & Red Accents */
+    --background: 350 40% 98%; /* Very faint blush white */
+    --foreground: 350 40% 12%; /* Deep berry charcoal */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
+    --card-foreground: 350 40% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 12%;
-    --primary: 0 0% 12%; 
-    --primary-foreground: 35 30% 96%;
-    --secondary: 350 25% 92%; /* Soft Blush Pink */
-    --secondary-foreground: 350 60% 25%; /* Deep Berry */
-    --muted: 30 10% 90%;
-    --muted-foreground: 0 0% 40%; /* Accessible Grey */
-    --accent: 350 50% 94%; 
-    --accent-foreground: 350 70% 35%; /* High Contrast Berry */
-    --destructive: 350 70% 45%; 
+    --popover-foreground: 350 40% 12%;
+    --primary: 350 60% 25%; /* Sophisticated Deep Berry */
+    --primary-foreground: 350 40% 98%;
+    --secondary: 350 50% 92%; /* Soft Blush Pink */
+    --secondary-foreground: 350 60% 30%;
+    --muted: 350 20% 94%;
+    --muted-foreground: 350 10% 40%;
+    --accent: 350 70% 96%; /* Lighter Blush */
+    --accent-foreground: 350 80% 40%; /* Vibrant but soft Rose Red */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 30 10% 85%;
-    --input: 30 10% 85%;
+    --border: 350 20% 90%;
+    --input: 350 20% 90%;
     --ring: 350 60% 50%;
-    --radius: 0.75rem;
+    --radius: 1.5rem;
   }
 
   .dark {
-    /* Dark Theme - High Intensity Luxury */
-    --background: 0 0% 5%; /* Deepest Black */
-    --foreground: 35 20% 98%; /* Bright Sand */
-    --card: 0 0% 8%;
-    --card-foreground: 35 20% 98%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 35 20% 98%;
-    --primary: 35 20% 98%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 350 30% 12%;
+    /* Midnight Rose - Dark Theme */
+    --background: 350 40% 4%; /* Deepest Black Cherry */
+    --foreground: 350 30% 98%;
+    --card: 350 40% 6%;
+    --card-foreground: 350 30% 98%;
+    --popover: 350 40% 6%;
+    --popover-foreground: 350 30% 98%;
+    --primary: 350 30% 98%;
+    --primary-foreground: 350 40% 4%;
+    --secondary: 350 40% 12%;
     --secondary-foreground: 350 80% 90%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 75%; 
-    --accent: 350 40% 15%;
-    --accent-foreground: 350 95% 85%; 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
+    --muted: 350 30% 12%;
+    --muted-foreground: 350 10% 70%;
+    --accent: 350 50% 15%;
+    --accent-foreground: 350 90% 80%;
+    --border: 350 30% 15%;
+    --input: 350 30% 15%;
     --ring: 350 70% 70%;
   }
 }
@@ -54,25 +54,30 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body overflow-x-hidden;
+    @apply bg-background text-foreground font-body overflow-x-hidden transition-colors duration-300;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline font-medium tracking-tight text-foreground;
   }
 }
 
-.luxury-gradient {
-  background: linear-gradient(135deg, hsla(35, 30%, 96%, 1) 0%, hsla(350, 40%, 92%, 1) 100%);
+/* Beauty Effects */
+.soft-focus {
+  @apply saturate-[0.85] brightness-[1.02] blur-[0.5px] transition-all duration-500 ease-out;
 }
 
-.charcoal-gradient {
-  background: linear-gradient(135deg, hsla(0, 0%, 15%, 1) 0%, hsla(350, 40%, 15%, 1) 100%);
+.group:hover .soft-focus, .soft-focus:hover {
+  @apply saturate-100 brightness-100 blur-0 scale-[1.02];
+}
+
+.liquid-glass {
+  @apply bg-white/10 dark:bg-black/20 backdrop-blur-3xl border border-white/20 dark:border-white/10 shadow-2xl ring-1 ring-white/10;
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.1] dark:opacity-[0.05] pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.08] dark:opacity-[0.04] pointer-events-none;
   background-image: radial-gradient(circle at 2px 2px, hsl(var(--accent-foreground)) 1px, transparent 0);
-  background-size: 40px 40px;
+  background-size: 32px 32px;
 }
 
 @keyframes shimmer {
@@ -80,11 +85,6 @@
   100% { transform: translateX(100%); }
 }
 
-.glass-morphism {
-  @apply bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)] ring-1 ring-white/10;
-}
-
-/* Snappy transitions for interactive elements */
-.interactive-glass {
-  @apply transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98];
+.interactive-element {
+  @apply transition-all duration-300 ease-out active:scale-[0.97] hover:shadow-lg;
 }
