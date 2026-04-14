@@ -1,29 +1,30 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Soft Beauty Palette - Pink & Red Accents */
+    /* Muted Beauty Palette */
     --background: 350 40% 98%;
     --foreground: 350 40% 12%;
     --card: 0 0% 100%;
     --card-foreground: 350 40% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 350 40% 12%;
-    --primary: 350 60% 25%;
+    --primary: 350 50% 30%;
     --primary-foreground: 350 40% 98%;
-    --secondary: 350 50% 92%;
-    --secondary-foreground: 350 60% 30%;
-    --muted: 350 20% 94%;
-    --muted-foreground: 350 10% 40%;
-    --accent: 350 70% 96%;
-    --accent-foreground: 350 80% 40%;
+    --secondary: 350 40% 94%;
+    --secondary-foreground: 350 50% 25%;
+    --muted: 350 20% 95%;
+    --muted-foreground: 350 10% 45%;
+    --accent: 350 60% 97%;
+    --accent-foreground: 350 70% 35%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 350 20% 90%;
-    --input: 350 20% 90%;
-    --ring: 350 60% 50%;
+    --border: 350 20% 92%;
+    --input: 350 20% 92%;
+    --ring: 350 50% 50%;
     --radius: 1.5rem;
   }
 
@@ -53,29 +54,38 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body overflow-x-hidden transition-colors duration-300 antialiased;
+    @apply bg-background text-foreground font-body overflow-x-hidden transition-colors duration-200 antialiased;
   }
 }
 
-/* Optimized Beauty Effects */
+/* Optimized Visual Effects for Low-End Devices */
 .soft-focus {
-  @apply saturate-[0.9] brightness-[1.01] transition-all duration-300 ease-out;
+  @apply saturate-[0.85] brightness-[1.01] transition-all duration-300 ease-out;
 }
 
 .group:hover .soft-focus {
-  @apply saturate-100 brightness-100 scale-[1.02];
+  @apply saturate-100 brightness-100;
 }
 
 .liquid-glass {
-  @apply bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl;
+  @apply bg-white/20 dark:bg-black/30 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg;
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.03] pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.02] pointer-events-none;
   background-image: radial-gradient(circle at 1px 1px, hsl(var(--accent-foreground)) 1px, transparent 0);
-  background-size: 40px 40px;
+  background-size: 60px 60px;
 }
 
 .interactive-element {
-  @apply transition-transform duration-200 active:scale-[0.98];
+  @apply transition-transform duration-150 active:scale-[0.99];
+}
+
+/* Hide scrollbars for clean aesthetic */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

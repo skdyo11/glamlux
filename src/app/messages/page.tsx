@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -7,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, ChevronLeft, MoreVertical } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Conversation } from '@/app/types';
+import { Conversation, ChatMessage } from '@/app/types';
 
 const MOCK_CONVERSATIONS: Conversation[] = [
   {
@@ -41,43 +42,60 @@ const MOCK_CONVERSATIONS: Conversation[] = [
 ];
 
 export default function MessagesPage() {
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(MOCK_CONVERSATIONS[0]);
+  const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(MOCK_CONVERSATIONS[0].id);
   const [newMessage, setNewMessage] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const activeConversation = conversations.find(c => c.id === activeConversationId) || null;
 
   const handleSendMessage = () => {
-    if (!newMessage.trim() || !activeConversation) return;
-    activeConversation.messages.push({
+    if (!newMessage.trim() || !activeConversationId) return;
+    
+    const chatMsg: ChatMessage = {
       id: Math.random().toString(),
       senderId: 'user',
       text: newMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isMe: true
-    });
+    };
+
+    setConversations(prev => prev.map(c => 
+      c.id === activeConversationId 
+        ? { ...c, messages: [...c.messages, chatMsg], lastMessage: newMessage, lastTimestamp: 'Just now' } 
+        : c
+    ));
     setNewMessage('');
   };
+
+  if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
-      <main className="container mx-auto max-w-screen-2xl flex flex-1 h-[calc(100dvh-120px)] md:h-[calc(100vh-100px)] pt-4 md:pt-8 transition-all duration-300">
-        {/* List */}
+      <main className="container mx-auto max-w-screen-2xl flex flex-1 h-[calc(100dvh-120px)] md:h-[calc(100vh-100px)] pt-20 md:pt-8 transition-all duration-300">
+        {/* Sidebar List */}
         <div className={cn(
-          "w-full md:w-72 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
-          activeConversation ? "hidden md:flex" : "flex"
+          "w-full md:w-80 border-r flex flex-col bg-white/40 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
+          activeConversationId ? "hidden md:flex" : "flex"
         )}>
-          <div className="p-6 space-y-2">
+          <div className="p-6 space-y-1">
             <h1 className="text-3xl font-headline italic text-primary">Chat</h1>
-            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Messages with beauty artisans</p>
+            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Inquiries and Support</p>
           </div>
-          <ScrollArea className="flex-1 px-2 space-y-2 pb-24">
-            {MOCK_CONVERSATIONS.map((conv) => (
+          <ScrollArea className="flex-1 px-2 pb-24">
+            {conversations.map((conv) => (
               <button
                 key={conv.id}
-                onClick={() => setActiveConversation(conv)}
+                onClick={() => setActiveConversationId(conv.id)}
                 className={cn(
-                  "w-full p-4 rounded-3xl flex items-center gap-4 transition-all active:scale-[0.98]",
-                  activeConversation?.id === conv.id ? "bg-primary text-white shadow-lg" : "hover:bg-primary/5"
+                  "w-full p-4 rounded-3xl flex items-center gap-4 transition-all active:scale-[0.98] mb-2",
+                  activeConversationId === conv.id ? "bg-primary text-white shadow-lg" : "hover:bg-primary/5"
                 )}
               >
                 <Avatar className="h-12 w-12 border-2 border-white/20"><AvatarImage src={conv.participantImage} /></Avatar>
@@ -90,15 +108,15 @@ export default function MessagesPage() {
           </ScrollArea>
         </div>
 
-        {/* Window */}
-        {activeConversation && (
+        {/* Chat Window */}
+        {activeConversation ? (
           <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative">
             <div className="p-4 border-b flex items-center gap-4 bg-white/60 backdrop-blur-md z-10">
-              <Button variant="ghost" size="icon" onClick={() => setActiveConversation(null)} className="md:hidden text-primary"><ChevronLeft className="h-6 w-6" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => setActiveConversationId(null)} className="md:hidden text-primary"><ChevronLeft className="h-6 w-6" /></Button>
               <Avatar className="h-10 w-10"><AvatarImage src={activeConversation.participantImage} /></Avatar>
               <div className="flex-grow">
                 <h3 className="font-headline text-xl italic text-primary">{activeConversation.participantName}</h3>
-                <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">Active</p>
+                <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">Active Now</p>
               </div>
               <Button variant="ghost" size="icon" className="text-primary/40"><MoreVertical className="h-5 w-5" /></Button>
             </div>
@@ -116,12 +134,23 @@ export default function MessagesPage() {
               </div>
             </ScrollArea>
 
+            {/* Input Bar pinned above bottom nav */}
             <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t z-10 pb-[calc(1.5rem+env(safe-area-inset-bottom)+3.5rem)] md:pb-6">
               <div className="flex gap-2 max-w-4xl mx-auto">
-                <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Write your message..." className="rounded-full h-14 bg-white/80 border-none px-6 text-sm" />
+                <Input 
+                  value={newMessage} 
+                  onChange={(e) => setNewMessage(e.target.value)} 
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} 
+                  placeholder="Write your message..." 
+                  className="rounded-full h-14 bg-white/80 border-none px-6 text-sm" 
+                />
                 <Button onClick={handleSendMessage} size="icon" className="h-14 w-14 rounded-full bg-primary text-white shadow-xl hover:scale-105 transition-all"><Send className="h-5 w-5" /></Button>
               </div>
             </div>
+          </div>
+        ) : (
+          <div className="hidden md:flex flex-grow items-center justify-center bg-white/20 md:rounded-r-[3rem]">
+             <p className="text-muted-foreground italic">Select a conversation to start chatting.</p>
           </div>
         )}
       </main>

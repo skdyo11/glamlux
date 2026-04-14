@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -58,11 +59,18 @@ export default function PartnerPortalPage() {
   const [activeTab, setActiveTab] = useState('bookings');
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   const myServices = DEALS.filter(d => d.vendor_id === 'v1');
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    
     let timer: NodeJS.Timeout;
     if (activeTab === 'scanner') {
       timer = setTimeout(() => {
@@ -83,9 +91,12 @@ export default function PartnerPortalPage() {
     }
     return () => {
       if (timer) clearTimeout(timer);
-      if (scannerRef.current) scannerRef.current.clear().catch(() => {});
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(() => {});
+        scannerRef.current = null;
+      }
     };
-  }, [activeTab]);
+  }, [activeTab, isMounted]);
 
   async function onScanSuccess(decodedText: string) {
     if (!firestore) return;
@@ -105,26 +116,7 @@ export default function PartnerPortalPage() {
     }
   }
 
-  const ArrivalsList = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {[1, 2, 3].map((i) => (
-        <Card 
-          key={i} 
-          className="rounded-[3rem] border-none bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-white/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5 liquid-glass" 
-          onClick={() => setSelectedArrival({ id: i, name: i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik', service: i === 1 ? 'Royal Bridal' : i === 2 ? 'Silk Hair Spa' : 'Skin Facial', time: `${10 + i}:30 AM`, status: 'Waiting' })}
-        >
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
-              <h4 className="font-headline text-3xl text-primary italic leading-none">{i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik'}</h4>
-              <p className="text-xs italic text-muted-foreground">{i === 1 ? 'Royal Bridal Special' : 'Crystal Clear Facial'}</p>
-            </div>
-            <Badge variant="outline" className="rounded-full text-[8px] font-black tracking-widest px-3 border-white/20 text-primary">Waiting</Badge>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
+  if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -196,7 +188,24 @@ export default function PartnerPortalPage() {
                 <Clock className="h-6 w-6 text-primary/40" />
                 <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
               </div>
-              <ArrivalsList />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <Card 
+                    key={i} 
+                    className="rounded-[3rem] border-none liquid-glass p-8 space-y-6 hover:bg-white/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
+                    onClick={() => setSelectedArrival({ id: i, name: i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik', service: i === 1 ? 'Royal Bridal' : i === 2 ? 'Silk Hair Spa' : 'Skin Facial', time: `${10 + i}:30 AM`, status: 'Waiting' })}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
+                        <h4 className="font-headline text-3xl text-primary italic leading-none">{i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik'}</h4>
+                        <p className="text-xs italic text-muted-foreground">{i === 1 ? 'Royal Bridal Special' : 'Crystal Clear Facial'}</p>
+                      </div>
+                      <Badge variant="outline" className="rounded-full text-[8px] font-black tracking-widest px-3 border-white/20 text-primary">Waiting</Badge>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </section>
           </TabsContent>
 
@@ -288,57 +297,59 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      {/* Unified Sheet Handler */}
+      {/* Unified Form Sheet */}
       <Sheet open={!!activeSheet} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] p-10 md:p-20 bg-background/95 backdrop-blur-xl overflow-y-auto border-none">
-          <div className="max-w-xl mx-auto space-y-12">
-            <SheetHeader className="text-center">
-              <div className="bg-primary/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                {activeSheet === 'delivery' ? <Navigation className="h-10 w-10 text-primary" /> : activeSheet === 'product' ? <Package className="h-10 w-10 text-primary" /> : <Scissors className="h-10 w-10 text-primary" />}
-              </div>
-              <SheetTitle className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter">
-                {activeSheet === 'delivery' ? 'Join Delivery Team' : activeSheet === 'product' ? 'New Product' : 'New Service'}
-              </SheetTitle>
-              <SheetDescription className="text-muted-foreground italic text-lg font-body">Complete the details below to proceed.</SheetDescription>
-            </SheetHeader>
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
-                <Input placeholder="Enter details..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Primary Reference</Label>
-                  <Input placeholder="Contact or detail" className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-xl border-none">
+          <ScrollArea className="h-full">
+            <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
+              <SheetHeader className="text-center">
+                <div className="bg-primary/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  {activeSheet === 'delivery' ? <Navigation className="h-10 w-10 text-primary" /> : activeSheet === 'product' ? <Package className="h-10 w-10 text-primary" /> : <Scissors className="h-10 w-10 text-primary" />}
                 </div>
+                <SheetTitle className="text-5xl font-headline italic text-primary tracking-tighter leading-none">
+                  {activeSheet === 'delivery' ? 'Join Team' : activeSheet === 'product' ? 'New Item' : 'New Deal'}
+                </SheetTitle>
+                <SheetDescription className="text-muted-foreground italic text-lg font-body">Complete the details below to proceed.</SheetDescription>
+              </SheetHeader>
+              <div className="space-y-8">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value / Metric</Label>
-                  <Input placeholder="Price or Type" className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
+                  <Input placeholder="Enter name..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Detail</Label>
+                    <Input placeholder="Enter info..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value</Label>
+                    <Input placeholder="Enter value..." className="rounded-full h-14 bg-white/40 border-primary/20 text-primary px-8" />
+                  </div>
+                </div>
+                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">
+                  Submit Details
+                </Button>
               </div>
-              <Button onClick={() => {toast({title: "Success", description: "Your request has been processed."}); setActiveSheet(null);}} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all hover:scale-[1.02]">
-                Submit Details
-              </Button>
             </div>
-          </div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
 
       {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] p-12 md:p-20 bg-white/80 backdrop-blur-xl border-none">
+        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 backdrop-blur-xl border-none">
           {selectedArrival && (
-            <div className="max-w-xl mx-auto space-y-12">
+            <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
               <div className="space-y-2 text-center">
                 <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1">Customer Arrival</Badge>
-                <SheetTitle className="text-6xl font-headline italic text-primary">{selectedArrival.name}</SheetTitle>
+                <SheetTitle className="text-6xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                 <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
               </div>
-              <div className="p-10 bg-white/40 backdrop-blur-xl border border-white/40 shadow-xl rounded-[3rem] space-y-4">
-                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Arrival Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
-                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Ticket Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
+              <div className="p-10 bg-white/40 backdrop-blur-xl border border-white/40 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
+                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
+                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
               </div>
-              <Button onClick={() => setSelectedArrival(null)} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all hover:scale-[1.02]">Verify & Start Service</Button>
+              <Button onClick={() => setSelectedArrival(null)} className="w-full h-16 bg-primary text-white hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">Verify & Start</Button>
             </div>
           )}
         </SheetContent>
