@@ -109,9 +109,11 @@ export default function ShopPage() {
                       <ShoppingBag className="h-6 w-6" />
                     </Button>
                   </div>
-                  <CardHeader className="space-y-4 p-10 text-center flex-grow">
+                  <CardHeader className="space-y-4 p-8 text-center flex-grow">
                     <p className="text-[10px] uppercase tracking-[0.3em] text-primary/40 font-black">{product.brand}</p>
-                    <CardTitle className="text-3xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">{product.name}</CardTitle>
+                    <CardTitle className="text-2xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
+                      {product.name}
+                    </CardTitle>
                     <div className="flex justify-center items-center gap-3 pt-4 border-t border-border/5 mt-4">
                        <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price.toLocaleString()}</p>
                     </div>

@@ -86,7 +86,7 @@ export default function MessagesPage() {
         )}>
           <div className="p-6 space-y-1">
             <h1 className="text-3xl font-headline italic text-primary">Chat</h1>
-            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Inquiries and Support</p>
+            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Inquiries and Support</p>Section
           </div>
           <ScrollArea className="flex-1 px-2 pb-24">
             {conversations.map((conv) => (
@@ -111,7 +111,7 @@ export default function MessagesPage() {
         {/* Chat Window */}
         {activeConversation && (
           <div className="flex-grow flex flex-col bg-background md:rounded-r-[3rem] overflow-hidden shadow-2xl relative border-l dark:border-white/10">
-            <div className="p-4 border-b flex items-center gap-4 bg-white/60 dark:bg-black/20 backdrop-blur-md z-10">
+            <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 dark:bg-black/20 backdrop-blur-md z-10">
               <Button variant="ghost" size="icon" onClick={() => setActiveConversationId(null)} className="md:hidden text-primary"><ChevronLeft className="h-6 w-6" /></Button>
               <Avatar className="h-10 w-10"><AvatarImage src={activeConversation.participantImage} /></Avatar>
               <div className="flex-grow">
