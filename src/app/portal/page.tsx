@@ -150,10 +150,10 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
-               <TrendingUp className="h-6 w-6 opacity-40 text-primary" />
-               <p className="text-4xl font-headline italic tracking-tighter text-primary">82.4K</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Today's Money ({getCurrency()})</p>
+             <Card className="rounded-[3rem] border-none bg-primary p-10 space-y-4 shadow-xl text-primary-foreground">
+               <TrendingUp className="h-6 w-6 opacity-60" />
+               <p className="text-4xl font-headline italic tracking-tighter">82.4K</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Today's Money ({getCurrency()})</p>
              </Card>
              <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
                <Users className="h-6 w-6 opacity-40 text-primary" />
@@ -362,31 +362,33 @@ export default function PartnerPortalPage() {
 
       {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none">
-          {selectedArrival && (
-            <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
-              <div className="space-y-2 text-center">
-                <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1">Customer Arrival</Badge>
-                <SheetTitle className="text-6xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
-                <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
-              </div>
-              <div className="p-10 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
-                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
-                <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
-                <div className="flex justify-between items-baseline pt-4 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Verify Entry</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Start Service</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Complete</Button>
-              </div>
+        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col">
+          <ScrollArea className="flex-1">
+            {selectedArrival && (
+              <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
+                <div className="space-y-2 text-center">
+                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1">Customer Arrival</Badge>
+                  <SheetTitle className="text-6xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
+                </div>
+                <div className="p-10 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
+                  <div className="flex justify-between items-baseline pt-4 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Verify Entry</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Start Service</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Complete</Button>
+                </div>
 
-              <SheetClose asChild>
-                <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40">Dismiss</Button>
-              </SheetClose>
-            </div>
-          )}
+                <SheetClose asChild>
+                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40">Dismiss</Button>
+                </SheetClose>
+              </div>
+            )}
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </div>
