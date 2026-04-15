@@ -11,9 +11,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, ShieldCheck, Users, Plus, Minus, Info } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 export default function DealPage() {
   const { id } = useParams();
@@ -22,6 +24,10 @@ export default function DealPage() {
   const [recommendedProductNames, setRecommendedProductNames] = useState<string[]>([]);
   const [isLoadingRecs, setIsLoadingRecs] = useState(true);
   const [personCount, setPersonCount] = useState(1);
+
+  const plugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
 
   const deal = DEALS.find(d => d.id === id);
   const vendor = VENDORS.find(v => v.id === deal?.vendor_id);
@@ -48,6 +54,12 @@ export default function DealPage() {
   if (!deal || !vendor) return null;
 
   const depositAmount = (deal.discount_price * deal.deposit_percent) / 100;
+
+  const dealImages = [
+    vendor.images[0],
+    `https://picsum.photos/seed/deal-${deal.id}-1/800/800`,
+    `https://picsum.photos/seed/deal-${deal.id}-2/800/800`,
+  ];
 
   const handleAddToCart = () => {
     addToCart({
@@ -79,14 +91,34 @@ export default function DealPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-          {/* Visuals */}
+          {/* Visuals - Auto-Scroll Carousel */}
           <div className="space-y-6">
-            <div className="relative aspect-square bg-muted rounded-[3rem] overflow-hidden transition-all duration-300">
-              <Image src={vendor.images[0]} alt={deal.name} fill className="object-cover soft-focus" priority />
+            <div className="relative aspect-square bg-muted rounded-[3rem] overflow-hidden transition-all duration-300 shadow-2xl">
+              <Carousel 
+                plugins={[plugin.current]}
+                className="w-full h-full"
+                opts={{
+                  loop: true,
+                }}
+              >
+                <CarouselContent className="h-full -ml-0">
+                  {dealImages.map((img, index) => (
+                    <CarouselItem key={index} className="pl-0 h-full relative">
+                      <Image 
+                        src={img} 
+                        alt={`${deal.name} ${index + 1}`} 
+                        fill 
+                        className="object-cover soft-focus" 
+                        priority={index === 0}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
             <div className="grid grid-cols-3 gap-6">
               {[1, 2, 3].map(i => (
-                <div key={i} className="relative aspect-square bg-muted rounded-2xl overflow-hidden transition-opacity cursor-pointer">
+                <div key={i} className="relative aspect-square bg-muted rounded-2xl overflow-hidden transition-opacity cursor-pointer ring-1 ring-primary/10">
                    <Image src={`https://picsum.photos/seed/parlour-${i}/400/400`} alt="Detail" fill className="object-cover soft-focus" />
                 </div>
               ))}
@@ -149,7 +181,7 @@ export default function DealPage() {
               </div>
             </div>
 
-            <Button size="lg" className="w-full h-20 bg-primary text-white rounded-full text-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl group" onClick={handleAddToCart}>
+            <Button size="lg" className="w-full h-20 bg-primary text-primary-foreground rounded-full text-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl group" onClick={handleAddToCart}>
               Book Now
               <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>

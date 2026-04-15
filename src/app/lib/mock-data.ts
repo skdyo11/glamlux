@@ -9,7 +9,11 @@ export const VENDORS: Vendor[] = [
     lng: 74.3587,
     area_tag: 'Gulberg, Lahore',
     rating: 4.9,
-    images: ['https://picsum.photos/seed/luxury-spa-interior/800/600'],
+    images: [
+      'https://picsum.photos/seed/luxury-spa-interior/800/600',
+      'https://picsum.photos/seed/spa-2/800/600',
+      'https://picsum.photos/seed/spa-3/800/600'
+    ],
     owner_currency: 'PKR',
     commission_rate: 0.15,
   },
@@ -20,7 +24,11 @@ export const VENDORS: Vendor[] = [
     lng: 77.2090,
     area_tag: 'South Delhi',
     rating: 4.8,
-    images: ['https://picsum.photos/seed/modern-hair-studio/800/600'],
+    images: [
+      'https://picsum.photos/seed/modern-hair-studio/800/600',
+      'https://picsum.photos/seed/hair-2/800/600',
+      'https://picsum.photos/seed/hair-3/800/600'
+    ],
     owner_currency: 'INR',
     commission_rate: 0.15,
   },
@@ -31,7 +39,11 @@ export const VENDORS: Vendor[] = [
     lng: 67.0011,
     area_tag: 'DHA, Karachi',
     rating: 4.7,
-    images: ['https://picsum.photos/seed/bridal-makeup-studio/800/600'],
+    images: [
+      'https://picsum.photos/seed/bridal-makeup-studio/800/600',
+      'https://picsum.photos/seed/bridal-2/800/600',
+      'https://picsum.photos/seed/bridal-3/800/600'
+    ],
     owner_currency: 'PKR',
     commission_rate: 0.15,
   }

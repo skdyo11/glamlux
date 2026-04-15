@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -11,6 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import { useRef } from 'react';
 
 export default function VendorProfilePage() {
   const { id } = useParams();
@@ -18,6 +22,10 @@ export default function VendorProfilePage() {
   const vendor = VENDORS.find(v => v.id === id);
   const vendorDeals = DEALS.filter(d => d.vendor_id === id);
   const vendorProducts = PRODUCTS.filter(p => p.vendor_id === id);
+
+  const plugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
 
   if (!vendor) return null;
 
@@ -28,16 +36,32 @@ export default function VendorProfilePage() {
       <Navbar />
       
       <main className="pb-32">
-        {/* Vendor Hero - High Intensity Glass */}
+        {/* Vendor Hero - High Intensity Glass with Auto-Scroll Carousel */}
         <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden">
-          <Image 
-            src={vendor.images[0]} 
-            alt={vendor.name} 
-            fill 
-            className="object-cover soft-focus opacity-60" 
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0">
+            <Carousel 
+              plugins={[plugin.current]}
+              className="w-full h-full"
+              opts={{
+                loop: true,
+              }}
+            >
+              <CarouselContent className="h-full -ml-0">
+                {vendor.images.map((img, index) => (
+                  <CarouselItem key={index} className="pl-0 h-[70vh] relative">
+                    <Image 
+                      src={img} 
+                      alt={`${vendor.name} ${index + 1}`} 
+                      fill 
+                      className="object-cover soft-focus opacity-60" 
+                      priority={index === 0}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
           
           <div className="container mx-auto px-6 relative z-10">
              <div className="max-w-4xl space-y-6">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -12,6 +13,9 @@ import { ShoppingCart, ShieldCheck, Truck, ArrowLeft, Star, Heart, Store } from 
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import { useRef } from 'react';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -22,6 +26,10 @@ export default function ProductDetailPage() {
   const product = PRODUCTS.find(p => p.id === id);
   const vendor = VENDORS.find(v => v.id === product?.vendor_id);
   const isFav = product ? isFavoriteProduct(product.id) : false;
+
+  const plugin = useRef(
+    Autoplay({ delay: 3500, stopOnInteraction: false })
+  );
 
   if (!product) {
     return (
@@ -37,6 +45,12 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
+  const productImages = [
+    product.image,
+    `https://picsum.photos/seed/${product.id}-alt1/400/500`,
+    `https://picsum.photos/seed/${product.id}-alt2/400/500`,
+  ];
 
   const handleAddToCart = () => {
     addToCart({
@@ -69,22 +83,35 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Product Image */}
+          {/* Product Image Auto-Scroll Carousel */}
           <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl bg-white/50 backdrop-blur-sm border border-white/40">
-            <Image 
-              src={product.image} 
-              alt={product.name} 
-              fill 
-              className="object-cover"
-              priority
-              data-ai-hint="makeup product"
-            />
+            <Carousel 
+              plugins={[plugin.current]}
+              className="w-full h-full"
+              opts={{
+                loop: true,
+              }}
+            >
+              <CarouselContent className="h-full -ml-0">
+                {productImages.map((img, index) => (
+                  <CarouselItem key={index} className="pl-0 h-full relative">
+                    <Image 
+                      src={img} 
+                      alt={`${product.name} ${index + 1}`} 
+                      fill 
+                      className="object-cover"
+                      priority={index === 0}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => toggleFavoriteProduct(product.id)}
               className={cn(
-                "absolute top-6 right-6 rounded-full backdrop-blur-md transition-all h-12 w-12",
+                "absolute top-6 right-6 rounded-full backdrop-blur-md transition-all h-12 w-12 z-20",
                 isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
               )}
             >
