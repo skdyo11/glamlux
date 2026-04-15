@@ -324,7 +324,7 @@ export default function DashboardPage() {
                   <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2 bg-primary/10 px-3 py-1 rounded-full">
                     <CheckCircle2 className="h-4 w-4" /> Guest Check-In
                   </div>
-                  <SheetTitle className="text-5xl font-headline leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetTitle className="text-4xl font-headline leading-none">{selectedArrival.name}</SheetTitle>
                   <SheetDescription className="italic text-lg">{selectedArrival.service}</SheetDescription>
                 </SheetHeader>
                 

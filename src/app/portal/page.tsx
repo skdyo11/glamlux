@@ -368,8 +368,8 @@ export default function PartnerPortalPage() {
               <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
                 <div className="space-y-2 text-center">
                   <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1">Customer Arrival</Badge>
-                  <SheetTitle className="text-6xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
-                  <SheetDescription className="italic text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
+                  <SheetTitle className="text-4xl md:text-5xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-lg md:text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
                 </div>
                 <div className="p-10 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
