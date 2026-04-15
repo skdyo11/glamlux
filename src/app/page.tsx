@@ -73,15 +73,15 @@ export default function Home() {
               </p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="flex gap-10 overflow-x-auto pb-10 scrollbar-hide -mx-6 px-6">
               {rankedVendors.map((vendor, index) => (
-                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative">
+                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative shrink-0 w-[320px] md:w-[400px]">
                   <div className="absolute -top-4 -left-4 z-10">
                     <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-headline text-2xl italic shadow-2xl ring-4 ring-background">
                       #{index + 1}
                     </div>
                   </div>
-                  <Card className="rounded-[3rem] border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl p-8 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl ring-1 ring-primary/5">
+                  <Card className="rounded-[3rem] border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl p-8 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl ring-1 ring-primary/5 h-full">
                     <div className="relative aspect-video rounded-[2rem] overflow-hidden mb-4">
                       <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover soft-focus" />
                     </div>

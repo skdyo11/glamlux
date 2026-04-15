@@ -67,6 +67,7 @@ export default function PartnerPortalPage() {
     { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '11:30 AM', status: 'Waiting' },
     { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:30 PM', status: 'Waiting' },
     { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '01:30 PM', status: 'Waiting' },
+    { id: '4', name: 'Hiba Ali', service: 'Signature Manicure', time: '04:00 PM', status: 'Waiting' },
   ]);
 
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
@@ -188,7 +189,7 @@ export default function PartnerPortalPage() {
                 <CalendarDays className="h-6 w-6 text-primary/40" />
                 <h3 className="text-3xl font-headline italic text-primary">My Weekly Plan</h3>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6">
                 {WEEKLY_PLAN.map((item) => (
                   <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl flex flex-col items-center gap-2 shadow-xl hover:bg-primary/10 transition-all">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
@@ -207,11 +208,11 @@ export default function PartnerPortalPage() {
                 <Clock className="h-6 w-6 text-primary/40" />
                 <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="flex gap-8 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
                 {arrivals.map((a) => (
                   <Card 
                     key={a.id} 
-                    className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
+                    className="min-w-[280px] md:min-w-[350px] rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
                     onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
