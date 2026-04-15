@@ -36,11 +36,11 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-0.5 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
+    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Home className="h-4 w-4 text-foreground" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Home className="h-5 w-5 text-foreground" />
           </Button>
         </Link>
       )}
@@ -49,24 +49,24 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-8 w-8 rounded-full"
+        className="h-9 w-9 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-4 w-4 text-foreground" /> : <Moon className="h-4 w-4 text-foreground" />}
+        {theme === 'dark' ? <Sun className="h-5 w-5 text-foreground" /> : <Moon className="h-5 w-5 text-foreground" />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-8 px-3 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground">
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 rounded-full text-[9px] font-black uppercase tracking-widest text-foreground">
         {getCurrency()}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-          <Heart className={cn("h-4 w-4 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+          <Heart className={cn("h-5 w-5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-          <ShoppingBag className="h-4 w-4 text-foreground" />
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+          <ShoppingBag className="h-5 w-5 text-foreground" />
           {cartCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border border-background z-20 rounded-full">
               {cartCount}
@@ -111,10 +111,10 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-12 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-4 shadow-md rounded-2xl">
-        <Link href="/" className="flex items-center space-x-2">
-          <Sparkles className="h-4 w-4 text-accent-foreground" />
-          <span className="font-headline text-base tracking-tighter text-foreground italic">GlamLux</span>
+      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-5 shadow-md rounded-2xl">
+        <Link href="/" className="flex items-center space-x-3">
+          <Sparkles className="h-6 w-6 text-accent-foreground" />
+          <span className="font-headline text-xl tracking-tighter text-foreground italic">GlamLux</span>
         </Link>
 
         <div className="flex items-center">
@@ -123,7 +123,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-12 px-2 shadow-lg">
+      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-14 px-3 shadow-lg">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
@@ -133,7 +133,7 @@ export function Navbar() {
                 "p-2 rounded-full",
                 isActive ? "text-accent-foreground bg-primary/5" : "text-muted-foreground/60"
               )}>
-                <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
+                <Icon className={cn("h-6 w-6", isActive && "stroke-[2.5px]")} />
               </div>
             </Link>
           );
