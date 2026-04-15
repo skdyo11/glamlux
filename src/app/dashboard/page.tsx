@@ -319,7 +319,7 @@ export default function DashboardPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-8 py-10 px-6">
+              <div className="max-w-xl mx-auto space-y-8 py-6 px-6">
                 <SheetHeader className="space-y-3">
                   <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-2 bg-primary/10 px-3 py-1 rounded-full">
                     <CheckCircle2 className="h-4 w-4" /> Guest Check-In
