@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -213,30 +214,30 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-6 mb-12 pt-28">
-          <div className="space-y-1">
+        <header className="flex flex-col gap-4 mb-10 pt-12 md:pt-24">
+          <div className="space-y-0.5">
             <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
-            <h1 className="text-4xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
+            <h1 className="text-3xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-             <Card className="rounded-[1.2rem] border-none bg-primary p-3 md:p-4 space-y-1 shadow-md text-primary-foreground">
-               <TrendingUp className="h-3 w-3 opacity-60" />
-               <p className="text-2xl md:text-3xl font-headline italic tracking-tighter leading-none">82.4K</p>
-               <p className="text-[8px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+             <Card className="rounded-[1rem] border-none bg-primary p-2.5 md:p-3.5 space-y-0.5 shadow-md text-primary-foreground">
+               <TrendingUp className="h-2.5 w-2.5 opacity-60" />
+               <p className="text-xl md:text-2xl font-headline italic tracking-tighter leading-none">82.4K</p>
+               <p className="text-[7px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[1.2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-3 md:p-4 space-y-1 shadow-md">
-               <Users className="h-3 w-3 opacity-40 text-primary" />
-               <p className="text-2xl md:text-3xl font-headline italic tracking-tighter text-primary leading-none">14</p>
-               <p className="text-[8px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
+             <Card className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2.5 md:p-3.5 space-y-0.5 shadow-md">
+               <Users className="h-2.5 w-2.5 opacity-40 text-primary" />
+               <p className="text-xl md:text-2xl font-headline italic tracking-tighter text-primary leading-none">14</p>
+               <p className="text-[7px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
              </Card>
              <Card 
-                className="rounded-[1.2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-3 md:p-4 space-y-1 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
+                className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2.5 md:p-3.5 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-3 w-3 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                <p className="text-[8px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
-                <p className="text-[9px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
+                <Navigation className="h-2.5 w-2.5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <p className="text-[7px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
+                <p className="text-[8px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
              </Card>
           </div>
         </header>
