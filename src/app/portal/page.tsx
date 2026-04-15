@@ -213,29 +213,29 @@ export default function PartnerPortalPage() {
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-4 mb-10 pt-12 md:pt-24">
+      <main className="container mx-auto px-6 py-4 md:py-12">
+        <header className="flex flex-col gap-3 mb-8 pt-4 md:pt-20">
           <div className="space-y-0.5">
             <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
-            <h1 className="text-3xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
+            <h1 className="text-3xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-             <Card className="rounded-[1rem] border-none bg-primary p-2.5 md:p-3.5 space-y-0.5 shadow-md text-primary-foreground">
-               <TrendingUp className="h-2.5 w-2.5 opacity-60" />
-               <p className="text-xl md:text-2xl font-headline italic tracking-tighter leading-none">82.4K</p>
+             <Card className="rounded-[1rem] border-none bg-primary p-2 md:p-3 space-y-0.5 shadow-sm text-primary-foreground">
+               <TrendingUp className="h-2 w-2 opacity-60" />
+               <p className="text-lg md:text-2xl font-headline italic tracking-tighter leading-none">82.4K</p>
                <p className="text-[7px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2.5 md:p-3.5 space-y-0.5 shadow-md">
-               <Users className="h-2.5 w-2.5 opacity-40 text-primary" />
-               <p className="text-xl md:text-2xl font-headline italic tracking-tighter text-primary leading-none">14</p>
+             <Card className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 shadow-sm">
+               <Users className="h-2 w-2 opacity-40 text-primary" />
+               <p className="text-lg md:text-2xl font-headline italic tracking-tighter text-primary leading-none">14</p>
                <p className="text-[7px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
              </Card>
              <Card 
-                className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2.5 md:p-3.5 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
+                className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-sm group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-2.5 w-2.5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Navigation className="h-2 w-2 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 <p className="text-[7px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
                 <p className="text-[8px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
              </Card>
@@ -412,7 +412,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 rounded-[2.5rem] transition-all hover:bg-primary/10 shadow-md">
+                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 rounded-[2.5rem] transition-all hover:bg-primary/10 shadow-sm">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
                     <Image src={p.image} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform" />
                   </div>
@@ -435,7 +435,7 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myServices.map((service) => (
-                <Card key={service.id} className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-md group">
+                <Card key={service.id} className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-sm group">
                   <div className="h-20 w-20 rounded-[1.5rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform"><Scissors className="h-8 w-8" /></div>
                   <div className="flex-grow space-y-1">
                     <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/20 text-primary rounded-full">{service.category}</Badge>
@@ -484,7 +484,7 @@ export default function PartnerPortalPage() {
                     <Input required placeholder={activeSheet === 'delivery' ? "Car / Bike / Van" : "Enter value..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                 </div>
-                <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-md transition-all">
+                <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-sm transition-all">
                   Submit Details
                 </Button>
               </form>
@@ -503,7 +503,7 @@ export default function PartnerPortalPage() {
                   <SheetTitle className="text-3xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                   <SheetDescription className="italic text-sm text-primary/60 leading-tight">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-md rounded-[2rem] space-y-1 text-center md:text-left">
+                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-sm rounded-[2rem] space-y-1 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
                   <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-3">{selectedArrival.status}</Badge></div>
