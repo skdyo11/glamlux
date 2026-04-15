@@ -27,12 +27,10 @@ import { useToast } from '@/hooks/use-toast';
 export default function DashboardPage() {
   const { toast } = useToast();
   
-  // Sheet States
   const [isParlourSheetOpen, setIsParlourSheetOpen] = useState(false);
   const [isShopSheetOpen, setIsShopSheetOpen] = useState(false);
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
 
-  // Status State
   const [arrivals, setArrivals] = useState([
     { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
     { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
@@ -72,7 +70,6 @@ export default function DashboardPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-8 md:py-12">
-        {/* Header - Mobile Optimized */}
         <header className="flex flex-col gap-6 mb-12">
           <div className="space-y-1 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -83,12 +80,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-lg shadow-primary/20 text-primary-foreground">
+             <Card className="bg-primary p-6 rounded-[2rem] border-none shadow-md text-primary-foreground">
                <Users className="h-6 w-6 mb-3 opacity-60" />
                <p className="text-3xl font-bold font-headline">12</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">Guests Today</p>
              </Card>
-             <Card className="bg-white dark:bg-card p-6 rounded-[2rem] border-none shadow-xl text-primary">
+             <Card className="bg-white dark:bg-card p-6 rounded-[2rem] border-none shadow-md text-primary">
                <TrendingUp className="h-6 w-6 mb-3 opacity-60 text-secondary" />
                <p className="text-3xl font-bold font-headline">142.5K</p>
                <p className="text-[10px] uppercase font-bold tracking-widest opacity-80">PKR Revenue</p>
@@ -98,14 +95,14 @@ export default function DashboardPage() {
           <div className="flex gap-3">
             <Button 
               onClick={() => setIsParlourSheetOpen(true)}
-              className="flex-1 rounded-2xl h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
+              className="flex-1 rounded-2xl h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs uppercase tracking-widest shadow-md"
             >
               <Plus className="h-5 w-5 mr-2" /> Add Parlour
             </Button>
             <Button 
               onClick={() => setIsShopSheetOpen(true)}
               variant="outline" 
-              className="flex-1 rounded-2xl h-16 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest"
+              className="flex-1 rounded-2xl h-16 border-primary/20 bg-white/40 backdrop-blur-md text-primary font-bold text-xs uppercase tracking-widest shadow-sm"
             >
               <Plus className="h-5 w-5 mr-2" /> Add Shop
             </Button>
@@ -114,22 +111,21 @@ export default function DashboardPage() {
 
         <Tabs defaultValue="arrivals" className="space-y-8">
           <TabsList className="bg-white/40 backdrop-blur-md p-1 h-16 border border-white/60 rounded-2xl w-full flex">
-            <TabsTrigger value="arrivals" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
+            <TabsTrigger value="arrivals" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-xl font-bold text-xs uppercase tracking-widest">
               Queue
             </TabsTrigger>
-            <TabsTrigger value="planner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-xl font-bold text-xs uppercase tracking-widest">
+            <TabsTrigger value="planner" className="flex-1 h-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-xl font-bold text-xs uppercase tracking-widest">
               Capacity
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="arrivals" className="space-y-4">
-            {/* Mobile List View */}
             <div className="md:hidden space-y-4">
               {arrivals.map((arrival) => (
                 <Card 
                   key={arrival.id} 
                   onClick={() => setSelectedArrival(arrival)}
-                  className="p-6 rounded-[2.5rem] border-none shadow-lg bg-white/60 dark:bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
+                  className="p-6 rounded-[2.5rem] border-none shadow-md bg-white/60 dark:bg-card/60 backdrop-blur-md space-y-4 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
@@ -158,8 +154,7 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* Desktop Table View */}
-            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-card overflow-hidden">
+            <Card className="hidden md:block rounded-[2.5rem] border-none shadow-md bg-white dark:bg-card overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent bg-primary/5">
@@ -208,7 +203,7 @@ export default function DashboardPage() {
 
           <TabsContent value="planner" className="space-y-6">
              <div className="grid grid-cols-1 gap-8">
-               <Card className="rounded-[2.5rem] border-none shadow-xl p-8 bg-white/60 dark:bg-card/60 backdrop-blur-md">
+               <Card className="rounded-[2.5rem] border-none shadow-md p-8 bg-white/60 dark:bg-card/60 backdrop-blur-md">
                  <div className="flex items-center justify-between mb-8">
                    <div className="space-y-1">
                      <h3 className="font-headline text-3xl tracking-tighter">Weekly Availability</h3>
@@ -253,9 +248,6 @@ export default function DashboardPage() {
         </Tabs>
       </main>
 
-      {/* --- INTERACTIVE SHEETS --- */}
-
-      {/* Add Parlour Sheet */}
       <Sheet open={isParlourSheetOpen} onOpenChange={setIsParlourSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
@@ -277,7 +269,7 @@ export default function DashboardPage() {
                   <Label htmlFor="parlour-description" className="text-xs uppercase font-black tracking-widest text-primary/60">About the Studio</Label>
                   <Textarea id="parlour-description" placeholder="Describe your luxury environment..." className="rounded-2xl border-primary/20 bg-primary/5 min-h-[120px]" required />
                 </div>
-                <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg">
+                <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground font-bold rounded-2xl shadow-md text-lg">
                   Submit Registration
                 </Button>
               </form>
@@ -286,7 +278,6 @@ export default function DashboardPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Add Shop Sheet */}
       <Sheet open={isShopSheetOpen} onOpenChange={setIsShopSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
@@ -304,7 +295,7 @@ export default function DashboardPage() {
                   <Label htmlFor="shop-category" className="text-xs uppercase font-black tracking-widest text-primary/60">Product Categories</Label>
                   <Input id="shop-category" placeholder="e.g. Foundations, Lipsticks" className="rounded-2xl h-14 border-primary/20 bg-secondary/10" required />
                 </div>
-                <Button type="submit" className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-xl shadow-secondary/10 text-lg">
+                <Button type="submit" className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-md text-lg">
                   Open Merchant Account
                 </Button>
               </form>
@@ -313,7 +304,6 @@ export default function DashboardPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Manage Entry Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
         <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
@@ -343,13 +333,13 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4">
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-green-200 text-sm md:text-lg">
+                  <Button onClick={() => updateArrivalStatus(arrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg">
                     Verify Entry
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-amber-200 text-sm md:text-lg">
+                  <Button onClick={() => updateArrivalStatus(arrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg">
                     Start Service
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-sm md:text-lg md:col-span-2">
+                  <Button onClick={() => updateArrivalStatus(arrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg md:col-span-2">
                     Mark as Completed
                   </Button>
                   <SheetClose asChild className="md:col-span-2">

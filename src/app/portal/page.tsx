@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -94,7 +93,6 @@ export default function PartnerPortalPage() {
   const [isMounted, setIsMounted] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  // Arrivals State
   const [arrivals, setArrivals] = useState([
     { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '11:30 AM', status: 'Waiting' },
     { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:30 PM', status: 'Waiting' },
@@ -105,7 +103,6 @@ export default function PartnerPortalPage() {
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
 
-  // Chat State
   const [businessConversations, setBusinessConversations] = useState<Conversation[]>(MOCK_BUSINESS_CHATS);
   const [activeChatId, setActiveChatId] = useState<string | null>(MOCK_BUSINESS_CHATS[0].id);
   const [chatSearch, setChatSearch] = useState('');
@@ -210,30 +207,30 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-8 mb-12 pt-12">
+        <header className="flex flex-col gap-8 mb-12 pt-16">
           <div className="space-y-1">
-            <Badge className="bg-primary/10 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[9px] font-black">Owner Area</Badge>
-            <h1 className="text-4xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
+            <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[8px] font-black">Owner Area</Badge>
+            <h1 className="text-4xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <Card className="rounded-[2rem] border-none bg-primary p-6 md:p-8 space-y-3 shadow-xl text-primary-foreground">
-               <TrendingUp className="h-5 w-5 opacity-60" />
-               <p className="text-3xl md:text-4xl font-headline italic tracking-tighter leading-none">82.4K</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Today's Money ({getCurrency()})</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <Card className="rounded-[1.5rem] border-none bg-primary p-4 md:p-6 space-y-2 shadow-md text-primary-foreground">
+               <TrendingUp className="h-4 w-4 opacity-60" />
+               <p className="text-2xl md:text-3xl font-headline italic tracking-tighter leading-none">82.4K</p>
+               <p className="text-[9px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 md:p-8 space-y-3 shadow-xl">
-               <Users className="h-5 w-5 opacity-40 text-primary" />
-               <p className="text-3xl md:text-4xl font-headline italic tracking-tighter text-primary leading-none">14</p>
-               <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
+             <Card className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-6 space-y-2 shadow-md">
+               <Users className="h-4 w-4 opacity-40 text-primary" />
+               <p className="text-2xl md:text-3xl font-headline italic tracking-tighter text-primary leading-none">14</p>
+               <p className="text-[9px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
              </Card>
              <Card 
-                className="rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 md:p-8 space-y-3 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
+                className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-6 space-y-2 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-5 w-5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                <p className="text-[10px] uppercase font-black tracking-widest text-primary">Join Delivery Team</p>
-                <p className="text-[11px] italic opacity-80 text-primary/70">Deliver makeup to homes</p>
+                <Navigation className="h-4 w-4 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <p className="text-[9px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
+                <p className="text-[10px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
              </Card>
           </div>
         </header>
@@ -254,13 +251,13 @@ export default function PartnerPortalPage() {
             <section className="space-y-8">
               <div className="flex items-center gap-3">
                 <CalendarDays className="h-6 w-6 text-primary/40" />
-                <h3 className="text-3xl font-headline italic text-primary">My Weekly Plan</h3>
+                <h3 className="text-3xl font-headline italic text-primary">Weekly Availability</h3>
               </div>
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6 snap-x">
                 {WEEKLY_PLAN.map((item) => (
-                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm flex flex-col items-center gap-2 shadow-xl hover:bg-primary/10 transition-all snap-start">
+                  <Card key={item.day} className="min-w-[140px] p-6 rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm flex flex-col items-center gap-1 shadow-md hover:bg-primary/10 transition-all snap-start">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
-                    <span className="font-headline text-3xl italic text-primary">{item.slots > 0 ? `${item.slots} Slots` : 'Closed'}</span>
+                    <span className="font-headline text-2xl italic text-primary">{item.slots > 0 ? `${item.slots} Slots` : 'Closed'}</span>
                     <Badge variant="outline" className={cn(
                       "text-[8px] font-black uppercase tracking-widest border-none px-2 py-0.5 mt-2 rounded-full",
                       item.demand === 'High' ? "bg-rose-500/10 text-rose-500" : "bg-primary/10 text-primary"
@@ -273,23 +270,23 @@ export default function PartnerPortalPage() {
             <section className="space-y-8">
               <div className="flex items-center gap-3">
                 <Clock className="h-6 w-6 text-primary/40" />
-                <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
+                <h3 className="text-3xl font-headline italic text-primary">Arrival Queue</h3>
               </div>
               <div className="flex gap-8 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
                 {arrivals.map((a) => (
                   <Card 
                     key={a.id} 
-                    className="min-w-[280px] md:min-w-[350px] rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5 snap-start" 
+                    className="min-w-[280px] md:min-w-[350px] rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 space-y-4 hover:bg-primary/10 transition-all cursor-pointer shadow-md ring-1 ring-white/5 snap-start" 
                     onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-primary opacity-40">Coming at {a.time}</p>
-                        <h4 className="font-headline text-3xl text-primary italic leading-none">{a.name}</h4>
+                        <p className="text-[10px] font-bold text-primary opacity-40">{a.time}</p>
+                        <h4 className="font-headline text-2xl text-primary italic leading-none">{a.name}</h4>
                         <p className="text-xs italic text-muted-foreground">{a.service}</p>
                       </div>
                       <Badge variant="outline" className={cn(
-                        "rounded-full text-[9px] font-black tracking-widest px-4 h-9 flex items-center border-white/20",
+                        "rounded-full text-[9px] font-black tracking-widest px-4 h-8 flex items-center border-white/20",
                         a.status === 'Waiting' ? "text-primary" : a.status === 'Verified' ? "text-green-600 border-green-200" : "text-amber-600 border-amber-200"
                       )}>
                         {a.status}
@@ -302,7 +299,7 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="scanner" className="max-w-xl mx-auto space-y-8 text-center animate-in zoom-in-95 duration-300">
-            <div id="reader" className="w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl" />
+            <div id="reader" className="w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 bg-white/5 backdrop-blur-sm shadow-md" />
             <div className="flex items-center justify-center gap-3 italic text-primary/60">
               <QrCode className="h-5 w-5" />
               <span className="text-[10px] uppercase font-bold tracking-widest">Scanning Customer Ticket</span>
@@ -310,10 +307,9 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in duration-300">
-            {/* Sidebar Chat List */}
-            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 shadow-xl flex flex-col h-[600px]">
+            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 shadow-md flex flex-col h-[600px]">
               <div className="space-y-4">
-                <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
+                <h3 className="font-headline text-3xl italic text-primary">Inquiries</h3>
                 <div className="relative group">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/30" />
                   <Input 
@@ -333,7 +329,7 @@ export default function PartnerPortalPage() {
                       onClick={() => setActiveChatId(chat.id)}
                       className={cn(
                         "w-full flex items-center gap-4 p-4 rounded-3xl transition-all text-left",
-                        activeChatId === chat.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
+                        activeChatId === chat.id ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-primary/5"
                       )}
                     >
                       <Avatar className="h-12 w-12 border-2 border-white/20">
@@ -350,8 +346,7 @@ export default function PartnerPortalPage() {
               </ScrollArea>
             </Card>
 
-            {/* Main Chat Window */}
-            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm h-[600px] flex flex-col shadow-xl overflow-hidden relative">
+            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm h-[600px] flex flex-col shadow-md overflow-hidden relative">
                {activeChat ? (
                  <>
                    <div className="p-6 border-b flex items-center gap-4 bg-white/20 dark:bg-white/5">
@@ -387,7 +382,7 @@ export default function PartnerPortalPage() {
                         placeholder="Message partner team..." 
                         className="rounded-full bg-white/60 dark:bg-white/10 border-none h-12 px-6" 
                       />
-                      <Button onClick={handleSendBusinessMsg} size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-105 transition-all">
+                      <Button onClick={handleSendBusinessMsg} size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-sm hover:scale-105 transition-all">
                         <Send className="h-5 w-5" />
                       </Button>
                    </div>
@@ -403,21 +398,21 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="items" className="space-y-8 animate-in fade-in duration-300">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Products</h3>
-              <Button onClick={() => setActiveSheet('product')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
-                <Plus className="h-4 w-4 mr-2" /> Add Product
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Inventory</h3>
+              <Button onClick={() => setActiveSheet('product')} className="rounded-full h-11 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
+                <Plus className="h-4 w-4 mr-2" /> Add Item
               </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 rounded-[3rem] transition-all hover:bg-primary/10 shadow-xl">
+                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 rounded-[2.5rem] transition-all hover:bg-primary/10 shadow-md">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
                     <Image src={p.image} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform" />
                   </div>
-                  <div className="pt-6 space-y-1 text-center">
-                    <h4 className="font-headline text-2xl text-primary italic leading-none">{p.name}</h4>
-                    <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest text-primary">{p.brand}</p>
-                    <p className="text-xs font-bold pt-2 text-primary">Stock: {p.stock}</p>
+                  <div className="pt-4 space-y-1 text-center">
+                    <h4 className="font-headline text-xl text-primary italic leading-none">{p.name}</h4>
+                    <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest text-primary">{p.brand}</p>
+                    <p className="text-[10px] font-bold pt-1 text-primary">Stock: {p.stock}</p>
                   </div>
                 </div>
               ))}
@@ -426,18 +421,18 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="services" className="space-y-8 animate-in fade-in duration-300">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Services</h3>
-              <Button onClick={() => setActiveSheet('service')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
-                <Plus className="h-4 w-4 mr-2" /> Add Service
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Offered Deals</h3>
+              <Button onClick={() => setActiveSheet('service')} className="rounded-full h-11 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
+                <Plus className="h-4 w-4 mr-2" /> New Deal
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myServices.map((service) => (
-                <Card key={service.id} className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-xl group">
-                  <div className="h-24 w-24 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform"><Scissors className="h-10 w-10" /></div>
-                  <div className="flex-grow space-y-2">
+                <Card key={service.id} className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-md group">
+                  <div className="h-20 w-20 rounded-[1.5rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform"><Scissors className="h-8 w-8" /></div>
+                  <div className="flex-grow space-y-1">
                     <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/20 text-primary rounded-full">{service.category}</Badge>
-                    <h4 className="font-headline text-3xl text-primary italic leading-none">{service.name}</h4>
+                    <h4 className="font-headline text-2xl text-primary italic leading-none">{service.name}</h4>
                     <p className="font-bold text-lg text-accent-foreground">{getCurrency()} {service.discount_price.toLocaleString()}</p>
                   </div>
                   <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 rounded-full"><ArrowRight className="h-5 w-5" /></Button>
@@ -448,36 +443,35 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      {/* Unified Form Sheet */}
-      <Sheet open={!!activeSheet} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={!!activeSheet} onValueChange={() => setActiveSheet(null)}>
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-sm border-none p-0">
           <ScrollArea className="h-full w-full">
-            <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
+            <div className="max-w-xl mx-auto space-y-8 py-8 px-6">
               <SheetHeader className="text-center">
-                <div className="bg-primary/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  {activeSheet === 'delivery' ? <Navigation className="h-10 w-10 text-primary" /> : activeSheet === 'product' ? <Package className="h-10 w-10 text-primary" /> : <Scissors className="h-10 w-10 text-primary" />}
+                <div className="bg-primary/5 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {activeSheet === 'delivery' ? <Navigation className="h-8 w-8 text-primary" /> : activeSheet === 'product' ? <Package className="h-8 w-8 text-primary" /> : <Scissors className="h-8 w-8 text-primary" />}
                 </div>
-                <SheetTitle className="text-5xl font-headline italic text-primary tracking-tighter leading-none">
+                <SheetTitle className="text-4xl font-headline italic text-primary tracking-tighter leading-none">
                   {activeSheet === 'delivery' ? 'Join Team' : activeSheet === 'product' ? 'New Item' : 'New Deal'}
                 </SheetTitle>
-                <SheetDescription className="text-muted-foreground italic text-lg font-body">Complete the details below to proceed.</SheetDescription>
+                <SheetDescription className="text-muted-foreground italic text-sm font-body">Fill out the details below.</SheetDescription>
               </SheetHeader>
-              <div className="space-y-8">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
-                  <Input placeholder="Enter name..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
+                  <Input placeholder="Enter name..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Detail</Label>
-                    <Input placeholder="Enter info..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Detail</Label>
+                    <Input placeholder="Enter info..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value</Label>
-                    <Input placeholder="Enter value..." className="rounded-full h-14 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-8" />
+                  <div className="space-y-1">
+                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value</Label>
+                    <Input placeholder="Enter value..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                 </div>
-                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">
+                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-md transition-all">
                   Submit Details
                 </Button>
               </div>
@@ -486,27 +480,26 @@ export default function PartnerPortalPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
         <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-sm border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
               <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
                 <div className="space-y-1 text-center">
-                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto mb-1">Customer Arrival</Badge>
-                  <SheetTitle className="text-3xl md:text-4xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
-                  <SheetDescription className="italic text-sm text-primary/60 leading-tight mt-1">{selectedArrival.service}</SheetDescription>
+                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto">Customer Arrival</Badge>
+                  <SheetTitle className="text-3xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-sm text-primary/60 leading-tight">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-1 text-center md:text-left">
+                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-sm rounded-[2rem] space-y-1 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
-                  <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
+                  <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-3">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-2 pt-2">
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Verify Entry</Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Start Service</Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Complete</Button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Verify</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">In-Progress</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Complete</Button>
                 </div>
 
                 <SheetClose asChild>
