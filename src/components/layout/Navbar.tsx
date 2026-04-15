@@ -60,11 +60,6 @@ export function Navbar() {
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
           <Heart className={cn("h-3 w-3 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
-          {favCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
-              {favCount}
-            </Badge>
-          )}
         </Button>
       </Link>
 
