@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -7,11 +8,15 @@ import { DEALS, VENDORS } from '@/app/lib/mock-data';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ArrowRight, Sparkles } from 'lucide-react';
+import { Star, ArrowRight, Sparkles, Trophy, ShieldCheck, Medal } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const { getCurrency } = useStore();
+
+  // Simulated ranking logic: Sort by rating and simulate "Verified Bookings"
+  const rankedVendors = [...VENDORS].sort((a, b) => b.rating - a.rating).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,6 +56,64 @@ export default function Home() {
                   <Link href="/shop">Buy Makeup</Link>
                 </Button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Elite Registry Ranking Section */}
+        <section className="py-24 bg-accent/30 dark:bg-white/5 border-b border-border/10">
+          <div className="container mx-auto px-6">
+            <header className="max-w-3xl mb-16 space-y-4">
+              <div className="flex items-center gap-3">
+                <Trophy className="h-6 w-6 text-primary" />
+                <h2 className="text-5xl font-headline tracking-tighter text-primary italic leading-none">The Elite Registry</h2>
+              </div>
+              <p className="text-lg text-muted-foreground italic font-body">
+                Our most prestigious sanctuaries, ranked exclusively by guests with a <span className="text-primary font-bold">confirmed service history</span> at each location.
+              </p>
+            </header>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {rankedVendors.map((vendor, index) => (
+                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative">
+                  <div className="absolute -top-4 -left-4 z-10">
+                    <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-headline text-2xl italic shadow-2xl ring-4 ring-background">
+                      #{index + 1}
+                    </div>
+                  </div>
+                  <Card className="rounded-[3rem] border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl p-8 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl ring-1 ring-primary/5">
+                    <div className="relative aspect-video rounded-[2rem] overflow-hidden mb-4">
+                      <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover soft-focus" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-start">
+                        <h3 className="text-3xl font-headline italic text-primary leading-none">{vendor.name}</h3>
+                        <Badge variant="outline" className="rounded-full bg-primary/5 border-primary/20 text-primary text-[8px] font-black uppercase tracking-widest">
+                          {vendor.rating} Rank
+                        </Badge>
+                      </div>
+                      
+                      <div className="p-4 rounded-2xl bg-primary/5 space-y-2 border border-primary/10">
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+                          <ShieldCheck className="h-4 w-4 text-rose-500" /> Verified Score
+                        </div>
+                        <p className="text-[10px] text-muted-foreground italic leading-tight">
+                          Ranking based on {Math.floor(Math.random() * 200) + 100} verified check-ins and verified artistry feedback.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-primary/5">
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className={cn("h-3 w-3", s <= Math.floor(vendor.rating) ? "fill-primary text-primary" : "text-muted-foreground/30")} />
+                          ))}
+                        </div>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-primary/40 italic">View Profile</span>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
