@@ -207,28 +207,28 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-8 mb-12 pt-16">
+        <header className="flex flex-col gap-8 mb-12 pt-20">
           <div className="space-y-1">
             <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[8px] font-black">Owner Area</Badge>
             <h1 className="text-4xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <Card className="rounded-[1.5rem] border-none bg-primary p-4 md:p-6 space-y-2 shadow-md text-primary-foreground">
-               <TrendingUp className="h-4 w-4 opacity-60" />
+             <Card className="rounded-[1.5rem] border-none bg-primary p-4 md:p-5 space-y-1.5 shadow-md text-primary-foreground">
+               <TrendingUp className="h-3.5 w-3.5 opacity-60" />
                <p className="text-2xl md:text-3xl font-headline italic tracking-tighter leading-none">82.4K</p>
                <p className="text-[9px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-6 space-y-2 shadow-md">
-               <Users className="h-4 w-4 opacity-40 text-primary" />
+             <Card className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-5 space-y-1.5 shadow-md">
+               <Users className="h-3.5 w-3.5 opacity-40 text-primary" />
                <p className="text-2xl md:text-3xl font-headline italic tracking-tighter text-primary leading-none">14</p>
                <p className="text-[9px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
              </Card>
              <Card 
-                className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-6 space-y-2 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
+                className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-5 space-y-1.5 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-4 w-4 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Navigation className="h-3.5 w-3.5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 <p className="text-[9px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
                 <p className="text-[10px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
              </Card>
@@ -443,10 +443,10 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      <Sheet open={!!activeSheet} onValueChange={() => setActiveSheet(null)}>
+      <Sheet open={!!activeSheet} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-sm border-none p-0">
           <ScrollArea className="h-full w-full">
-            <div className="max-w-xl mx-auto space-y-8 py-8 px-6">
+            <div className="max-w-xl mx-auto space-y-6 py-6 px-6">
               <SheetHeader className="text-center">
                 <div className="bg-primary/5 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   {activeSheet === 'delivery' ? <Navigation className="h-8 w-8 text-primary" /> : activeSheet === 'product' ? <Package className="h-8 w-8 text-primary" /> : <Scissors className="h-8 w-8 text-primary" />}
@@ -456,19 +456,25 @@ export default function PartnerPortalPage() {
                 </SheetTitle>
                 <SheetDescription className="text-muted-foreground italic text-sm font-body">Fill out the details below.</SheetDescription>
               </SheetHeader>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="space-y-1">
-                  <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Name / Title</Label>
-                  <Input placeholder="Enter name..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                  <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
+                    {activeSheet === 'delivery' ? 'Name' : 'Name / Title'}
+                  </Label>
+                  <Input placeholder={activeSheet === 'delivery' ? "Your full name" : "Enter name..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Detail</Label>
-                    <Input placeholder="Enter info..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
+                      {activeSheet === 'delivery' ? 'Phone Number' : 'Detail'}
+                    </Label>
+                    <Input placeholder={activeSheet === 'delivery' ? "+92 / +91 number" : "Enter info..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">Value</Label>
-                    <Input placeholder="Enter value..." className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                    <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
+                      {activeSheet === 'delivery' ? 'Vehicle' : 'Value'}
+                    </Label>
+                    <Input placeholder={activeSheet === 'delivery' ? "Car / Bike / Van" : "Enter value..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                 </div>
                 <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-md transition-all">
@@ -484,26 +490,26 @@ export default function PartnerPortalPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-sm border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
+              <div className="max-w-xl mx-auto space-y-3 py-4 px-6">
                 <div className="space-y-1 text-center">
                   <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto">Customer Arrival</Badge>
                   <SheetTitle className="text-3xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                   <SheetDescription className="italic text-sm text-primary/60 leading-tight">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-sm rounded-[2rem] space-y-1 text-center md:text-left">
+                <div className="p-3 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-sm rounded-[1.5rem] space-y-0.5 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
                   <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-3">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Verify</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">In-Progress</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Complete</Button>
                 </div>
 
                 <SheetClose asChild>
-                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40 h-10">Dismiss</Button>
+                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40 h-8">Dismiss</Button>
                 </SheetClose>
               </div>
             )}
