@@ -7,8 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, ChevronLeft, MoreVertical } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Send, ChevronLeft, MoreVertical, Search, X } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Conversation, ChatMessage } from '@/app/types';
 
@@ -45,11 +45,21 @@ export default function MessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(MOCK_CONVERSATIONS[0].id);
   const [newMessage, setNewMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const filteredConversations = useMemo(() => {
+    if (!searchTerm.trim()) return conversations;
+    const term = searchTerm.toLowerCase();
+    return conversations.filter(conv => 
+      conv.participantName.toLowerCase().includes(term) || 
+      conv.lastMessage.toLowerCase().includes(term)
+    );
+  }, [conversations, searchTerm]);
 
   const activeConversation = conversations.find(c => c.id === activeConversationId) || null;
 
@@ -84,27 +94,58 @@ export default function MessagesPage() {
           "w-full md:w-80 border-r flex flex-col bg-white/40 dark:bg-white/5 backdrop-blur-xl md:rounded-l-[3rem] overflow-hidden shadow-sm",
           activeConversationId ? "hidden md:flex" : "flex"
         )}>
-          <div className="p-6 space-y-1">
+          <div className="p-6 pb-2 space-y-1">
             <h1 className="text-3xl font-headline italic text-primary">Chat</h1>
-            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Inquiries and Support</p>Section
+            <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Inquiries and Support</p>
           </div>
+
+          {/* Working Search Bar */}
+          <div className="px-6 pb-4 pt-2">
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/30 group-focus-within:text-primary transition-colors" />
+              <Input 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search conversations..." 
+                className="pl-10 pr-10 rounded-full h-10 bg-primary/5 border-none text-xs italic font-body transition-all focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full flex items-center justify-center hover:bg-primary/10 text-primary/40"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
           <ScrollArea className="flex-1 px-2 pb-24">
-            {conversations.map((conv) => (
-              <button
-                key={conv.id}
-                onClick={() => setActiveConversationId(conv.id)}
-                className={cn(
-                  "w-full p-4 rounded-3xl flex items-center gap-4 transition-all active:scale-[0.98] mb-2",
-                  activeConversationId === conv.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
-                )}
-              >
-                <Avatar className="h-12 w-12 border-2 border-white/20"><AvatarImage src={conv.participantImage} /></Avatar>
-                <div className="flex-grow text-left min-w-0">
-                  <h4 className="font-headline text-lg truncate">{conv.participantName}</h4>
-                  <p className="text-xs truncate opacity-70">{conv.lastMessage}</p>
+            {filteredConversations.length > 0 ? (
+              filteredConversations.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => setActiveConversationId(conv.id)}
+                  className={cn(
+                    "w-full p-4 rounded-3xl flex items-center gap-4 transition-all active:scale-[0.98] mb-2",
+                    activeConversationId === conv.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
+                  )}
+                >
+                  <Avatar className="h-12 w-12 border-2 border-white/20"><AvatarImage src={conv.participantImage} /></Avatar>
+                  <div className="flex-grow text-left min-w-0">
+                    <h4 className="font-headline text-lg truncate">{conv.participantName}</h4>
+                    <p className="text-xs truncate opacity-70">{conv.lastMessage}</p>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className="py-20 text-center space-y-4 px-6">
+                <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center mx-auto">
+                  <Search className="h-6 w-6 text-primary/20" />
                 </div>
-              </button>
-            ))}
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 italic">No conversations found</p>
+              </div>
+            )}
           </ScrollArea>
         </div>
 
