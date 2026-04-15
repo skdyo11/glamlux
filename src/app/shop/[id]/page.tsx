@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { PRODUCTS, VENDORS } from '@/app/lib/mock-data';
@@ -14,10 +14,10 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
-import { useRef } from 'react';
+import { useRef, use } from 'react';
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
+export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { addToCart, getCurrency, toggleFavoriteProduct, isFavoriteProduct } = useStore();
   const { toast } = useToast();

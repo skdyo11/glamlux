@@ -1,9 +1,8 @@
-
 'use client';
 
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Download, Share2, CheckCircle2, QrCode, Truck, Package, MapPin, Clock } from 'lucide-react';
@@ -11,12 +10,11 @@ import Link from 'next/link';
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 
-export default function BookingSuccessPage() {
-  const { id } = useParams();
+export default function BookingSuccessPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const searchParams = useSearchParams();
   const uid = searchParams.get('uid');
   const firestore = useFirestore();
@@ -28,7 +26,7 @@ export default function BookingSuccessPage() {
 
   const bookingRef = useMemoFirebase(() => {
     if (!firestore || !uid || !id) return null;
-    return doc(firestore, 'localUsers', uid, 'bookings', id as string);
+    return doc(firestore, 'localUsers', uid, 'bookings', id);
   }, [firestore, uid, id]);
 
   const { data: booking, isLoading } = useDoc(bookingRef);
@@ -41,7 +39,6 @@ export default function BookingSuccessPage() {
     );
   }
 
-  const hasProducts = booking?.cartItems?.some((item: any) => item.type === 'product');
   const steps = [
     { label: 'Order Placed', icon: Package, date: 'Today', status: 'completed' },
     { label: 'Processing', icon: Clock, date: 'Pending', status: booking?.deliveryStatus === 'Pending' ? 'current' : 'completed' },
@@ -94,7 +91,7 @@ export default function BookingSuccessPage() {
               </CardContent>
             </Card>
 
-            {/* Delivery Tracker (Daraz Style) */}
+            {/* Delivery Tracker */}
             <Card className="rounded-[3rem] border-none shadow-2xl bg-white/40 backdrop-blur-xl p-10 space-y-8">
               <div className="flex items-center justify-between">
                 <h3 className="font-headline text-3xl italic text-primary">Delivery Updates</h3>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { VENDORS, DEALS, PRODUCTS } from '@/app/lib/mock-data';
@@ -13,10 +12,10 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
-import { useRef } from 'react';
+import { useRef, use } from 'react';
 
-export default function VendorProfilePage() {
-  const { id } = useParams();
+export default function VendorProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { getCurrency, toggleFavoriteVendor, isFavoriteVendor } = useStore();
   const vendor = VENDORS.find(v => v.id === id);
   const vendorDeals = DEALS.filter(d => d.vendor_id === id);

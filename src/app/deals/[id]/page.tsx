@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { DEALS, VENDORS, PRODUCTS } from '@/app/lib/mock-data';
@@ -9,15 +9,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
-import { Clock, MapPin, Star, Sparkles, ShoppingCart, ArrowRight, ArrowLeft, ShieldCheck, Users, Plus, Minus, Info } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { MapPin, Star, ArrowRight, ArrowLeft, ShieldCheck, Users, Plus, Minus, Info } from 'lucide-react';
+import { useEffect, useState, useRef, use } from 'react';
 import { productRecommendationForDeal } from '@/ai/flows/product-recommendation-for-deal';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
-export default function DealPage() {
-  const { id } = useParams();
+export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { addToCart, getCurrency } = useStore();
   const [recommendedProductNames, setRecommendedProductNames] = useState<string[]>([]);
