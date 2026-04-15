@@ -318,16 +318,16 @@ export default function DashboardPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-2 py-2 px-6">
+              <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
                 <SheetHeader className="space-y-1">
                   <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1 bg-primary/10 px-3 py-1 rounded-full w-fit mx-auto">
                     <CheckCircle2 className="h-3 w-3" /> Guest Check-In
                   </div>
-                  <SheetTitle className="text-3xl font-headline leading-none text-center">{selectedArrival.name}</SheetTitle>
-                  <SheetDescription className="italic text-base text-center">{selectedArrival.service}</SheetDescription>
+                  <SheetTitle className="text-2xl md:text-3xl font-headline leading-none text-center">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-base text-center leading-tight">{selectedArrival.service}</SheetDescription>
                 </SheetHeader>
                 
-                <div className="bg-primary/5 p-4 rounded-[2rem] space-y-2">
+                <div className="bg-primary/5 p-4 rounded-[2rem] space-y-2 text-center md:text-left">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Booking Ref</span>
                     <span className="font-mono font-bold text-primary text-base">GL-{selectedArrival.id}938-X</span>
@@ -336,24 +336,24 @@ export default function DashboardPage() {
                     <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Arrival Time</span>
                     <span className="font-bold text-base">{selectedArrival.time}</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center pt-2 border-t">
                     <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Current Status</span>
                     <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[10px]">{selectedArrival.status}</Badge>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4">
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-green-200 text-lg">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-green-200 text-sm md:text-lg">
                     Verify Entry
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-amber-200 text-lg">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-amber-200 text-sm md:text-lg">
                     Start Service
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg md:col-span-2">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-sm md:text-lg md:col-span-2">
                     Mark as Completed
                   </Button>
                   <SheetClose asChild className="md:col-span-2">
-                    <Button variant="ghost" className="h-12 font-bold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <Button variant="ghost" className="h-10 font-bold text-muted-foreground uppercase tracking-widest text-[10px]">
                       Dismiss
                     </Button>
                   </SheetClose>
