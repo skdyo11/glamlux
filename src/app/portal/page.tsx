@@ -210,10 +210,10 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-12 mb-20">
-          <div className="space-y-4">
-            <Badge className="bg-primary/10 text-primary rounded-full px-4 py-1 uppercase tracking-widest text-[10px]">Owner Area</Badge>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
+        <header className="flex flex-col gap-10 mb-16 pt-12">
+          <div className="space-y-2">
+            <Badge className="bg-primary/10 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[9px] font-black">Owner Area</Badge>
+            <h1 className="text-5xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -222,13 +222,13 @@ export default function PartnerPortalPage() {
                <p className="text-4xl font-headline italic tracking-tighter leading-none">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Today's Money ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
+             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-10 space-y-4 shadow-xl">
                <Users className="h-6 w-6 opacity-40 text-primary" />
                <p className="text-4xl font-headline italic tracking-tighter text-primary leading-none">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
              </Card>
              <Card 
-                className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
+                className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-10 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
                 onClick={() => setActiveSheet('delivery')}
              >
                 <Navigation className="h-6 w-6 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -256,9 +256,9 @@ export default function PartnerPortalPage() {
                 <CalendarDays className="h-6 w-6 text-primary/40" />
                 <h3 className="text-3xl font-headline italic text-primary">My Weekly Plan</h3>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6">
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6 snap-x">
                 {WEEKLY_PLAN.map((item) => (
-                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl flex flex-col items-center gap-2 shadow-xl hover:bg-primary/10 transition-all">
+                  <Card key={item.day} className="min-w-[140px] p-8 rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm flex flex-col items-center gap-2 shadow-xl hover:bg-primary/10 transition-all snap-start">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
                     <span className="font-headline text-3xl italic text-primary">{item.slots > 0 ? `${item.slots} Slots` : 'Closed'}</span>
                     <Badge variant="outline" className={cn(
@@ -275,11 +275,11 @@ export default function PartnerPortalPage() {
                 <Clock className="h-6 w-6 text-primary/40" />
                 <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
               </div>
-              <div className="flex gap-8 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
+              <div className="flex gap-8 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
                 {arrivals.map((a) => (
                   <Card 
                     key={a.id} 
-                    className="min-w-[280px] md:min-w-[350px] rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
+                    className="min-w-[280px] md:min-w-[350px] rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5 snap-start" 
                     onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
@@ -289,7 +289,7 @@ export default function PartnerPortalPage() {
                         <p className="text-xs italic text-muted-foreground">{a.service}</p>
                       </div>
                       <Badge variant="outline" className={cn(
-                        "rounded-full text-[10px] font-black tracking-widest px-4 h-8 flex items-center border-white/20",
+                        "rounded-full text-[9px] font-black tracking-widest px-4 h-9 flex items-center border-white/20",
                         a.status === 'Waiting' ? "text-primary" : a.status === 'Verified' ? "text-green-600 border-green-200" : "text-amber-600 border-amber-200"
                       )}>
                         {a.status}
@@ -302,7 +302,7 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="scanner" className="max-w-xl mx-auto space-y-8 text-center animate-in zoom-in-95 duration-300">
-            <div id="reader" className="w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl" />
+            <div id="reader" className="w-full aspect-square rounded-[3rem] overflow-hidden border-4 border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl" />
             <div className="flex items-center justify-center gap-3 italic text-primary/60">
               <QrCode className="h-5 w-5" />
               <span className="text-[10px] uppercase font-bold tracking-widest">Scanning Customer Ticket</span>
@@ -311,7 +311,7 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="chat" className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in duration-300">
             {/* Sidebar Chat List */}
-            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 shadow-xl flex flex-col h-[600px]">
+            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 shadow-xl flex flex-col h-[600px]">
               <div className="space-y-4">
                 <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
                 <div className="relative group">
@@ -351,7 +351,7 @@ export default function PartnerPortalPage() {
             </Card>
 
             {/* Main Chat Window */}
-            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl h-[600px] flex flex-col shadow-xl overflow-hidden relative">
+            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm h-[600px] flex flex-col shadow-xl overflow-hidden relative">
                {activeChat ? (
                  <>
                    <div className="p-6 border-b flex items-center gap-4 bg-white/20 dark:bg-white/5">
@@ -404,15 +404,15 @@ export default function PartnerPortalPage() {
           <TabsContent value="items" className="space-y-8 animate-in fade-in duration-300">
             <div className="flex justify-between items-center">
               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Products</h3>
-              <Button onClick={() => setActiveSheet('product')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-xl border border-white/20 hover:bg-primary/20 text-primary transition-all">
+              <Button onClick={() => setActiveSheet('product')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
                 <Plus className="h-4 w-4 mr-2" /> Add Product
               </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {PRODUCTS.map((p) => (
-                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-6 rounded-[3rem] transition-all hover:bg-primary/10 shadow-xl">
+                <div key={p.id} className="group relative bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 rounded-[3rem] transition-all hover:bg-primary/10 shadow-xl">
                   <div className="relative aspect-square rounded-[2rem] overflow-hidden">
-                    <Image src={p.image} alt={p.name} fill className="object-cover soft-focus group-hover:scale-105 transition-transform" />
+                    <Image src={p.image} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="pt-6 space-y-1 text-center">
                     <h4 className="font-headline text-2xl text-primary italic leading-none">{p.name}</h4>
@@ -427,13 +427,13 @@ export default function PartnerPortalPage() {
           <TabsContent value="services" className="space-y-8 animate-in fade-in duration-300">
             <div className="flex justify-between items-center">
               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">My Services</h3>
-              <Button onClick={() => setActiveSheet('service')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-xl border border-white/20 hover:bg-primary/20 text-primary transition-all">
+              <Button onClick={() => setActiveSheet('service')} className="rounded-full h-12 px-8 font-bold text-[10px] uppercase tracking-widest bg-primary/10 backdrop-blur-sm border border-white/20 hover:bg-primary/20 text-primary transition-all">
                 <Plus className="h-4 w-4 mr-2" /> Add Service
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myServices.map((service) => (
-                <Card key={service.id} className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-xl group">
+                <Card key={service.id} className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 flex gap-6 items-center hover:bg-primary/10 transition-all shadow-xl group">
                   <div className="h-24 w-24 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform"><Scissors className="h-10 w-10" /></div>
                   <div className="flex-grow space-y-2">
                     <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/20 text-primary rounded-full">{service.category}</Badge>
@@ -450,7 +450,7 @@ export default function PartnerPortalPage() {
 
       {/* Unified Form Sheet */}
       <Sheet open={!!activeSheet} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-xl border-none p-0">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-sm border-none p-0">
           <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
               <SheetHeader className="text-center">
@@ -488,16 +488,16 @@ export default function PartnerPortalPage() {
 
       {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
+        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-sm border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-2 py-4 px-6">
-                <div className="space-y-0 text-center">
+              <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
+                <div className="space-y-1 text-center">
                   <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto mb-1">Customer Arrival</Badge>
-                  <SheetTitle className="text-3xl md:text-5xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetTitle className="text-3xl md:text-4xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                   <SheetDescription className="italic text-sm text-primary/60 leading-tight mt-1">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-2 text-center md:text-left">
+                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-1 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
                   <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
