@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -365,26 +364,26 @@ export default function PartnerPortalPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-8 py-6 px-6">
-                <div className="space-y-2 text-center">
-                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1">Customer Arrival</Badge>
-                  <SheetTitle className="text-4xl md:text-5xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
-                  <SheetDescription className="italic text-lg md:text-2xl text-primary/60">{selectedArrival.service}</SheetDescription>
+              <div className="max-w-xl mx-auto space-y-2 py-2 px-6">
+                <div className="space-y-1 text-center">
+                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto mb-1">Customer Arrival</Badge>
+                  <SheetTitle className="text-3xl md:text-4xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-base md:text-xl text-primary/60">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-8 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-4 text-center md:text-left">
-                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
-                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
-                  <div className="flex justify-between items-baseline pt-4 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
+                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-2 text-center md:text-left">
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-2xl text-primary italic">{selectedArrival.time}</span></div>
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-base text-primary">GL-9382-AR</span></div>
+                  <div className="flex justify-between items-baseline pt-2 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-4">
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Verify Entry</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Start Service</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Complete</Button>
                 </div>
 
                 <SheetClose asChild>
-                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40 h-14">Dismiss</Button>
+                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40 h-12">Dismiss</Button>
                 </SheetClose>
               </div>
             )}
