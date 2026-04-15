@@ -81,22 +81,22 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full px-8 h-14 flex items-center justify-between">
+        <div className="w-full px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center space-x-2">
-              <Sparkles className="h-4 w-4 text-accent-foreground" />
-              <span className="font-headline text-lg tracking-tighter text-foreground italic">GlamLux</span>
+            <Link href="/" className="flex items-center space-x-3">
+              <Sparkles className="h-5 w-5 text-accent-foreground" />
+              <span className="font-headline text-xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>
 
-          <div className="flex items-center space-x-6 text-[8px] font-black uppercase tracking-[0.2em]">
+          <div className="flex items-center space-x-8 text-[9px] font-black uppercase tracking-[0.2em]">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href} 
                 className={cn(
                   "hover:text-accent-foreground transition-colors",
-                  pathname === link.href ? "text-accent-foreground" : "text-muted-foreground"
+                  pathname === link.href ? "text-accent-foreground font-black" : "text-muted-foreground"
                 )}
               >
                 {link.label}
@@ -111,10 +111,10 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-5 shadow-md rounded-2xl">
-        <Link href="/" className="flex items-center space-x-3">
-          <Sparkles className="h-8 w-8 text-accent-foreground" />
-          <span className="font-headline text-2xl tracking-tighter text-foreground italic">GlamLux</span>
+      <nav className="fixed top-3 left-4 right-4 z-50 h-16 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-6 shadow-md rounded-2xl">
+        <Link href="/" className="flex items-center space-x-4">
+          <Sparkles className="h-10 w-10 text-accent-foreground" />
+          <span className="font-headline text-3xl tracking-tighter text-foreground italic">GlamLux</span>
         </Link>
 
         <div className="flex items-center">
