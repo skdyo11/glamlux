@@ -210,30 +210,30 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-10 mb-16 pt-12">
-          <div className="space-y-2">
+        <header className="flex flex-col gap-8 mb-12 pt-12">
+          <div className="space-y-1">
             <Badge className="bg-primary/10 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[9px] font-black">Owner Area</Badge>
-            <h1 className="text-5xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
+            <h1 className="text-4xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <Card className="rounded-[3rem] border-none bg-primary p-10 space-y-4 shadow-xl text-primary-foreground">
-               <TrendingUp className="h-6 w-6 opacity-60" />
-               <p className="text-4xl font-headline italic tracking-tighter leading-none">82.4K</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <Card className="rounded-[2rem] border-none bg-primary p-6 md:p-8 space-y-3 shadow-xl text-primary-foreground">
+               <TrendingUp className="h-5 w-5 opacity-60" />
+               <p className="text-3xl md:text-4xl font-headline italic tracking-tighter leading-none">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Today's Money ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-10 space-y-4 shadow-xl">
-               <Users className="h-6 w-6 opacity-40 text-primary" />
-               <p className="text-4xl font-headline italic tracking-tighter text-primary leading-none">14</p>
+             <Card className="rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 md:p-8 space-y-3 shadow-xl">
+               <Users className="h-5 w-5 opacity-40 text-primary" />
+               <p className="text-3xl md:text-4xl font-headline italic tracking-tighter text-primary leading-none">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
              </Card>
              <Card 
-                className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-10 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
+                className="rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 md:p-8 space-y-3 cursor-pointer hover:bg-primary/10 transition-all shadow-xl group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-6 w-6 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Navigation className="h-5 w-5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 <p className="text-[10px] uppercase font-black tracking-widest text-primary">Join Delivery Team</p>
-                <p className="text-xs italic opacity-80 text-primary/70">Deliver makeup to homes</p>
+                <p className="text-[11px] italic opacity-80 text-primary/70">Deliver makeup to homes</p>
              </Card>
           </div>
         </header>
