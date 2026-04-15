@@ -11,12 +11,19 @@ import { Badge } from '@/components/ui/badge';
 import { Star, ArrowRight, Sparkles, Trophy, ShieldCheck, Medal } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const { getCurrency } = useStore();
+  const [verifiedCounts, setVerifiedCounts] = useState<number[]>([]);
 
   // Simulated ranking logic: Sort by rating and simulate "Verified Bookings"
   const rankedVendors = [...VENDORS].sort((a, b) => b.rating - a.rating).slice(0, 3);
+
+  useEffect(() => {
+    // Generate random check-in counts only on the client to avoid hydration mismatch
+    setVerifiedCounts(rankedVendors.map(() => Math.floor(Math.random() * 200) + 100));
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,7 +105,7 @@ export default function Home() {
                           <ShieldCheck className="h-4 w-4 text-rose-500" /> Verified Score
                         </div>
                         <p className="text-[10px] text-muted-foreground italic leading-tight">
-                          Ranking based on {Math.floor(Math.random() * 200) + 100} verified check-ins and verified artistry feedback.
+                          Ranking based on {verifiedCounts[index] || '...'} verified check-ins and verified artistry feedback.
                         </p>
                       </div>
 
