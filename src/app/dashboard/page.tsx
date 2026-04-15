@@ -252,22 +252,22 @@ export default function DashboardPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto">
-              <SheetHeader className="space-y-3 pt-6 px-6">
+              <SheetHeader className="space-y-2 pt-6 px-6">
                 <SheetTitle className="text-4xl font-headline italic">New Parlour Registration</SheetTitle>
-                <SheetDescription className="text-md">Provide details about your beauty establishment to join GlamLux.</SheetDescription>
+                <SheetDescription className="text-md">Provide all details about your beauty establishment to join GlamLux.</SheetDescription>
               </SheetHeader>
-              <form onSubmit={handleCreateParlour} className="space-y-6 py-8 px-6">
+              <form onSubmit={handleCreateParlour} className="space-y-6 py-6 px-6">
                 <div className="space-y-2">
                   <Label htmlFor="parlour-name" className="text-xs uppercase font-black tracking-widest text-primary/60">Parlour Name</Label>
-                  <Input id="parlour-name" placeholder="e.g. The Gilded Rose" className="rounded-2xl h-14 border-primary/20 bg-primary/5" required />
+                  <Input required id="parlour-name" placeholder="e.g. The Gilded Rose" className="rounded-2xl h-14 border-primary/20 bg-primary/5" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="parlour-location" className="text-xs uppercase font-black tracking-widest text-primary/60">Area / Location</Label>
-                  <Input id="parlour-location" placeholder="e.g. Gulberg III, Lahore" className="rounded-2xl h-14 border-primary/20 bg-primary/5" required />
+                  <Input required id="parlour-location" placeholder="e.g. Gulberg III, Lahore" className="rounded-2xl h-14 border-primary/20 bg-primary/5" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="parlour-description" className="text-xs uppercase font-black tracking-widest text-primary/60">About the Studio</Label>
-                  <Textarea id="parlour-description" placeholder="Describe your luxury environment..." className="rounded-2xl border-primary/20 bg-primary/5 min-h-[120px]" required />
+                  <Textarea required id="parlour-description" placeholder="Describe your luxury environment..." className="rounded-2xl border-primary/20 bg-primary/5 min-h-[120px]" />
                 </div>
                 <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground font-bold rounded-2xl shadow-md text-lg">
                   Submit Registration
@@ -282,18 +282,18 @@ export default function DashboardPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto">
-              <SheetHeader className="space-y-3 pt-6 px-6">
+              <SheetHeader className="space-y-2 pt-6 px-6">
                 <SheetTitle className="text-4xl font-headline italic">Merchant Onboarding</SheetTitle>
                 <SheetDescription className="text-md">List your premium makeup brand on our marketplace.</SheetDescription>
               </SheetHeader>
-              <form onSubmit={handleCreateShop} className="space-y-6 py-8 px-6">
+              <form onSubmit={handleCreateShop} className="space-y-6 py-6 px-6">
                 <div className="space-y-2">
                   <Label htmlFor="shop-brand" className="text-xs uppercase font-black tracking-widest text-primary/60">Brand Name</Label>
-                  <Input id="shop-brand" placeholder="e.g. GlamLux Couture" className="rounded-2xl h-14 border-primary/20 bg-secondary/10" required />
+                  <Input required id="shop-brand" placeholder="e.g. GlamLux Couture" className="rounded-2xl h-14 border-primary/20 bg-secondary/10" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="shop-category" className="text-xs uppercase font-black tracking-widest text-primary/60">Product Categories</Label>
-                  <Input id="shop-category" placeholder="e.g. Foundations, Lipsticks" className="rounded-2xl h-14 border-primary/20 bg-secondary/10" required />
+                  <Input required id="shop-category" placeholder="e.g. Foundations, Lipsticks" className="rounded-2xl h-14 border-primary/20 bg-secondary/10" />
                 </div>
                 <Button type="submit" className="w-full h-16 bg-secondary text-secondary-foreground font-bold rounded-2xl shadow-md text-lg">
                   Open Merchant Account
@@ -308,8 +308,8 @@ export default function DashboardPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
-                <SheetHeader className="space-y-1">
+              <div className="max-w-xl mx-auto space-y-2 py-4 px-6">
+                <SheetHeader className="space-y-0.5">
                   <div className="inline-flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1 bg-primary/10 px-3 py-1 rounded-full w-fit mx-auto">
                     <CheckCircle2 className="h-3 w-3" /> Guest Check-In
                   </div>
@@ -317,33 +317,33 @@ export default function DashboardPage() {
                   <SheetDescription className="italic text-base text-center leading-tight">{selectedArrival.service}</SheetDescription>
                 </SheetHeader>
                 
-                <div className="bg-primary/5 p-4 rounded-[2rem] space-y-2 text-center md:text-left">
+                <div className="bg-primary/5 p-4 rounded-[2rem] space-y-1 text-center md:text-left border border-primary/5 shadow-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Booking Ref</span>
-                    <span className="font-mono font-bold text-primary text-base">GL-{selectedArrival.id}938-X</span>
+                    <span className="text-muted-foreground font-bold uppercase text-[9px] tracking-widest">Booking Ref</span>
+                    <span className="font-mono font-bold text-primary text-sm">GL-{selectedArrival.id}938-X</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Arrival Time</span>
-                    <span className="font-bold text-base">{selectedArrival.time}</span>
+                    <span className="text-muted-foreground font-bold uppercase text-[9px] tracking-widest">Arrival Time</span>
+                    <span className="font-bold text-sm">{selectedArrival.time}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Current Status</span>
-                    <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[10px]">{selectedArrival.status}</Badge>
+                  <div className="flex justify-between items-center pt-1 border-t">
+                    <span className="text-muted-foreground font-bold uppercase text-[9px] tracking-widest">Current Status</span>
+                    <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[9px]">{selectedArrival.status}</Badge>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4">
-                  <Button onClick={() => updateArrivalStatus(arrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-2">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm">
                     Verify Entry
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(arrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-sm text-sm">
                     Start Service
                   </Button>
-                  <Button onClick={() => updateArrivalStatus(arrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-sm text-sm md:text-lg md:col-span-2">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-sm text-sm md:col-span-2">
                     Mark as Completed
                   </Button>
                   <SheetClose asChild className="md:col-span-2">
-                    <Button variant="ghost" className="h-10 font-bold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <Button variant="ghost" className="h-8 font-bold text-muted-foreground uppercase tracking-widest text-[9px]">
                       Dismiss
                     </Button>
                   </SheetClose>

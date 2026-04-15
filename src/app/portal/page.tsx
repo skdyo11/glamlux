@@ -200,6 +200,12 @@ export default function PartnerPortalPage() {
     }
   }
 
+  const handleSheetSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({ title: "Processing", description: "Submission successful." });
+    setActiveSheet(null);
+  };
+
   if (!isMounted) return null;
 
   return (
@@ -207,30 +213,30 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        <header className="flex flex-col gap-8 mb-12 pt-20">
+        <header className="flex flex-col gap-6 mb-12 pt-28">
           <div className="space-y-1">
-            <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[8px] font-black">Owner Area</Badge>
+            <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
             <h1 className="text-4xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <Card className="rounded-[1.5rem] border-none bg-primary p-4 md:p-5 space-y-1.5 shadow-md text-primary-foreground">
-               <TrendingUp className="h-3.5 w-3.5 opacity-60" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+             <Card className="rounded-[1.2rem] border-none bg-primary p-3 md:p-4 space-y-1 shadow-md text-primary-foreground">
+               <TrendingUp className="h-3 w-3 opacity-60" />
                <p className="text-2xl md:text-3xl font-headline italic tracking-tighter leading-none">82.4K</p>
-               <p className="text-[9px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
+               <p className="text-[8px] uppercase font-black tracking-widest opacity-60">Revenue Today ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-5 space-y-1.5 shadow-md">
-               <Users className="h-3.5 w-3.5 opacity-40 text-primary" />
+             <Card className="rounded-[1.2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-3 md:p-4 space-y-1 shadow-md">
+               <Users className="h-3 w-3 opacity-40 text-primary" />
                <p className="text-2xl md:text-3xl font-headline italic tracking-tighter text-primary leading-none">14</p>
-               <p className="text-[9px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
+               <p className="text-[8px] uppercase font-black tracking-widest opacity-40 text-primary">Active Staff</p>
              </Card>
              <Card 
-                className="rounded-[1.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-4 md:p-5 space-y-1.5 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
+                className="rounded-[1.2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-3 md:p-4 space-y-1 cursor-pointer hover:bg-primary/10 transition-all shadow-md group"
                 onClick={() => setActiveSheet('delivery')}
              >
-                <Navigation className="h-3.5 w-3.5 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                <p className="text-[9px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
-                <p className="text-[10px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
+                <Navigation className="h-3 w-3 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <p className="text-[8px] uppercase font-black tracking-widest text-primary">Delivery Services</p>
+                <p className="text-[9px] italic opacity-80 text-primary/70 leading-none">Join logistics team</p>
              </Card>
           </div>
         </header>
@@ -255,7 +261,7 @@ export default function PartnerPortalPage() {
               </div>
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6 snap-x">
                 {WEEKLY_PLAN.map((item) => (
-                  <Card key={item.day} className="min-w-[140px] p-6 rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm flex flex-col items-center gap-1 shadow-md hover:bg-primary/10 transition-all snap-start">
+                  <Card key={item.day} className="min-w-[140px] p-6 rounded-[2rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm flex flex-col items-center gap-1 shadow-sm hover:bg-primary/10 transition-all snap-start">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.day}</span>
                     <span className="font-headline text-2xl italic text-primary">{item.slots > 0 ? `${item.slots} Slots` : 'Closed'}</span>
                     <Badge variant="outline" className={cn(
@@ -276,7 +282,7 @@ export default function PartnerPortalPage() {
                 {arrivals.map((a) => (
                   <Card 
                     key={a.id} 
-                    className="min-w-[280px] md:min-w-[350px] rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 space-y-4 hover:bg-primary/10 transition-all cursor-pointer shadow-md ring-1 ring-white/5 snap-start" 
+                    className="min-w-[280px] md:min-w-[350px] rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-6 space-y-4 hover:bg-primary/10 transition-all cursor-pointer shadow-sm ring-1 ring-white/5 snap-start" 
                     onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
@@ -286,7 +292,7 @@ export default function PartnerPortalPage() {
                         <p className="text-xs italic text-muted-foreground">{a.service}</p>
                       </div>
                       <Badge variant="outline" className={cn(
-                        "rounded-full text-[9px] font-black tracking-widest px-4 h-8 flex items-center border-white/20",
+                        "rounded-full text-[10px] font-black tracking-widest px-4 h-9 flex items-center border-white/20",
                         a.status === 'Waiting' ? "text-primary" : a.status === 'Verified' ? "text-green-600 border-green-200" : "text-amber-600 border-amber-200"
                       )}>
                         {a.status}
@@ -307,7 +313,7 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in duration-300">
-            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 shadow-md flex flex-col h-[600px]">
+            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-8 space-y-6 shadow-sm flex flex-col h-[600px]">
               <div className="space-y-4">
                 <h3 className="font-headline text-3xl italic text-primary">Inquiries</h3>
                 <div className="relative group">
@@ -454,33 +460,33 @@ export default function PartnerPortalPage() {
                 <SheetTitle className="text-4xl font-headline italic text-primary tracking-tighter leading-none">
                   {activeSheet === 'delivery' ? 'Join Team' : activeSheet === 'product' ? 'New Item' : 'New Deal'}
                 </SheetTitle>
-                <SheetDescription className="text-muted-foreground italic text-sm font-body">Fill out the details below.</SheetDescription>
+                <SheetDescription className="text-muted-foreground italic text-sm font-body">Fill out all required details below.</SheetDescription>
               </SheetHeader>
-              <div className="space-y-4">
+              <form onSubmit={handleSheetSubmit} className="space-y-4">
                 <div className="space-y-1">
                   <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
                     {activeSheet === 'delivery' ? 'Name' : 'Name / Title'}
                   </Label>
-                  <Input placeholder={activeSheet === 'delivery' ? "Your full name" : "Enter name..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                  <Input required placeholder={activeSheet === 'delivery' ? "Your full name" : "Enter name..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
                       {activeSheet === 'delivery' ? 'Phone Number' : 'Detail'}
                     </Label>
-                    <Input placeholder={activeSheet === 'delivery' ? "+92 / +91 number" : "Enter info..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                    <Input required placeholder={activeSheet === 'delivery' ? "+92 / +91 number" : "Enter info..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[9px] uppercase font-bold tracking-widest text-primary/60 ml-2">
-                      {activeSheet === 'delivery' ? 'Vehicle' : 'Value'}
+                      {activeSheet === 'delivery' ? 'Vehicle Type' : 'Value'}
                     </Label>
-                    <Input placeholder={activeSheet === 'delivery' ? "Car / Bike / Van" : "Enter value..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
+                    <Input required placeholder={activeSheet === 'delivery' ? "Car / Bike / Van" : "Enter value..."} className="rounded-full h-12 bg-white/40 dark:bg-white/5 border-primary/20 text-primary px-6" />
                   </div>
                 </div>
-                <Button onClick={() => {toast({title: "Processing", description: "Submission successful."}); setActiveSheet(null);}} className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-md transition-all">
+                <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-md transition-all">
                   Submit Details
                 </Button>
-              </div>
+              </form>
             </div>
           </ScrollArea>
         </SheetContent>
@@ -490,19 +496,19 @@ export default function PartnerPortalPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-sm border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-3 py-4 px-6">
-                <div className="space-y-1 text-center">
-                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto">Customer Arrival</Badge>
+              <div className="max-w-xl mx-auto space-y-2 py-4 px-6">
+                <div className="space-y-0.5 text-center">
+                  <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto mb-1">Customer Arrival</Badge>
                   <SheetTitle className="text-3xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
                   <SheetDescription className="italic text-sm text-primary/60 leading-tight">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-3 bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-sm rounded-[1.5rem] space-y-0.5 text-center md:text-left">
+                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-md rounded-[2rem] space-y-1 text-center md:text-left">
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
                   <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
                   <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-3">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pb-2">
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Verify</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">In-Progress</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-sm">Complete</Button>
