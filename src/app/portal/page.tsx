@@ -18,6 +18,7 @@ import {
   SheetHeader, 
   SheetTitle, 
   SheetDescription,
+  SheetClose
 } from '@/components/ui/sheet';
 import { 
   Users, 
@@ -32,6 +33,7 @@ import {
   ArrowRight,
   Package,
   Send,
+  CheckCircle2
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -57,16 +59,33 @@ export default function PartnerPortalPage() {
   const { getCurrency } = useStore();
   
   const [activeTab, setActiveTab] = useState('bookings');
-  const [selectedArrival, setSelectedArrival] = useState<any>(null);
-  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
+  // Arrivals State
+  const [arrivals, setArrivals] = useState([
+    { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '11:30 AM', status: 'Waiting' },
+    { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:30 PM', status: 'Waiting' },
+    { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '01:30 PM', status: 'Waiting' },
+  ]);
+
+  const [selectedArrival, setSelectedArrival] = useState<any>(null);
+  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
 
   const myServices = DEALS.filter(d => d.vendor_id === 'v1');
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const updateArrivalStatus = (id: string, newStatus: string) => {
+    setArrivals(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
+    toast({
+      title: "Status Updated",
+      description: `Guest status changed to ${newStatus}.`
+    });
+    setSelectedArrival(null);
+  };
 
   useEffect(() => {
     if (!isMounted) return;
@@ -189,19 +208,24 @@ export default function PartnerPortalPage() {
                 <h3 className="text-3xl font-headline italic text-primary">Who's Coming Next</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1, 2, 3].map((i) => (
+                {arrivals.map((a) => (
                   <Card 
-                    key={i} 
+                    key={a.id} 
                     className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 hover:bg-primary/10 transition-all cursor-pointer shadow-xl ring-1 ring-white/5" 
-                    onClick={() => setSelectedArrival({ id: i, name: i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik', service: i === 1 ? 'Royal Bridal' : i === 2 ? 'Silk Hair Spa' : 'Skin Facial', time: `${10 + i}:30 AM`, status: 'Waiting' })}
+                    onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-primary opacity-40">Coming at {10 + i}:30 AM</p>
-                        <h4 className="font-headline text-3xl text-primary italic leading-none">{i === 1 ? 'Sara Khan' : i === 2 ? 'Amna Ahmed' : 'Zoya Malik'}</h4>
-                        <p className="text-xs italic text-muted-foreground">{i === 1 ? 'Royal Bridal Special' : 'Crystal Clear Facial'}</p>
+                        <p className="text-[10px] font-bold text-primary opacity-40">Coming at {a.time}</p>
+                        <h4 className="font-headline text-3xl text-primary italic leading-none">{a.name}</h4>
+                        <p className="text-xs italic text-muted-foreground">{a.service}</p>
                       </div>
-                      <Badge variant="outline" className="rounded-full text-[8px] font-black tracking-widest px-3 border-white/20 text-primary">Waiting</Badge>
+                      <Badge variant="outline" className={cn(
+                        "rounded-full text-[8px] font-black tracking-widest px-3 border-white/20",
+                        a.status === 'Waiting' ? "text-primary" : a.status === 'Verified' ? "text-green-600 border-green-200" : "text-amber-600 border-amber-200"
+                      )}>
+                        {a.status}
+                      </Badge>
                     </div>
                   </Card>
                 ))}
@@ -348,8 +372,18 @@ export default function PartnerPortalPage() {
               <div className="p-10 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[3rem] space-y-4 text-center md:text-left">
                 <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-3xl text-primary italic">{selectedArrival.time}</span></div>
                 <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xl text-primary">GL-9382-AR</span></div>
+                <div className="flex justify-between items-baseline pt-4 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
               </div>
-              <Button onClick={() => setSelectedArrival(null)} className="w-full h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-2xl transition-all">Verify & Start</Button>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Verify Entry</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Start Service</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Complete</Button>
+              </div>
+
+              <SheetClose asChild>
+                <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40">Dismiss</Button>
+              </SheetClose>
             </div>
           )}
         </SheetContent>

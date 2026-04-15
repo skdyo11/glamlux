@@ -24,13 +24,6 @@ import { Users, TrendingUp, Sparkles, Clock, ChevronRight, Plus, CalendarDays, C
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-const MOCK_ARRIVALS = [
-  { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
-  { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
-  { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '02:30 PM', status: 'In-Progress' },
-  { id: '4', name: 'Hiba Ali', service: 'Signature Manicure', time: '04:00 PM', status: 'Upcoming' },
-];
-
 export default function DashboardPage() {
   const { toast } = useToast();
   
@@ -38,6 +31,23 @@ export default function DashboardPage() {
   const [isParlourSheetOpen, setIsParlourSheetOpen] = useState(false);
   const [isShopSheetOpen, setIsShopSheetOpen] = useState(false);
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
+
+  // Status State
+  const [arrivals, setArrivals] = useState([
+    { id: '1', name: 'Sara Khan', service: 'Royal Bridal Glow Up', time: '10:30 AM', status: 'Pending' },
+    { id: '2', name: 'Amna Ahmed', service: 'Silk Therapy Hair Spa', time: '12:00 PM', status: 'Verified' },
+    { id: '3', name: 'Zoya Malik', service: 'Crystal Clear Skin Facial', time: '02:30 PM', status: 'In-Progress' },
+    { id: '4', name: 'Hiba Ali', service: 'Signature Manicure', time: '04:00 PM', status: 'Upcoming' },
+  ]);
+
+  const updateArrivalStatus = (id: string, newStatus: string) => {
+    setArrivals(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
+    toast({
+      title: "Success",
+      description: `${selectedArrival?.name}'s status updated to ${newStatus}.`,
+    });
+    setSelectedArrival(null);
+  };
 
   const handleCreateParlour = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,14 +65,6 @@ export default function DashboardPage() {
       title: "Merchant Request Received",
       description: "Brand onboarding details sent to your email.",
     });
-  };
-
-  const handleVerifyEntry = () => {
-    toast({
-      title: "Access Granted",
-      description: `${selectedArrival.name} is now checked in.`,
-    });
-    setSelectedArrival(null);
   };
 
   return (
@@ -123,7 +125,7 @@ export default function DashboardPage() {
           <TabsContent value="arrivals" className="space-y-4">
             {/* Mobile List View */}
             <div className="md:hidden space-y-4">
-              {MOCK_ARRIVALS.map((arrival) => (
+              {arrivals.map((arrival) => (
                 <Card 
                   key={arrival.id} 
                   onClick={() => setSelectedArrival(arrival)}
@@ -137,7 +139,15 @@ export default function DashboardPage() {
                       <h4 className="font-headline text-2xl leading-none">{arrival.name}</h4>
                       <p className="text-xs text-muted-foreground italic">{arrival.service}</p>
                     </div>
-                    <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className={arrival.status === 'Verified' ? 'bg-primary text-primary-foreground border-none' : 'border-primary/20 text-primary'}>
+                    <Badge 
+                      variant="outline" 
+                      className={cn(
+                        "rounded-full text-[10px] font-bold",
+                        arrival.status === 'Verified' ? "bg-green-100 text-green-700 border-green-200" : 
+                        arrival.status === 'In-Progress' ? "bg-amber-100 text-amber-700 border-amber-200" : 
+                        "border-primary/20 text-primary"
+                      )}
+                    >
                       {arrival.status}
                     </Badge>
                   </div>
@@ -161,13 +171,21 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {MOCK_ARRIVALS.map((arrival) => (
+                  {arrivals.map((arrival) => (
                     <TableRow key={arrival.id} className="group hover:bg-primary/5">
                       <TableCell className="px-8 font-bold text-sm">{arrival.time}</TableCell>
                       <TableCell className="font-headline text-xl">{arrival.name}</TableCell>
                       <TableCell className="text-muted-foreground text-xs italic">{arrival.service}</TableCell>
                       <TableCell>
-                        <Badge variant={arrival.status === 'Verified' ? 'default' : 'outline'} className="rounded-full">
+                        <Badge 
+                          variant="outline" 
+                          className={cn(
+                            "rounded-full",
+                            arrival.status === 'Verified' ? "bg-green-100 text-green-700 border-green-200" : 
+                            arrival.status === 'In-Progress' ? "bg-amber-100 text-amber-700 border-amber-200" : 
+                            "border-primary/20 text-primary"
+                          )}
+                        >
                           {arrival.status}
                         </Badge>
                       </TableCell>
@@ -314,16 +332,22 @@ export default function DashboardPage() {
                   <span className="font-bold text-xl">{selectedArrival.time}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Status</span>
+                  <span className="text-muted-foreground font-bold uppercase text-[10px] tracking-widest">Current Status</span>
                   <Badge variant="outline" className="border-primary/20 text-primary font-black uppercase text-[10px]">{selectedArrival.status}</Badge>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 pb-8">
-                <Button onClick={handleVerifyEntry} className="h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg">
-                  Verify & Grant Entry
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-16 bg-green-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-green-200 text-lg">
+                  Verify Entry
                 </Button>
-                <SheetClose asChild>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-16 bg-amber-600 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-amber-200 text-lg">
+                  Start Service
+                </Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-16 bg-primary text-primary-foreground font-bold rounded-[1.5rem] shadow-2xl shadow-primary/30 text-lg md:col-span-2">
+                  Mark as Completed
+                </Button>
+                <SheetClose asChild className="md:col-span-2">
                   <Button variant="ghost" className="h-14 font-bold text-muted-foreground uppercase tracking-widest text-[10px]">
                     Dismiss
                   </Button>
