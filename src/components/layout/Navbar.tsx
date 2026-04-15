@@ -39,8 +39,8 @@ export function Navbar() {
     <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-            <Home className="h-5 w-5 text-foreground" />
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Home className="h-4 w-4 text-foreground" />
           </Button>
         </Link>
       )}
@@ -49,24 +49,24 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-9 w-9 rounded-full"
+        className="h-8 w-8 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-5 w-5 text-foreground" /> : <Moon className="h-5 w-5 text-foreground" />}
+        {theme === 'dark' ? <Sun className="h-4 w-4 text-foreground" /> : <Moon className="h-4 w-4 text-foreground" />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 rounded-full text-[9px] font-black uppercase tracking-widest text-foreground">
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-8 px-2 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground">
         {getCurrency()}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-          <Heart className={cn("h-5 w-5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+          <Heart className={cn("h-4 w-4 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-          <ShoppingBag className="h-5 w-5 text-foreground" />
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+          <ShoppingBag className="h-4 w-4 text-foreground" />
           {cartCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
               {cartCount}
@@ -122,7 +122,7 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar - Refined Height */}
+      {/* Mobile Bottom Bar */}
       <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-12 px-3 shadow-lg">
         {navLinks.map((link) => {
           const Icon = link.icon;
