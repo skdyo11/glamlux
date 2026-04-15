@@ -68,7 +68,7 @@ export function Navbar() {
         <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
           <ShoppingBag className="h-5 w-5 text-foreground" />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border border-background z-20 rounded-full">
+            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
               {cartCount}
             </Badge>
           )}
@@ -113,8 +113,8 @@ export function Navbar() {
       {/* Mobile Top Utility Bar */}
       <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-5 shadow-md rounded-2xl">
         <Link href="/" className="flex items-center space-x-3">
-          <Sparkles className="h-6 w-6 text-accent-foreground" />
-          <span className="font-headline text-xl tracking-tighter text-foreground italic">GlamLux</span>
+          <Sparkles className="h-8 w-8 text-accent-foreground" />
+          <span className="font-headline text-2xl tracking-tighter text-foreground italic">GlamLux</span>
         </Link>
 
         <div className="flex items-center">
@@ -122,8 +122,8 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-14 px-3 shadow-lg">
+      {/* Mobile Bottom Bar - Refined Height */}
+      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-12 px-3 shadow-lg">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
@@ -133,7 +133,7 @@ export function Navbar() {
                 "p-2 rounded-full",
                 isActive ? "text-accent-foreground bg-primary/5" : "text-muted-foreground/60"
               )}>
-                <Icon className={cn("h-6 w-6", isActive && "stroke-[2.5px]")} />
+                <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
               </div>
             </Link>
           );
