@@ -324,8 +324,8 @@ export default function PartnerPortalPage() {
 
       {/* Unified Form Sheet */}
       <Sheet open={!!activeSheet} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-xl border-none">
-          <ScrollArea className="h-full">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] bg-background/95 backdrop-blur-xl border-none p-0">
+          <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
               <SheetHeader className="text-center">
                 <div className="bg-primary/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -362,8 +362,8 @@ export default function PartnerPortalPage() {
 
       {/* Arrival Management Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col">
-          <ScrollArea className="flex-1">
+        <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <ScrollArea className="h-full w-full">
             {selectedArrival && (
               <div className="max-w-xl mx-auto space-y-12 py-10 px-6">
                 <div className="space-y-2 text-center">

@@ -258,8 +258,8 @@ export default function DashboardPage() {
 
       {/* Add Parlour Sheet */}
       <Sheet open={isParlourSheetOpen} onOpenChange={setIsParlourSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col">
-          <ScrollArea className="flex-1">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
+          <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto">
               <SheetHeader className="space-y-3 pt-6 px-6">
                 <SheetTitle className="text-4xl font-headline italic">New Parlour Registration</SheetTitle>
@@ -289,8 +289,8 @@ export default function DashboardPage() {
 
       {/* Add Shop Sheet */}
       <Sheet open={isShopSheetOpen} onOpenChange={setIsShopSheetOpen}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col">
-          <ScrollArea className="flex-1">
+        <SheetContent side="bottom" className="rounded-t-[3rem] h-[85vh] md:h-auto overflow-hidden flex flex-col p-0">
+          <ScrollArea className="h-full w-full">
             <div className="max-w-xl mx-auto">
               <SheetHeader className="space-y-3 pt-6 px-6">
                 <SheetTitle className="text-4xl font-headline italic">Merchant Onboarding</SheetTitle>
@@ -316,8 +316,8 @@ export default function DashboardPage() {
 
       {/* Manage Entry Sheet */}
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col">
-          <ScrollArea className="flex-1">
+        <SheetContent side="bottom" className="rounded-t-[3rem] max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <ScrollArea className="h-full w-full">
             {selectedArrival && (
               <div className="max-w-xl mx-auto space-y-8 py-10 px-6">
                 <SheetHeader className="space-y-3">
