@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare, Home } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare, Home, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,12 +11,13 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export function Navbar() {
-  const { cart, region, toggleRegion, getCurrency } = useStore();
+  const { cart, favorites, toggleRegion, getCurrency } = useStore();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const favCount = (favorites?.products?.length || 0) + (favorites?.vendors?.length || 0);
   const isHome = pathname === '/';
 
   useEffect(() => {
@@ -34,10 +35,10 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
+    <div className="flex items-center p-0.5 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
       {!isHome && (
         <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white/10 transition-all">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10 transition-all">
             <Home className="h-3.5 w-3.5 text-foreground" />
           </Button>
         </Link>
@@ -47,21 +48,31 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
+        className="h-8 w-8 rounded-full hover:bg-white/10 transition-all"
       >
         {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" /> : <Moon className="h-3.5 w-3.5 text-foreground" />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-3 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground hover:bg-white/10 transition-all">
-        <MapPin className="h-3 w-3 mr-2 text-accent-foreground" />
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-8 px-2 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground hover:bg-white/10 transition-all">
         {getCurrency()}
       </Button>
 
+      <Link href="/favorites">
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full hover:bg-white/10 transition-all">
+          <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
+          {favCount > 0 && (
+            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-10 rounded-full">
+              {favCount}
+            </Badge>
+          )}
+        </Button>
+      </Link>
+
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-white/10 transition-all">
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full hover:bg-white/10 transition-all">
           <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center p-0 bg-destructive text-white text-[7px] font-black border-2 border-background animate-in zoom-in-50 z-10 rounded-full">
+            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-destructive text-white text-[6px] font-black border border-background z-10 rounded-full">
               {cartCount}
             </Badge>
           )}
