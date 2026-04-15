@@ -35,7 +35,7 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-0.5 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-white/20 dark:border-white/5 shadow-md">
+    <div className="flex items-center p-0.5 bg-white/10 dark:bg-white/5 backdrop-blur-md rounded-full border border-white/20 dark:border-white/5 shadow-md">
       {!isHome && (
         <Link href="/" className="animate-in slide-in-from-right-2 fade-in duration-300">
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10 transition-all">
@@ -61,7 +61,7 @@ export function Navbar() {
         <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full hover:bg-white/10 transition-all">
           <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
           {favCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-10 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
               {favCount}
             </Badge>
           )}
@@ -72,7 +72,7 @@ export function Navbar() {
         <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full hover:bg-white/10 transition-all">
           <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-destructive text-white text-[6px] font-black border border-background z-10 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 flex items-center justify-center p-0 bg-destructive text-white text-[6px] font-black border border-background z-20 rounded-full">
               {cartCount}
             </Badge>
           )}
@@ -84,7 +84,7 @@ export function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/20 dark:border-white/5 bg-white/5 dark:bg-black/40 backdrop-blur-xl transition-all duration-300 hidden md:block">
+      <nav className="fixed top-0 z-50 w-full border-b border-white/20 dark:border-white/5 bg-white/5 dark:bg-black/40 backdrop-blur-md transition-all duration-300 hidden md:block">
         <div className="w-full px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center space-x-2 group">
@@ -112,26 +112,26 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center">
             <UtilityGroup />
           </div>
         </div>
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-3 right-3 z-50 h-12 border border-white/40 dark:border-white/10 bg-white/10 dark:bg-black/40 backdrop-blur-xl md:hidden flex items-center justify-between px-3 shadow-lg rounded-2xl">
+      <nav className="fixed top-3 left-3 right-3 z-50 h-12 border border-white/40 dark:border-white/10 bg-white/10 dark:bg-black/40 backdrop-blur-md md:hidden flex items-center justify-between px-3 shadow-lg rounded-2xl">
         <Link href="/" className="flex items-center space-x-1.5 group">
           <Sparkles className="h-4 w-4 text-accent-foreground" />
           <span className="font-headline text-base tracking-tighter text-foreground italic">GlamLux</span>
         </Link>
 
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center">
           <UtilityGroup />
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-white/10 dark:bg-black/60 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-full md:hidden flex items-center justify-around h-11 px-2 shadow-lg overflow-hidden">
+      {/* Mobile Bottom Bar - Removed overflow-hidden to prevent badge clipping */}
+      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-white/10 dark:bg-black/60 backdrop-blur-md border border-white/40 dark:border-white/10 rounded-full md:hidden flex items-center justify-around h-11 px-2 shadow-lg">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;

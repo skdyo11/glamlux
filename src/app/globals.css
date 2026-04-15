@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -68,11 +67,11 @@
 }
 
 .liquid-glass {
-  @apply bg-white/20 dark:bg-black/30 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg;
+  @apply bg-white/20 dark:bg-black/30 backdrop-blur-md border border-white/30 dark:border-white/10 shadow-lg;
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.02] pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.01] pointer-events-none;
   background-image: radial-gradient(circle at 1px 1px, hsl(var(--accent-foreground)) 1px, transparent 0);
   background-size: 60px 60px;
 }
