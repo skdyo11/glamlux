@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { 
   Sheet, 
@@ -32,15 +33,18 @@ import {
   ArrowRight,
   Package,
   Send,
-  CheckCircle2
+  CheckCircle2,
+  Search,
+  X
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PRODUCTS, DEALS } from '@/app/lib/mock-data';
 import Image from 'next/image';
 import { useFirebase } from '@/firebase';
 import { collectionGroup, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Conversation, ChatMessage } from '@/app/types';
 
 const WEEKLY_PLAN = [
   { day: 'Mon', slots: 12, demand: 'Medium' },
@@ -50,6 +54,35 @@ const WEEKLY_PLAN = [
   { day: 'Fri', slots: 24, demand: 'High' },
   { day: 'Sat', slots: 12, demand: 'High' },
   { day: 'Sun', slots: 0, demand: 'Closed' },
+];
+
+const MOCK_BUSINESS_CHATS: Conversation[] = [
+  {
+    id: 'bc1',
+    participantId: 'support',
+    participantName: 'GlamLux Help',
+    participantImage: 'https://picsum.photos/seed/glam-makeup-hero-final/100/100',
+    lastMessage: 'Your payout for last week is processed.',
+    lastTimestamp: '10:15 AM',
+    unreadCount: 0,
+    messages: [
+      { id: 'm1', senderId: 'support', text: 'Hello! Your delivery driver is now assigned.', timestamp: '09:00 AM', isMe: false },
+      { id: 'm2', senderId: 'me', text: 'Thank you, can I track the live location?', timestamp: '09:05 AM', isMe: true },
+      { id: 'm3', senderId: 'support', text: 'Your payout for last week is processed.', timestamp: '10:15 AM', isMe: false },
+    ]
+  },
+  {
+    id: 'bc2',
+    participantId: 'brands',
+    participantName: 'Beauty Brands Supply',
+    participantImage: 'https://picsum.photos/seed/luxury-foundation-bottle/100/100',
+    lastMessage: 'New stock of foundations arriving Friday.',
+    lastTimestamp: 'Yesterday',
+    unreadCount: 2,
+    messages: [
+      { id: 'm4', senderId: 'brands', text: 'New stock of foundations arriving Friday.', timestamp: 'Yesterday', isMe: false },
+    ]
+  }
 ];
 
 export default function PartnerPortalPage() {
@@ -72,6 +105,12 @@ export default function PartnerPortalPage() {
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
 
+  // Chat State
+  const [businessConversations, setBusinessConversations] = useState<Conversation[]>(MOCK_BUSINESS_CHATS);
+  const [activeChatId, setActiveChatId] = useState<string | null>(MOCK_BUSINESS_CHATS[0].id);
+  const [chatSearch, setChatSearch] = useState('');
+  const [newMsg, setNewMsg] = useState('');
+
   const myServices = DEALS.filter(d => d.vendor_id === 'v1');
 
   useEffect(() => {
@@ -85,6 +124,35 @@ export default function PartnerPortalPage() {
       description: `Guest status changed to ${newStatus}.`
     });
     setSelectedArrival(null);
+  };
+
+  const filteredChats = useMemo(() => {
+    if (!chatSearch.trim()) return businessConversations;
+    return businessConversations.filter(c => 
+      c.participantName.toLowerCase().includes(chatSearch.toLowerCase()) ||
+      c.lastMessage.toLowerCase().includes(chatSearch.toLowerCase())
+    );
+  }, [businessConversations, chatSearch]);
+
+  const activeChat = businessConversations.find(c => c.id === activeChatId) || null;
+
+  const handleSendBusinessMsg = () => {
+    if (!newMsg.trim() || !activeChatId) return;
+    
+    const msg: ChatMessage = {
+      id: Math.random().toString(),
+      senderId: 'me',
+      text: newMsg,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isMe: true
+    };
+
+    setBusinessConversations(prev => prev.map(c => 
+      c.id === activeChatId 
+        ? { ...c, messages: [...c.messages, msg], lastMessage: newMsg, lastTimestamp: 'Just now' } 
+        : c
+    ));
+    setNewMsg('');
   };
 
   useEffect(() => {
@@ -145,18 +213,18 @@ export default function PartnerPortalPage() {
         <header className="flex flex-col gap-12 mb-20">
           <div className="space-y-4">
             <Badge className="bg-primary/10 text-primary rounded-full px-4 py-1 uppercase tracking-widest text-[10px]">Owner Area</Badge>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary">My Shop</h1>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">My Shop</h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              <Card className="rounded-[3rem] border-none bg-primary p-10 space-y-4 shadow-xl text-primary-foreground">
                <TrendingUp className="h-6 w-6 opacity-60" />
-               <p className="text-4xl font-headline italic tracking-tighter">82.4K</p>
+               <p className="text-4xl font-headline italic tracking-tighter leading-none">82.4K</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Today's Money ({getCurrency()})</p>
              </Card>
              <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-10 space-y-4 shadow-xl">
                <Users className="h-6 w-6 opacity-40 text-primary" />
-               <p className="text-4xl font-headline italic tracking-tighter text-primary">14</p>
+               <p className="text-4xl font-headline italic tracking-tighter text-primary leading-none">14</p>
                <p className="text-[10px] uppercase font-black tracking-widest opacity-40 text-primary">Staff Working</p>
              </Card>
              <Card 
@@ -242,35 +310,94 @@ export default function PartnerPortalPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in duration-300">
-            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 shadow-xl">
-              <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
-              <div className="space-y-2">
-                {[{id: 'b1', name: 'GlamLux Help', msg: 'Driver is on the way.'}, {id: 'b2', name: 'Beauty Brands', msg: 'Products ready.'}].map(chat => (
-                  <button key={chat.id} className="w-full flex items-center gap-4 p-4 rounded-3xl hover:bg-primary/5 transition-all text-left">
-                    <Avatar className="h-12 w-12 border-2 border-primary/10"><AvatarFallback>{chat.name[0]}</AvatarFallback></Avatar>
-                    <div className="min-w-0">
-                      <p className="font-bold text-sm truncate text-primary">{chat.name}</p>
-                      <p className="text-xs truncate text-muted-foreground italic">{chat.msg}</p>
-                    </div>
-                  </button>
-                ))}
+            {/* Sidebar Chat List */}
+            <Card className="rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl p-8 space-y-6 shadow-xl flex flex-col h-[600px]">
+              <div className="space-y-4">
+                <h3 className="font-headline text-3xl italic text-primary">Business Chats</h3>
+                <div className="relative group">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/30" />
+                  <Input 
+                    value={chatSearch}
+                    onChange={(e) => setChatSearch(e.target.value)}
+                    placeholder="Search messages..." 
+                    className="pl-10 h-10 rounded-full bg-white/40 dark:bg-white/5 border-none text-xs italic" 
+                  />
+                  {chatSearch && <X className="absolute right-4 top-1/2 -translate-y-1/2 h-3 w-3 text-primary/30 cursor-pointer" onClick={() => setChatSearch('')} />}
+                </div>
               </div>
+              <ScrollArea className="flex-1">
+                <div className="space-y-2">
+                  {filteredChats.map(chat => (
+                    <button 
+                      key={chat.id} 
+                      onClick={() => setActiveChatId(chat.id)}
+                      className={cn(
+                        "w-full flex items-center gap-4 p-4 rounded-3xl transition-all text-left",
+                        activeChatId === chat.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
+                      )}
+                    >
+                      <Avatar className="h-12 w-12 border-2 border-white/20">
+                        <AvatarImage src={chat.participantImage} />
+                        <AvatarFallback>{chat.participantName[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className={cn("font-bold text-sm truncate", activeChatId === chat.id ? "text-primary-foreground" : "text-primary")}>{chat.participantName}</p>
+                        <p className={cn("text-[10px] truncate italic", activeChatId === chat.id ? "text-primary-foreground/70" : "text-muted-foreground")}>{chat.lastMessage}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
             </Card>
-            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl h-[500px] flex flex-col shadow-xl overflow-hidden">
-               <div className="p-6 border-b flex items-center gap-4 bg-white/20 dark:bg-white/5">
-                  <Avatar className="h-10 w-10"><AvatarFallback>G</AvatarFallback></Avatar>
-                  <div>
-                     <p className="font-headline text-xl italic text-primary">GlamLux Help</p>
-                     <p className="text-[8px] uppercase font-black text-rose-500 tracking-widest">Support Channel</p>
-                  </div>
-               </div>
-               <ScrollArea className="flex-1 p-8">
-                  <div className="bg-primary/5 dark:bg-white/5 p-4 rounded-3xl rounded-tl-none max-w-[80%] text-sm italic">Hello! Your delivery driver is now assigned.</div>
-               </ScrollArea>
-               <div className="p-6 border-t bg-white/20 dark:bg-white/5 flex gap-2">
-                  <Input placeholder="Message help team..." className="rounded-full bg-white/60 dark:bg-white/10 border-none h-12 px-6" />
-                  <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground"><Send className="h-5 w-5" /></Button>
-               </div>
+
+            {/* Main Chat Window */}
+            <Card className="lg:col-span-2 rounded-[3rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-xl h-[600px] flex flex-col shadow-xl overflow-hidden relative">
+               {activeChat ? (
+                 <>
+                   <div className="p-6 border-b flex items-center gap-4 bg-white/20 dark:bg-white/5">
+                      <Avatar className="h-10 w-10 border border-white/20">
+                        <AvatarImage src={activeChat.participantImage} />
+                        <AvatarFallback>{activeChat.participantName[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                         <p className="font-headline text-xl italic text-primary leading-none">{activeChat.participantName}</p>
+                         <p className="text-[8px] uppercase font-black text-rose-500 tracking-widest mt-1">Direct Business Channel</p>
+                      </div>
+                   </div>
+                   <ScrollArea className="flex-1 p-8">
+                      <div className="space-y-6">
+                        {activeChat.messages.map((msg) => (
+                          <div key={msg.id} className={cn("flex flex-col max-w-[85%] space-y-1", msg.isMe ? "ml-auto items-end" : "items-start")}>
+                            <div className={cn(
+                              "p-4 rounded-3xl text-sm italic shadow-sm",
+                              msg.isMe ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-white/60 dark:bg-white/10 text-foreground rounded-tl-none"
+                            )}>
+                              {msg.text}
+                            </div>
+                            <span className="text-[9px] font-black uppercase opacity-30 tracking-widest">{msg.timestamp}</span>
+                          </div>
+                        ))}
+                      </div>
+                   </ScrollArea>
+                   <div className="p-6 border-t bg-white/20 dark:bg-white/5 flex gap-2">
+                      <Input 
+                        value={newMsg}
+                        onChange={(e) => setNewMsg(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendBusinessMsg()}
+                        placeholder="Message partner team..." 
+                        className="rounded-full bg-white/60 dark:bg-white/10 border-none h-12 px-6" 
+                      />
+                      <Button onClick={handleSendBusinessMsg} size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-105 transition-all">
+                        <Send className="h-5 w-5" />
+                      </Button>
+                   </div>
+                 </>
+               ) : (
+                 <div className="flex-1 flex flex-col items-center justify-center space-y-4 p-8 text-center">
+                    <div className="h-16 w-16 rounded-full bg-primary/5 flex items-center justify-center"><Search className="h-8 w-8 text-primary/20" /></div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 italic">Select a conversation to start chatting</p>
+                 </div>
+               )}
             </Card>
           </TabsContent>
 
@@ -364,19 +491,19 @@ export default function PartnerPortalPage() {
         <SheetContent side="bottom" className="rounded-t-[3rem] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-none max-h-[90vh] overflow-hidden flex flex-col p-0">
           <ScrollArea className="h-full w-full">
             {selectedArrival && (
-              <div className="max-w-xl mx-auto space-y-4 py-6 px-6">
-                <div className="space-y-1 text-center">
+              <div className="max-w-xl mx-auto space-y-2 py-4 px-6">
+                <div className="space-y-0 text-center">
                   <Badge className="bg-primary/10 text-primary rounded-full uppercase tracking-widest text-[8px] font-black px-4 py-1 w-fit mx-auto mb-1">Customer Arrival</Badge>
-                  <SheetTitle className="text-3xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
-                  <SheetDescription className="italic text-base text-primary/60 leading-tight">{selectedArrival.service}</SheetDescription>
+                  <SheetTitle className="text-3xl md:text-5xl font-headline italic text-primary leading-none">{selectedArrival.name}</SheetTitle>
+                  <SheetDescription className="italic text-sm text-primary/60 leading-tight mt-1">{selectedArrival.service}</SheetDescription>
                 </div>
-                <div className="p-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-2 text-center md:text-left">
-                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-2xl text-primary italic">{selectedArrival.time}</span></div>
-                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-base text-primary">GL-9382-AR</span></div>
-                  <div className="flex justify-between items-baseline pt-2 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
+                <div className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl rounded-[2rem] space-y-2 text-center md:text-left">
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Time</span><span className="font-headline text-xl text-primary italic">{selectedArrival.time}</span></div>
+                  <div className="flex justify-between items-baseline"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Code</span><span className="font-mono font-bold text-xs text-primary">GL-9382-AR</span></div>
+                  <div className="flex justify-between items-baseline pt-1 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-2 pt-2">
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-12 md:h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Verify Entry</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-12 md:h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Start Service</Button>
                   <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-12 md:h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Complete</Button>
