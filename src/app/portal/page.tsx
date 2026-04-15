@@ -222,7 +222,7 @@ export default function PartnerPortalPage() {
                         <p className="text-xs italic text-muted-foreground">{a.service}</p>
                       </div>
                       <Badge variant="outline" className={cn(
-                        "rounded-full text-[8px] font-black tracking-widest px-3 border-white/20",
+                        "rounded-full text-[10px] font-black tracking-widest px-4 h-8 flex items-center border-white/20",
                         a.status === 'Waiting' ? "text-primary" : a.status === 'Verified' ? "text-green-600 border-green-200" : "text-amber-600 border-amber-200"
                       )}>
                         {a.status}
@@ -377,14 +377,14 @@ export default function PartnerPortalPage() {
                   <div className="flex justify-between items-baseline pt-4 border-t"><span className="text-[10px] font-black uppercase tracking-widest opacity-40 text-primary">Current Status</span><Badge variant="outline" className="border-primary/20 text-primary uppercase text-[10px]">{selectedArrival.status}</Badge></div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Verify Entry</Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Start Service</Button>
-                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Complete</Button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-8">
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-16 bg-green-600 text-white hover:bg-green-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Verify Entry</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-16 bg-amber-600 text-white hover:bg-amber-700 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Start Service</Button>
+                  <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Completed')} className="h-16 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg">Complete</Button>
                 </div>
 
                 <SheetClose asChild>
-                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40">Dismiss</Button>
+                  <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest opacity-40 h-14">Dismiss</Button>
                 </SheetClose>
               </div>
             )}
