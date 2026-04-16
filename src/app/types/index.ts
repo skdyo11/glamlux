@@ -10,7 +10,8 @@ export type Vendor = {
   rating: number;
   images: string[];
   owner_currency: 'PKR' | 'INR';
-  commission_rate: number; // e.g. 0.15 for 15%
+  commission_rate: number;
+  description?: string;
 };
 
 export type DealCategory = 'Bridal' | 'Hair' | 'Skin';
@@ -22,10 +23,11 @@ export type Deal = {
   category: DealCategory;
   base_price: number;
   discount_price: number;
-  deposit_percent: number; // e.g. 10 for 10%
+  deposit_percent: number;
   is_offpeak_active: boolean;
   expiry_date: string;
   upsell_product_id?: string;
+  currency: 'PKR' | 'INR';
 };
 
 export type Product = {
@@ -36,13 +38,15 @@ export type Product = {
   price: number;
   stock: number;
   image: string;
+  currency: 'PKR' | 'INR';
+  weightKg?: number;
 };
 
 export type CartItem = {
   id: string;
   type: 'deal' | 'product';
   name: string;
-  price: number; // Upfront price (deposit for deals, full for products)
+  price: number;
   full_price?: number;
   quantity: number;
   image?: string;
@@ -52,19 +56,32 @@ export type CartItem = {
 export type Booking = {
   id: string;
   localUserId: string;
-  vendor_id: string;
-  user_phone: string;
+  vendorId?: string;
+  userPhone: string;
   referenceCode: string;
   cartItems: CartItem[];
-  total_price: number; // Total amount paid at checkout
-  platform_commission: number; // 15% of checkout price
+  totalPrice: number;
+  shippingCost?: number;
   currency: string;
-  qr_verified: boolean;
+  qrVerified: boolean;
   deliveryStatus: DeliveryStatus;
   createdAt: string;
   paymentStatus: string;
-  group_size: number;
+  groupSize: number;
+  inspirationImageUrl?: string | null;
   arrival_time?: string;
+};
+
+export type Review = {
+  id: string;
+  bookingId?: string;
+  targetId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  isVerified: boolean;
+  createdAt: string;
 };
 
 export type ChatMessage = {
