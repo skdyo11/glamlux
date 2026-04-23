@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, ArrowRight, Sparkles, Trophy, ShieldCheck } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn } from '@/lib/utils';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 

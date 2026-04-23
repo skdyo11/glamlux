@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, MapPin, Search, ArrowRight, Navigation, Heart, Sparkles } from 'lucide-react';
+import { Star, MapPin, Search, ArrowRight, Navigation, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -125,7 +125,7 @@ export default function VendorsPage() {
                           isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
                         )}
                       >
-                        <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
+                        <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
                       </Button>
                     </div>
                     <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
