@@ -4,32 +4,41 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
-import { VENDORS } from '@/app/lib/mock-data';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, MapPin, Search, ArrowRight, Navigation, Heart } from 'lucide-react';
+import { Star, MapPin, Search, ArrowRight, Navigation, Heart, Sparkles } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 
 export default function VendorsPage() {
   const { getCurrency, isFavoriteVendor, toggleFavoriteVendor } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [areaFilter, setAreaFilter] = useState('All');
   const [isMounted, setIsMounted] = useState(false);
+  const firestore = useFirestore();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const uniqueAreas = ['All', ...Array.from(new Set(VENDORS.map(v => v.area_tag.split(',').pop()?.trim() || v.area_tag)))];
+  const vendorsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'parlours'), orderBy('rating', 'desc'));
+  }, [firestore]);
 
-  const filteredVendors = VENDORS.filter((v) => {
+  const { data: vendors, isLoading } = useCollection(vendorsQuery);
+
+  const uniqueAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.areaTag.split(',').pop()?.trim() || v.areaTag)))];
+
+  const filteredVendors = (vendors || []).filter((v) => {
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          v.area_tag.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesArea = areaFilter === 'All' || v.area_tag.includes(areaFilter);
+                          v.areaTag.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesArea = areaFilter === 'All' || v.areaTag.includes(areaFilter);
     return matchesSearch && matchesArea;
   });
 
@@ -57,7 +66,6 @@ export default function VendorsPage() {
           </p>
         </header>
 
-        {/* Search and Filter Section */}
         <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/20 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
           <div className="relative flex-grow w-full">
             <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
@@ -82,7 +90,13 @@ export default function VendorsPage() {
           </div>
         </section>
 
-        {filteredVendors.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="h-[500px] rounded-[3rem] bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : filteredVendors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {filteredVendors.map((vendor) => {
               const isFav = isFavoriteVendor(vendor.id);
@@ -91,7 +105,7 @@ export default function VendorsPage() {
                   <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
                     <div className="relative h-80 md:h-96 overflow-hidden">
                       <Image 
-                        src={vendor.images[0]} 
+                        src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/vendor/800/600'} 
                         alt={vendor.name}
                         fill
                         className="object-cover soft-focus group-hover:scale-110 transition-transform duration-1000"
@@ -117,7 +131,7 @@ export default function VendorsPage() {
                     <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
                       <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
                         <MapPin className="h-4 w-4 text-destructive" />
-                        {vendor.area_tag}
+                        {vendor.areaTag}
                       </div>
                       <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
                         {vendor.name}
