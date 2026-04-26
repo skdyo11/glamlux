@@ -1,19 +1,20 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, ShoppingBag, Heart } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Store, ArrowRight, Star } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, limit } from 'firebase/firestore';
 
 export default function ShopPage() {
   const { addToCart, getCurrency, isFavoriteProduct, toggleFavoriteProduct } = useStore();
@@ -33,6 +34,13 @@ export default function ShopPage() {
   }, [firestore]);
 
   const { data: products, isLoading } = useCollection(productsQuery);
+
+  const vendorsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'parlours'), limit(6));
+  }, [firestore]);
+
+  const { data: vendors } = useCollection(vendorsQuery);
 
   const filteredProducts = (products || []).filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -56,7 +64,7 @@ export default function ShopPage() {
     });
     toast({
       title: "Added to Cart",
-      description: `${product.name} is now in your cart.`,
+      description: `${product.name} is now in your collection.`,
     });
   };
 
@@ -74,22 +82,48 @@ export default function ShopPage() {
       
       <main className="container mx-auto px-6 py-16 md:py-24">
         <header className="max-w-4xl mb-20 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
             <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Products Section</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Marketplace Collection</span>
           </div>
-          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Makeup Shop</h1>
+          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Elite Boutique</h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
-            Pick from our best professional makeup and beauty items.
+            Curated professional makeup and beauty essentials from our registry of elite shops.
           </p>
         </header>
+
+        {/* Featured Shops Row */}
+        <section className="mb-32 space-y-8">
+           <div className="flex justify-between items-end">
+             <h2 className="text-4xl font-headline italic text-primary">Artisan Registry</h2>
+             <Link href="/vendors" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">View All Registry <ArrowRight className="h-3 w-3" /></Link>
+           </div>
+           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
+             {vendors?.map((v) => (
+               <Link key={v.id} href={`/vendors/${v.id}`} className="snap-start shrink-0">
+                 <Card className="w-64 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md p-6 space-y-4 shadow-xl hover:bg-primary/5 transition-all">
+                    <div className="relative aspect-square rounded-[2rem] overflow-hidden">
+                       <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{v.name}</h3>
+                      <div className="flex items-center justify-between">
+                         <p className="text-[8px] uppercase font-black tracking-widest opacity-40">{v.areaTag}</p>
+                         <div className="flex items-center gap-1 text-[8px] font-bold text-accent-foreground"><Star className="h-2 w-2 fill-current" /> {v.rating}</div>
+                      </div>
+                    </div>
+                 </Card>
+               </Link>
+             ))}
+           </div>
+        </section>
 
         {/* Search and Filter Section */}
         <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
           <div className="relative flex-grow w-full">
             <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
-              placeholder="Search for makeup..." 
+              placeholder="Search items by name or brand..." 
               className="pl-20 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -98,7 +132,7 @@ export default function ShopPage() {
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={brandFilter} onValueChange={setBrandFilter}>
               <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-10">
-                <SelectValue placeholder="Brand" />
+                <SelectValue placeholder="All Brands" />
               </SelectTrigger>
               <SelectContent className="rounded-3xl font-body border-none shadow-2xl bg-white/90 backdrop-blur-xl">
                 {brands.map((brand) => (
@@ -121,7 +155,7 @@ export default function ShopPage() {
               const isFav = isFavoriteProduct(product.id);
               return (
                 <Link key={product.id} href={`/shop/${product.id}`} className="group block interactive-element h-full">
-                  <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden active:scale-[0.99] h-full flex flex-col">
+                  <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden h-full flex flex-col">
                     <div className="relative aspect-[4/5] overflow-hidden">
                       <Image 
                         src={product.imageUrl} 
@@ -172,7 +206,7 @@ export default function ShopPage() {
               <Search className="h-12 w-12 text-primary/20" />
             </div>
             <h3 className="text-5xl font-headline italic text-primary">No items found</h3>
-            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">Try searching for a different brand or item name.</p>
+            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">Try searching for a different boutique brand or item name.</p>
           </div>
         )}
       </main>

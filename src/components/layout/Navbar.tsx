@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -65,8 +66,7 @@ export function Navbar() {
 
   const bottomNavLinks = useMemo(() => [
     { href: '/deals', label: 'Deals', icon: Scissors },
-    { href: '/shop', label: 'Shop', icon: Store },
-    { href: '/vendors', label: 'Parlours', icon: MapPin },
+    { href: '/shop', label: 'Shops', icon: Store },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
   ], []);
 
@@ -144,7 +144,7 @@ export function Navbar() {
             
             <SheetClose asChild>
               <Link href="/portal" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} /> My Shop Portal
+                <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} /> My Business
               </Link>
             </SheetClose>
 
@@ -195,7 +195,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
         <div className="w-full pl-2 pr-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -227,7 +226,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Top Utility Bar */}
       <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-4 shadow-md rounded-2xl">
         <div className="flex items-center gap-0.5">
           <SideMenu />
@@ -241,7 +239,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Bottom Bar */}
       <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-14 px-3 shadow-lg">
         {bottomNavLinks.map((link) => {
           const Icon = link.icon;
