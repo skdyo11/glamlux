@@ -34,7 +34,9 @@ import {
   ShoppingBag,
   Sparkles,
   ArrowRight,
-  Store
+  Store,
+  Edit2,
+  Settings
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -53,13 +55,15 @@ export default function PartnerPortalPage() {
   const [activeTab, setActiveTab] = useState('bookings');
   const [isMounted, setIsMounted] = useState(false);
   const [hasBusiness, setHasBusiness] = useState<boolean | null>(null);
+  const [myBusiness, setMyBusiness] = useState<any>(null);
 
   const [arrivals, setArrivals] = useState<any[]>([]);
   const [myProducts, setMyProducts] = useState<any[]>([]);
   const [myDeals, setMyDeals] = useState<any[]>([]);
 
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
-  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | null>(null);
+  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | null>(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -77,7 +81,12 @@ export default function PartnerPortalPage() {
     const checkBusiness = async () => {
       const q = query(collection(firestore, 'parlours'), where('ownerId', '==', user.uid));
       const snapshot = await getDocs(q);
-      setHasBusiness(!snapshot.empty);
+      if (!snapshot.empty) {
+        setHasBusiness(true);
+        setMyBusiness({ ...snapshot.docs[0].data(), id: snapshot.docs[0].id });
+      } else {
+        setHasBusiness(false);
+      }
     };
 
     checkBusiness();
@@ -112,7 +121,7 @@ export default function PartnerPortalPage() {
     if (!user || !firestore) return;
     
     try {
-      await addDoc(collection(firestore, 'parlours'), {
+      const bizRef = await addDoc(collection(firestore, 'parlours'), {
         ownerId: user.uid,
         name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`,
         areaTag: 'Select Area',
@@ -123,6 +132,7 @@ export default function PartnerPortalPage() {
       });
       
       setHasBusiness(true);
+      setMyBusiness({ id: bizRef.id, name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop` });
       toast({
         title: "Success",
         description: `Your ${type} is ready.`,
@@ -158,36 +168,68 @@ export default function PartnerPortalPage() {
 
     try {
       if (activeSheet === 'product') {
-        await addDoc(collection(firestore, 'products'), {
-          vendorId: user.uid,
-          name,
-          brand: detail,
-          price: parseFloat(value),
-          stockCount: 0,
-          imageUrl: 'https://picsum.photos/seed/luxury-makeup-primer/400/500',
-          currency: 'PKR',
-          createdAt: serverTimestamp(),
-        });
+        if (editingItem) {
+          await updateDoc(doc(firestore, 'products', editingItem.id), {
+            name,
+            brand: detail,
+            price: parseFloat(value),
+          });
+        } else {
+          await addDoc(collection(firestore, 'products'), {
+            vendorId: user.uid,
+            name,
+            brand: detail,
+            price: parseFloat(value),
+            stockCount: 0,
+            imageUrl: 'https://picsum.photos/seed/luxury-makeup-primer/400/500',
+            currency: 'PKR',
+            createdAt: serverTimestamp(),
+          });
+        }
       } else if (activeSheet === 'service') {
-        await addDoc(collection(firestore, 'deals'), {
-          parlourOwnerId: user.uid,
-          parlourId: user.uid,
-          name,
-          category: detail,
-          discountPrice: parseFloat(value),
-          basePrice: parseFloat(value) * 1.2,
-          depositPercent: 10,
-          currency: 'PKR',
-          expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          createdAt: serverTimestamp(),
-        });
+        if (editingItem) {
+          await updateDoc(doc(firestore, 'deals', editingItem.id), {
+            name,
+            category: detail,
+            discountPrice: parseFloat(value),
+            basePrice: parseFloat(value) * 1.2,
+          });
+        } else {
+          await addDoc(collection(firestore, 'deals'), {
+            parlourOwnerId: user.uid,
+            parlourId: user.uid,
+            name,
+            category: detail,
+            discountPrice: parseFloat(value),
+            basePrice: parseFloat(value) * 1.2,
+            depositPercent: 10,
+            currency: 'PKR',
+            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            createdAt: serverTimestamp(),
+          });
+        }
+      } else if (activeSheet === 'profile') {
+        if (myBusiness) {
+          await updateDoc(doc(firestore, 'parlours', myBusiness.id), {
+            name,
+            areaTag: detail,
+            description: value,
+          });
+          setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value });
+        }
       }
 
-      toast({ title: "Success", description: `${activeSheet} added.` });
+      toast({ title: "Success", description: `${activeSheet} updated.` });
       setActiveSheet(null);
+      setEditingItem(null);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to add." });
+      toast({ variant: "destructive", title: "Error", description: "Failed to update." });
     }
+  };
+
+  const handleEdit = (type: 'product' | 'service', item: any) => {
+    setEditingItem(item);
+    setActiveSheet(type);
   };
 
   if (!isMounted || isUserLoading) return null;
@@ -254,10 +296,20 @@ export default function PartnerPortalPage() {
       
       <main className="container mx-auto px-6 py-4 md:py-12">
         <header className="flex flex-col gap-3 mb-8 pt-4 md:pt-20">
-          <div className="space-y-0.5">
-            <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
-            <h1 className="text-3xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">Management</h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest opacity-40 text-primary">{user.email}</p>
+          <div className="flex justify-between items-start">
+            <div className="space-y-0.5">
+              <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
+              <h1 className="text-3xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">{myBusiness?.name || 'Management'}</h1>
+              <p className="text-[10px] uppercase font-bold tracking-widest opacity-40 text-primary">{user.email}</p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setActiveSheet('profile')}
+              className="rounded-full border-primary/10 text-primary hover:bg-primary/5 h-10 px-6 font-bold uppercase tracking-widest text-[9px]"
+            >
+              <Settings className="h-3 w-3 mr-2" /> Customize Profile
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -289,7 +341,7 @@ export default function PartnerPortalPage() {
                 key={id} value={id} 
                 className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] text-primary"
               >
-                {id === 'bookings' ? 'Queue' : id === 'items' ? 'Products' : 'Deals'}
+                {id === 'bookings' ? 'Queue' : id === 'items' ? 'Products' : 'Services'}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -327,17 +379,25 @@ export default function PartnerPortalPage() {
           <TabsContent value="items" className="space-y-8">
             <div className="flex justify-between items-center">
               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Inventory</h3>
-              <Button onClick={() => setActiveSheet('product')} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">Add Product</Button>
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
+                <Plus className="h-3 w-3 mr-2" /> Add Product
+              </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {myProducts.map((p) => (
-                <div key={p.id} className="space-y-3 text-center group">
+                <div key={p.id} className="space-y-3 text-center group relative">
                   <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
                     <Image src={p.imageUrl || 'https://picsum.photos/seed/product-placeholder/400/500'} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                       <Button size="icon" variant="secondary" className="rounded-full" onClick={() => handleEdit('product', p)}>
+                         <Edit2 className="h-4 w-4" />
+                       </Button>
+                    </div>
                   </div>
                   <div className="space-y-0.5">
                     <h4 className="font-headline text-xl italic text-primary truncate px-2">{p.name}</h4>
                     <p className="text-[10px] font-bold text-accent-foreground uppercase tracking-widest">{getCurrency()} {p.price?.toLocaleString()}</p>
+                    <Button variant="link" size="sm" onClick={() => handleEdit('product', p)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0">Customize</Button>
                   </div>
                 </div>
               ))}
@@ -347,15 +407,20 @@ export default function PartnerPortalPage() {
           <TabsContent value="services" className="space-y-8">
             <div className="flex justify-between items-center">
               <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Services</h3>
-              <Button onClick={() => setActiveSheet('service')} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">Add Deal</Button>
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
+                <Plus className="h-3 w-3 mr-2" /> Add Service
+              </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myDeals.map((d) => (
-                <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5">
+                <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
                   <div className="space-y-1">
                     <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
                     <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
                     <p className="text-xs font-bold text-accent-foreground">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit('service', d)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0 mt-2 hover:bg-transparent">
+                      <Edit2 className="h-3 w-3 mr-1" /> Customize
+                    </Button>
                   </div>
                   <div className="h-14 w-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary/30">
                     <Scissors className="h-6 w-6" />
@@ -368,29 +433,59 @@ export default function PartnerPortalPage() {
       </main>
 
       {/* Item & Deal Listing Dialog */}
-      <Dialog open={activeSheet === 'product' || activeSheet === 'service'} onOpenChange={() => setActiveSheet(null)}>
+      <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => { setActiveSheet(null); setEditingItem(null); }}>
         <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-3xl font-headline italic text-primary">New Listing</DialogTitle>
-            <DialogDescription className="italic">Add a new item to your shop or parlour.</DialogDescription>
+            <DialogTitle className="text-3xl font-headline italic text-primary">
+              {activeSheet === 'profile' ? 'Business Profile' : editingItem ? 'Customize Item' : 'New Listing'}
+            </DialogTitle>
+            <DialogDescription className="italic">
+              {activeSheet === 'profile' ? 'Update your artisan identity.' : 'Provide details for your marketplace offering.'}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSheetSubmit} className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Name</Label>
-              <Input name="name" required placeholder="Name of the item..." className="rounded-full h-12 bg-primary/5 border-none px-6" />
+              <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                {activeSheet === 'profile' ? 'Parlour/Shop Name' : 'Name'}
+              </Label>
+              <Input 
+                name="name" 
+                required 
+                defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
+                placeholder="Elite reference name..." 
+                className="rounded-full h-12 bg-primary/5 border-none px-6" 
+              />
             </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Detail</Label>
-                <Input name="detail" required placeholder="Category/Brand" className="rounded-full h-12 bg-primary/5 border-none px-6" />
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                  {activeSheet === 'profile' ? 'Area/Location' : activeSheet === 'product' ? 'Brand' : 'Category'}
+                </Label>
+                <Input 
+                  name="detail" 
+                  required 
+                  defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
+                  placeholder="Details..." 
+                  className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Price</Label>
-                <Input name="value" type="number" required placeholder="0.00" className="rounded-full h-12 bg-primary/5 border-none px-6" />
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                  {activeSheet === 'profile' ? 'Studio Vision' : 'Price'}
+                </Label>
+                <Input 
+                  name="value" 
+                  required 
+                  type={activeSheet === 'profile' ? 'text' : 'number'}
+                  defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : (activeSheet === 'profile' ? myBusiness?.description : '')}
+                  placeholder={activeSheet === 'profile' ? "Vision..." : "0.00"}
+                  className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                />
               </div>
             </div>
             <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
-              Save Item
+              {editingItem || activeSheet === 'profile' ? 'Save Changes' : 'Publish Listing'}
             </Button>
           </form>
         </DialogContent>

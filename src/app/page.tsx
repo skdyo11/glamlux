@@ -77,7 +77,7 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 rounded-full px-10 h-14 font-black uppercase tracking-[0.2em] text-[10px] shadow-3xl transition-all hover:scale-105">
-                  <Link href="/deals">Book Transformation</Link>
+                  <Link href="/deals">Book Services</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="border-white/30 bg-white/5 backdrop-blur-xl text-white rounded-full px-10 h-14 font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-white/10">
                   <Link href="/shop">Boutique Store</Link>
@@ -197,7 +197,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Best Deals */}
+        {/* Best Services */}
         <section className="py-20 md:py-32 bg-secondary/10 border-y border-primary/5">
           <div className="container mx-auto px-6">
             <div className="mb-16 text-center md:text-left">
@@ -265,7 +265,7 @@ export default function Home() {
           <div className="space-y-4">
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">COLLECTIONS</h4>
             <ul className="space-y-2 text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Signature Deals</Link></li>
+              <li><Link href="/deals" className="hover:text-accent-foreground transition-colors">Artisan Services</Link></li>
               <li><Link href="/shop" className="hover:text-accent-foreground transition-colors">Boutique Store</Link></li>
               <li><Link href="/vendors" className="hover:text-accent-foreground transition-colors">Elite Registry</Link></li>
             </ul>

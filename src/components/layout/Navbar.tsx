@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -65,7 +64,7 @@ export function Navbar() {
   }, []);
 
   const bottomNavLinks = useMemo(() => [
-    { href: '/deals', label: 'Deals', icon: Scissors },
+    { href: '/deals', label: 'Services', icon: Scissors },
     { href: '/shop', label: 'Shops', icon: Store },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
   ], []);
