@@ -367,6 +367,7 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
+      {/* Item & Deal Listing Dialog */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
           <DialogHeader>
@@ -392,6 +393,40 @@ export default function PartnerPortalPage() {
               Save Item
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Logistics Enrollment Dialog */}
+      <Dialog open={activeSheet === 'delivery'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Logistics</DialogTitle>
+            <DialogDescription className="italic">Join our elite delivery network to reach more clients.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <p className="text-sm text-muted-foreground italic leading-relaxed">
+              Enable professional shipping for your boutique items. Our logistics partners ensure your artistry reaches customers with the care it deserves.
+            </p>
+            <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-3">
+              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-primary">
+                <Navigation className="h-4 w-4" /> Service Features
+              </div>
+              <ul className="text-xs italic text-muted-foreground space-y-1">
+                <li>• Real-time tracking for customers</li>
+                <li>• Automated label generation</li>
+                <li>• Insured high-value shipments</li>
+              </ul>
+            </div>
+            <Button 
+              onClick={() => {
+                toast({ title: "Application Sent", description: "Your logistics request is under review." });
+                setActiveSheet(null);
+              }}
+              className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg"
+            >
+              Enroll in Delivery Network
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
