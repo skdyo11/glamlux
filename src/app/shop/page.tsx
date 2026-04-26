@@ -13,21 +13,31 @@ import { Search, ShoppingBag, Heart } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
 
 export default function ShopPage() {
   const { addToCart, getCurrency, isFavoriteProduct, toggleFavoriteProduct } = useStore();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
+  const firestore = useFirestore();
 
-  const filteredProducts = PRODUCTS.filter((product) => {
+  const productsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'products'));
+  }, [firestore]);
+
+  const { data: products, isLoading } = useCollection(productsQuery);
+
+  const filteredProducts = (products || []).filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          product.brand.toLowerCase().includes(searchQuery.toLowerCase());
+                          product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesBrand = brandFilter === 'All' || product.brand === brandFilter;
     return matchesSearch && matchesBrand;
   });
 
-  const brands = ['All', ...Array.from(new Set(PRODUCTS.map(p => p.brand)))];
+  const brands = ['All', ...Array.from(new Set((products || []).map(p => p.brand).filter(Boolean)))];
 
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault();
@@ -93,7 +103,13 @@ export default function ShopPage() {
           </div>
         </section>
 
-        {filteredProducts.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {[1, 2, 3, 4].map(n => (
+              <div key={n} className="h-[400px] rounded-[3rem] bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {filteredProducts.map((product) => {
               const isFav = isFavoriteProduct(product.id);

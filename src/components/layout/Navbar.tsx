@@ -3,19 +3,33 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare, Home, Heart } from 'lucide-react';
+import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare, Home, Heart, LogOut } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useMemo } from 'react';
+import { useUser, useFirebase } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth';
 
 export function Navbar() {
   const { cart, favorites, toggleRegion, getCurrency } = useStore();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const { user } = useUser();
+  const { auth } = useFirebase();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    document.cookie = "__session=; path=/; max-age=0";
+    if (auth) {
+      await signOut(auth);
+      router.push('/');
+    }
+  };
   
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
   const favCount = useMemo(() => (favorites?.products?.length || 0) + (favorites?.vendors?.length || 0), [favorites]);
@@ -74,6 +88,23 @@ export function Navbar() {
           )}
         </Button>
       </Link>
+
+      {user ? (
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleLogout}
+          className="h-8 w-8 rounded-full ml-1"
+        >
+          <LogOut className="h-3.5 w-3.5 text-foreground/40" />
+        </Button>
+      ) : (
+        <Link href="/login">
+          <Button variant="ghost" className="h-8 px-3 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
+            Admin
+          </Button>
+        </Link>
+      )}
     </div>
   );
 

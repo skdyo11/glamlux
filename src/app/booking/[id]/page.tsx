@@ -25,9 +25,9 @@ export default function BookingSuccessPage({ params }: { params: Promise<{ id: s
   }, []);
 
   const bookingRef = useMemoFirebase(() => {
-    if (!firestore || !uid || !id) return null;
-    return doc(firestore, 'localUsers', uid, 'bookings', id);
-  }, [firestore, uid, id]);
+    if (!firestore || !id) return null;
+    return doc(firestore, 'bookings', id);
+  }, [firestore, id]);
 
   const { data: booking, isLoading } = useDoc(bookingRef);
 
@@ -129,8 +129,13 @@ export default function BookingSuccessPage({ params }: { params: Promise<{ id: s
               </div>
 
               <div className="pt-6 border-t border-primary/5 space-y-4">
-                 <div className="flex items-center gap-3 text-primary/60 italic text-xs">
-                   <MapPin className="h-4 w-4" /> Delivered to: {booking?.user_phone}
+                 <div className="flex flex-col gap-1 text-primary/60 italic text-xs">
+                   <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> Recipient: {booking?.userName}
+                   </div>
+                   <div className="flex items-center gap-2 ml-6 text-[10px] font-mono">
+                    {booking?.userPhone}
+                   </div>
                  </div>
                  <Button asChild variant="ghost" className="w-full h-12 rounded-full font-bold text-[10px] uppercase tracking-widest text-primary hover:bg-primary/5">
                    <Link href="/messages">Chat with Support</Link>

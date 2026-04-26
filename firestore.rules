@@ -1,163 +1,54 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * FIREBASE SECURITY RULES DOCUMENTATION
-     *
-     * Core Philosophy:
-     * This ruleset implements a "Light-Auth" identity model designed for a premium beauty marketplace. 
-     * It leverages Firebase Anonymous Authentication to create "Shadow Profiles" for guest users, 
-     * allowing them to maintain booking history and local state without a traditional password-based 
-     * login. Access control is strictly partitioned between public marketplace data and private 
-     * user-specific bookings.
-     *
-     * Data Structure:
-     * - /parlours: Publicly readable; writable by the authenticated Parlour Owner.
-     * - /deals: Publicly readable; writable by the authenticated owner of the associated parlour.
-     * - /products: Publicly readable; writable only by platform administrators.
-     * - /globalConfig: Publicly readable configuration (e.g., exchange rates).
-     * - /localUsers/{userId}: Private user profile, accessible only by the owning user.
-     * - /localUsers/{userId}/bookings: Private booking records and items, nested for path-based security.
-     *
-     * Key Security Decisions:
-     * 1. Path-Based Authorization: User data is nested under the user's UID to ensure list operations 
-     *    automatically filter to the correct owner.
-     * 2. Denormalization for Performance: Fields like 'ownerId', 'parlourOwnerId', and 'localUserId' 
-     *    are denormalized onto documents to enable fast, single-document authorization checks 
-     *    without using costly get() calls.
-     * 3. Prototyping Flexibility: Rules enforce WHO can access data and maintain relational integrity 
-     *    (e.g., matching IDs) but do not strictly enforce the internal schema types to allow for rapid iteration.
-     * 4. Relational Integrity: On creation, we enforce that internal ownership fields match the 
-     *    authenticated user's ID and the document path.
-     */
-
-    // --- HELPER FUNCTIONS ---
-
-    /** Checks if the request is made by an authenticated user (including anonymous) */
-    function isSignedIn() {
+    
+    // Helper to check if user is authenticated
+    function isAuthenticated() {
       return request.auth != null;
     }
 
-    /** Checks if the authenticated user's UID matches the provided userId */
+    // Helper to check if the user is the owner of the document
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return request.auth.uid == userId;
     }
 
-    /** Checks if the authenticated user owns the existing document in the database */
-    function isExistingOwner(ownerField) {
-      return isSignedIn() && resource != null && resource.data[ownerField] == request.auth.uid;
-    }
-
-    /** Placeholder for administrative access logic */
-    function isAdmin() {
-      // In prototyping, we restrict admin writes to false or a specific UID.
-      // Replace 'ADMIN_UID' with an actual UID if needed.
-      return isSignedIn() && (request.auth.token.admin == true || request.auth.uid == 'ADMIN_UID');
-    }
-
-    // --- COLLECTION RULES ---
-
-    /**
-     * @description Publicly viewable parlour listings. Writable only by the designated parlour owner.
-     * @path /parlours/{parlourId}
-     * @allow (get) Any user. (create) Authenticated user where ownerId matches their UID.
-     * @deny (update) If user is not the owner or is attempting to change the ownerId.
-     * @principle Ownership-based writes with public read access.
-     */
-    match /parlours/{parlourId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
-      allow update: if isExistingOwner('ownerId') && request.resource.data.ownerId == resource.data.ownerId;
-      allow delete: if isExistingOwner('ownerId');
-    }
-
-    /**
-     * @description Beauty deals offered by parlours. Writable by the parlour owner.
-     * @path /deals/{dealId}
-     * @allow (get) Any user. (create) User matching the denormalized parlourOwnerId.
-     * @deny (delete) Any user who is not the parlour owner.
-     * @principle Denormalization to avoid cross-document get() calls for ownership verification.
-     */
-    match /deals/{dealId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.parlourOwnerId == request.auth.uid;
-      allow update: if isExistingOwner('parlourOwnerId') && request.resource.data.parlourOwnerId == resource.data.parlourOwnerId;
-      allow delete: if isExistingOwner('parlourOwnerId');
-    }
-
-    /**
-     * @description Marketplace makeup products. Writable only by platform admins.
-     * @path /products/{productId}
-     * @allow (get) Any user. (write) Admin only.
-     * @deny (write) Any non-admin user.
-     * @principle Role-based access control for global catalog.
-     */
-    match /products/{productId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    /**
-     * @description Global configuration including exchange rates.
-     * @path /globalConfig/defaultConfig
-     * @allow (get) Any user. (write) Admin only.
-     * @principle Single-document configuration protection.
-     */
-    match /globalConfig/defaultConfig {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    /**
-     * @description User "Shadow Profiles" for storing basic info and device links.
-     * @path /localUsers/{localUserId}
-     * @allow (read/write) Only the user whose UID matches the localUserId path variable.
-     * @deny (read) Requesting a different user's profile.
-     * @principle Strict path-based ownership.
-     */
-    match /localUsers/{localUserId} {
-      allow get, list: if isOwner(localUserId);
-      allow create: if isOwner(localUserId) && request.resource.data.id == localUserId;
-      allow update: if isOwner(localUserId) && resource != null && request.resource.data.id == resource.data.id;
-      allow delete: if isOwner(localUserId) && resource != null;
-    }
-
-    /**
-     * @description Consolidated bookings for deals and product orders.
-     * @path /localUsers/{localUserId}/bookings/{bookingId}
-     * @allow (read/write) Only the user who owns the parent localUser profile.
-     * @principle Hierarchical ownership and relational integrity.
-     */
-    match /localUsers/{localUserId}/bookings/{bookingId} {
-      allow get, list: if isOwner(localUserId);
-      allow create: if isOwner(localUserId) && request.resource.data.localUserId == localUserId;
-      allow update: if isOwner(localUserId) && resource != null && request.resource.data.localUserId == resource.data.localUserId;
-      allow delete: if isOwner(localUserId) && resource != null;
-
-      /**
-       * @description Individual items within a booking (Deals or Products).
-       * @path /localUsers/{localUserId}/bookings/{bookingId}/bookingItems/{bookingItemId}
-       * @allow (read/write) Only the user who owns the parent booking.
-       * @principle Deeply nested path-based security.
-       */
-      match /bookingItems/{bookingItemId} {
-        allow get, list: if isOwner(localUserId);
-        allow create: if isOwner(localUserId) && request.resource.data.bookingId == bookingId;
-        allow update: if isOwner(localUserId) && resource != null && request.resource.data.bookingId == resource.data.bookingId;
-        allow delete: if isOwner(localUserId) && resource != null;
-      }
+    // --- MARKETPLACE DATA (B2C) ---
+    // Anyone can browse deals, products, and vendors
+    match /vendors/{vendorId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isOwner(vendorId);
     }
     
-    /**
-     * @description Collection Group helper for Parlour Owners to see bookings across users.
-     * Note: Requires index creation in Firebase Console.
-     */
-    match /{path=**}/bookings/{bookingId} {
-      allow list: if isSignedIn() && request.query.limit <= 100 && (
-        // Allow parlour owners to query bookings containing their parlour ID via denormalized array
-        request.auth.uid in resource.data.parlourOwnerIdsInBooking
-      );
+    match /deals/{dealId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.resource.data.vendor_id == request.auth.uid;
+    }
+    
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.resource.data.vendor_id == request.auth.uid;
+    }
+
+    // --- USER DATA & SESSIONS ---
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      
+      // Nested sessions
+      match /sessions/{sessionId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+      }
+    }
+
+    // --- BOOKINGS (COD) ---
+    // Customers can create bookings (anonymous or auth). 
+    // Vendors can only read bookings assigned to them.
+    match /bookings/{bookingId} {
+      allow create: if true; // COD B2C flow
+      allow read: if (isAuthenticated() && (
+        resource.data.vendorId == request.auth.uid || 
+        resource.data.localUserId == request.auth.uid
+      ));
+      allow update: if isAuthenticated() && resource.data.vendorId == request.auth.uid;
     }
   }
 }

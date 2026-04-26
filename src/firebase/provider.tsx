@@ -52,6 +52,8 @@ export interface UserHookResult { // Renamed from UserAuthHookResult for consist
 // React Context
 export const FirebaseContext = createContext<FirebaseContextState | undefined>(undefined);
 
+import { logUserSession } from '@/lib/performance';
+
 /**
  * FirebaseProvider manages and provides Firebase services and user authentication state.
  */
@@ -80,6 +82,11 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       auth,
       (firebaseUser) => { // Auth state determined
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
+        
+        // Log session for authenticated user
+        if (firebaseUser && firestore) {
+          logUserSession(firestore, firebaseUser.uid);
+        }
       },
       (error) => { // Auth listener error
         console.error("FirebaseProvider: onAuthStateChanged error:", error);
@@ -87,7 +94,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => unsubscribe(); // Cleanup
-  }, [auth]); // Depends on the auth instance
+  }, [auth, firestore]); // Depends on auth and firestore instance
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {

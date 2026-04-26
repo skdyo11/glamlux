@@ -111,7 +111,7 @@ export default function DealsPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="px-10 pb-4 flex items-baseline gap-6">
-                      <span className="text-4xl md:text-5xl font-bold text-primary italic">{getCurrency()} {deal.discountPrice.toLocaleString()}</span>
+                      <span className="text-4xl md:text-5xl font-bold text-primary italic">{getCurrency()} {deal.discount_price?.toLocaleString()}</span>
                     </CardContent>
                     <CardFooter className="mt-8 pt-8 border-t border-muted/10 flex justify-between items-center bg-muted/5 px-10 h-24">
                       <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">

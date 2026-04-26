@@ -28,17 +28,17 @@ export default function VendorsPage() {
 
   const vendorsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'parlours'), orderBy('rating', 'desc'));
+    return query(collection(firestore, 'vendors'), orderBy('rating', 'desc'));
   }, [firestore]);
 
   const { data: vendors, isLoading } = useCollection(vendorsQuery);
 
-  const uniqueAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.areaTag.split(',').pop()?.trim() || v.areaTag)))];
+  const uniqueAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.area_tag?.split(',').pop()?.trim() || v.area_tag).filter(Boolean)))];
 
   const filteredVendors = (vendors || []).filter((v) => {
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          v.areaTag.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesArea = areaFilter === 'All' || v.areaTag.includes(areaFilter);
+                          v.area_tag?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesArea = areaFilter === 'All' || v.area_tag?.includes(areaFilter);
     return matchesSearch && matchesArea;
   });
 

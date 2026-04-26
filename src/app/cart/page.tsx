@@ -93,7 +93,7 @@ export default function CartPage() {
     if (isCheckingOut) return;
     
     if (!userName.trim() || !phoneNumber.trim()) {
-      toast({ variant: "destructive", title: "Identity Required", description: "Name and phone are required for the artisan to identify you." });
+      toast({ variant: "destructive", title: "Contact Required", description: "Name and phone are required for COD identification." });
       return;
     }
 
@@ -101,6 +101,7 @@ export default function CartPage() {
 
     try {
       let currentUser = user;
+      // If not logged in, we stay anonymous for low-friction
       if (!currentUser && auth) {
         const cred = await signInAnonymously(auth);
         currentUser = cred.user;
@@ -108,44 +109,43 @@ export default function CartPage() {
 
       if (!currentUser || !firestore) throw new Error("Services not ready");
 
-      const userRef = doc(firestore, 'localUsers', currentUser.uid);
-      setDocumentNonBlocking(userRef, {
-        id: currentUser.uid,
-        name: userName,
-        phoneNumber: phoneNumber,
-        lastActiveAt: new Date().toISOString()
-      }, { merge: true });
-
       const refCode = Math.random().toString(36).substring(7).toUpperCase();
-      const bookingsCol = collection(firestore, 'localUsers', currentUser.uid, 'bookings');
-      const newBookingRef = doc(bookingsCol);
+      
+      // Save order to central bookings collection
+      const newBookingRef = doc(collection(firestore, 'bookings'));
       
       const bookingData = {
         id: newBookingRef.id,
         localUserId: currentUser.uid,
-        user_phone: phoneNumber,
+        userName: userName,
+        userPhone: phoneNumber,
         referenceCode: refCode,
-        total_price: totalDueNow,
-        platform_commission: commission,
+        totalPrice: totalDueNow,
         currency: getCurrency(),
-        qr_verified: false,
+        qrVerified: false,
         deliveryStatus: 'Pending',
+        paymentStatus: 'COD (Pending)',
+        paymentMethod: 'Cash on Delivery',
         createdAt: new Date().toISOString(),
-        paymentStatus: 'Paid',
         cartItems: cart,
         inspirationImageUrl: inspirationImage,
-        group_size: cart.find(i => i.type === 'deal')?.quantity || 1,
-        vendor_id: cart[0]?.vendor_id || 'v1'
+        vendorId: cart[0]?.vendor_id || 'v1'
       };
 
-      setDocumentNonBlocking(newBookingRef, bookingData, { merge: false });
+      // Set document in Firestore
+      await setDocumentNonBlocking(newBookingRef, bookingData, { merge: false });
       
+      toast({
+        title: "Order Placed",
+        description: `Your COD order ${refCode} is confirmed.`,
+      });
+
       clearCart();
       router.push(`/booking/${newBookingRef.id}?uid=${currentUser.uid}`);
     } catch (error) {
       console.error("Checkout failed", error);
       setIsCheckingOut(false);
-      toast({ variant: "destructive", title: "Transaction Error", description: "Could not process your secure booking." });
+      toast({ variant: "destructive", title: "Order Error", description: "Could not place your COD order." });
     }
   };
 
