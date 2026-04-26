@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -143,9 +142,9 @@ export function Navbar() {
 
       {/* Mobile Top Utility Bar */}
       <nav className="fixed top-3 left-4 right-4 z-50 h-16 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between px-6 shadow-md rounded-2xl">
-        <Link href="/" className="flex items-center space-x-4">
-          <Sparkles className="h-10 w-10 text-accent-foreground" />
-          <span className="font-headline text-3xl tracking-tighter text-foreground italic">GlamLux</span>
+        <Link href="/" className="flex items-center space-x-2">
+          <Sparkles className="h-6 w-6 text-accent-foreground" />
+          <span className="font-headline text-xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
         </Link>
 
         <div className="flex items-center">
