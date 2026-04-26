@@ -71,7 +71,6 @@ export default function PartnerPortalPage() {
     }
   }, [user, isUserLoading, isMounted, router]);
 
-  // Check if user has an existing parlour/shop profile
   useEffect(() => {
     if (!user || !firestore) return;
 
@@ -115,21 +114,18 @@ export default function PartnerPortalPage() {
     try {
       await addDoc(collection(firestore, 'parlours'), {
         ownerId: user.uid,
-        name: type === 'parlour' ? `${user.displayName || 'My'} Elite Parlour` : `${user.displayName || 'My'} Boutique Shop`,
+        name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`,
         areaTag: 'Select Area',
         rating: 5.0,
         imageUrls: [],
-        description: type === 'parlour' ? 'An elite beauty studio.' : 'A premium makeup boutique.',
-        ownerDashboardStyle: 'grid',
-        latitude: 0,
-        longitude: 0,
+        description: type === 'parlour' ? 'A nice beauty parlour.' : 'A premium makeup shop.',
         createdAt: serverTimestamp()
       });
       
       setHasBusiness(true);
       toast({
         title: "Success",
-        description: `Your ${type} has been initialized. Welcome to the Elite Registry.`,
+        description: `Your ${type} is ready.`,
       });
     } catch (e) {
       toast({ variant: "destructive", title: "Setup Failed" });
@@ -175,7 +171,7 @@ export default function PartnerPortalPage() {
       } else if (activeSheet === 'service') {
         await addDoc(collection(firestore, 'deals'), {
           parlourOwnerId: user.uid,
-          parlourId: user.uid, // Placeholder if simplified
+          parlourId: user.uid,
           name,
           category: detail,
           discountPrice: parseFloat(value),
@@ -187,66 +183,63 @@ export default function PartnerPortalPage() {
         });
       }
 
-      toast({ title: "Success", description: `${activeSheet} added successfully.` });
+      toast({ title: "Success", description: `${activeSheet} added.` });
       setActiveSheet(null);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to add item." });
+      toast({ variant: "destructive", title: "Error", description: "Failed to add." });
     }
   };
 
   if (!isMounted || isUserLoading) return null;
   if (!user) return null;
 
-  // Onboarding View
   if (hasBusiness === false) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
-        <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
+        <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-12">
           <div className="text-center space-y-4 max-w-2xl">
             <Badge className="bg-primary/5 text-primary rounded-full px-4 py-1.5 uppercase tracking-widest text-[10px] font-black border-none">
-              <Sparkles className="h-3 w-3 mr-2 inline" /> Artisan Onboarding
+              <Sparkles className="h-3 w-3 mr-2 inline" /> Partner Setup
             </Badge>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Choose Your <br />Legacy</h1>
-            <p className="text-lg text-muted-foreground italic font-body">Select your business model to join the GlamLux Elite Registry.</p>
+            <h1 className="text-5xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">Start Your Business</h1>
+            <p className="text-lg text-muted-foreground italic font-body">Pick what kind of business you want to start.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-5xl">
-            {/* Option 1: Parlour */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
             <Card 
               onClick={() => handleStartBusiness('parlour')}
-              className="group cursor-pointer rounded-[3.5rem] border-none bg-white/40 backdrop-blur-xl p-12 space-y-8 shadow-2xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
+              className="group cursor-pointer rounded-[2.5rem] border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
             >
-              <div className="h-20 w-20 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <Scissors className="h-10 w-10" />
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <Scissors className="h-8 w-8" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-4xl font-headline italic text-primary">Elite Parlour</h3>
+                <h3 className="text-3xl font-headline italic text-primary">Start Parlour</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed italic">
-                  Offer luxury transformations, bridal glows, and specialized hair/skin services. Perfect for high-end studios.
+                  Offer beauty services like makeup and hair styling.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary pt-4">
-                Start Sanctuary <ArrowRight className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary pt-2">
+                Open Parlour <ArrowRight className="h-4 w-4" />
               </div>
             </Card>
 
-            {/* Option 2: Shop */}
             <Card 
               onClick={() => handleStartBusiness('shop')}
-              className="group cursor-pointer rounded-[3.5rem] border-none bg-white/40 backdrop-blur-xl p-12 space-y-8 shadow-2xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
+              className="group cursor-pointer rounded-[2.5rem] border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
             >
-              <div className="h-20 w-20 rounded-[2rem] bg-accent/10 flex items-center justify-center text-accent-foreground group-hover:scale-110 transition-transform">
-                <ShoppingBag className="h-10 w-10" />
+              <div className="h-16 w-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent-foreground">
+                <ShoppingBag className="h-8 w-8" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-4xl font-headline italic text-primary">Designer Shop</h3>
+                <h3 className="text-3xl font-headline italic text-primary">Start Shop</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed italic">
-                  Curate professional makeup bundles and boutique products. Ideal for independent brands and artisans.
+                  Sell professional makeup products and items.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-accent-foreground pt-4">
-                Launch Boutique <ArrowRight className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-accent-foreground pt-2">
+                Open Shop <ArrowRight className="h-4 w-4" />
               </div>
             </Card>
           </div>
@@ -255,7 +248,6 @@ export default function PartnerPortalPage() {
     );
   }
 
-  // Dashboard View (existing logic)
   return (
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
@@ -334,7 +326,7 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="items" className="space-y-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Artisan Inventory</h3>
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Inventory</h3>
               <Button onClick={() => setActiveSheet('product')} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">Add Product</Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -349,18 +341,12 @@ export default function PartnerPortalPage() {
                   </div>
                 </div>
               ))}
-              {myProducts.length === 0 && (
-                <div className="col-span-full py-20 border-2 border-dashed rounded-[3rem] border-primary/5 flex flex-col items-center justify-center space-y-4">
-                  <ShoppingBag className="h-10 w-10 text-primary/10" />
-                  <p className="italic text-muted-foreground opacity-50">No products listed.</p>
-                </div>
-              )}
             </div>
           </TabsContent>
 
           <TabsContent value="services" className="space-y-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Service Catalog</h3>
+              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Services</h3>
               <Button onClick={() => setActiveSheet('service')} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">Add Deal</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -376,59 +362,52 @@ export default function PartnerPortalPage() {
                   </div>
                 </Card>
               ))}
-              {myDeals.length === 0 && (
-                <div className="col-span-full py-20 border-2 border-dashed rounded-[3rem] border-primary/5 flex flex-col items-center justify-center space-y-4">
-                  <Scissors className="h-10 w-10 text-primary/10" />
-                  <p className="italic text-muted-foreground opacity-50">No active deals found.</p>
-                </div>
-              )}
             </div>
           </TabsContent>
         </Tabs>
       </main>
 
-      {/* Sheets & Dialogs (same as before) */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-[3rem] border-none bg-white/90 backdrop-blur-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]">
+        <DialogContent className="rounded-[2.5rem] border-none bg-white shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-4xl font-headline italic text-primary tracking-tighter">New Listing</DialogTitle>
-            <DialogDescription className="italic">Add a prestigious item to your professional catalog.</DialogDescription>
+            <DialogTitle className="text-3xl font-headline italic text-primary">New Listing</DialogTitle>
+            <DialogDescription className="italic">Add a new item to your shop or parlour.</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSheetSubmit} className="space-y-6 py-6">
+          <form onSubmit={handleSheetSubmit} className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] uppercase font-black tracking-[0.2em] ml-4 text-primary/60">Official Name</Label>
-              <Input name="name" required placeholder="Item reference name..." className="rounded-full h-14 bg-white/60 border-primary/10 px-8" />
+              <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Name</Label>
+              <Input name="name" required placeholder="Name of the item..." className="rounded-full h-12 bg-primary/5 border-none px-6" />
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-[0.2em] ml-4 text-primary/60">Detail (Brand/Category)</Label>
-                <Input name="detail" required placeholder="Elite Boutique" className="rounded-full h-14 bg-white/60 border-primary/10 px-8" />
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Detail</Label>
+                <Input name="detail" required placeholder="Category/Brand" className="rounded-full h-12 bg-primary/5 border-none px-6" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-[0.2em] ml-4 text-primary/60">Market Value</Label>
-                <Input name="value" type="number" required placeholder="0.00" className="rounded-full h-14 bg-white/60 border-primary/10 px-8" />
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Price</Label>
+                <Input name="value" type="number" required placeholder="0.00" className="rounded-full h-12 bg-primary/5 border-none px-6" />
               </div>
             </div>
-            <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-[0.3em] text-[10px] shadow-xl hover:bg-primary/90 transition-all">
-              Initialize Product
+            <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
+              Save Item
             </Button>
           </form>
         </DialogContent>
       </Dialog>
 
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3.5rem] border-none p-12 bg-white/95 backdrop-blur-3xl shadow-2xl">
+        <SheetContent side="bottom" className="rounded-t-[3rem] border-none p-10 bg-white/95 shadow-2xl">
           {selectedArrival && (
-            <div className="max-w-xl mx-auto space-y-8">
+            <div className="max-w-xl mx-auto space-y-6">
               <div className="text-center space-y-2">
-                <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase px-4 py-1.5 rounded-full mb-2">Reference {selectedArrival.referenceCode}</Badge>
-                <SheetTitle className="text-5xl font-headline italic text-primary tracking-tighter">{selectedArrival.userName || selectedArrival.userPhone}</SheetTitle>
-                <SheetDescription className="text-lg italic text-muted-foreground">Managing artisan workflow and guest verification.</SheetDescription>
+                <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase px-4 py-1.5 rounded-full">Ref: {selectedArrival.referenceCode}</Badge>
+                <SheetTitle className="text-4xl font-headline italic text-primary">{selectedArrival.userName || selectedArrival.userPhone}</SheetTitle>
+                <SheetDescription className="italic">Manage your guest booking status.</SheetDescription>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-16 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl shadow-lg uppercase tracking-widest text-[10px]">Verify Flow</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-16 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow-lg uppercase tracking-widest text-[10px]">In-Progress</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl shadow-lg uppercase tracking-widest text-[10px]">Complete</Button>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl uppercase tracking-widest text-[10px]">Verify</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl uppercase tracking-widest text-[10px]">Active</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-14 bg-primary text-primary-foreground font-bold rounded-2xl uppercase tracking-widest text-[10px]">Finish</Button>
               </div>
             </div>
           )}
