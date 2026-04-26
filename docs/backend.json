@@ -7,41 +7,15 @@
       "type": "object",
       "description": "Stores guest visitor info and device links for session persistence.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique ID for the user."
-        },
-        "name": {
-          "type": "string",
-          "description": "The user's full name."
-        },
-        "phoneNumber": {
-          "type": "string",
-          "description": "The user's mobile number."
-        },
-        "deviceIdentifier": {
-          "type": "string",
-          "description": "ID for the user's phone or computer."
-        },
-        "lastActiveAt": {
-          "type": "string",
-          "description": "When the user last used the app.",
-          "format": "date-time"
-        },
-        "latitude": {
-          "type": "number",
-          "description": "Last known latitude."
-        },
-        "longitude": {
-          "type": "number",
-          "description": "Last known longitude."
-        }
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "deviceIdentifier": { "type": "string" },
+        "lastActiveAt": { "type": "string", "format": "date-time" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" }
       },
-      "required": [
-        "id",
-        "name",
-        "phoneNumber"
-      ]
+      "required": ["id", "name", "phoneNumber"]
     },
     "Parlour": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -49,59 +23,18 @@
       "type": "object",
       "description": "An elite beauty studio or parlour listing.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique ID."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the parlour."
-        },
-        "ownerId": {
-          "type": "string",
-          "description": "The UID of the parlour owner."
-        },
-        "latitude": {
-          "type": "number",
-          "description": "Map location (lat)."
-        },
-        "longitude": {
-          "type": "number",
-          "description": "Map location (long)."
-        },
-        "areaTag": {
-          "type": "string",
-          "description": "The city or neighborhood name."
-        },
-        "rating": {
-          "type": "number",
-          "description": "Average stars out of 5."
-        },
-        "imageUrls": {
-          "type": "array",
-          "description": "Photos of the parlour.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string",
-          "description": "Detailed studio description."
-        },
-        "ownerDashboardStyle": {
-          "type": "string",
-          "description": "Owner dashboard view preference.",
-          "enum": ["list", "grid"]
-        }
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "areaTag": { "type": "string" },
+        "rating": { "type": "number" },
+        "imageUrls": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "ownerDashboardStyle": { "type": "string", "enum": ["list", "grid"] }
       },
-      "required": [
-        "id",
-        "name",
-        "ownerId",
-        "latitude",
-        "longitude",
-        "areaTag"
-      ]
+      "required": ["id", "name", "ownerId", "latitude", "longitude", "areaTag"]
     },
     "Deal": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -109,63 +42,19 @@
       "type": "object",
       "description": "Specialized service offers like Bridal Glow or Hair Spa.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique ID."
-        },
-        "parlourId": {
-          "type": "string",
-          "description": "Associated parlour ID."
-        },
-        "parlourOwnerId": {
-          "type": "string",
-          "description": "Associated owner UID."
-        },
-        "name": {
-          "type": "string",
-          "description": "Service name."
-        },
-        "category": {
-          "type": "string",
-          "description": "Type of service.",
-          "enum": ["Bridal", "Hair", "Skin"]
-        },
-        "basePrice": {
-          "type": "number",
-          "description": "Original price."
-        },
-        "discountPrice": {
-          "type": "number",
-          "description": "Offer price."
-        },
-        "currency": {
-          "type": "string",
-          "description": "PKR or INR.",
-          "enum": ["PKR", "INR"]
-        },
-        "expiryDate": {
-          "type": "string",
-          "description": "Deal expiration.",
-          "format": "date-time"
-        },
-        "depositPercent": {
-          "type": "number",
-          "description": "Percentage to pay upfront."
-        },
-        "upsellProductId": {
-          "type": "string",
-          "description": "Recommended product ID."
-        }
+        "id": { "type": "string" },
+        "parlourId": { "type": "string" },
+        "parlourOwnerId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["Bridal", "Hair", "Skin"] },
+        "basePrice": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "currency": { "type": "string", "enum": ["PKR", "INR"] },
+        "expiryDate": { "type": "string", "format": "date-time" },
+        "depositPercent": { "type": "number" },
+        "upsellProductId": { "type": "string" }
       },
-      "required": [
-        "id",
-        "parlourId",
-        "name",
-        "category",
-        "discountPrice",
-        "currency",
-        "depositPercent"
-      ]
+      "required": ["id", "parlourId", "name", "category", "discountPrice", "currency", "depositPercent"]
     },
     "Product": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -173,43 +62,17 @@
       "type": "object",
       "description": "Professional makeup products available in the shop.",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "vendorId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "brand": {
-          "type": "string"
-        },
-        "price": {
-          "type": "number"
-        },
-        "currency": {
-          "type": "string",
-          "enum": ["PKR", "INR"]
-        },
-        "stockCount": {
-          "type": "number"
-        },
-        "weightKg": {
-          "type": "number"
-        },
-        "imageUrl": {
-          "type": "string"
-        }
+        "id": { "type": "string" },
+        "vendorId": { "type": "string" },
+        "name": { "type": "string" },
+        "brand": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string", "enum": ["PKR", "INR"] },
+        "stockCount": { "type": "number" },
+        "weightKg": { "type": "number" },
+        "imageUrl": { "type": "string" }
       },
-      "required": [
-        "id",
-        "name",
-        "brand",
-        "price",
-        "currency",
-        "stockCount"
-      ]
+      "required": ["id", "name", "brand", "price", "currency", "stockCount"]
     },
     "Booking": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -217,58 +80,21 @@
       "type": "object",
       "description": "Combined record of service bookings and product orders.",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "localUserId": {
-          "type": "string"
-        },
-        "vendorId": {
-          "type": "string"
-        },
-        "referenceCode": {
-          "type": "string"
-        },
-        "totalPrice": {
-          "type": "number"
-        },
-        "shippingCost": {
-          "type": "number"
-        },
-        "currency": {
-          "type": "string",
-          "enum": ["PKR", "INR"]
-        },
-        "qrVerified": {
-          "type": "boolean"
-        },
-        "deliveryStatus": {
-          "type": "string",
-          "enum": ["Pending", "Picked Up", "Delivered"]
-        },
-        "paymentStatus": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "groupSize": {
-          "type": "number"
-        },
-        "inspirationImageUrl": {
-          "type": "string"
-        }
+        "id": { "type": "string" },
+        "localUserId": { "type": "string" },
+        "vendorId": { "type": "string" },
+        "referenceCode": { "type": "string" },
+        "totalPrice": { "type": "number" },
+        "shippingCost": { "type": "number" },
+        "currency": { "type": "string", "enum": ["PKR", "INR"] },
+        "qrVerified": { "type": "boolean" },
+        "deliveryStatus": { "type": "string", "enum": ["Pending", "Picked Up", "Delivered"] },
+        "paymentStatus": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "groupSize": { "type": "number" },
+        "inspirationImageUrl": { "type": "string" }
       },
-      "required": [
-        "id",
-        "localUserId",
-        "referenceCode",
-        "totalPrice",
-        "currency",
-        "deliveryStatus",
-        "createdAt"
-      ]
+      "required": ["id", "localUserId", "referenceCode", "totalPrice", "currency", "deliveryStatus", "createdAt"]
     },
     "Review": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -278,7 +104,7 @@
       "properties": {
         "id": { "type": "string" },
         "bookingId": { "type": "string" },
-        "targetId": { "type": "string", "description": "ID of the Parlour or Product reviewed." },
+        "targetId": { "type": "string" },
         "userId": { "type": "string" },
         "userName": { "type": "string" },
         "rating": { "type": "number" },
@@ -288,21 +114,37 @@
       },
       "required": ["id", "targetId", "userId", "rating", "comment", "isVerified", "createdAt"]
     },
-    "GlobalConfig": {
+    "Conversation": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Global Configuration",
+      "title": "Chat Conversation",
       "type": "object",
+      "description": "A chat thread between two people.",
       "properties": {
-        "exchangeRatePKRtoINR": { "type": "number" },
-        "platformCommissionRate": { "type": "number" }
-      }
+        "id": { "type": "string" },
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "vendorName": { "type": "string" },
+        "vendorImage": { "type": "string" }
+      },
+      "required": ["id", "participants", "updatedAt"]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Chat Message",
+      "type": "object",
+      "description": "A single text message in a thread.",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "senderId", "text", "createdAt"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["password", "anonymous"]
   },
   "firestore": {
     "/parlours/{parlourId}": {
@@ -329,9 +171,13 @@
       "schema": { "$ref": "#/backend/entities/Review" },
       "description": "Verified customer feedback."
     },
-    "/globalConfig/defaultConfig": {
-      "schema": { "$ref": "#/backend/entities/GlobalConfig" },
-      "description": "Platform settings."
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/backend/entities/Conversation" },
+      "description": "Threads for messaging."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/backend/entities/Message" },
+      "description": "Messages inside threads."
     }
   }
 }

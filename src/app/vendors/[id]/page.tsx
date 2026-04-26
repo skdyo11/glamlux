@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -6,7 +7,7 @@ import { useStore } from '@/app/lib/store';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart } from 'lucide-react';
+import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -115,6 +116,11 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                     >
                       <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
                     </Button>
+                    <Button asChild className="rounded-full bg-primary text-primary-foreground h-10 px-6 font-bold uppercase tracking-widest text-[10px]">
+                      <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
+                        <MessageCircle className="h-4 w-4 mr-2" /> Chat with Parlour
+                      </Link>
+                    </Button>
                   </div>
                   <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl self-start">
                     <Sparkles className="h-3 w-3 text-accent-foreground" />
@@ -148,13 +154,13 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
             </div>
             {isLoadingDeals ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                 {[1, 2].map(n => <div key={n} className="h-64 rounded-[3rem] bg-muted animate-pulse" />)}
+                 {[1, 2].map(n => <div key={n} className="h-64 rounded-3xl bg-muted animate-pulse" />)}
               </div>
             ) : (vendorDeals || []).length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {vendorDeals.map((deal) => (
                   <Link key={deal.id} href={`/deals/${deal.id}`} className="group">
-                    <Card className="rounded-[3rem] border-none bg-white/20 backdrop-blur-xl flex flex-col md:flex-row overflow-hidden hover:bg-white/30 transition-all duration-700 ring-1 ring-white/20 hover:ring-white/50 shadow-2xl">
+                    <Card className="rounded-3xl border-none bg-white/20 backdrop-blur-xl flex flex-col md:flex-row overflow-hidden hover:bg-white/30 transition-all duration-700 ring-1 ring-white/20 hover:ring-white/50 shadow-2xl">
                       <div className="relative w-full md:w-64 h-64 overflow-hidden">
                         <Image src={`https://picsum.photos/seed/deal-${deal.id}/600/600`} alt={deal.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-105" />
                       </div>
@@ -187,13 +193,13 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
             </div>
             {isLoadingProducts ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-                {[1, 2, 3, 4].map(n => <div key={n} className="aspect-square rounded-[3rem] bg-muted animate-pulse" />)}
+                {[1, 2, 3, 4].map(n => <div key={n} className="aspect-square rounded-3xl bg-muted animate-pulse" />)}
               </div>
             ) : (vendorProducts || []).length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
                 {vendorProducts.map((product) => (
                   <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6">
-                    <div className="relative aspect-square overflow-hidden rounded-[3rem] bg-white/20 backdrop-blur-xl ring-1 ring-white/20 shadow-xl">
+                    <div className="relative aspect-square overflow-hidden rounded-3xl bg-white/20 backdrop-blur-xl ring-1 ring-white/20 shadow-xl">
                       <Image src={product.imageUrl || `https://picsum.photos/seed/${product.id}/400/500`} alt={product.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
                     </div>
