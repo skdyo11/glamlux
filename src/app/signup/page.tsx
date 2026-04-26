@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Navbar } from '@/components/layout/Navbar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [role, setRole] = useState<'customer' | 'vendor'>('customer');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { auth, firestore } = useFirebase();
   const router = useRouter();
@@ -30,6 +32,7 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
+      if (!auth || !firestore) return;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 

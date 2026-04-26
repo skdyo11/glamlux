@@ -12,11 +12,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { Navbar } from '@/components/layout/Navbar';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { auth, firestore } = useFirebase();
   const router = useRouter();
@@ -27,6 +29,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      if (!auth || !firestore) return;
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
