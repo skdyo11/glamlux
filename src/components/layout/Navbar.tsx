@@ -75,8 +75,8 @@ export function Navbar() {
     <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-            <Home className="h-4 w-4 text-foreground" strokeWidth={1.5} />
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+            <Home className="h-5 w-5 text-foreground" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -85,26 +85,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-9 w-9 rounded-full"
+        className="h-10 w-10 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-4 w-4 text-foreground" strokeWidth={1.5} /> : <Moon className="h-4 w-4 text-foreground" strokeWidth={1.5} />}
+        {theme === 'dark' ? <Sun className="h-5 w-5 text-foreground" strokeWidth={1.5} /> : <Moon className="h-5 w-5 text-foreground" strokeWidth={1.5} />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-2.5 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground">
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-3 rounded-full text-[10px] font-black uppercase tracking-widest text-foreground">
         {getCurrency()}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-          <Heart className={cn("h-4 w-4 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
+          <Heart className={cn("h-5 w-5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-          <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
+          <ShoppingBag className="h-5 w-5 text-foreground" strokeWidth={1.5} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[8px] font-black border border-background z-20 rounded-full">
               {cartCount}
             </Badge>
           )}
@@ -116,8 +116,8 @@ export function Navbar() {
   const SideMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-          <Menu className="h-5 w-5 text-primary" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+          <Menu className="h-6 w-6 text-primary" strokeWidth={1.5} />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] rounded-r-2xl border-none bg-background/95 backdrop-blur-xl p-0">
@@ -197,11 +197,11 @@ export function Navbar() {
             <SideMenu />
             <Link href="/" className="flex items-center space-x-3 ml-2">
               <Sparkles className="h-5 w-5 text-accent-foreground" />
-              <span className="font-headline text-xl tracking-tighter text-foreground italic">GlamLux</span>
+              <span className="font-headline text-3xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>
 
-          <div className="flex items-center space-x-8 text-[9px] font-black uppercase tracking-[0.2em]">
+          <div className="flex items-center space-x-10 text-[10px] font-black uppercase tracking-[0.3em]">
             {bottomNavLinks.map((link) => (
               <Link 
                 key={link.href} 
@@ -216,18 +216,18 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center pr-4">
+          <div className="flex items-center pr-2">
             <UtilityGroup />
           </div>
         </div>
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-2 shadow-md rounded-2xl">
+      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-1 shadow-md rounded-2xl">
         <div className="flex items-center gap-2">
           <SideMenu />
           <Link href="/" className="flex items-center space-x-1">
-            <span className="font-headline text-lg tracking-tighter text-foreground italic leading-none">GlamLux</span>
+            <span className="font-headline text-2xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
           </Link>
         </div>
 
@@ -247,9 +247,9 @@ export function Navbar() {
                 "p-2.5 rounded-full transition-all duration-300",
                 isActive ? "text-primary bg-primary/5 scale-110" : "text-muted-foreground/60 hover:text-primary/40"
               )}>
-                <Icon className={cn("h-5 w-5")} strokeWidth={1.5} />
+                <Icon className={cn("h-6 w-6")} strokeWidth={1.5} />
               </div>
-              {isActive && <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full" />}
+              {isActive && <div className="absolute -bottom-1 w-1.5 h-1.5 bg-primary rounded-full" />}
             </Link>
           );
         })}
