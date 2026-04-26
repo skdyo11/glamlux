@@ -43,9 +43,10 @@ import {
   Dices,
   Upload,
   Trash2,
-  Check
+  Check,
+  RefreshCw
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
@@ -74,10 +75,10 @@ export default function PartnerPortalPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [imageUploadType, setImageUploadType] = useState<'profile' | 'cover' | null>(null);
   
-  // Customization Extras
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [profilePreviews, setProfilePreviews] = useState<string[]>([]);
+  const [coverPreviews, setCoverPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -132,14 +133,19 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
-  const generatePreviews = () => {
-    const news = [
+  const generatePreviews = useCallback(() => {
+    const profs = [
       `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
       `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
       `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
     ];
-    setProfilePreviews(news);
-  };
+    const covs = [
+      `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
+      `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
+    ];
+    setProfilePreviews(profs);
+    setCoverPreviews(covs);
+  }, []);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) return;
@@ -292,7 +298,6 @@ export default function PartnerPortalPage() {
       
       const reader = new FileReader();
       
-      // Simulate progress
       const interval = setInterval(() => {
         setUploadProgress(prev => Math.min(prev + 15, 90));
       }, 200);
@@ -322,7 +327,7 @@ export default function PartnerPortalPage() {
 
   const openImageModal = (type: 'profile' | 'cover') => {
     setImageUploadType(type);
-    if (type === 'profile') generatePreviews();
+    generatePreviews();
     setActiveSheet('image-upload');
   };
 
@@ -561,14 +566,26 @@ export default function PartnerPortalPage() {
 
       {/* Brand Identity Dialog */}
       <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => { if (!isUploading) setActiveSheet(null); }}>
-        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-sm p-8">
+        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-md p-8 overflow-hidden">
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-3xl font-headline italic text-primary text-center">
-              Brand Identity
-            </DialogTitle>
-            <DialogDescription className="text-center italic text-muted-foreground">
-              Refresh your {imageUploadType} appearance.
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <DialogTitle className="text-3xl font-headline italic text-primary">
+                  Brand Identity
+                </DialogTitle>
+                <DialogDescription className="italic text-muted-foreground">
+                  Choose a look for your {imageUploadType}.
+                </DialogDescription>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={generatePreviews}
+                className="h-10 w-10 rounded-full hover:bg-primary/5 text-primary/40 hover:text-primary transition-all"
+              >
+                <RefreshCw className="h-5 w-5" />
+              </Button>
+            </div>
           </DialogHeader>
 
           {isUploading ? (
@@ -578,18 +595,18 @@ export default function PartnerPortalPage() {
                <Progress value={uploadProgress} className="h-1.5" />
             </div>
           ) : (
-            <div className="space-y-8">
-              {/* Profile Specific Previews */}
+            <div className="space-y-10">
+              {/* Profile Specific Previews (3 items) */}
               {imageUploadType === 'profile' && (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-6">
                   {profilePreviews.map((url, i) => (
                     <button 
                       key={i} 
                       onClick={() => handleApplyIdentity(url)}
-                      className="relative aspect-square rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-md bg-muted"
+                      className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1"
                     >
-                      <Image src={url} alt="Preview" fill className="object-cover" />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <Image src={url} alt="Profile Option" fill className="object-cover rounded-[1.2rem]" />
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                         <Check className="h-6 w-6 text-white" />
                       </div>
                     </button>
@@ -597,34 +614,39 @@ export default function PartnerPortalPage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-4">
-                <Button 
-                  onClick={() => {
-                    if (imageUploadType === 'profile') {
-                      generatePreviews();
-                    } else {
-                      handleApplyIdentity(`https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`);
-                    }
-                  }}
-                  className="h-16 rounded-2xl bg-primary/5 hover:bg-primary/10 border-2 border-dashed border-primary/20 text-primary font-bold uppercase tracking-widest text-xs flex items-center justify-center shadow-none"
-                >
-                  <Dices className="h-6 w-6 mr-3" /> Roll for Identity
-                </Button>
+              {/* Cover Specific Previews (2 items) */}
+              {imageUploadType === 'cover' && (
+                <div className="grid grid-cols-1 gap-4">
+                  {coverPreviews.map((url, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => handleApplyIdentity(url)}
+                      className="relative h-28 w-full rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl"
+                    >
+                      <Image src={url} alt="Cover Option" fill className="object-cover" />
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <Check className="h-6 w-6 text-white" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
 
+              <div className="space-y-4">
                 <div className="relative py-2">
-                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-                  <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-muted-foreground">
-                    <span className="bg-background px-2">ARTISAN TOOLS</span>
+                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10" /></div>
+                  <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
+                    <span className="bg-background px-4">OR CUSTOM UPLOAD</span>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                    <Button 
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex-grow h-16 rounded-2xl border-primary/20 bg-background text-primary font-bold uppercase tracking-widest text-xs shadow-sm hover:bg-primary/5"
+                    className="flex-grow h-16 rounded-2xl border-primary/10 bg-background/50 text-primary font-bold uppercase tracking-widest text-[10px] shadow-sm hover:bg-primary/5 active:scale-95"
                   >
-                    <Upload className="h-6 w-6 mr-3" /> Upload
+                    <Upload className="h-5 w-5 mr-3" /> Select File
                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
                   </Button>
 
@@ -632,9 +654,9 @@ export default function PartnerPortalPage() {
                     <Button 
                       variant="ghost"
                       onClick={handleRemoveImage}
-                      className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border-2 border-transparent hover:border-destructive/20"
+                      className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border border-destructive/10 transition-colors"
                     >
-                      <Trash2 className="h-6 w-6" />
+                      <Trash2 className="h-5 w-5" />
                     </Button>
                   )}
                 </div>
@@ -642,8 +664,8 @@ export default function PartnerPortalPage() {
             </div>
           )}
 
-          <DialogFooter className="mt-6">
-             <p className="text-[9px] uppercase font-black tracking-widest text-muted-foreground/40 text-center w-full">Artisan standard requirements apply.</p>
+          <DialogFooter className="mt-8 border-t border-primary/5 pt-6">
+             <p className="text-[9px] uppercase font-black tracking-[0.3em] text-primary/20 text-center w-full">Artisan Registry • Identity Management</p>
           </DialogFooter>
         </DialogContent>
       </Dialog>
