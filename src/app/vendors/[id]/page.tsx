@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -72,9 +71,9 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pb-32 pt-16 md:pt-0">
-        <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden">
-          <div className="absolute inset-0">
+      <main className="pb-32 pt-24 md:pt-32">
+        <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden rounded-b-[4rem] mx-4 md:mx-8">
+          <div className="absolute inset-0 z-0">
             <Carousel 
               plugins={[plugin.current]}
               className="w-full h-full"
@@ -97,11 +96,11 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
               </CarouselContent>
             </Carousel>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none z-0" />
           
           <div className="container mx-auto px-6 relative z-10">
-             <div className="max-w-4xl space-y-6">
-                <div className="flex flex-col gap-4">
+             <div className="max-w-4xl space-y-8">
+                <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-4">
                     <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-3 py-1 rounded-full shadow-2xl">
                       <div className="w-1 h-1 rounded-full bg-primary" />
@@ -127,19 +126,21 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                     <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Elite Artisan Registry</span>
                   </div>
                 </div>
-                <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary leading-none">
-                  {vendor.name}
-                </h1>
-                <div className="flex flex-wrap items-center gap-4 text-sm italic text-muted-foreground pt-4">
-                   <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
-                     <MapPin className="h-4 w-4 text-rose-500" /> {vendor.areaTag}
-                   </div>
-                   <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
-                     <Star className="h-4 w-4 fill-primary text-primary" /> {vendor.rating} Artisan Rating
-                   </div>
-                   <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
-                     <ShieldCheck className="h-4 w-4 text-rose-600" /> Verified Studio
-                   </div>
+                <div className="space-y-4">
+                  <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary leading-none">
+                    {vendor.name}
+                  </h1>
+                  <div className="flex flex-wrap items-center gap-4 text-sm italic text-muted-foreground pt-2">
+                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                       <MapPin className="h-4 w-4 text-rose-500" /> {vendor.areaTag}
+                     </div>
+                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                       <Star className="h-4 w-4 fill-primary text-primary" /> {vendor.rating} Artisan Rating
+                     </div>
+                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                       <ShieldCheck className="h-4 w-4 text-rose-600" /> Verified Studio
+                     </div>
+                  </div>
                 </div>
              </div>
           </div>
