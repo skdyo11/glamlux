@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { 
   Sheet, 
@@ -77,6 +78,7 @@ export default function PartnerPortalPage() {
   
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
   const [profilePreviews, setProfilePreviews] = useState<string[]>([]);
   const [coverPreviews, setCoverPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -134,17 +136,22 @@ export default function PartnerPortalPage() {
   }, [user, firestore, hasBusiness]);
 
   const generatePreviews = useCallback(() => {
-    const profs = [
-      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
-      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
-      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
-    ];
-    const covs = [
-      `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
-      `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
-    ];
-    setProfilePreviews(profs);
-    setCoverPreviews(covs);
+    setIsRolling(true);
+    // Add small delay for rolling animation
+    setTimeout(() => {
+      const profs = [
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+      ];
+      const covs = [
+        `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
+        `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
+      ];
+      setProfilePreviews(profs);
+      setCoverPreviews(covs);
+      setIsRolling(false);
+    }, 600);
   }, []);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
@@ -566,107 +573,116 @@ export default function PartnerPortalPage() {
 
       {/* Brand Identity Dialog */}
       <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => { if (!isUploading) setActiveSheet(null); }}>
-        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-md p-8 overflow-hidden">
-          <DialogHeader className="mb-6">
-            <div className="flex items-center justify-between">
-              <div className="text-left">
-                <DialogTitle className="text-3xl font-headline italic text-primary">
-                  Brand Identity
-                </DialogTitle>
-                <DialogDescription className="italic text-muted-foreground">
-                  Choose a look for your {imageUploadType}.
-                </DialogDescription>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={generatePreviews}
-                className="h-10 w-10 rounded-full hover:bg-primary/5 text-primary/40 hover:text-primary transition-all"
-              >
-                <RefreshCw className="h-5 w-5" />
-              </Button>
-            </div>
-          </DialogHeader>
-
-          {isUploading ? (
-            <div className="py-12 space-y-6 text-center">
-               <Sparkles className="h-8 w-8 mx-auto animate-pulse text-primary" />
-               <p className="text-sm font-bold uppercase tracking-widest opacity-60">Synchronizing with Gallery...</p>
-               <Progress value={uploadProgress} className="h-1.5" />
-            </div>
-          ) : (
-            <div className="space-y-10">
-              {/* Profile Specific Previews (3 items) */}
-              {imageUploadType === 'profile' && (
-                <div className="grid grid-cols-3 gap-6">
-                  {profilePreviews.map((url, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => handleApplyIdentity(url)}
-                      className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1"
-                    >
-                      <Image src={url} alt="Profile Option" fill className="object-cover rounded-[1.2rem]" />
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Check className="h-6 w-6 text-white" />
-                      </div>
-                    </button>
-                  ))}
+        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-md p-0 overflow-hidden flex flex-col max-h-[90dvh]">
+          <ScrollArea className="flex-1 w-full">
+            <div className="p-8 space-y-10">
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <DialogTitle className="text-3xl font-headline italic text-primary">
+                      Brand Identity
+                    </DialogTitle>
+                    <DialogDescription className="italic text-muted-foreground">
+                      Choose a look for your {imageUploadType}.
+                    </DialogDescription>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    disabled={isRolling}
+                    onClick={generatePreviews}
+                    className="h-10 w-10 rounded-full hover:bg-primary/5 text-primary/40 hover:text-primary transition-all group"
+                  >
+                    <RefreshCw className={cn("h-5 w-5 transition-transform duration-500", isRolling && "animate-spin")} />
+                  </Button>
                 </div>
-              )}
+              </DialogHeader>
 
-              {/* Cover Specific Previews (2 items) */}
-              {imageUploadType === 'cover' && (
-                <div className="grid grid-cols-1 gap-4">
-                  {coverPreviews.map((url, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => handleApplyIdentity(url)}
-                      className="relative h-28 w-full rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl"
-                    >
-                      <Image src={url} alt="Cover Option" fill className="object-cover" />
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Check className="h-6 w-6 text-white" />
-                      </div>
-                    </button>
-                  ))}
+              {isUploading ? (
+                <div className="py-12 space-y-6 text-center">
+                   <Sparkles className="h-8 w-8 mx-auto animate-pulse text-primary" />
+                   <p className="text-sm font-bold uppercase tracking-widest opacity-60">Synchronizing with Gallery...</p>
+                   <Progress value={uploadProgress} className="h-1.5" />
                 </div>
-              )}
+              ) : (
+                <div className="space-y-10">
+                  {/* Profile Specific Previews (3 items) */}
+                  {imageUploadType === 'profile' && (
+                    <div className="grid grid-cols-3 gap-4 md:gap-6">
+                      {isRolling ? (
+                        [1, 2, 3].map(i => <Skeleton key={i} className="aspect-square rounded-[1.5rem]" />)
+                      ) : profilePreviews.map((url, i) => (
+                        <button 
+                          key={i} 
+                          onClick={() => handleApplyIdentity(url)}
+                          className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1 animate-in fade-in zoom-in duration-300"
+                        >
+                          <Image src={url} alt="Profile Option" fill className="object-cover rounded-[1.2rem]" />
+                          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <Check className="h-6 w-6 text-white" />
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-              <div className="space-y-4">
-                <div className="relative py-2">
-                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10" /></div>
-                  <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
-                    <span className="bg-background px-4">OR CUSTOM UPLOAD</span>
+                  {/* Cover Specific Previews (2 items) */}
+                  {imageUploadType === 'cover' && (
+                    <div className="grid grid-cols-1 gap-4">
+                      {isRolling ? (
+                        [1, 2].map(i => <Skeleton key={i} className="h-28 w-full rounded-2xl" />)
+                      ) : coverPreviews.map((url, i) => (
+                        <button 
+                          key={i} 
+                          onClick={() => handleApplyIdentity(url)}
+                          className="relative h-28 w-full rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-300"
+                        >
+                          <Image src={url} alt="Cover Option" fill className="object-cover" />
+                          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <Check className="h-6 w-6 text-white" />
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <div className="relative py-2">
+                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10" /></div>
+                      <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
+                        <span className="bg-background px-4">OR CUSTOM UPLOAD</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                       <Button 
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex-grow h-16 rounded-2xl border-primary/10 bg-background/50 text-primary font-bold uppercase tracking-widest text-[10px] shadow-sm hover:bg-primary/5 active:scale-95"
+                      >
+                        <Upload className="h-5 w-5 mr-3" /> Select File
+                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                      </Button>
+
+                      {((imageUploadType === 'cover' && myBusiness?.myCover) || (imageUploadType === 'profile' && myBusiness?.myImage)) && (
+                        <Button 
+                          variant="ghost"
+                          onClick={handleRemoveImage}
+                          className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border border-destructive/10 transition-colors"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
+              )}
 
-                <div className="flex gap-3">
-                   <Button 
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-grow h-16 rounded-2xl border-primary/10 bg-background/50 text-primary font-bold uppercase tracking-widest text-[10px] shadow-sm hover:bg-primary/5 active:scale-95"
-                  >
-                    <Upload className="h-5 w-5 mr-3" /> Select File
-                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
-                  </Button>
-
-                  {((imageUploadType === 'cover' && myBusiness?.myCover) || (imageUploadType === 'profile' && myBusiness?.myImage)) && (
-                    <Button 
-                      variant="ghost"
-                      onClick={handleRemoveImage}
-                      className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border border-destructive/10 transition-colors"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </Button>
-                  )}
-                </div>
-              </div>
+              <DialogFooter className="mt-8 border-t border-primary/5 pt-6">
+                 <p className="text-[9px] uppercase font-black tracking-[0.3em] text-primary/20 text-center w-full">Artisan Registry • Identity Management</p>
+              </DialogFooter>
             </div>
-          )}
-
-          <DialogFooter className="mt-8 border-t border-primary/5 pt-6">
-             <p className="text-[9px] uppercase font-black tracking-[0.3em] text-primary/20 text-center w-full">Artisan Registry • Identity Management</p>
-          </DialogFooter>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
