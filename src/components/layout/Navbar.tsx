@@ -49,11 +49,11 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
+    <div className="flex items-center p-0.5 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Home className="h-4 w-4 text-foreground" />
+          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full">
+            <Home className="h-3.5 w-3.5 text-foreground" />
           </Button>
         </Link>
       )}
@@ -62,26 +62,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-8 w-8 rounded-full"
+        className="h-7 w-7 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-4 w-4 text-foreground" /> : <Moon className="h-4 w-4 text-foreground" />}
+        {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" /> : <Moon className="h-3.5 w-3.5 text-foreground" />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-8 px-2 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground">
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-7 px-1.5 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground">
         {getCurrency()}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-          <Heart className={cn("h-4 w-4 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
+        <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
+          <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-          <ShoppingBag className="h-4 w-4 text-foreground" />
+        <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
+          <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-3 w-3 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[5px] font-black border border-background z-20 rounded-full">
               {cartCount}
             </Badge>
           )}
@@ -93,13 +93,13 @@ export function Navbar() {
           variant="ghost" 
           size="icon" 
           onClick={handleLogout}
-          className="h-8 w-8 rounded-full ml-1"
+          className="h-7 w-7 rounded-full ml-0.5"
         >
-          <LogOut className="h-3.5 w-3.5 text-foreground/40" />
+          <LogOut className="h-3 w-3 text-foreground/40" />
         </Button>
       ) : (
         <Link href="/login">
-          <Button variant="ghost" className="h-8 px-3 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
+          <Button variant="ghost" className="h-7 px-2.5 rounded-full text-[6px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
             Admin
           </Button>
         </Link>
