@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardFooter, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, MapPin, Search, ArrowRight, Navigation, Heart } from 'lucide-react';
+import { Star, MapPin, Search, ArrowRight, Navigation, Heart, Sparkles, Clock, Percent } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function VendorsPage() {
   const { getCurrency, isFavoriteVendor, toggleFavoriteVendor } = useStore();
@@ -32,6 +33,13 @@ export default function VendorsPage() {
   }, [firestore]);
 
   const { data: vendors, isLoading } = useCollection(vendorsQuery);
+
+  const dealsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'deals'), limit(10));
+  }, [firestore]);
+
+  const { data: featuredDeals, isLoading: isLoadingDeals } = useCollection(dealsQuery);
 
   const uniqueAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.areaTag?.split(',').pop()?.trim() || v.areaTag).filter(Boolean)))];
 
@@ -55,10 +63,10 @@ export default function VendorsPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-16 md:py-24">
-        <header className="max-w-4xl mb-20 space-y-6">
+        <header className="max-w-4xl mb-12 space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-top-2 duration-500">
-            <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Parlours Section</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Sanctuaries Registry</span>
           </div>
           <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
           <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
@@ -66,6 +74,52 @@ export default function VendorsPage() {
           </p>
         </header>
 
+        {/* Featured Deals & Combo Section */}
+        <section className="mb-24 space-y-8">
+          <div className="flex items-center justify-between px-2">
+             <div className="space-y-1">
+               <h2 className="text-3xl md:text-4xl font-headline italic text-primary">Artisan Deals & Combos</h2>
+               <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Limited Availability Discounts</p>
+             </div>
+             <Link href="/deals" className="text-[10px] font-black uppercase tracking-widest text-accent-foreground hover:underline">See All Deals</Link>
+          </div>
+
+          <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
+             {isLoadingDeals ? (
+               [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-80 shrink-0 rounded-[2.5rem]" />)
+             ) : featuredDeals?.map((deal) => (
+               <Link key={deal.id} href={`/deals/${deal.id}`} className="snap-start shrink-0 group">
+                 <Card className="w-80 h-full rounded-[2.5rem] border-none bg-white dark:bg-black/20 shadow-xl overflow-hidden hover:shadow-2xl transition-all ring-1 ring-primary/5 flex flex-col">
+                   <div className="relative h-40 overflow-hidden">
+                     <Image 
+                       src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 
+                       alt={deal.name} 
+                       fill 
+                       className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                     />
+                     <div className="absolute top-4 left-4">
+                        <Badge className="bg-accent text-accent-foreground border-none text-[8px] font-black uppercase px-3 py-1.5 rounded-full shadow-lg">
+                          <Percent className="h-2 w-2 mr-1 inline" /> {Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% OFF
+                        </Badge>
+                     </div>
+                   </div>
+                   <CardContent className="p-6 flex-grow space-y-3">
+                      <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-primary/40">
+                         <Clock className="h-2.5 w-2.5" /> Limited Combo
+                      </div>
+                      <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{deal.name}</h3>
+                      <div className="flex items-baseline gap-2 pt-2">
+                        <span className="text-xl font-bold text-accent-foreground">{getCurrency()} {deal.discountPrice?.toLocaleString()}</span>
+                        <span className="text-[10px] text-muted-foreground line-through opacity-40">{getCurrency()} {deal.basePrice?.toLocaleString()}</span>
+                      </div>
+                   </CardContent>
+                 </Card>
+               </Link>
+             ))}
+          </div>
+        </section>
+
+        {/* Filter Section */}
         <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/20 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
           <div className="relative flex-grow w-full">
             <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />

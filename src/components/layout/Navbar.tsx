@@ -18,7 +18,8 @@ import {
   Menu,
   User,
   Settings,
-  Globe
+  Globe,
+  Package
 } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
@@ -63,10 +64,11 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
+  // Updated Nav order: Products, Parlours, CChat
   const bottomNavLinks = useMemo(() => [
-    { href: '/deals', label: 'Services', icon: Scissors },
-    { href: '/shop', label: 'Shops', icon: Store },
-    { href: '/messages', label: 'Chat', icon: MessageSquare },
+    { href: '/shop', label: 'Products', icon: Package },
+    { href: '/vendors', label: 'Parlours', icon: Store },
+    { href: '/messages', label: 'CChat', icon: MessageSquare },
   ], []);
 
   if (!mounted) return null;
