@@ -115,7 +115,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                   </div>
                   
                   <div className="space-y-4">
-                    <h1 className="text-6xl md:text-[8rem] font-headline tracking-tighter italic text-white leading-tight drop-shadow-2xl">
+                    <h1 className="text-5xl md:text-[8rem] font-headline tracking-tighter italic text-white leading-tight drop-shadow-2xl">
                       {vendor.name}
                     </h1>
                     <div className="flex flex-wrap items-center gap-4 pt-4">
