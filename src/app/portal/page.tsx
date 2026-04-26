@@ -294,142 +294,166 @@ export default function PartnerPortalPage() {
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-4 md:py-12">
-        <header className="flex flex-col gap-3 mb-8 pt-4 md:pt-20">
-          <div className="flex justify-between items-start">
-            <div className="space-y-0.5">
-              <Badge className="bg-primary/10 text-primary rounded-full px-2 py-0.5 uppercase tracking-widest text-[7px] font-black">Owner Area</Badge>
-              <h1 className="text-3xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">{myBusiness?.name || 'Management'}</h1>
-              <p className="text-[10px] uppercase font-bold tracking-widest opacity-40 text-primary">{user.email}</p>
+      <main className="container mx-auto px-0 md:px-6 py-4 md:py-12 pt-14 md:pt-24">
+        {/* Cover Photo & Profile Header (Facebook Style) */}
+        <div className="relative mb-12">
+          {/* Cover Photo */}
+          <div className="w-full h-48 md:h-64 lg:h-80 rounded-b-[2.5rem] md:rounded-[3rem] overflow-hidden relative shadow-xl">
+            <Image
+              src={`https://picsum.photos/seed/${myBusiness?.id || 'portal'}/1600/400`}
+              alt="Artisan Cover"
+              fill
+              className="object-cover brightness-[0.85]"
+              priority
+              data-ai-hint="luxury interior"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
+
+          {/* Profile Section Overlap */}
+          <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
+            <div className="h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0">
+              <div className="h-full w-full rounded-[2.5rem] bg-primary/5 flex items-center justify-center text-primary relative overflow-hidden">
+                {myBusiness?.imageUrls?.[0] ? (
+                  <Image src={myBusiness.imageUrls[0]} alt="Logo" fill className="object-cover" />
+                ) : (
+                  <Store className="h-12 w-12 md:h-16 md:w-16 opacity-10" />
+                )}
+              </div>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setActiveSheet('profile')}
-              className="rounded-full border-primary/10 text-primary hover:bg-primary/5 h-10 px-6 font-bold uppercase tracking-widest text-[9px]"
-            >
-              <Settings className="h-3 w-3 mr-2" /> Customize Profile
-            </Button>
-          </div>
+            
+            <div className="flex-grow pb-2 space-y-3">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                <h1 className="text-4xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none drop-shadow-sm">
+                  {myBusiness?.name || 'Artisan Studio'}
+                </h1>
+                <Badge className="bg-primary/10 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[8px] font-black border-none h-fit shadow-sm">
+                  Verified Artisan
+                </Badge>
+              </div>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 text-xs font-bold uppercase tracking-widest text-primary/40">
+                <span className="flex items-center gap-2"><Navigation className="h-4 w-4 text-rose-400" /> {myBusiness?.areaTag}</span>
+                <span className="flex items-center gap-2"><Users className="h-4 w-4 text-primary/30" /> {arrivals.length} Clients Today</span>
+                <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-emerald-400" /> {arrivals.length * 15}K Revenue</span>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-             <Card className="rounded-xl border-none bg-primary p-2 md:p-3 space-y-0.5 shadow-sm text-primary-foreground">
-               <TrendingUp className="h-2 w-2 opacity-60" />
-               <p className="text-lg md:text-2xl font-headline italic tracking-tighter leading-none">{arrivals.length * 15}K</p>
-               <p className="text-[7px] uppercase font-black tracking-widest opacity-60">Estimated Revenue ({getCurrency()})</p>
-             </Card>
-             <Card className="rounded-xl border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 shadow-sm">
-               <Users className="h-2 w-2 opacity-40 text-primary" />
-               <p className="text-lg md:text-2xl font-headline italic tracking-tighter text-primary leading-none">{arrivals.filter(a => a.deliveryStatus !== 'Delivered').length}</p>
-               <p className="text-[7px] uppercase font-black tracking-widest opacity-40 text-primary">Active Flows</p>
-             </Card>
-             <Card 
-                className="rounded-xl border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-sm group"
-                onClick={() => setActiveSheet('delivery')}
-             >
-                <Navigation className="h-2 w-2 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                <p className="text-[7px] uppercase font-black tracking-widest text-primary">Logistics</p>
-                <p className="text-[8px] italic opacity-80 text-primary/70 leading-none">Join Delivery network</p>
-             </Card>
-          </div>
-        </header>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
-          <TabsList className="bg-transparent h-auto gap-8 border-b w-full justify-start rounded-none overflow-x-auto scrollbar-hide">
-            {['bookings', 'items', 'services'].map((id) => (
-              <TabsTrigger 
-                key={id} value={id} 
-                className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] text-primary"
+            <div className="pb-2 flex gap-3 w-full md:w-auto px-6 md:px-0">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSheet('profile')}
+                className="flex-1 md:flex-none rounded-full border-primary/10 bg-white/60 backdrop-blur-md text-primary font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg hover:bg-primary/5"
               >
-                {id === 'bookings' ? 'Queue' : id === 'items' ? 'Products' : 'Services'}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          <TabsContent value="bookings" className="space-y-8">
-            <div className="flex items-center gap-3 mb-6">
-              <Clock className="h-6 w-6 text-primary/40" />
-              <h3 className="text-3xl font-headline italic text-primary">Arrival Queue</h3>
+                <Edit2 className="h-4 w-4 mr-2" /> Customize
+              </Button>
+              <Button 
+                onClick={() => setActiveSheet('delivery')}
+                className="flex-1 md:flex-none rounded-full bg-primary text-primary-foreground font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg transition-transform active:scale-95"
+              >
+                <Navigation className="h-4 w-4 mr-2" /> Logistics
+              </Button>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide">
-              {arrivals.map((a) => (
-                <Card 
-                  key={a.id} 
-                  className="min-w-[280px] rounded-2xl border-none bg-white/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
-                  onClick={() => setSelectedArrival(a)}
+          </div>
+        </div>
+
+        <div className="px-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
+            <TabsList className="bg-transparent h-auto gap-8 border-b w-full justify-center md:justify-start rounded-none overflow-x-auto scrollbar-hide">
+              {['bookings', 'items', 'services'].map((id) => (
+                <TabsTrigger 
+                  key={id} value={id} 
+                  className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] text-primary"
                 >
-                  <div className="flex justify-between items-start">
+                  {id === 'bookings' ? 'Queue' : id === 'items' ? 'Inventory' : 'Services'}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            <TabsContent value="bookings" className="space-y-8">
+              <div className="flex items-center gap-3 mb-6">
+                <Clock className="h-6 w-6 text-primary/40" />
+                <h3 className="text-3xl font-headline italic text-primary">Arrival Queue</h3>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide">
+                {arrivals.map((a) => (
+                  <Card 
+                    key={a.id} 
+                    className="min-w-[280px] rounded-2xl border-none bg-white/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
+                    onClick={() => setSelectedArrival(a)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold text-primary opacity-40">Identity</p>
+                        <h4 className="font-headline text-2xl text-primary italic truncate max-w-[180px]">{a.userName || a.userPhone}</h4>
+                      </div>
+                      <Badge variant="outline" className="rounded-full text-[8px] uppercase font-black">{a.deliveryStatus}</Badge>
+                    </div>
+                  </Card>
+                ))}
+                {arrivals.length === 0 && (
+                  <div className="w-full py-20 text-center space-y-4">
+                     <Users className="h-10 w-10 mx-auto text-primary/10" />
+                     <p className="italic text-muted-foreground opacity-50">No active bookings detected.</p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="items" className="space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Artisan Inventory</h3>
+                <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
+                  <Plus className="h-3 w-3 mr-2" /> Add Product
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                {myProducts.map((p) => (
+                  <div key={p.id} className="space-y-3 text-center group relative">
+                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
+                      <Image src={p.imageUrl || 'https://picsum.photos/seed/product-placeholder/400/500'} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                         <Button size="icon" variant="secondary" className="rounded-full" onClick={() => handleEdit('product', p)}>
+                           <Edit2 className="h-4 w-4" />
+                         </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-0.5">
+                      <h4 className="font-headline text-xl italic text-primary truncate px-2">{p.name}</h4>
+                      <p className="text-[10px] font-bold text-accent-foreground uppercase tracking-widest">{getCurrency()} {p.price?.toLocaleString()}</p>
+                      <Button variant="link" size="sm" onClick={() => handleEdit('product', p)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0">Customize</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="services" className="space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Studio Services</h3>
+                <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
+                  <Plus className="h-3 w-3 mr-2" /> Add Service
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {myDeals.map((d) => (
+                  <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-primary opacity-40">Identity</p>
-                      <h4 className="font-headline text-2xl text-primary italic truncate max-w-[180px]">{a.userName || a.userPhone}</h4>
+                      <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
+                      <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
+                      <p className="text-xs font-bold text-accent-foreground">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit('service', d)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0 mt-2 hover:bg-transparent">
+                        <Edit2 className="h-3 w-3 mr-1" /> Customize
+                      </Button>
                     </div>
-                    <Badge variant="outline" className="rounded-full text-[8px] uppercase font-black">{a.deliveryStatus}</Badge>
-                  </div>
-                </Card>
-              ))}
-              {arrivals.length === 0 && (
-                <div className="w-full py-20 text-center space-y-4">
-                   <Users className="h-10 w-10 mx-auto text-primary/10" />
-                   <p className="italic text-muted-foreground opacity-50">No active bookings detected.</p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="items" className="space-y-8">
-            <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Inventory</h3>
-              <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
-                <Plus className="h-3 w-3 mr-2" /> Add Product
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {myProducts.map((p) => (
-                <div key={p.id} className="space-y-3 text-center group relative">
-                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
-                    <Image src={p.imageUrl || 'https://picsum.photos/seed/product-placeholder/400/500'} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                       <Button size="icon" variant="secondary" className="rounded-full" onClick={() => handleEdit('product', p)}>
-                         <Edit2 className="h-4 w-4" />
-                       </Button>
+                    <div className="h-14 w-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary/30">
+                      <Scissors className="h-6 w-6" />
                     </div>
-                  </div>
-                  <div className="space-y-0.5">
-                    <h4 className="font-headline text-xl italic text-primary truncate px-2">{p.name}</h4>
-                    <p className="text-[10px] font-bold text-accent-foreground uppercase tracking-widest">{getCurrency()} {p.price?.toLocaleString()}</p>
-                    <Button variant="link" size="sm" onClick={() => handleEdit('product', p)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0">Customize</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="services" className="space-y-8">
-            <div className="flex justify-between items-center">
-              <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Services</h3>
-              <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
-                <Plus className="h-3 w-3 mr-2" /> Add Service
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {myDeals.map((d) => (
-                <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
-                  <div className="space-y-1">
-                    <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
-                    <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
-                    <p className="text-xs font-bold text-accent-foreground">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit('service', d)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0 mt-2 hover:bg-transparent">
-                      <Edit2 className="h-3 w-3 mr-1" /> Customize
-                    </Button>
-                  </div>
-                  <div className="h-14 w-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary/30">
-                    <Scissors className="h-6 w-6" />
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </main>
 
       {/* Item & Deal Listing Dialog */}

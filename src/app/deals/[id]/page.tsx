@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -100,12 +99,12 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
       <main className="container mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <Button asChild variant="ghost" className="-ml-4 text-muted-foreground hover:text-primary rounded-full">
-            <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Deals</Link>
+            <Link href="/deals"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Services</Link>
           </Button>
           <div className="inline-flex items-center gap-4">
              <Button asChild variant="outline" className="rounded-full border-primary/20 text-primary">
                <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
-                 <MessageCircle className="h-4 w-4 mr-2" /> Chat with Parlour
+                 <MessageCircle className="h-4 w-4 mr-2" /> Chat with Studio
                </Link>
              </Button>
           </div>
@@ -133,7 +132,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                   {deal.category}
                 </Badge>
                 <div className="flex items-center gap-1 text-[10px] font-bold text-primary">
-                  <Star className="h-3 w-3 fill-primary" /> {vendor.rating} Artisan Score
+                  <Star className="h-3 w-3 fill-primary" /> {vendor.rating} Artisan Rating
                 </div>
               </div>
               <h1 className="text-5xl md:text-7xl font-headline tracking-tighter leading-tight italic text-primary">{deal.name}</h1>
