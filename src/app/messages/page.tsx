@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -63,8 +62,8 @@ export default function MessagesPage() {
     if (!firestore || !user) return null;
     return query(
       collection(firestore, 'conversations'),
-      where('participants', 'array-contains', user.uid),
-      orderBy('updatedAt', 'desc')
+      where('participants', 'array-contains', user.uid)
+      // Removed orderBy to avoid index-related permission errors during development
     );
   }, [firestore, user?.uid]);
 
@@ -123,9 +122,20 @@ export default function MessagesPage() {
 
   const filteredConversations = useMemo(() => {
     if (!conversations) return [];
-    if (!searchTerm.trim()) return conversations;
+    
+    // Sort manually on client to bypass Firestore index requirements for a smooth prototype
+    const sorted = [...conversations].sort((a, b) => {
+      const getVal = (v: any) => {
+        if (!v) return 0;
+        if (v.seconds) return v.seconds * 1000;
+        return new Date(v).getTime();
+      };
+      return getVal(b.updatedAt) - getVal(a.updatedAt);
+    });
+
+    if (!searchTerm.trim()) return sorted;
     const term = searchTerm.toLowerCase();
-    return conversations.filter(conv => 
+    return sorted.filter(conv => 
       conv.vendorName?.toLowerCase().includes(term) || 
       conv.lastMessage?.toLowerCase().includes(term)
     );
