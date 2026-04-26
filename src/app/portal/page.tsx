@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { 
   Sheet, 
@@ -41,13 +41,15 @@ import {
   Settings,
   Camera,
   Dices,
-  Upload
+  Upload,
+  Trash2,
+  Check
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs } from 'firebase/firestore';
+import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, deleteField } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
@@ -72,6 +74,10 @@ export default function PartnerPortalPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [imageUploadType, setImageUploadType] = useState<'profile' | 'cover' | null>(null);
   
+  // Customization Extras
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [profilePreviews, setProfilePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -125,6 +131,15 @@ export default function PartnerPortalPage() {
       unsubBookings();
     };
   }, [user, firestore, hasBusiness]);
+
+  const generatePreviews = () => {
+    const news = [
+      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+      `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+    ];
+    setProfilePreviews(news);
+  };
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) return;
@@ -241,37 +256,63 @@ export default function PartnerPortalPage() {
     setActiveSheet(type);
   };
 
-  const handleRandomizeImage = async (type: 'profile' | 'cover') => {
-    if (!firestore || !myBusiness) return;
-    const seed = Math.random().toString(36).substring(7);
-    const newUrl = type === 'cover' 
-      ? `https://picsum.photos/seed/${seed}/1600/400`
-      : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}`;
-    
+  const handleApplyIdentity = async (url: string) => {
+    if (!firestore || !myBusiness || !imageUploadType) return;
+    const field = imageUploadType === 'cover' ? 'myCover' : 'myImage';
     try {
-      const field = type === 'cover' ? 'myCover' : 'myImage';
-      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: newUrl });
-      setMyBusiness({ ...myBusiness, [field]: newUrl });
-      toast({ title: "Updated", description: `New ${type} identity generated.` });
+      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: url });
+      setMyBusiness({ ...myBusiness, [field]: url });
+      toast({ title: "Updated", description: `Your ${imageUploadType} identity has been refreshed.` });
+      setActiveSheet(null);
     } catch (e) {
       toast({ variant: "destructive", title: "Update Failed" });
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (!firestore || !myBusiness || !imageUploadType) return;
+    const field = imageUploadType === 'cover' ? 'myCover' : 'myImage';
+    try {
+      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: deleteField() });
+      const updated = { ...myBusiness };
+      delete updated[field];
+      setMyBusiness(updated);
+      toast({ title: "Reverted", description: `${imageUploadType} has been reset to default.` });
+      setActiveSheet(null);
+    } catch (e) {
+      toast({ variant: "destructive", title: "Reset Failed" });
     }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && myBusiness && firestore) {
+      setIsUploading(true);
+      setUploadProgress(10);
+      
       const reader = new FileReader();
+      
+      // Simulate progress
+      const interval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 15, 90));
+      }, 200);
+
       reader.onloadend = async () => {
+        clearInterval(interval);
+        setUploadProgress(100);
         const base64String = reader.result as string;
         const field = imageUploadType === 'cover' ? 'myCover' : 'myImage';
         try {
           await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: base64String });
           setMyBusiness({ ...myBusiness, [field]: base64String });
           toast({ title: "Upload Success", description: `Your ${imageUploadType} has been updated.` });
-          setActiveSheet(null);
-          setImageUploadType(null);
+          setTimeout(() => {
+            setIsUploading(false);
+            setUploadProgress(0);
+            setActiveSheet(null);
+          }, 500);
         } catch (error) {
+          setIsUploading(false);
           toast({ variant: "destructive", title: "Upload Failed" });
         }
       };
@@ -281,6 +322,7 @@ export default function PartnerPortalPage() {
 
   const openImageModal = (type: 'profile' | 'cover') => {
     setImageUploadType(type);
+    if (type === 'profile') generatePreviews();
     setActiveSheet('image-upload');
   };
 
@@ -303,7 +345,7 @@ export default function PartnerPortalPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
             <Card 
               onClick={() => handleStartBusiness('parlour')}
-              className="group cursor-pointer rounded-2xl border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
+              className="group cursor-pointer rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
             >
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Scissors className="h-8 w-8" />
@@ -321,7 +363,7 @@ export default function PartnerPortalPage() {
 
             <Card 
               onClick={() => handleStartBusiness('shop')}
-              className="group cursor-pointer rounded-2xl border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
+              className="group cursor-pointer rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
             >
               <div className="h-16 w-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent-foreground">
                 <ShoppingBag className="h-8 w-8" />
@@ -351,7 +393,7 @@ export default function PartnerPortalPage() {
       
       <main className="container mx-auto px-0 md:px-6 py-4 md:py-12 pt-14 md:pt-24">
         <div className="relative mb-12">
-          {/* Cover Photo with Hover Overlay */}
+          {/* Cover Photo */}
           <div className="w-full h-48 md:h-64 lg:h-80 rounded-b-[2.5rem] md:rounded-[3rem] overflow-hidden relative shadow-xl group">
             <Image
               src={coverImageUrl}
@@ -359,7 +401,6 @@ export default function PartnerPortalPage() {
               fill
               className="object-cover brightness-[0.85] transition-all group-hover:scale-105"
               priority
-              data-ai-hint="luxury interior"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -374,7 +415,7 @@ export default function PartnerPortalPage() {
 
           {/* Profile Section Overlap */}
           <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <div className="group relative h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0 transition-transform active:scale-95">
+            <div className="group relative h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white dark:bg-background p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0 transition-transform active:scale-95">
               <Avatar className="h-full w-full rounded-[2.5rem] overflow-hidden border-none bg-primary/5">
                 <AvatarImage src={profileImageUrl} className="object-cover" />
                 <AvatarFallback className="bg-primary/10 text-primary"><Store className="h-12 w-12 opacity-10" /></AvatarFallback>
@@ -404,7 +445,7 @@ export default function PartnerPortalPage() {
               <Button 
                 variant="outline" 
                 onClick={() => setActiveSheet('profile')}
-                className="flex-1 md:flex-none rounded-full border-primary/10 bg-white/60 backdrop-blur-md text-primary font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg hover:bg-primary/5"
+                className="flex-1 md:flex-none rounded-full border-primary/10 bg-white/60 dark:bg-card/60 backdrop-blur-md text-primary font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg hover:bg-primary/5"
               >
                 <Edit2 className="h-4 w-4 mr-2" /> Customize
               </Button>
@@ -440,7 +481,7 @@ export default function PartnerPortalPage() {
                 {arrivals.map((a) => (
                   <Card 
                     key={a.id} 
-                    className="min-w-[280px] rounded-2xl border-none bg-white/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
+                    className="min-w-[280px] rounded-2xl border-none bg-white/40 dark:bg-card/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
                     onClick={() => setSelectedArrival(a)}
                   >
                     <div className="flex justify-between items-start">
@@ -498,7 +539,7 @@ export default function PartnerPortalPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {myDeals.map((d) => (
-                  <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
+                  <Card key={d.id} className="p-8 rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
                     <div className="space-y-1">
                       <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
                       <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
@@ -518,42 +559,90 @@ export default function PartnerPortalPage() {
         </div>
       </main>
 
-      {/* Identity Update Dialog (Randomize / Upload) */}
-      <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-3xl border-none bg-white shadow-3xl max-w-sm">
-          <DialogHeader>
+      {/* Brand Identity Dialog */}
+      <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => { if (!isUploading) setActiveSheet(null); }}>
+        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-sm p-8">
+          <DialogHeader className="mb-6">
             <DialogTitle className="text-3xl font-headline italic text-primary text-center">
               Brand Identity
             </DialogTitle>
-            <DialogDescription className="text-center italic">
+            <DialogDescription className="text-center italic text-muted-foreground">
               Refresh your {imageUploadType} appearance.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-8 space-y-6">
-            <div className="grid grid-cols-1 gap-4">
-              <Button 
-                onClick={() => handleRandomizeImage(imageUploadType!)}
-                className="h-16 rounded-2xl bg-primary/5 hover:bg-primary/10 border-2 border-dashed border-primary/20 text-primary font-bold uppercase tracking-widest text-xs"
-              >
-                <Dices className="h-6 w-6 mr-3" /> Roll for Identity
-              </Button>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
-                  <span className="bg-white px-2">OR</span>
+
+          {isUploading ? (
+            <div className="py-12 space-y-6 text-center">
+               <Sparkles className="h-8 w-8 mx-auto animate-pulse text-primary" />
+               <p className="text-sm font-bold uppercase tracking-widest opacity-60">Synchronizing with Gallery...</p>
+               <Progress value={uploadProgress} className="h-1.5" />
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* Profile Specific Previews */}
+              {imageUploadType === 'profile' && (
+                <div className="grid grid-cols-3 gap-4">
+                  {profilePreviews.map((url, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => handleApplyIdentity(url)}
+                      className="relative aspect-square rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-md bg-muted"
+                    >
+                      <Image src={url} alt="Preview" fill className="object-cover" />
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <Check className="h-6 w-6 text-white" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-4">
+                <Button 
+                  onClick={() => {
+                    if (imageUploadType === 'profile') {
+                      generatePreviews();
+                    } else {
+                      handleApplyIdentity(`https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`);
+                    }
+                  }}
+                  className="h-16 rounded-2xl bg-primary/5 hover:bg-primary/10 border-2 border-dashed border-primary/20 text-primary font-bold uppercase tracking-widest text-xs flex items-center justify-center shadow-none"
+                >
+                  <Dices className="h-6 w-6 mr-3" /> Roll for Identity
+                </Button>
+
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+                  <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-muted-foreground">
+                    <span className="bg-background px-2">ARTISAN TOOLS</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                   <Button 
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-grow h-16 rounded-2xl border-primary/20 bg-background text-primary font-bold uppercase tracking-widest text-xs shadow-sm hover:bg-primary/5"
+                  >
+                    <Upload className="h-6 w-6 mr-3" /> Upload
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                  </Button>
+
+                  {((imageUploadType === 'cover' && myBusiness?.myCover) || (imageUploadType === 'profile' && myBusiness?.myImage)) && (
+                    <Button 
+                      variant="ghost"
+                      onClick={handleRemoveImage}
+                      className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border-2 border-transparent hover:border-destructive/20"
+                    >
+                      <Trash2 className="h-6 w-6" />
+                    </Button>
+                  )}
                 </div>
               </div>
-              <Button 
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                className="h-16 rounded-2xl border-primary/20 bg-white text-primary font-bold uppercase tracking-widest text-xs shadow-sm"
-              >
-                <Upload className="h-6 w-6 mr-3" /> Upload Selection
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
-              </Button>
             </div>
-          </div>
-          <DialogFooter>
+          )}
+
+          <DialogFooter className="mt-6">
              <p className="text-[9px] uppercase font-black tracking-widest text-muted-foreground/40 text-center w-full">Artisan standard requirements apply.</p>
           </DialogFooter>
         </DialogContent>
@@ -561,12 +650,12 @@ export default function PartnerPortalPage() {
 
       {/* Item & Deal Listing Dialog */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => { setActiveSheet(null); setEditingItem(null); }}>
-        <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
+        <DialogContent className="rounded-2xl border-none bg-background text-foreground shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-3xl font-headline italic text-primary">
               {activeSheet === 'profile' ? 'Business Profile' : editingItem ? 'Customize Item' : 'New Listing'}
             </DialogTitle>
-            <DialogDescription className="italic">
+            <DialogDescription className="italic text-muted-foreground">
               {activeSheet === 'profile' ? 'Update your artisan identity.' : 'Provide details for your marketplace offering.'}
             </DialogDescription>
           </DialogHeader>
@@ -620,10 +709,10 @@ export default function PartnerPortalPage() {
 
       {/* Logistics Enrollment Dialog */}
       <Dialog open={activeSheet === 'delivery'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
+        <DialogContent className="rounded-2xl border-none bg-background text-foreground shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Logistics</DialogTitle>
-            <DialogDescription className="italic">Join our elite delivery network to reach more clients.</DialogDescription>
+            <DialogDescription className="italic text-muted-foreground">Join our elite delivery network to reach more clients.</DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
             <p className="text-sm text-muted-foreground italic leading-relaxed">
@@ -653,13 +742,13 @@ export default function PartnerPortalPage() {
       </Dialog>
 
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-2xl border-none p-10 bg-white/95 shadow-2xl">
+        <SheetContent side="bottom" className="rounded-t-2xl border-none p-10 bg-background text-foreground shadow-2xl">
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-6">
               <div className="text-center space-y-2">
                 <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase px-4 py-1.5 rounded-full">Ref: {selectedArrival.referenceCode}</Badge>
                 <SheetTitle className="text-4xl font-headline italic text-primary">{selectedArrival.userName || selectedArrival.userPhone}</SheetTitle>
-                <SheetDescription className="italic">Manage your guest booking status.</SheetDescription>
+                <SheetDescription className="italic text-muted-foreground">Manage your guest booking status.</SheetDescription>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl uppercase tracking-widest text-[10px]">Verify</Button>
