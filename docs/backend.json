@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "LocalUser": {
@@ -15,7 +14,7 @@
         "latitude": { "type": "number" },
         "longitude": { "type": "number" }
       },
-      "required": ["id", "name", "phoneNumber"]
+      "required": ["id", "name"]
     },
     "Parlour": {
       "$schema": "http://json-schema.org/draft-07/schema#",

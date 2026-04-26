@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -58,7 +57,6 @@ export default function CartPage() {
   const showTracker = latestOrder && latestOrder.deliveryStatus !== 'Delivered';
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const commission = subtotal * 0.15; 
   const totalDueNow = subtotal;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,8 +90,8 @@ export default function CartPage() {
   const handleCheckout = async () => {
     if (isCheckingOut) return;
     
-    if (!userName.trim() || !phoneNumber.trim()) {
-      toast({ variant: "destructive", title: "Contact Required", description: "Name and phone are required for COD identification." });
+    if (!userName.trim()) {
+      toast({ variant: "destructive", title: "Contact Required", description: "A name is required for order identification." });
       return;
     }
 
@@ -101,7 +99,6 @@ export default function CartPage() {
 
     try {
       let currentUser = user;
-      // If not logged in, we stay anonymous for low-friction
       if (!currentUser && auth) {
         const cred = await signInAnonymously(auth);
         currentUser = cred.user;
@@ -118,7 +115,7 @@ export default function CartPage() {
         id: newBookingRef.id,
         localUserId: currentUser.uid,
         userName: userName,
-        userPhone: phoneNumber,
+        userPhone: phoneNumber || 'Not provided',
         referenceCode: refCode,
         totalPrice: totalDueNow,
         currency: getCurrency(),
@@ -137,7 +134,7 @@ export default function CartPage() {
       
       toast({
         title: "Order Placed",
-        description: `Your COD order ${refCode} is confirmed.`,
+        description: `Your order ${refCode} is confirmed.`,
       });
 
       clearCart();
@@ -145,7 +142,7 @@ export default function CartPage() {
     } catch (error) {
       console.error("Checkout failed", error);
       setIsCheckingOut(false);
-      toast({ variant: "destructive", title: "Order Error", description: "Could not place your COD order." });
+      toast({ variant: "destructive", title: "Order Error", description: "Could not place your order." });
     }
   };
 
@@ -261,7 +258,7 @@ export default function CartPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Phone Number</Label>
+                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Phone Number (Optional)</Label>
                   <Input 
                     placeholder="+92 / +91 number" 
                     value={phoneNumber}
@@ -371,10 +368,6 @@ export default function CartPage() {
                   <span>Checkout Subtotal</span>
                   <span className="text-primary-foreground">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span>Service Fee</span>
-                  <span className="text-primary-foreground">{getCurrency()} {commission.toLocaleString()}</span>
-                </div>
                 <div className="flex justify-between items-center text-accent">
                   <span className="flex items-center gap-2"><Package className="h-3 w-3" /> Delivery</span>
                   <span>FREE</span>
@@ -390,7 +383,7 @@ export default function CartPage() {
                 disabled={isCheckingOut}
                 className="w-full h-16 bg-accent text-accent-foreground hover:bg-white rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border-none shadow-xl transition-all"
               >
-                {isCheckingOut ? 'Securing Transaction...' : 'Complete Payment'}
+                {isCheckingOut ? 'Securing Transaction...' : 'Complete Order'}
               </Button>
             </Card>
 
@@ -399,7 +392,7 @@ export default function CartPage() {
                 <ShieldCheck className="h-4 w-4" /> Artisan Security Active
               </div>
               <p className="text-[9px] text-muted-foreground italic leading-relaxed">
-                Your payment is held in escrow until verification. Service deposits and product costs are platform-secured.
+                Your order is secured by our platform. Cash on Delivery ensures you pay only when you receive your selection.
               </p>
             </div>
           </div>

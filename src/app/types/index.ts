@@ -1,4 +1,3 @@
-
 export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
 
 export type Vendor = {
@@ -57,7 +56,8 @@ export type Booking = {
   id: string;
   localUserId: string;
   vendorId?: string;
-  userPhone: string;
+  userName?: string;
+  userPhone?: string;
   referenceCode: string;
   cartItems: CartItem[];
   totalPrice: number;
