@@ -137,21 +137,22 @@ export default function PartnerPortalPage() {
 
   const generatePreviews = useCallback(() => {
     setIsRolling(true);
-    // Add small delay for rolling animation
+    // Add small delay for rolling animation and reliable state update
     setTimeout(() => {
+      const randomSeed = () => Math.random().toString(36).substring(7);
       const profs = [
-        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
-        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
-        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${Math.random().toString(36)}`,
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${randomSeed()}`,
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${randomSeed()}`,
+        `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${randomSeed()}`,
       ];
       const covs = [
-        `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
-        `https://picsum.photos/seed/${Math.random().toString(36)}/1600/400`,
+        `https://picsum.photos/seed/${randomSeed()}/1600/400`,
+        `https://picsum.photos/seed/${randomSeed()}/1600/400`,
       ];
       setProfilePreviews(profs);
       setCoverPreviews(covs);
       setIsRolling(false);
-    }, 600);
+    }, 400);
   }, []);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
@@ -617,7 +618,8 @@ export default function PartnerPortalPage() {
                           onClick={() => handleApplyIdentity(url)}
                           className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1 animate-in fade-in zoom-in duration-300"
                         >
-                          <Image src={url} alt="Profile Option" fill className="object-cover rounded-[1.2rem]" />
+                          {/* Use standard img for previews to ensure reliable loading of dynamic placeholders */}
+                          <img src={url} alt="Profile Option" className="w-full h-full object-cover rounded-[1.2rem]" />
                           <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                             <Check className="h-6 w-6 text-white" />
                           </div>
@@ -637,7 +639,7 @@ export default function PartnerPortalPage() {
                           onClick={() => handleApplyIdentity(url)}
                           className="relative h-28 w-full rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-300"
                         >
-                          <Image src={url} alt="Cover Option" fill className="object-cover" />
+                          <img src={url} alt="Cover Option" className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                             <Check className="h-6 w-6 text-white" />
                           </div>
