@@ -17,7 +17,8 @@ import {
   LogOut, 
   Menu,
   User,
-  Settings
+  Settings,
+  Globe
 } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
@@ -90,10 +91,6 @@ export function Navbar() {
         {theme === 'dark' ? <Sun className="h-5 w-5 text-foreground" strokeWidth={1.5} /> : <Moon className="h-5 w-5 text-foreground" strokeWidth={1.5} />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-10 px-3 rounded-full text-[10px] font-black uppercase tracking-widest text-foreground">
-        {getCurrency()}
-      </Button>
-
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
           <Heart className={cn("h-5 w-5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
@@ -157,6 +154,15 @@ export function Navbar() {
               </Link>
             </SheetClose>
 
+            {/* Currency Toggle in Side Menu */}
+            <Button 
+              variant="ghost" 
+              onClick={toggleRegion}
+              className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 transition-all"
+            >
+              <Globe className="h-4 w-4" strokeWidth={1.5} /> Region: {getCurrency()}
+            </Button>
+
             <div className="pt-8 opacity-20">
               <div className="h-px bg-primary" />
             </div>
@@ -192,12 +198,12 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full pl-4 pr-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="w-full pl-2 pr-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <SideMenu />
-            <Link href="/" className="flex items-center space-x-3">
-              <Sparkles className="h-5 w-5 text-accent-foreground" />
-              <span className="font-headline text-3xl tracking-tighter text-foreground italic">GlamLux</span>
+            <Link href="/" className="flex items-center space-x-2">
+              <Sparkles className="h-6 w-6 text-accent-foreground" />
+              <span className="font-headline text-4xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>
 
@@ -223,11 +229,11 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-2 pr-1 shadow-md rounded-2xl">
-        <div className="flex items-center gap-1">
+      <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-1 shadow-md rounded-2xl">
+        <div className="flex items-center gap-0.5">
           <SideMenu />
           <Link href="/" className="flex items-center space-x-1">
-            <span className="font-headline text-2xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
+            <span className="font-headline text-3xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
           </Link>
         </div>
 
