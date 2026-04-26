@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { PRODUCTS } from '@/app/lib/mock-data';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +20,12 @@ export default function ShopPage() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
+  const [isMounted, setIsMounted] = useState(false);
   const firestore = useFirestore();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const productsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -48,7 +52,7 @@ export default function ShopPage() {
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.image
+      image: product.imageUrl
     });
     toast({
       title: "Added to Cart",
@@ -62,8 +66,10 @@ export default function ShopPage() {
     toggleFavoriteProduct(id);
   };
 
+  if (!isMounted) return null;
+
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pt-20 md:pt-24 pb-32">
       <Navbar />
       
       <main className="container mx-auto px-6 py-16 md:py-24">
@@ -118,7 +124,7 @@ export default function ShopPage() {
                   <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden active:scale-[0.99] h-full flex flex-col">
                     <div className="relative aspect-[4/5] overflow-hidden">
                       <Image 
-                        src={product.image} 
+                        src={product.imageUrl} 
                         alt={product.name}
                         fill
                         className="object-cover soft-focus group-hover:scale-110"
@@ -152,7 +158,7 @@ export default function ShopPage() {
                         {product.name}
                       </CardTitle>
                       <div className="flex justify-center items-center gap-3 pt-4 border-t border-border/5 mt-4">
-                         <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price.toLocaleString()}</p>
+                         <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price?.toLocaleString()}</p>
                       </div>
                     </CardHeader>
                   </Card>

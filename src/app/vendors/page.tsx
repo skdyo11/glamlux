@@ -28,7 +28,6 @@ export default function VendorsPage() {
 
   const vendorsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // Aligning to 'parlours' collection as per backend.json
     return query(collection(firestore, 'parlours'), orderBy('rating', 'desc'));
   }, [firestore]);
 
@@ -52,7 +51,7 @@ export default function VendorsPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pt-20 md:pt-24 pb-32">
       <Navbar />
       
       <main className="container mx-auto px-6 py-16 md:py-24">
