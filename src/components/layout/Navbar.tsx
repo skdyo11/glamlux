@@ -2,10 +2,34 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, MapPin, LayoutDashboard, Sparkles, Store, Scissors, Moon, Sun, MessageSquare, Home, Heart, LogOut } from 'lucide-react';
+import { 
+  ShoppingBag, 
+  MapPin, 
+  LayoutDashboard, 
+  Sparkles, 
+  Store, 
+  Scissors, 
+  Moon, 
+  Sun, 
+  MessageSquare, 
+  Home, 
+  Heart, 
+  LogOut, 
+  Menu,
+  User,
+  Settings
+} from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger,
+  SheetClose
+} from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useMemo } from 'react';
@@ -38,12 +62,12 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  const navLinks = useMemo(() => [
+  // Bottom bar links (removed portal)
+  const bottomNavLinks = useMemo(() => [
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
     { href: '/vendors', label: 'Parlours', icon: MapPin },
     { href: '/messages', label: 'Chat', icon: MessageSquare },
-    { href: '/portal', label: 'My Shop', icon: LayoutDashboard },
   ], []);
 
   if (!mounted) return null;
@@ -53,7 +77,7 @@ export function Navbar() {
       {!isHome && (
         <Link href="/">
           <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full">
-            <Home className="h-3.5 w-3.5 text-foreground" />
+            <Home className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -64,7 +88,7 @@ export function Navbar() {
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         className="h-7 w-7 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" /> : <Moon className="h-3.5 w-3.5 text-foreground" />}
+        {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} /> : <Moon className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />}
       </Button>
 
       <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-7 px-1.5 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground">
@@ -73,13 +97,13 @@ export function Navbar() {
 
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
-          <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} />
+          <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
         <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
-          <ShoppingBag className="h-3.5 w-3.5 text-foreground" />
+          <ShoppingBag className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />
           {cartCount > 0 && (
             <Badge className="absolute -top-0.5 -right-0.5 h-3 w-3 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[5px] font-black border border-background z-20 rounded-full">
               {cartCount}
@@ -87,24 +111,82 @@ export function Navbar() {
           )}
         </Button>
       </Link>
-
-      {user ? (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleLogout}
-          className="h-7 w-7 rounded-full ml-0.5"
-        >
-          <LogOut className="h-3 w-3 text-foreground/40" />
-        </Button>
-      ) : (
-        <Link href="/login">
-          <Button variant="ghost" className="h-7 px-2.5 rounded-full text-[6px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
-            Admin
-          </Button>
-        </Link>
-      )}
     </div>
+  );
+
+  const SideMenu = () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+          <Menu className="h-5 w-5 text-primary" strokeWidth={1.5} />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-[300px] rounded-r-[3rem] border-none bg-background/95 backdrop-blur-xl p-0">
+        <div className="flex flex-col h-full">
+          <SheetHeader className="p-8 text-left border-b border-primary/5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <User className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <div>
+                <SheetTitle className="font-headline text-2xl italic text-primary leading-none">
+                  {user ? (user.displayName || 'Artisan') : 'Guest'}
+                </SheetTitle>
+                <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">
+                  {user ? user.email : 'Explore GlamLux'}
+                </p>
+              </div>
+            </div>
+          </SheetHeader>
+
+          <div className="flex-1 px-4 py-8 space-y-2">
+            <SheetClose asChild>
+              <Link href="/" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+                <Home className="h-4 w-4" strokeWidth={1.5} /> Home
+              </Link>
+            </SheetClose>
+            
+            <SheetClose asChild>
+              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+                <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} /> My Shop Portal
+              </Link>
+            </SheetClose>
+
+            <SheetClose asChild>
+              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+                <MessageSquare className="h-4 w-4" strokeWidth={1.5} /> Support Chat
+              </Link>
+            </SheetClose>
+
+            <div className="pt-8 opacity-20">
+              <div className="h-px bg-primary" />
+            </div>
+            
+            <div className="pt-4">
+              {user ? (
+                <Button 
+                  variant="ghost" 
+                  onClick={handleLogout}
+                  className="w-full justify-start gap-4 p-4 h-auto rounded-2xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest"
+                >
+                  <LogOut className="h-4 w-4" strokeWidth={1.5} /> Log Out
+                </Button>
+              ) : (
+                <SheetClose asChild>
+                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+                    <Settings className="h-4 w-4" strokeWidth={1.5} /> Member Login
+                  </Link>
+                </SheetClose>
+              )}
+            </div>
+          </div>
+
+          <div className="p-8 text-center">
+            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-accent-foreground/30">GlamLux • MMXXIV</p>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 
   return (
@@ -113,14 +195,15 @@ export function Navbar() {
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
         <div className="w-full pl-8 pr-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center space-x-3">
+            <SideMenu />
+            <Link href="/" className="flex items-center space-x-3 ml-2">
               <Sparkles className="h-5 w-5 text-accent-foreground" />
               <span className="font-headline text-xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-8 text-[9px] font-black uppercase tracking-[0.2em]">
-            {navLinks.map((link) => (
+            {bottomNavLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href} 
@@ -134,18 +217,20 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center pr-4">
             <UtilityGroup />
           </div>
         </div>
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-16 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-6 pr-2 shadow-md rounded-2xl">
-        <Link href="/" className="flex items-center space-x-2">
-          <Sparkles className="h-6 w-6 text-accent-foreground" />
-          <span className="font-headline text-xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
-        </Link>
+      <nav className="fixed top-3 left-4 right-4 z-50 h-16 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-2 shadow-md rounded-2xl">
+        <div className="flex items-center gap-2">
+          <SideMenu />
+          <Link href="/" className="flex items-center space-x-1">
+            <span className="font-headline text-xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
+          </Link>
+        </div>
 
         <div className="flex items-center">
           <UtilityGroup />
@@ -153,18 +238,19 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Bar */}
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-12 px-3 shadow-lg">
-        {navLinks.map((link) => {
+      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-14 px-3 shadow-lg">
+        {bottomNavLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group">
               <div className={cn(
-                "p-2 rounded-full",
-                isActive ? "text-accent-foreground bg-primary/5" : "text-muted-foreground/60"
+                "p-2.5 rounded-full transition-all duration-300",
+                isActive ? "text-primary bg-primary/5 scale-110" : "text-muted-foreground/60 hover:text-primary/40"
               )}>
-                <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
+                <Icon className={cn("h-5 w-5")} strokeWidth={1.5} />
               </div>
+              {isActive && <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full" />}
             </Link>
           );
         })}
