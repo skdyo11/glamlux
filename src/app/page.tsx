@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const { getCurrency } = useStore();
@@ -29,12 +30,12 @@ export default function Home() {
 
   const { data: rankedVendors, isLoading: isLoadingElite } = useCollection(eliteQuery);
 
-  const dealsQuery = useMemoFirebase(() => {
+  const servicesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'deals'), limit(6));
   }, [firestore]);
 
-  const { data: deals, isLoading: isLoadingDeals } = useCollection(dealsQuery);
+  const { data: services, isLoading: isLoadingServices } = useCollection(servicesQuery);
 
   const nearbyQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -46,11 +47,11 @@ export default function Home() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="max-w-[100vw] overflow-x-hidden">
-        {/* Hero Section - Immersive & Balanced */}
+      <main className="flex-grow overflow-x-hidden">
+        {/* Hero Section */}
         <section className="relative h-[80vh] md:h-[90vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image 
@@ -59,16 +60,17 @@ export default function Home() {
               fill 
               className="object-cover brightness-[0.7] dark:brightness-[0.4]"
               priority
+              data-ai-hint="luxury beauty"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent z-10" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 z-10" />
           </div>
-          <div className="container mx-auto px-6 relative z-20">
+          <div className="container mx-auto px-4 md:px-6 relative z-20">
             <div className="max-w-2xl space-y-6">
               <Badge className="bg-secondary/20 text-white backdrop-blur-xl px-4 py-1.5 uppercase tracking-widest text-[8px] font-black border border-white/20 rounded-full shadow-2xl">
                 <Sparkles className="h-3 w-3 mr-2 inline text-accent" /> THE ARTISAN COLLECTION
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-headline leading-[0.9] text-white tracking-tighter drop-shadow-2xl">
+              <h1 className="text-5xl md:text-8xl font-headline leading-[0.9] text-white tracking-tighter drop-shadow-2xl">
                 True <br />
                 <span className="italic text-secondary">Elegance.</span>
               </h1>
@@ -89,20 +91,20 @@ export default function Home() {
 
         {/* Elite Registry Ranking Section */}
         <section className="py-24 md:py-32 bg-accent/5 border-b border-primary/5">
-          <div className="container mx-auto px-6">
-            <header className="max-w-4xl mb-20 space-y-6">
-              <div className="flex items-center gap-4">
-                <Trophy className="h-8 w-8 text-primary" />
+          <div className="container mx-auto px-4 md:px-6">
+            <header className="max-w-4xl mb-20 space-y-6 text-center md:text-left">
+              <div className="flex flex-col md:flex-row items-center gap-4">
+                <Trophy className="h-10 w-10 text-primary" />
                 <h2 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary italic leading-none">The Elite Registry</h2>
               </div>
-              <p className="text-lg text-muted-foreground italic font-body max-w-2xl leading-relaxed">
+              <p className="text-lg text-muted-foreground italic font-body max-w-2xl leading-relaxed mx-auto md:mx-0">
                 Our most prestigious sanctuaries, ranked exclusively by guests with a <span className="text-primary font-bold border-b border-primary/20">confirmed history of excellence</span>.
               </p>
             </header>
 
-            <div className="flex gap-10 overflow-x-auto pb-12 scrollbar-hide -mx-6 px-6 snap-x">
+            <div className="flex gap-10 overflow-x-auto pb-12 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
               {isLoadingElite ? (
-                [1, 2, 3].map(n => <div key={n} className="w-[280px] md:w-[400px] h-[500px] rounded-[3rem] bg-muted animate-pulse shrink-0" />)
+                [1, 2, 3].map(n => <Skeleton key={n} className="w-[280px] md:w-[400px] h-[500px] rounded-[3rem] shrink-0" />)
               ) : rankedVendors?.map((vendor, index) => (
                 <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative shrink-0 w-[280px] md:w-[400px] snap-start">
                   <div className="absolute -top-4 -left-4 z-10">
@@ -117,6 +119,7 @@ export default function Home() {
                         alt={vendor.name} 
                         fill 
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                        data-ai-hint="elite parlour"
                       />
                     </div>
                     <div className="space-y-4">
@@ -154,7 +157,7 @@ export default function Home() {
 
         {/* Nearby Parlours */}
         <section className="py-20 md:py-32">
-          <div className="container mx-auto px-6">
+          <div className="container mx-auto px-4 md:px-6">
             <div className="flex justify-between items-end mb-12">
               <div className="space-y-2">
                 <Badge className="bg-primary/5 text-primary border-none text-[9px] uppercase font-black px-3 py-1 rounded-full mb-2">Regional Selection</Badge>
@@ -167,7 +170,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
               {isLoadingNearby ? (
-                [1, 2, 3].map(n => <div key={n} className="aspect-[4/3] rounded-[2.5rem] bg-muted animate-pulse" />)
+                [1, 2, 3].map(n => <Skeleton key={n} className="aspect-[4/3] rounded-[2.5rem]" />)
               ) : nearbyVendors?.map((vendor) => (
                 <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group interactive-element">
                   <div className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] shadow-2xl ring-1 ring-black/5 bg-muted transition-all duration-700 hover:shadow-3xl">
@@ -176,6 +179,7 @@ export default function Home() {
                       alt={vendor.name} 
                       fill 
                       className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                      data-ai-hint="beauty sanctuary"
                     />
                     <div className="absolute top-4 left-4">
                       <Badge className="bg-white/95 dark:bg-black/80 text-primary border-none text-[9px] font-black px-4 py-1.5 shadow-2xl uppercase tracking-widest backdrop-blur-xl rounded-full">
@@ -199,7 +203,7 @@ export default function Home() {
 
         {/* Best Services */}
         <section className="py-20 md:py-32 bg-secondary/10 border-y border-primary/5">
-          <div className="container mx-auto px-6">
+          <div className="container mx-auto px-4 md:px-6">
             <div className="mb-16 text-center md:text-left">
               <Badge className="bg-accent/10 text-accent-foreground border-none text-[9px] uppercase font-black px-3 py-1 rounded-full mb-3">Limited Availability</Badge>
               <h2 className="text-4xl md:text-6xl font-headline tracking-tighter text-primary italic leading-none">Elite Transformations</h2>
@@ -207,28 +211,29 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-14">
-              {isLoadingDeals ? (
-                 [1, 2, 3].map(n => <div key={n} className="h-[400px] rounded-[3rem] bg-muted animate-pulse" />)
-              ) : deals?.map((deal) => (
-                <Link key={deal.id} href={`/deals/${deal.id}`} className="group block interactive-element">
+              {isLoadingServices ? (
+                 [1, 2, 3].map(n => <Skeleton key={n} className="h-[400px] rounded-[3rem]" />)
+              ) : services?.map((service) => (
+                <Link key={service.id} href={`/deals/${service.id}`} className="group block interactive-element">
                   <Card className="rounded-[3rem] overflow-hidden border-none shadow-2xl h-full flex flex-col bg-white dark:bg-black/40 transition-all duration-700 hover:shadow-3xl">
                     <div className="relative h-72 overflow-hidden bg-muted">
                       <Image 
-                        src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 
-                        alt={deal.name} 
+                        src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
+                        alt={service.name} 
                         fill 
                         className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        data-ai-hint="beauty transformation"
                       />
                     </div>
                     <div className="p-8 space-y-4 flex-grow flex flex-col justify-between">
                       <div className="space-y-2">
-                        <p className="text-[9px] uppercase font-black tracking-[0.3em] text-accent-foreground/60">{deal.category}</p>
-                        <h3 className="text-2xl font-headline leading-tight italic text-primary">{deal.name}</h3>
+                        <p className="text-[9px] uppercase font-black tracking-[0.3em] text-accent-foreground/60">{service.category}</p>
+                        <h3 className="text-2xl font-headline leading-tight italic text-primary">{service.name}</h3>
                       </div>
                       <div className="flex justify-between items-end pt-6 border-t border-primary/5">
                         <div className="flex flex-col">
                           <span className="text-[8px] uppercase font-black text-muted-foreground tracking-widest mb-1">Booking From</span>
-                          <span className="text-2xl font-bold text-accent-foreground italic tracking-tighter">{getCurrency()} {deal.discountPrice.toLocaleString()}</span>
+                          <span className="text-2xl font-bold text-accent-foreground italic tracking-tighter">{getCurrency()} {service.discountPrice.toLocaleString()}</span>
                         </div>
                         <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-3xl group-hover:scale-110 transition-transform">
                           <ArrowRight className="h-6 w-6" />
@@ -244,7 +249,7 @@ export default function Home() {
       </main>
 
       <footer className="py-20 border-t bg-background">
-        <div className="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left">
+        <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left">
           <div className="space-y-4 col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 justify-center md:justify-start">
               <Sparkles className="h-6 w-6 text-accent-foreground" />
@@ -271,7 +276,7 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-6 mt-16 text-center border-t border-primary/5 pt-10">
+        <div className="container mx-auto px-4 md:px-6 mt-16 text-center border-t border-primary/5 pt-10">
           <p className="text-[9px] font-black uppercase tracking-[0.5em] text-accent-foreground/30">GLAMLUX • CURATORS OF ELEGANCE • MMXXIV</p>
         </div>
       </footer>

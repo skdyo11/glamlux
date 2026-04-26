@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ShopPage() {
   const { addToCart, getCurrency, isFavoriteProduct, toggleFavoriteProduct } = useStore();
@@ -77,33 +77,33 @@ export default function ShopPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background pt-20 md:pt-24 pb-32">
+    <div className="min-h-screen bg-background flex flex-col pt-20 md:pt-24 pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-16 md:py-24">
-        <header className="max-w-4xl mb-20 space-y-6">
+      <main className="container mx-auto px-4 md:px-6 py-12 md:py-24 flex-grow">
+        <header className="max-w-4xl mb-20 space-y-6 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
             <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
             <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Marketplace Collection</span>
           </div>
-          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Elite Boutique</h1>
-          <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
+          <h1 className="text-6xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Elite Boutique</h1>
+          <p className="text-lg md:text-xl text-muted-foreground font-body italic max-w-2xl mx-auto md:mx-0">
             Curated professional makeup and beauty essentials from our registry of elite shops.
           </p>
         </header>
 
         {/* Featured Shops Row */}
         <section className="mb-32 space-y-8">
-           <div className="flex justify-between items-end">
-             <h2 className="text-4xl font-headline italic text-primary">Artisan Registry</h2>
-             <Link href="/vendors" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">View All Registry <ArrowRight className="h-3 w-3" /></Link>
+           <div className="flex justify-between items-end px-2">
+             <h2 className="text-3xl md:text-4xl font-headline italic text-primary">Artisan Registry</h2>
+             <Link href="/vendors" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">View All <ArrowRight className="h-3 w-3" /></Link>
            </div>
-           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
+           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
              {vendors?.map((v) => (
                <Link key={v.id} href={`/vendors/${v.id}`} className="snap-start shrink-0">
                  <Card className="w-64 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md p-6 space-y-4 shadow-xl hover:bg-primary/5 transition-all">
                     <div className="relative aspect-square rounded-[2rem] overflow-hidden">
-                       <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" />
+                       <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" data-ai-hint="boutique shop" />
                     </div>
                     <div className="space-y-1">
                       <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{v.name}</h3>
@@ -121,17 +121,17 @@ export default function ShopPage() {
         {/* Search and Filter Section */}
         <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
           <div className="relative flex-grow w-full">
-            <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
               placeholder="Search items by name or brand..." 
-              className="pl-20 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
+              className="pl-16 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={brandFilter} onValueChange={setBrandFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-10">
+              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-8">
                 <SelectValue placeholder="All Brands" />
               </SelectTrigger>
               <SelectContent className="rounded-3xl font-body border-none shadow-2xl bg-white/90 backdrop-blur-xl">
@@ -144,13 +144,13 @@ export default function ShopPage() {
         </section>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {[1, 2, 3, 4].map(n => (
-              <div key={n} className="h-[400px] rounded-[3rem] bg-muted animate-pulse" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+              <Skeleton key={n} className="h-[400px] rounded-[3rem]" />
             ))}
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12">
             {filteredProducts.map((product) => {
               const isFav = isFavoriteProduct(product.id);
               return (
@@ -162,6 +162,7 @@ export default function ShopPage() {
                         alt={product.name}
                         fill
                         className="object-cover soft-focus group-hover:scale-110"
+                        data-ai-hint="makeup product"
                       />
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
                       
@@ -181,18 +182,18 @@ export default function ShopPage() {
                         variant="secondary"
                         size="icon" 
                         onClick={(e) => handleAddToCart(e, product)}
-                        className="absolute bottom-8 right-8 h-14 w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
+                        className="absolute bottom-6 right-6 h-12 w-12 md:h-14 md:w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
                       >
-                        <ShoppingBag className="h-6 w-6" />
+                        <ShoppingBag className="h-5 w-5 md:h-6 md:w-6" />
                       </Button>
                     </div>
-                    <CardHeader className="space-y-4 p-8 text-center flex-grow">
+                    <CardHeader className="space-y-2 p-6 md:p-8 text-center flex-grow">
                       <p className="text-[10px] uppercase tracking-[0.3em] text-primary/40 font-black">{product.brand}</p>
-                      <CardTitle className="text-xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
+                      <CardTitle className="text-lg md:text-xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
                         {product.name}
                       </CardTitle>
-                      <div className="flex justify-center items-center gap-3 pt-4 border-t border-border/5 mt-4">
-                         <p className="text-primary font-bold text-2xl italic">{getCurrency()} {product.price?.toLocaleString()}</p>
+                      <div className="pt-4 border-t border-border/5 mt-4">
+                         <p className="text-primary font-bold text-xl md:text-2xl italic">{getCurrency()} {product.price?.toLocaleString()}</p>
                       </div>
                     </CardHeader>
                   </Card>
@@ -206,7 +207,7 @@ export default function ShopPage() {
               <Search className="h-12 w-12 text-primary/20" />
             </div>
             <h3 className="text-5xl font-headline italic text-primary">No items found</h3>
-            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">Try searching for a different boutique brand or item name.</p>
+            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed px-6">Try searching for a different boutique brand or item name.</p>
           </div>
         )}
       </main>
