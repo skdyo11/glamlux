@@ -154,7 +154,6 @@ export function Navbar() {
               </Link>
             </SheetClose>
 
-            {/* Currency Toggle in Side Menu */}
             <Button 
               variant="ghost" 
               onClick={toggleRegion}
@@ -198,7 +197,7 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full pl-2 pr-4 h-14 flex items-center justify-between">
+        <div className="w-full pl-2 pr-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <SideMenu />
             <Link href="/" className="flex items-center space-x-2">
@@ -222,14 +221,14 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center pr-2">
+          <div className="flex items-center">
             <UtilityGroup />
           </div>
         </div>
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-1 shadow-md rounded-2xl">
+      <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-4 shadow-md rounded-2xl">
         <div className="flex items-center gap-0.5">
           <SideMenu />
           <Link href="/" className="flex items-center space-x-1">
