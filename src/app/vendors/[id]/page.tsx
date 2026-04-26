@@ -74,7 +74,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
       
       <main className="pb-32">
         {/* Full-Bleed Immersive Hero */}
-        <section className="relative h-[85vh] md:h-[90vh] flex items-end pb-12 md:pb-24 overflow-hidden shadow-2xl">
+        <section className="relative h-[85vh] md:h-[90vh] flex items-center justify-start pb-12 md:pb-24 overflow-hidden shadow-2xl">
           <div className="absolute inset-0 z-0">
             <Carousel 
               plugins={[plugin.current]}
@@ -90,7 +90,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                       src={img} 
                       alt={`${vendor.name} ${index + 1}`} 
                       fill 
-                      className="object-cover soft-focus brightness-[0.8] md:brightness-[0.85]" 
+                      className="object-cover soft-focus brightness-[0.7] md:brightness-[0.75]" 
                       priority={index === 0}
                     />
                   </CarouselItem>
@@ -100,21 +100,22 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
           </div>
           
           {/* Elegant Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent pointer-events-none z-10 h-32" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent pointer-events-none z-10 h-48" />
           
-          <div className="container mx-auto px-6 relative z-20">
-             <div className="max-w-4xl space-y-8">
+          <div className="container mx-auto px-6 relative z-20 mt-20">
+             <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-4">
                     <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full shadow-2xl">
                       <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Elite Artisan Registry</span>
                     </div>
+                    <Badge className="bg-primary/20 backdrop-blur-xl text-white border-white/20 text-[9px] uppercase font-black px-4 py-2 tracking-widest rounded-full shadow-lg">Verified Studio</Badge>
                   </div>
                   
                   <div className="space-y-4">
-                    <h1 className="text-7xl md:text-[10rem] font-headline tracking-tighter italic text-white leading-none drop-shadow-2xl">
+                    <h1 className="text-6xl md:text-[8rem] font-headline tracking-tighter italic text-white leading-tight drop-shadow-2xl">
                       {vendor.name}
                     </h1>
                     <div className="flex flex-wrap items-center gap-4 pt-4">
@@ -122,22 +123,25 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                         <MapPin className="h-5 w-5 text-rose-400" /> <span className="text-xs font-bold uppercase tracking-widest">{vendor.areaTag}</span>
                       </div>
                       <div className="flex items-center gap-3 bg-black/40 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10 text-white shadow-2xl">
-                        <Star className="h-5 w-5 fill-accent text-accent" /> <span className="text-xs font-bold uppercase tracking-widest">{vendor.rating} Artisan Score</span>
+                        <Star className="h-5 w-5 fill-accent text-accent" /> <span className="text-xs font-bold uppercase tracking-widest">{vendor.rating} Artisan Rating</span>
                       </div>
-                      <Button asChild className="rounded-full bg-white text-primary hover:bg-white/90 h-14 px-8 font-black uppercase tracking-widest text-xs shadow-2xl">
-                        <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
-                          <MessageCircle className="h-5 w-5 mr-3" /> Chat with Studio
-                        </Link>
-                      </Button>
-                      <Button 
-                        onClick={() => toggleFavoriteVendor(vendor.id)}
-                        className={cn(
-                          "rounded-full h-14 w-14 p-0 backdrop-blur-md transition-all shadow-xl",
-                          isFav ? "bg-accent text-accent-foreground border-none" : "bg-white/10 text-white border border-white/20 hover:bg-white/30"
-                        )}
-                      >
-                        <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
-                      </Button>
+                      
+                      <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+                        <Button asChild className="rounded-full bg-white text-primary hover:bg-white/90 h-14 px-8 font-black uppercase tracking-widest text-xs shadow-2xl">
+                          <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
+                            <MessageCircle className="h-5 w-5 mr-3" /> Chat with Parlour
+                          </Link>
+                        </Button>
+                        <Button 
+                          onClick={() => toggleFavoriteVendor(vendor.id)}
+                          className={cn(
+                            "rounded-full h-14 w-14 p-0 backdrop-blur-md transition-all shadow-xl",
+                            isFav ? "bg-accent text-accent-foreground border-none" : "bg-white/10 text-white border border-white/20 hover:bg-white/30"
+                          )}
+                        >
+                          <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
