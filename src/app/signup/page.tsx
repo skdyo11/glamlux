@@ -20,6 +20,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState<'customer' | 'vendor'>('customer');
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -44,6 +45,7 @@ export default function SignupPage() {
         uid: user.uid,
         name,
         email,
+        phoneNumber: phone || null,
         role,
         isVerified: true,
         createdAt: serverTimestamp(),
@@ -179,6 +181,16 @@ export default function SignupPage() {
                   className="rounded-full h-12 bg-white/60 border-primary/10 px-6"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Phone Number (Optional)</Label>
+                <Input 
+                  id="phone" 
+                  placeholder="+92 / +91 number" 
+                  className="rounded-full h-12 bg-white/60 border-primary/10 px-6"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
