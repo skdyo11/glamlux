@@ -21,7 +21,7 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAuthenticated() && (
         (request.method == 'create' && request.resource.data.parlourOwnerId == request.auth.uid) ||
-        (request.method == 'update' && resource.data.parlourOwnerId == request.auth.uid)
+        (request.method == 'update' && request.resource.data.parlourOwnerId == request.auth.uid)
       );
     }
     
@@ -29,7 +29,7 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAuthenticated() && (
         (request.method == 'create' && request.resource.data.vendorId == request.auth.uid) ||
-        (request.method == 'update' && resource.data.vendorId == request.auth.uid)
+        (request.method == 'update' && request.resource.data.vendorId == request.auth.uid)
       );
     }
 
@@ -63,9 +63,10 @@ service cloud.firestore {
 
     // --- CHAT SYSTEM ---
     match /conversations/{conversationId} {
-      // Explicitly allow read (get & list) if the user is in the participants array.
-      // Filtered list queries automatically respect this constraint.
-      allow read: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      // Explicitly allow list and get for participants
+      allow list: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      allow get: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      
       allow create: if isAuthenticated() && (request.auth.uid in request.resource.data.participants);
       allow update: if isAuthenticated() && (request.auth.uid in resource.data.participants);
       
@@ -84,6 +85,6 @@ service cloud.firestore {
     }
 
     // Trigger redeployment for security rules update
-    // Update: Refined conversation list permissions for participants.
+    // Fix: Explicitly granted 'list' permission for conversation participants.
   }
 }
