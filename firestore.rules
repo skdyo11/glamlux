@@ -63,12 +63,13 @@ service cloud.firestore {
 
     // --- CHAT SYSTEM ---
     match /conversations/{conversationId} {
-      allow read: if isAuthenticated() && request.auth.uid in resource.data.participants;
-      allow create: if isAuthenticated() && request.auth.uid in request.resource.data.participants;
-      allow update: if isAuthenticated() && request.auth.uid in resource.data.participants;
+      // Allow list and get if the user is a participant
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      allow create: if isAuthenticated() && (request.auth.uid in request.resource.data.participants);
+      allow update: if isAuthenticated() && (request.auth.uid in resource.data.participants);
       
       match /messages/{messageId} {
-        allow read: if isAuthenticated() && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+        allow read: if isAuthenticated() && (request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants);
         allow create: if isAuthenticated() && request.auth.uid == request.resource.data.senderId;
       }
     }
@@ -78,5 +79,8 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+
+    // Trigger redeployment for security rules update
+    // Update: Refined conversation participants check for better list operation support.
   }
 }

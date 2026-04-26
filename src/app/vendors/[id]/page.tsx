@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -73,7 +74,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
       
       <main className="pb-32">
         {/* Full-Bleed Immersive Hero */}
-        <section className="relative h-[75vh] md:h-[90vh] flex items-end pb-12 md:pb-24 overflow-hidden shadow-2xl">
+        <section className="relative h-[85vh] md:h-[90vh] flex items-end pb-12 md:pb-24 overflow-hidden shadow-2xl">
           <div className="absolute inset-0 z-0">
             <Carousel 
               plugins={[plugin.current]}
@@ -110,15 +111,6 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                       <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Elite Artisan Registry</span>
                     </div>
-                    <Button 
-                      onClick={() => toggleFavoriteVendor(vendor.id)}
-                      className={cn(
-                        "rounded-full h-12 w-12 p-0 backdrop-blur-md transition-all shadow-xl",
-                        isFav ? "bg-accent text-accent-foreground border-none" : "bg-white/10 text-white border border-white/20 hover:bg-white/30"
-                      )}
-                    >
-                      <Heart className={cn("h-5 w-5", isFav && "fill-current")} />
-                    </Button>
                   </div>
                   
                   <div className="space-y-4">
@@ -136,6 +128,15 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                         <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
                           <MessageCircle className="h-5 w-5 mr-3" /> Chat with Studio
                         </Link>
+                      </Button>
+                      <Button 
+                        onClick={() => toggleFavoriteVendor(vendor.id)}
+                        className={cn(
+                          "rounded-full h-14 w-14 p-0 backdrop-blur-md transition-all shadow-xl",
+                          isFav ? "bg-accent text-accent-foreground border-none" : "bg-white/10 text-white border border-white/20 hover:bg-white/30"
+                        )}
+                      >
+                        <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
                       </Button>
                     </div>
                   </div>
