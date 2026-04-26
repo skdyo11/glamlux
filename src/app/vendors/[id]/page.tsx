@@ -71,8 +71,8 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pb-32 pt-24 md:pt-32">
-        <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden rounded-b-[4rem] mx-4 md:mx-8">
+      <main className="pb-32 pt-4 md:pt-6">
+        <section className="relative h-[65vh] md:h-[75vh] flex items-end pb-12 md:pb-20 overflow-hidden rounded-[2.5rem] md:rounded-[4rem] mx-2 md:mx-6 shadow-2xl">
           <div className="absolute inset-0 z-0">
             <Carousel 
               plugins={[plugin.current]}
@@ -83,12 +83,12 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
             >
               <CarouselContent className="h-full -ml-0">
                 {(vendor.imageUrls && vendor.imageUrls.length > 0 ? vendor.imageUrls : ['https://picsum.photos/seed/vendor-fallback/1200/800']).map((img, index) => (
-                  <CarouselItem key={index} className="pl-0 h-[70vh] relative">
+                  <CarouselItem key={index} className="pl-0 h-full relative">
                     <Image 
                       src={img} 
                       alt={`${vendor.name} ${index + 1}`} 
                       fill 
-                      className="object-cover soft-focus opacity-60" 
+                      className="object-cover soft-focus brightness-75 md:brightness-90" 
                       priority={index === 0}
                     />
                   </CarouselItem>
@@ -96,13 +96,13 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
               </CarouselContent>
             </Carousel>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none z-0" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent pointer-events-none z-0" />
           
           <div className="container mx-auto px-6 relative z-10">
-             <div className="max-w-4xl space-y-8">
-                <div className="flex flex-col gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-3 py-1 rounded-full shadow-2xl">
+             <div className="max-w-4xl space-y-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-3 py-1.5 rounded-full shadow-lg">
                       <div className="w-1 h-1 rounded-full bg-primary" />
                       <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Parlours Section</span>
                     </div>
@@ -110,34 +110,34 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
                       onClick={() => toggleFavoriteVendor(vendor.id)}
                       className={cn(
                         "rounded-full h-10 w-10 p-0 backdrop-blur-md transition-all shadow-xl",
-                        isFav ? "bg-primary text-primary-foreground" : "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                        isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white border border-white/30 hover:bg-white/40"
                       )}
                     >
                       <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
                     </Button>
-                    <Button asChild className="rounded-full bg-primary text-primary-foreground h-10 px-6 font-bold uppercase tracking-widest text-[10px]">
+                    <Button asChild className="rounded-full bg-primary text-primary-foreground h-10 px-6 font-bold uppercase tracking-widest text-[10px] shadow-lg">
                       <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
                         <MessageCircle className="h-4 w-4 mr-2" /> Chat with Parlour
                       </Link>
                     </Button>
                   </div>
-                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-1.5 rounded-full shadow-2xl self-start">
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-4 py-1.5 rounded-full shadow-lg self-start">
                     <Sparkles className="h-3 w-3 text-accent-foreground" />
                     <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">Elite Artisan Registry</span>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary leading-none">
+                <div className="space-y-2">
+                  <h1 className="text-6xl md:text-9xl font-headline tracking-tighter italic text-primary leading-none drop-shadow-sm">
                     {vendor.name}
                   </h1>
-                  <div className="flex flex-wrap items-center gap-4 text-sm italic text-muted-foreground pt-2">
-                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                  <div className="flex flex-wrap items-center gap-3 text-sm italic text-muted-foreground pt-2">
+                     <div className="flex items-center gap-3 bg-white/30 backdrop-blur-xl px-4 py-2 rounded-full border border-white/40 text-primary shadow-sm">
                        <MapPin className="h-4 w-4 text-rose-500" /> {vendor.areaTag}
                      </div>
-                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                     <div className="flex items-center gap-3 bg-white/30 backdrop-blur-xl px-4 py-2 rounded-full border border-white/40 text-primary shadow-sm">
                        <Star className="h-4 w-4 fill-primary text-primary" /> {vendor.rating} Artisan Rating
                      </div>
-                     <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/30 text-primary">
+                     <div className="flex items-center gap-3 bg-white/30 backdrop-blur-xl px-4 py-2 rounded-full border border-white/40 text-primary shadow-sm">
                        <ShieldCheck className="h-4 w-4 text-rose-600" /> Verified Studio
                      </div>
                   </div>
@@ -146,7 +146,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
           </div>
         </section>
 
-        <section className="container mx-auto px-6 py-24 space-y-32">
+        <section className="container mx-auto px-6 py-16 md:py-24 space-y-24 md:space-y-32">
           {/* Active Deals */}
           <div className="space-y-12">
             <div className="space-y-2 text-center md:text-left">

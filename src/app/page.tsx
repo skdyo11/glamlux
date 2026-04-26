@@ -51,7 +51,7 @@ export default function Home() {
       
       <main className="max-w-[100vw] overflow-x-hidden">
         {/* Hero Section */}
-        <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-center overflow-hidden py-16 md:py-24">
+        <section className="relative min-h-[70vh] md:min-h-[80vh] flex items-center overflow-hidden py-12 md:py-20">
           <div className="absolute inset-0 z-0">
             <Image 
               src="https://picsum.photos/seed/glam-luxury-nature/1200/800" 
@@ -60,25 +60,25 @@ export default function Home() {
               className="object-cover brightness-[0.7] dark:brightness-[0.4]"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/10 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
             <div className="max-w-2xl space-y-6">
-              <Badge className="bg-secondary/60 text-primary backdrop-blur-md px-4 py-1.5 uppercase tracking-widest text-[9px] font-black border border-white/10 rounded-full">
+              <Badge className="bg-secondary/70 text-primary backdrop-blur-md px-4 py-1.5 uppercase tracking-widest text-[9px] font-black border border-white/10 rounded-full shadow-xl">
                 <Sparkles className="h-3 w-3 mr-2 inline text-accent-foreground" /> Best Beauty Deals
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-headline leading-none text-white tracking-tighter">
+              <h1 className="text-6xl md:text-8xl font-headline leading-none text-white tracking-tighter drop-shadow-lg">
                 Look <br />
                 <span className="italic text-secondary">Great.</span>
               </h1>
-              <p className="text-lg md:text-xl text-white/90 font-body max-w-xl italic leading-relaxed">
+              <p className="text-lg md:text-2xl text-white/90 font-body max-w-xl italic leading-relaxed">
                 The best place for makeup and parlour services in Pakistan & India.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button asChild size="lg" className="bg-secondary text-secondary-foreground rounded-full px-8 h-12 font-black uppercase tracking-widest text-[10px] shadow-lg">
+                <Button asChild size="lg" className="bg-secondary text-secondary-foreground rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] shadow-2xl transition-all hover:scale-105">
                   <Link href="/deals">Book Now</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-white/20 bg-white/5 backdrop-blur-md text-white rounded-full px-8 h-12 font-black uppercase tracking-widest text-[10px]">
+                <Button asChild variant="outline" size="lg" className="border-white/30 bg-white/5 backdrop-blur-md text-white rounded-full px-10 h-14 font-black uppercase tracking-widest text-[10px] transition-all hover:bg-white/10">
                   <Link href="/shop">Buy Makeup</Link>
                 </Button>
               </div>
