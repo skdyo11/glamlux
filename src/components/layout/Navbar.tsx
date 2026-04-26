@@ -62,7 +62,6 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  // Bottom bar links (removed portal)
   const bottomNavLinks = useMemo(() => [
     { href: '/deals', label: 'Deals', icon: Scissors },
     { href: '/shop', label: 'Shop', icon: Store },
@@ -121,7 +120,7 @@ export function Navbar() {
           <Menu className="h-5 w-5 text-primary" strokeWidth={1.5} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] rounded-r-[3rem] border-none bg-background/95 backdrop-blur-xl p-0">
+      <SheetContent side="left" className="w-[300px] rounded-r-2xl border-none bg-background/95 backdrop-blur-xl p-0">
         <div className="flex flex-col h-full">
           <SheetHeader className="p-8 text-left border-b border-primary/5">
             <div className="flex items-center gap-3 mb-4">
@@ -141,19 +140,19 @@ export function Navbar() {
 
           <div className="flex-1 px-4 py-8 space-y-2">
             <SheetClose asChild>
-              <Link href="/" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+              <Link href="/" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
                 <Home className="h-4 w-4" strokeWidth={1.5} /> Home
               </Link>
             </SheetClose>
             
             <SheetClose asChild>
-              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
                 <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} /> My Shop Portal
               </Link>
             </SheetClose>
 
             <SheetClose asChild>
-              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
                 <MessageSquare className="h-4 w-4" strokeWidth={1.5} /> Support Chat
               </Link>
             </SheetClose>
@@ -167,13 +166,13 @@ export function Navbar() {
                 <Button 
                   variant="ghost" 
                   onClick={handleLogout}
-                  className="w-full justify-start gap-4 p-4 h-auto rounded-2xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest"
+                  className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest"
                 >
                   <LogOut className="h-4 w-4" strokeWidth={1.5} /> Log Out
                 </Button>
               ) : (
                 <SheetClose asChild>
-                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
+                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
                     <Settings className="h-4 w-4" strokeWidth={1.5} /> Member Login
                   </Link>
                 </SheetClose>

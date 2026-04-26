@@ -209,7 +209,7 @@ export default function PartnerPortalPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
             <Card 
               onClick={() => handleStartBusiness('parlour')}
-              className="group cursor-pointer rounded-[2.5rem] border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
+              className="group cursor-pointer rounded-2xl border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
             >
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Scissors className="h-8 w-8" />
@@ -227,7 +227,7 @@ export default function PartnerPortalPage() {
 
             <Card 
               onClick={() => handleStartBusiness('shop')}
-              className="group cursor-pointer rounded-[2.5rem] border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
+              className="group cursor-pointer rounded-2xl border-none bg-white/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
             >
               <div className="h-16 w-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent-foreground">
                 <ShoppingBag className="h-8 w-8" />
@@ -261,18 +261,18 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-             <Card className="rounded-[1rem] border-none bg-primary p-2 md:p-3 space-y-0.5 shadow-sm text-primary-foreground">
+             <Card className="rounded-xl border-none bg-primary p-2 md:p-3 space-y-0.5 shadow-sm text-primary-foreground">
                <TrendingUp className="h-2 w-2 opacity-60" />
                <p className="text-lg md:text-2xl font-headline italic tracking-tighter leading-none">{arrivals.length * 15}K</p>
                <p className="text-[7px] uppercase font-black tracking-widest opacity-60">Estimated Revenue ({getCurrency()})</p>
              </Card>
-             <Card className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 shadow-sm">
+             <Card className="rounded-xl border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 shadow-sm">
                <Users className="h-2 w-2 opacity-40 text-primary" />
                <p className="text-lg md:text-2xl font-headline italic tracking-tighter text-primary leading-none">{arrivals.filter(a => a.deliveryStatus !== 'Delivered').length}</p>
                <p className="text-[7px] uppercase font-black tracking-widest opacity-40 text-primary">Active Flows</p>
              </Card>
              <Card 
-                className="rounded-[1rem] border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-sm group"
+                className="rounded-xl border-none bg-primary/5 dark:bg-white/5 backdrop-blur-sm p-2 md:p-3 space-y-0.5 cursor-pointer hover:bg-primary/10 transition-all shadow-sm group"
                 onClick={() => setActiveSheet('delivery')}
              >
                 <Navigation className="h-2 w-2 opacity-60 text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -303,7 +303,7 @@ export default function PartnerPortalPage() {
               {arrivals.map((a) => (
                 <Card 
                   key={a.id} 
-                  className="min-w-[280px] rounded-3xl border-none bg-white/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
+                  className="min-w-[280px] rounded-2xl border-none bg-white/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
                   onClick={() => setSelectedArrival(a)}
                 >
                   <div className="flex justify-between items-start">
@@ -332,7 +332,7 @@ export default function PartnerPortalPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {myProducts.map((p) => (
                 <div key={p.id} className="space-y-3 text-center group">
-                  <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
+                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
                     <Image src={p.imageUrl || 'https://picsum.photos/seed/product-placeholder/400/500'} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
                   </div>
                   <div className="space-y-0.5">
@@ -351,13 +351,13 @@ export default function PartnerPortalPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {myDeals.map((d) => (
-                <Card key={d.id} className="p-8 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5">
+                <Card key={d.id} className="p-8 rounded-2xl border-none bg-white/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5">
                   <div className="space-y-1">
                     <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
                     <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
                     <p className="text-xs font-bold text-accent-foreground">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
                   </div>
-                  <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary/30">
+                  <div className="h-14 w-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary/30">
                     <Scissors className="h-6 w-6" />
                   </div>
                 </Card>
@@ -368,7 +368,7 @@ export default function PartnerPortalPage() {
       </main>
 
       <Dialog open={activeSheet === 'product' || activeSheet === 'service'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-[2.5rem] border-none bg-white shadow-2xl">
+        <DialogContent className="rounded-2xl border-none bg-white shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-3xl font-headline italic text-primary">New Listing</DialogTitle>
             <DialogDescription className="italic">Add a new item to your shop or parlour.</DialogDescription>
@@ -396,7 +396,7 @@ export default function PartnerPortalPage() {
       </Dialog>
 
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-[3rem] border-none p-10 bg-white/95 shadow-2xl">
+        <SheetContent side="bottom" className="rounded-t-2xl border-none p-10 bg-white/95 shadow-2xl">
           {selectedArrival && (
             <div className="max-w-xl mx-auto space-y-6">
               <div className="text-center space-y-2">
@@ -405,9 +405,9 @@ export default function PartnerPortalPage() {
                 <SheetDescription className="italic">Manage your guest booking status.</SheetDescription>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl uppercase tracking-widest text-[10px]">Verify</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl uppercase tracking-widest text-[10px]">Active</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-14 bg-primary text-primary-foreground font-bold rounded-2xl uppercase tracking-widest text-[10px]">Finish</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl uppercase tracking-widest text-[10px]">Verify</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl uppercase tracking-widest text-[10px]">Active</Button>
+                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-14 bg-primary text-primary-foreground font-bold rounded-xl uppercase tracking-widest text-[10px]">Finish</Button>
               </div>
             </div>
           )}
