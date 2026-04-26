@@ -192,10 +192,10 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full pl-8 pr-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+        <div className="w-full pl-4 pr-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <SideMenu />
-            <Link href="/" className="flex items-center space-x-3 ml-2">
+            <Link href="/" className="flex items-center space-x-3">
               <Sparkles className="h-5 w-5 text-accent-foreground" />
               <span className="font-headline text-3xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
@@ -223,8 +223,8 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-1 shadow-md rounded-2xl">
-        <div className="flex items-center gap-2">
+      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-2 pr-1 shadow-md rounded-2xl">
+        <div className="flex items-center gap-1">
           <SideMenu />
           <Link href="/" className="flex items-center space-x-1">
             <span className="font-headline text-2xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
