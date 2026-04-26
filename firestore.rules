@@ -7,48 +7,65 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Helper to check if the user is the owner of the document
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    // --- MARKETPLACE DATA (B2C) ---
-    // Anyone can browse deals, products, and vendors
-    match /vendors/{vendorId} {
+    // --- MARKETPLACE DATA ---
+    // Anyone can browse parlours, deals, and products. 
+    // Only owners can modify their own listings.
+    match /parlours/{parlourId} {
       allow read: if true;
-      allow write: if isAuthenticated() && isOwner(vendorId);
+      allow write: if isAuthenticated() && (
+        (request.method == 'create' && request.resource.data.ownerId == request.auth.uid) ||
+        (request.method == 'update' && resource.data.ownerId == request.auth.uid)
+      );
     }
     
     match /deals/{dealId} {
       allow read: if true;
-      allow write: if isAuthenticated() && request.resource.data.vendor_id == request.auth.uid;
+      allow write: if isAuthenticated() && (
+        (request.method == 'create' && request.resource.data.parlourOwnerId == request.auth.uid) ||
+        (request.method == 'update' && resource.data.parlourOwnerId == request.auth.uid)
+      );
     }
     
     match /products/{productId} {
       allow read: if true;
-      allow write: if isAuthenticated() && request.resource.data.vendor_id == request.auth.uid;
+      allow write: if isAuthenticated() && (
+        (request.method == 'create' && request.resource.data.vendorId == request.auth.uid) ||
+        (request.method == 'update' && resource.data.vendorId == request.auth.uid)
+      );
     }
 
-    // --- USER DATA & SESSIONS ---
+    // --- USER DATA & BOOKINGS ---
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && isOwner(userId);
-      
-      // Nested sessions
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
       match /sessions/{sessionId} {
-        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
       }
     }
 
-    // --- BOOKINGS (COD) ---
-    // Customers can create bookings (anonymous or auth). 
-    // Vendors can only read bookings assigned to them.
+    match /localUsers/{localUserId} {
+      allow read, write: if true; // Guest profile access
+      match /bookings/{bookingId} {
+        allow read, write: if true;
+      }
+    }
+
     match /bookings/{bookingId} {
-      allow create: if true; // COD B2C flow
-      allow read: if (isAuthenticated() && (
+      allow read, create: if true;
+      allow update: if isAuthenticated() && (
         resource.data.vendorId == request.auth.uid || 
         resource.data.localUserId == request.auth.uid
-      ));
-      allow update: if isAuthenticated() && resource.data.vendorId == request.auth.uid;
+      );
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if true;
+    }
+
+    // Platform settings
+    match /globalConfig/defaultConfig {
+      allow read: if true;
+      allow write: if false; // System only
     }
   }
 }

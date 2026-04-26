@@ -48,18 +48,17 @@ export default function SignupPage() {
         updatedAt: serverTimestamp(),
       });
 
-      // If vendor, create initial vendor profile
+      // If vendor, create initial parlour profile matching backend.json
       if (role === 'vendor') {
-        await setDoc(doc(firestore, 'vendors', user.uid), {
+        await setDoc(doc(firestore, 'parlours', user.uid), {
           id: user.uid,
-          owner_uid: user.uid,
+          ownerId: user.uid,
           name: `${name}'s Parlour`,
-          area_tag: 'Not set',
+          areaTag: 'Not set',
           rating: 5.0,
-          images: [],
+          imageUrls: [],
           description: '',
-          owner_currency: 'PKR',
-          commission_rate: 0.15,
+          ownerDashboardStyle: 'grid',
         });
       }
 
