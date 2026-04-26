@@ -72,7 +72,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pb-32">
+      <main className="pb-32 pt-16 md:pt-0">
         <section className="relative h-[70vh] flex items-end pb-24 overflow-hidden">
           <div className="absolute inset-0">
             <Carousel 
