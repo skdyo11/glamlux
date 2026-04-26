@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Send, ChevronLeft, MoreVertical, Search, X, MessageSquare } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -63,7 +64,6 @@ export default function MessagesPage() {
     return query(
       collection(firestore, 'conversations'),
       where('participants', 'array-contains', user.uid)
-      // Removed orderBy to avoid index-related permission errors during development
     );
   }, [firestore, user?.uid]);
 
@@ -111,7 +111,7 @@ export default function MessagesPage() {
     );
   }, [firestore, activeConversationId]);
 
-  const { data: messages } = useCollection(messagesQuery);
+  const { data: messages, isLoading: isLoadingMessages } = useCollection(messagesQuery);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -195,7 +195,17 @@ export default function MessagesPage() {
 
           <ScrollArea className="flex-1 px-2">
             {isLoadingConversations ? (
-              <div className="p-8 text-center animate-pulse"><MessageSquare className="h-8 w-8 mx-auto text-primary/10" /></div>
+              <div className="space-y-2 p-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-4 p-4 rounded-2xl">
+                    <Skeleton className="h-12 w-12 rounded-full shrink-0" />
+                    <div className="flex-grow space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-40" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : filteredConversations.length > 0 ? (
               filteredConversations.map((conv) => (
                 <button
@@ -236,7 +246,16 @@ export default function MessagesPage() {
 
             <ScrollArea className="flex-1 p-4 md:p-8">
               <div className="space-y-6 pb-20">
-                {messages?.map((msg) => (
+                {isLoadingMessages ? (
+                  <div className="space-y-6">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className={cn("flex flex-col max-w-[85%] space-y-1", i % 2 === 0 ? "ml-auto items-end" : "items-start")}>
+                        <Skeleton className={cn("h-12 w-48 md:w-64 rounded-2xl", i % 2 === 0 ? "rounded-tr-none" : "rounded-tl-none")} />
+                        <Skeleton className="h-3 w-12" />
+                      </div>
+                    ))}
+                  </div>
+                ) : messages?.map((msg) => (
                   <div key={msg.id} className={cn("flex flex-col max-w-[85%] space-y-1", msg.senderId === user?.uid ? "ml-auto items-end" : "items-start")}>
                     <div className={cn(
                       "p-4 rounded-2xl shadow-sm text-sm", 
