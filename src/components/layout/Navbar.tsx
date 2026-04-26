@@ -72,11 +72,11 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-0.5 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
+    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full">
-            <Home className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Home className="h-4 w-4 text-foreground" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -85,26 +85,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-7 w-7 rounded-full"
+        className="h-9 w-9 rounded-full"
       >
-        {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} /> : <Moon className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />}
+        {theme === 'dark' ? <Sun className="h-4 w-4 text-foreground" strokeWidth={1.5} /> : <Moon className="h-4 w-4 text-foreground" strokeWidth={1.5} />}
       </Button>
 
-      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-7 px-1.5 rounded-full text-[7px] font-black uppercase tracking-widest text-foreground">
+      <Button variant="ghost" size="sm" onClick={toggleRegion} className="h-9 px-2.5 rounded-full text-[8px] font-black uppercase tracking-widest text-foreground">
         {getCurrency()}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
-          <Heart className={cn("h-3.5 w-3.5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+          <Heart className={cn("h-4 w-4 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-7 w-7 rounded-full">
-          <ShoppingBag className="h-3.5 w-3.5 text-foreground" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+          <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.5} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-0.5 -right-0.5 h-3 w-3 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[5px] font-black border border-background z-20 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[6px] font-black border border-background z-20 rounded-full">
               {cartCount}
             </Badge>
           )}
@@ -192,7 +192,7 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full pl-8 pr-4 h-16 flex items-center justify-between">
+        <div className="w-full pl-8 pr-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <SideMenu />
             <Link href="/" className="flex items-center space-x-3 ml-2">
@@ -223,11 +223,11 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Top Utility Bar */}
-      <nav className="fixed top-3 left-4 right-4 z-50 h-16 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-2 shadow-md rounded-2xl">
+      <nav className="fixed top-3 left-4 right-4 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-4 pr-2 shadow-md rounded-2xl">
         <div className="flex items-center gap-2">
           <SideMenu />
           <Link href="/" className="flex items-center space-x-1">
-            <span className="font-headline text-xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
+            <span className="font-headline text-lg tracking-tighter text-foreground italic leading-none">GlamLux</span>
           </Link>
         </div>
 
