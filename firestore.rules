@@ -63,9 +63,8 @@ service cloud.firestore {
 
     // --- CHAT SYSTEM ---
     match /conversations/{conversationId} {
-      // Explicitly allow list and get for participants
-      allow list: if isAuthenticated() && (request.auth.uid in resource.data.participants);
-      allow get: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      // Unified read permission for participants
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.participants);
       
       allow create: if isAuthenticated() && (request.auth.uid in request.resource.data.participants);
       allow update: if isAuthenticated() && (request.auth.uid in resource.data.participants);
@@ -85,6 +84,6 @@ service cloud.firestore {
     }
 
     // Trigger redeployment for security rules update
-    // Fix: Explicitly granted 'list' permission for conversation participants.
+    // Fix: Unified conversation permissions to allow listing for participants.
   }
 }
