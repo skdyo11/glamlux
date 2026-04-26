@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -23,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { 
   Users, 
@@ -36,14 +38,18 @@ import {
   ArrowRight,
   Store,
   Edit2,
-  Settings
+  Settings,
+  Camera,
+  Dices,
+  Upload
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
 import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
@@ -62,8 +68,11 @@ export default function PartnerPortalPage() {
   const [myDeals, setMyDeals] = useState<any[]>([]);
 
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
-  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | null>(null);
+  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | 'image-upload' | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [imageUploadType, setImageUploadType] = useState<'profile' | 'cover' | null>(null);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -232,6 +241,49 @@ export default function PartnerPortalPage() {
     setActiveSheet(type);
   };
 
+  const handleRandomizeImage = async (type: 'profile' | 'cover') => {
+    if (!firestore || !myBusiness) return;
+    const seed = Math.random().toString(36).substring(7);
+    const newUrl = type === 'cover' 
+      ? `https://picsum.photos/seed/${seed}/1600/400`
+      : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}`;
+    
+    try {
+      const field = type === 'cover' ? 'myCover' : 'myImage';
+      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: newUrl });
+      setMyBusiness({ ...myBusiness, [field]: newUrl });
+      toast({ title: "Updated", description: `New ${type} identity generated.` });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Update Failed" });
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && myBusiness && firestore) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        const field = imageUploadType === 'cover' ? 'myCover' : 'myImage';
+        try {
+          await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: base64String });
+          setMyBusiness({ ...myBusiness, [field]: base64String });
+          toast({ title: "Upload Success", description: `Your ${imageUploadType} has been updated.` });
+          setActiveSheet(null);
+          setImageUploadType(null);
+        } catch (error) {
+          toast({ variant: "destructive", title: "Upload Failed" });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const openImageModal = (type: 'profile' | 'cover') => {
+    setImageUploadType(type);
+    setActiveSheet('image-upload');
+  };
+
   if (!isMounted || isUserLoading) return null;
   if (!user) return null;
 
@@ -290,35 +342,45 @@ export default function PartnerPortalPage() {
     );
   }
 
+  const profileImageUrl = myBusiness?.myImage || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}`;
+  const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/${myBusiness?.id || 'portal'}/1600/400`;
+
   return (
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
       <main className="container mx-auto px-0 md:px-6 py-4 md:py-12 pt-14 md:pt-24">
-        {/* Cover Photo & Profile Header (Facebook Style) */}
         <div className="relative mb-12">
-          {/* Cover Photo */}
-          <div className="w-full h-48 md:h-64 lg:h-80 rounded-b-[2.5rem] md:rounded-[3rem] overflow-hidden relative shadow-xl">
+          {/* Cover Photo with Hover Overlay */}
+          <div className="w-full h-48 md:h-64 lg:h-80 rounded-b-[2.5rem] md:rounded-[3rem] overflow-hidden relative shadow-xl group">
             <Image
-              src={`https://picsum.photos/seed/${myBusiness?.id || 'portal'}/1600/400`}
+              src={coverImageUrl}
               alt="Artisan Cover"
               fill
-              className="object-cover brightness-[0.85]"
+              className="object-cover brightness-[0.85] transition-all group-hover:scale-105"
               priority
               data-ai-hint="luxury interior"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button 
+                onClick={() => openImageModal('cover')}
+                className="rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold text-xs uppercase tracking-widest h-14 px-8 shadow-2xl hover:bg-white/40"
+              >
+                <Camera className="h-4 w-4 mr-2" /> Change Cover
+              </Button>
+            </div>
           </div>
 
           {/* Profile Section Overlap */}
           <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <div className="h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0">
-              <div className="h-full w-full rounded-[2.5rem] bg-primary/5 flex items-center justify-center text-primary relative overflow-hidden">
-                {myBusiness?.imageUrls?.[0] ? (
-                  <Image src={myBusiness.imageUrls[0]} alt="Logo" fill className="object-cover" />
-                ) : (
-                  <Store className="h-12 w-12 md:h-16 md:w-16 opacity-10" />
-                )}
+            <div className="group relative h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0 transition-transform active:scale-95">
+              <Avatar className="h-full w-full rounded-[2.5rem] overflow-hidden border-none bg-primary/5">
+                <AvatarImage src={profileImageUrl} className="object-cover" />
+                <AvatarFallback className="bg-primary/10 text-primary"><Store className="h-12 w-12 opacity-10" /></AvatarFallback>
+              </Avatar>
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onClick={() => openImageModal('profile')}>
+                <Camera className="h-6 w-6 text-white" />
               </div>
             </div>
             
@@ -455,6 +517,47 @@ export default function PartnerPortalPage() {
           </Tabs>
         </div>
       </main>
+
+      {/* Identity Update Dialog (Randomize / Upload) */}
+      <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className="rounded-3xl border-none bg-white shadow-3xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-headline italic text-primary text-center">
+              Brand Identity
+            </DialogTitle>
+            <DialogDescription className="text-center italic">
+              Refresh your {imageUploadType} appearance.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-8 space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              <Button 
+                onClick={() => handleRandomizeImage(imageUploadType!)}
+                className="h-16 rounded-2xl bg-primary/5 hover:bg-primary/10 border-2 border-dashed border-primary/20 text-primary font-bold uppercase tracking-widest text-xs"
+              >
+                <Dices className="h-6 w-6 mr-3" /> Roll for Identity
+              </Button>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
+                  <span className="bg-white px-2">OR</span>
+                </div>
+              </div>
+              <Button 
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-16 rounded-2xl border-primary/20 bg-white text-primary font-bold uppercase tracking-widest text-xs shadow-sm"
+              >
+                <Upload className="h-6 w-6 mr-3" /> Upload Selection
+                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+              </Button>
+            </div>
+          </div>
+          <DialogFooter>
+             <p className="text-[9px] uppercase font-black tracking-widest text-muted-foreground/40 text-center w-full">Artisan standard requirements apply.</p>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Item & Deal Listing Dialog */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => { setActiveSheet(null); setEditingItem(null); }}>

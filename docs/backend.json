@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "LocalUser": {
@@ -30,6 +31,8 @@
         "areaTag": { "type": "string" },
         "rating": { "type": "number" },
         "imageUrls": { "type": "array", "items": { "type": "string" } },
+        "myImage": { "type": "string", "description": "Custom artisan profile image." },
+        "myCover": { "type": "string", "description": "Custom artisan cover banner." },
         "description": { "type": "string" },
         "ownerDashboardStyle": { "type": "string", "enum": ["list", "grid"] }
       },
