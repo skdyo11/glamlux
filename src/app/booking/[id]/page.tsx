@@ -11,10 +11,10 @@ import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { QRCodeCanvas } from 'qrcode.react';
 import { cn } from '@/lib/utils';
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState, use, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function BookingSuccessPage({ params }: { params: Promise<{ id: string }> }) {
+function BookingContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const searchParams = useSearchParams();
   const firestore = useFirestore();
@@ -164,5 +164,17 @@ export default function BookingSuccessPage({ params }: { params: Promise<{ id: s
         </div>
       </main>
     </div>
+  );
+}
+
+export default function BookingSuccessPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <Skeleton className="h-12 w-12 rounded-full" />
+      </div>
+    }>
+      <BookingContent params={params} />
+    </Suspense>
   );
 }

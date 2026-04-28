@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Send, ChevronLeft, MoreVertical, Search, X, MessageSquare } from 'lucide-react';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { 
@@ -31,7 +31,7 @@ import {
 } from 'firebase/firestore';
 import { signInAnonymously, getAuth } from 'firebase/auth';
 
-export default function MessagesPage() {
+function MessagesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const vendorId = searchParams.get('vendorId');
@@ -289,5 +289,20 @@ export default function MessagesPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <Skeleton className="h-12 w-12 rounded-full" />
+        </div>
+      </div>
+    }>
+      <MessagesContent />
+    </Suspense>
   );
 }
