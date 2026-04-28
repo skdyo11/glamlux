@@ -1,6 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import 'leaflet/dist/leaflet.css';
 
 @layer base {
   :root {
@@ -57,7 +60,13 @@
   }
 }
 
-/* Reduced intensity effects for performance */
+/* Leaflet Map Polishing */
+.leaflet-container {
+  @apply rounded-[2rem] border border-primary/10 shadow-inner overflow-hidden;
+  height: 300px;
+  width: 100%;
+}
+
 .soft-focus {
   @apply saturate-[0.9] transition-opacity duration-200 ease-out;
 }

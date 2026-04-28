@@ -1,3 +1,4 @@
+
 export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
 
 export type Vendor = {
@@ -6,6 +7,7 @@ export type Vendor = {
   lat: number;
   lng: number;
   area_tag: string;
+  address?: string;
   rating: number;
   images: string[];
   owner_currency: 'PKR' | 'INR';
@@ -70,6 +72,7 @@ export type Booking = {
   groupSize: number;
   inspirationImageUrl?: string | null;
   arrival_time?: string;
+  shippingAddress?: string;
 };
 
 export type Review = {

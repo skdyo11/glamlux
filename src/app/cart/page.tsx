@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -8,7 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, ShieldCheck, Truck, Camera, Sparkles, X, Info, Banknote, Plus, Minus, Users, ArrowRight, Package } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Trash2, ShieldCheck, Truck, Camera, Sparkles, X, Info, Banknote, Plus, Minus, Users, ArrowRight, Package, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
@@ -32,6 +34,7 @@ export default function CartPage() {
   
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
 
   const [inspirationImage, setInspirationImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -95,6 +98,12 @@ export default function CartPage() {
       return;
     }
 
+    const hasProducts = cart.some(item => item.type === 'product');
+    if (hasProducts && !shippingAddress.trim()) {
+      toast({ variant: "destructive", title: "Address Required", description: "A delivery address is required for boutique products." });
+      return;
+    }
+
     setIsCheckingOut(true);
 
     try {
@@ -108,7 +117,6 @@ export default function CartPage() {
 
       const refCode = Math.random().toString(36).substring(7).toUpperCase();
       
-      // Save order to central bookings collection
       const newBookingRef = doc(collection(firestore, 'bookings'));
       
       const bookingData = {
@@ -116,6 +124,7 @@ export default function CartPage() {
         localUserId: currentUser.uid,
         userName: userName,
         userPhone: phoneNumber || 'Not provided',
+        shippingAddress: shippingAddress || 'N/A',
         referenceCode: refCode,
         totalPrice: totalDueNow,
         currency: getCurrency(),
@@ -129,7 +138,6 @@ export default function CartPage() {
         vendorId: cart[0]?.vendor_id || 'v1'
       };
 
-      // Set document in Firestore
       await setDocumentNonBlocking(newBookingRef, bookingData, { merge: false });
       
       toast({
@@ -203,7 +211,6 @@ export default function CartPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-12">
-        {/* Persistent Tracker Banner */}
         {showTracker && (
           <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
             <Card className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl ring-1 ring-primary/10">
@@ -270,7 +277,25 @@ export default function CartPage() {
             </section>
 
             <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">2. Inspiration Reference</h2>
+              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">2. Delivery Registry</h2>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary flex items-center gap-2">
+                    <MapPin className="h-3 w-3" /> Shipping Address
+                  </Label>
+                  <Textarea 
+                    placeholder="Provide full destination details for boutique shipments..." 
+                    value={shippingAddress}
+                    onChange={(e) => setShippingAddress(e.target.value)}
+                    className="rounded-3xl border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 min-h-[100px]"
+                  />
+                  <p className="text-[8px] text-muted-foreground italic ml-4">Required for product delivery. For sanctuary bookings, this helps our artisans prepare.</p>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-6">
+              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">3. Inspiration Reference</h2>
               {!inspirationImage ? (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
@@ -325,7 +350,7 @@ export default function CartPage() {
             </section>
 
             <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">3. Your Selection</h2>
+              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">4. Your Selection</h2>
               <div className="space-y-8">
                 {cart.map((item) => (
                   <div key={item.id} className="flex flex-col md:flex-row gap-6 md:items-center border-b border-primary/5 pb-8">

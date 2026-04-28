@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -12,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
 import { 
   Sheet, 
   SheetContent, 
@@ -45,7 +47,8 @@ import {
   Upload,
   Trash2,
   Check,
-  RefreshCw
+  RefreshCw,
+  MapPin
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -54,6 +57,12 @@ import { useUser, useFirestore } from '@/firebase';
 import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, deleteField } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+
+// Dynamically import Map to avoid SSR issues with Leaflet
+const Map = dynamic(() => import('@/components/Map'), { 
+  ssr: false,
+  loading: () => <Skeleton className="h-[300px] w-full rounded-[2rem]" />
+});
 
 export default function PartnerPortalPage() {
   const { toast } = useToast();
@@ -69,7 +78,7 @@ export default function PartnerPortalPage() {
 
   const [arrivals, setArrivals] = useState<any[]>([]);
   const [myProducts, setMyProducts] = useState<any[]>([]);
-  const [myDeals, setMyDeals] = useState<any[]>([]);
+  const [myServices, setMyServices] = useState<any[]>([]);
 
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
   const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | 'image-upload' | null>(null);
@@ -82,6 +91,9 @@ export default function PartnerPortalPage() {
   const [profilePreviews, setProfilePreviews] = useState<string[]>([]);
   const [coverPreviews, setCoverPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]); // Default to Lahore
+  const [addressInput, setAddressInput] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
@@ -100,8 +112,13 @@ export default function PartnerPortalPage() {
       const q = query(collection(firestore, 'parlours'), where('ownerId', '==', user.uid));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
         setHasBusiness(true);
-        setMyBusiness({ ...snapshot.docs[0].data(), id: snapshot.docs[0].id });
+        setMyBusiness({ ...data, id: snapshot.docs[0].id });
+        setAddressInput(data.address || '');
+        if (data.latitude && data.longitude) {
+          setMapLocation([data.latitude, data.longitude]);
+        }
       } else {
         setHasBusiness(false);
       }
@@ -115,7 +132,7 @@ export default function PartnerPortalPage() {
 
     const dealsQuery = query(collection(firestore, 'deals'), where('parlourOwnerId', '==', user.uid));
     const unsubDeals = onSnapshot(dealsQuery, (snapshot) => {
-      setMyDeals(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      setMyServices(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     });
 
     const productsQuery = query(collection(firestore, 'products'), where('vendorId', '==', user.uid));
@@ -137,7 +154,6 @@ export default function PartnerPortalPage() {
 
   const generatePreviews = useCallback(() => {
     setIsRolling(true);
-    // Add small delay for rolling animation and reliable state update
     setTimeout(() => {
       const randomSeed = () => Math.random().toString(36).substring(7);
       const profs = [
@@ -163,6 +179,8 @@ export default function PartnerPortalPage() {
         ownerId: user.uid,
         name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`,
         areaTag: 'Select Area',
+        latitude: 31.5204,
+        longitude: 74.3587,
         rating: 5.0,
         imageUrls: [],
         description: type === 'parlour' ? 'A nice beauty parlour.' : 'A premium makeup shop.',
@@ -252,8 +270,11 @@ export default function PartnerPortalPage() {
             name,
             areaTag: detail,
             description: value,
+            address: addressInput,
+            latitude: mapLocation[0],
+            longitude: mapLocation[1],
           });
-          setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value });
+          setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
         }
       }
 
@@ -551,7 +572,7 @@ export default function PartnerPortalPage() {
                 </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {myDeals.map((d) => (
+                {myServices.map((d) => (
                   <Card key={d.id} className="p-8 rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
                     <div className="space-y-1">
                       <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
@@ -607,7 +628,6 @@ export default function PartnerPortalPage() {
                 </div>
               ) : (
                 <div className="space-y-10">
-                  {/* Profile Specific Previews (3 items) */}
                   {imageUploadType === 'profile' && (
                     <div className="grid grid-cols-3 gap-4 md:gap-6">
                       {isRolling ? (
@@ -618,7 +638,6 @@ export default function PartnerPortalPage() {
                           onClick={() => handleApplyIdentity(url)}
                           className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1 animate-in fade-in zoom-in duration-300"
                         >
-                          {/* Use standard img for previews to ensure reliable loading of dynamic placeholders */}
                           <img src={url} alt="Profile Option" className="w-full h-full object-cover rounded-[1.2rem]" />
                           <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                             <Check className="h-6 w-6 text-white" />
@@ -628,7 +647,6 @@ export default function PartnerPortalPage() {
                     </div>
                   )}
 
-                  {/* Cover Specific Previews (2 items) */}
                   {imageUploadType === 'cover' && (
                     <div className="grid grid-cols-1 gap-4">
                       {isRolling ? (
@@ -690,60 +708,90 @@ export default function PartnerPortalPage() {
 
       {/* Item & Deal Listing Dialog */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => { setActiveSheet(null); setEditingItem(null); }}>
-        <DialogContent className="rounded-2xl border-none bg-background text-foreground shadow-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-3xl font-headline italic text-primary">
-              {activeSheet === 'profile' ? 'Business Profile' : editingItem ? 'Customize Item' : 'New Listing'}
-            </DialogTitle>
-            <DialogDescription className="italic text-muted-foreground">
-              {activeSheet === 'profile' ? 'Update your artisan identity.' : 'Provide details for your marketplace offering.'}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSheetSubmit} className="space-y-6 py-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                {activeSheet === 'profile' ? 'Parlour/Shop Name' : 'Name'}
-              </Label>
-              <Input 
-                name="name" 
-                required 
-                defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
-                placeholder="Elite reference name..." 
-                className="rounded-full h-12 bg-primary/5 border-none px-6" 
-              />
+        <DialogContent className={cn("rounded-2xl border-none bg-background text-foreground shadow-2xl", activeSheet === 'profile' ? "max-w-2xl" : "max-w-md")}>
+          <ScrollArea className="max-h-[90dvh]">
+            <div className="p-1">
+              <DialogHeader>
+                <DialogTitle className="text-3xl font-headline italic text-primary">
+                  {activeSheet === 'profile' ? 'Business Profile' : editingItem ? 'Customize Item' : 'New Listing'}
+                </DialogTitle>
+                <DialogDescription className="italic text-muted-foreground">
+                  {activeSheet === 'profile' ? 'Update your artisan identity and sanctuary location.' : 'Provide details for your marketplace offering.'}
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSheetSubmit} className="space-y-6 py-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                    {activeSheet === 'profile' ? 'Parlour/Shop Name' : 'Name'}
+                  </Label>
+                  <Input 
+                    name="name" 
+                    required 
+                    defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
+                    placeholder="Elite reference name..." 
+                    className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                      {activeSheet === 'profile' ? 'Region Tag (City)' : activeSheet === 'product' ? 'Brand' : 'Category'}
+                    </Label>
+                    <Input 
+                      name="detail" 
+                      required 
+                      defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
+                      placeholder="Details..." 
+                      className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
+                      {activeSheet === 'profile' ? 'Short Bio' : 'Price'}
+                    </Label>
+                    <Input 
+                      name="value" 
+                      required 
+                      type={activeSheet === 'profile' ? 'text' : 'number'}
+                      defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : (activeSheet === 'profile' ? myBusiness?.description : '')}
+                      placeholder={activeSheet === 'profile' ? "Vision..." : "0.00"}
+                      className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                    />
+                  </div>
+                </div>
+
+                {activeSheet === 'profile' && (
+                  <div className="space-y-6 pt-4 border-t border-primary/5">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2 flex items-center gap-2">
+                        <MapPin className="h-3 w-3" /> Full Studio Address
+                      </Label>
+                      <Input 
+                        value={addressInput}
+                        onChange={(e) => setAddressInput(e.target.value)}
+                        placeholder="Street, Landmark, Building Number..." 
+                        className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                      />
+                      <p className="text-[8px] text-muted-foreground italic ml-4">Type your physical address above, then click on the map to pin your location.</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Sanctuary Pin</Label>
+                      <Map 
+                        center={mapLocation} 
+                        onLocationSelect={(lat, lng) => setMapLocation([lat, lng])} 
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
+                  {editingItem || activeSheet === 'profile' ? 'Save Changes' : 'Publish Listing'}
+                </Button>
+              </form>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                  {activeSheet === 'profile' ? 'Area/Location' : activeSheet === 'product' ? 'Brand' : 'Category'}
-                </Label>
-                <Input 
-                  name="detail" 
-                  required 
-                  defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
-                  placeholder="Details..." 
-                  className="rounded-full h-12 bg-primary/5 border-none px-6" 
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                  {activeSheet === 'profile' ? 'Studio Vision' : 'Price'}
-                </Label>
-                <Input 
-                  name="value" 
-                  required 
-                  type={activeSheet === 'profile' ? 'text' : 'number'}
-                  defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : (activeSheet === 'profile' ? myBusiness?.description : '')}
-                  placeholder={activeSheet === 'profile' ? "Vision..." : "0.00"}
-                  className="rounded-full h-12 bg-primary/5 border-none px-6" 
-                />
-              </div>
-            </div>
-            <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
-              {editingItem || activeSheet === 'profile' ? 'Save Changes' : 'Publish Listing'}
-            </Button>
-          </form>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
