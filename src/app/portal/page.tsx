@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -43,11 +42,12 @@ import {
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useFirebase } from '@/firebase';
 import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { slugify } from '@/lib/utils';
+import { signInAnonymously } from 'firebase/auth';
 
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
@@ -57,7 +57,7 @@ const Map = dynamic(() => import('@/components/Map'), {
 export default function PartnerPortalPage() {
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
+  const { auth, firestore } = useFirebase();
   const { getCurrency } = useStore();
   const router = useRouter();
   
@@ -89,11 +89,12 @@ export default function PartnerPortalPage() {
     setIsMounted(true);
   }, []);
 
+  // Frictionless Onboarding: Instead of redirecting to login, we silently sign in anonymously.
   useEffect(() => {
-    if (isMounted && !isUserLoading && !user) {
-      router.push('/login');
+    if (isMounted && !isUserLoading && !user && auth) {
+      signInAnonymously(auth).catch(err => console.error("Silent authentication failed", err));
     }
-  }, [user, isUserLoading, isMounted, router]);
+  }, [user, isUserLoading, isMounted, auth]);
 
   useEffect(() => {
     if (!user || !firestore) return;
@@ -171,7 +172,10 @@ export default function PartnerPortalPage() {
   }, []);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
-    if (!user || !firestore) return;
+    if (!user || !firestore) {
+      toast({ variant: "destructive", title: "Identity Pending", description: "Waiting for registry synchronization..." });
+      return;
+    }
     try {
       const businessName = type === 'parlour' ? `${user.displayName || 'The'} Sanctuary` : `${user.displayName || 'The'} House`;
       const baseSlug = slugify(businessName);
@@ -337,7 +341,6 @@ export default function PartnerPortalPage() {
   };
 
   if (!isMounted || isUserLoading) return null;
-  if (!user) return null;
 
   if (hasBusiness === false) {
     return (
@@ -373,7 +376,7 @@ export default function PartnerPortalPage() {
     );
   }
 
-  const profileImageUrl = myBusiness?.myImage || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}`;
+  const profileImageUrl = myBusiness?.myImage || (user ? `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}` : '');
   const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/vogue-portal/1600/400`;
 
   return (
