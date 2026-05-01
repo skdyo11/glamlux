@@ -20,8 +20,7 @@ import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 
-// Custom Precision Icons - Simple & Chunky Flaticon Style
-// Uses distinct path logic for Outline vs Solid to ensure perfect rendering
+// Precision-Crafted SVGs - Clean single-path geometries to avoid overlapping transparency issues
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
   const strokeWidth = 2.5;
   
@@ -29,7 +28,7 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'none' : 'currentColor'} strokeWidth={isActive ? 0 : strokeWidth} strokeLinecap="round" strokeLinejoin="round">
         {isActive ? (
-          <path d="M12 3L4 9V21H20V9L12 3Z" />
+          <path d="M12 2L3 9v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9l-9-7z" />
         ) : (
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
         )}
@@ -40,13 +39,9 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'none' : 'currentColor'} strokeWidth={isActive ? 0 : strokeWidth} strokeLinecap="round" strokeLinejoin="round">
         {isActive ? (
-          <path d="M21 8L12 13L3 8V16L12 21L21 16V8Z" />
+          <path d="M21 7.5L12 12 3 7.5 12 3l9 4.5zM3 10l9 4.5V21l-9-4.5V10zm18 0l-9 4.5V21l9-4.5V10z" />
         ) : (
-          <>
-            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-            <path d="M3.29 7L12 12L20.71 7" />
-            <path d="M12 22V12" />
-          </>
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73zM3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
         )}
       </svg>
     );
@@ -55,12 +50,9 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'none' : 'currentColor'} strokeWidth={isActive ? 0 : strokeWidth} strokeLinecap="round" strokeLinejoin="round">
         {isActive ? (
-          <path d="M20 7L22 11V19C22 20.1 21.1 21 20 21H4C2.9 21 2 20.1 2 19V11L4 7H20ZM12 11C11.4 11 11 10.6 11 10V4C11 3.4 11.4 3 12 3C12.6 3 13 3.4 13 4V10C13 10.6 12.6 11 12 11Z" />
+          <path d="M22 19V11l-2-4H4l-2 4v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2zM12 3v8" />
         ) : (
-          <>
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <path d="M9 22V12h6v10" />
-          </>
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10" />
         )}
       </svg>
     );
@@ -69,7 +61,7 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'none' : 'currentColor'} strokeWidth={isActive ? 0 : strokeWidth} strokeLinecap="round" strokeLinejoin="round">
         {isActive ? (
-          <path d="M21 11.5C21 16.19 16.97 20 12 20C10.64 20 9.35 19.71 8.18 19.19L3 21L4.81 15.82C4.29 14.65 4 13.36 4 12C4 7.03 8.03 3 13 3C17.97 3 22 7.03 22 12V11.5H21Z" />
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-7.3 8.38 8.38 0 0 1 3.8.9L21 3z" />
         ) : (
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         )}
@@ -87,7 +79,7 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'none' : 'currentColor'} strokeWidth={isActive ? 0 : strokeWidth} strokeLinecap="round" strokeLinejoin="round">
         {isActive ? (
-          <path d="M6 2L3 6V20C3 21.1 3.9 22 5 22H19C20.1 22 21 21.1 21 20V6L18 2H6ZM12 13C10.34 13 9 11.66 9 10H15C15 11.66 13.66 13 12 13Z" />
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6zm6 11a3 3 0 0 1-3-3H6l3-4h6l3 4h-3a3 3 0 0 1-3 3z" />
         ) : (
           <>
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -185,7 +177,6 @@ export function Navbar() {
   };
   
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
-  const favCount = useMemo(() => (favorites?.products?.length || 0) + (favorites?.vendors?.length || 0), [favorites]);
   const isHome = pathname === '/';
 
   useEffect(() => {
@@ -206,7 +197,7 @@ export function Navbar() {
     <div className="flex items-center gap-1.5 p-1.5 bg-white/60 dark:bg-black/40 backdrop-blur-xl rounded-full border border-primary/10 shadow-sm">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group text-primary">
             <CustomIcon type="home" isActive={pathname === '/'} className="h-5 w-5" />
           </Button>
         </Link>
@@ -216,19 +207,19 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(isDark ? 'light' : 'dark')}
-        className="h-10 w-10 rounded-full group"
+        className="h-10 w-10 rounded-full group text-primary"
       >
         <CustomIcon type={isDark ? 'theme-sun' : 'theme-moon'} isActive={false} className="h-5 w-5" />
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group text-primary">
           <CustomIcon type="favorites" isActive={pathname === '/favorites'} className="h-5 w-5" />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group text-primary">
           <CustomIcon type="cart" isActive={pathname === '/cart'} className="h-5 w-5" />
           {cartCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full shadow-lg">
@@ -243,7 +234,7 @@ export function Navbar() {
   const SideMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group text-primary">
           <CustomIcon type="menu" isActive={false} className="h-5 w-5" />
         </Button>
       </SheetTrigger>
@@ -268,21 +259,21 @@ export function Navbar() {
           <div className="flex-1 px-6 py-10 space-y-4">
             <SheetClose asChild>
               <Link href="/" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <CustomIcon type="home" isActive={pathname === '/'} className="h-5 w-5" />
+                <CustomIcon type="home" isActive={pathname === '/'} className="h-5 w-5 text-primary" />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Overview</span>
               </Link>
             </SheetClose>
             
             <SheetClose asChild>
               <Link href="/portal" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <CustomIcon type="dashboard" isActive={pathname === '/portal'} className="h-5 w-5" />
+                <CustomIcon type="dashboard" isActive={pathname === '/portal'} className="h-5 w-5 text-primary" />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Management</span>
               </Link>
             </SheetClose>
 
             <SheetClose asChild>
               <Link href="/messages" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <CustomIcon type="chat" isActive={pathname === '/messages'} className="h-5 w-5" />
+                <CustomIcon type="chat" isActive={pathname === '/messages'} className="h-5 w-5 text-primary" />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Inquiries</span>
               </Link>
             </SheetClose>
@@ -347,7 +338,7 @@ export function Navbar() {
                 href={link.href} 
                 className={cn(
                   "hover:text-secondary transition-all duration-500 relative group py-2 flex items-center gap-2",
-                  pathname.startsWith(link.href) ? "text-primary" : "text-primary/40"
+                  pathname.startsWith(link.href) ? "text-primary" : "text-primary/60"
                 )}
               >
                 <CustomIcon type={link.type} isActive={pathname.startsWith(link.href)} className="h-4 w-4" />
@@ -388,11 +379,12 @@ export function Navbar() {
                     ? "bg-secondary/15 border-secondary/20 scale-110 shadow-lg shadow-secondary/5" 
                     : ""
                 )}>
-                  <CustomIcon type={link.type} isActive={isActive} className={cn("h-6 w-6 transition-all duration-500", isActive ? "text-primary" : "text-primary/40")} />
+                  <CustomIcon type={link.type} isActive={isActive} className={cn("h-6 w-6 transition-all duration-500", isActive ? "text-primary" : "text-primary/60")} />
                 </div>
                 <span className={cn(
                   "text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-500",
-                  isActive ? "text-primary opacity-100" : "text-primary/20 opacity-0 group-hover:opacity-100"
+                  "text-primary",
+                  isActive ? "opacity-100" : "opacity-60"
                 )}>
                   {link.label}
                 </span>
