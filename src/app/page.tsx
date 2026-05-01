@@ -65,18 +65,18 @@ export default function Home() {
             <div className="absolute inset-0 bg-black/40 z-10" />
           </div>
           <div className="container mx-auto px-6 relative z-20">
-            <div className="max-w-4xl space-y-12">
+            <div className="max-w-3xl space-y-10">
               <div className="space-y-4">
                 <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px] block">The Editorial Registry</span>
-                <h1 className="text-7xl md:text-[10rem] font-headline leading-[0.85] text-white tracking-tighter">
+                <h1 className="text-6xl md:text-[8rem] font-headline leading-[0.85] text-white tracking-tighter">
                   PURE <br />
                   <span className="text-secondary italic">ESTHETIC.</span>
                 </h1>
               </div>
-              <p className="text-xl md:text-2xl text-white/80 font-body max-w-2xl leading-relaxed">
+              <p className="text-lg md:text-xl text-white/80 font-body max-w-xl leading-relaxed">
                 A structured collection of the most prestigious artisan sanctuaries across the subcontinent.
               </p>
-              <div className="flex flex-wrap gap-6 pt-8">
+              <div className="flex flex-wrap gap-6 pt-6">
                 <Button asChild size="lg" className="bg-white text-primary hover:bg-secondary hover:text-white rounded-none border-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs">
                   <Link href="/deals">The Services</Link>
                 </Button>
