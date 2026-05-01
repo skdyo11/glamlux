@@ -63,19 +63,19 @@ export function Navbar() {
   }, []);
 
   const bottomNavLinks = useMemo(() => [
-    { href: '/shop', label: 'Products', icon: Package },
-    { href: '/vendors', label: 'Parlours', icon: Store },
+    { href: '/shop', label: 'Boutique', icon: Package },
+    { href: '/vendors', label: 'Sanctuaries', icon: Store },
     { href: '/messages', label: 'CChat', icon: MessageSquare },
   ], []);
 
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm transition-all hover:shadow-md">
+    <div className="flex items-center p-1 bg-background/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none rounded-full border border-primary/5 md:border-none">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
-            <Home className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
+            <Home className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -84,26 +84,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-10 w-10 rounded-full group"
+        className="h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10"
       >
         {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Sun className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
         ) : (
-          <Moon className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Moon className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
         )}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
-          <Heart className={cn("h-5 w-5 text-foreground transition-all group-hover:scale-110", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
+          <Heart className={cn("h-5 w-5 text-primary transition-all group-hover:scale-110", favCount > 0 && "fill-current text-secondary")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
-          <ShoppingBag className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
+          <ShoppingBag className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[8px] font-black border border-background z-20 rounded-full animate-in zoom-in duration-300">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full animate-in zoom-in duration-500 shadow-xl">
               {cartCount}
             </Badge>
           )}
@@ -119,76 +119,82 @@ export function Navbar() {
           <Menu className="h-6 w-6 text-primary transition-all group-hover:scale-110" strokeWidth={1.5} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] rounded-r-2xl border-none bg-background/95 backdrop-blur-xl p-0 shadow-2xl">
+      <SheetContent side="left" className="w-[320px] border-none bg-background/98 backdrop-blur-3xl p-0 shadow-3xl">
         <div className="flex flex-col h-full">
-          <SheetHeader className="p-8 text-left border-b border-primary/5">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shadow-inner">
-                <User className="h-6 w-6" strokeWidth={1.5} />
+          <SheetHeader className="p-10 text-left border-b border-primary/5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-14 w-14 rounded-none border border-primary/10 bg-primary/5 flex items-center justify-center text-primary shadow-inner">
+                <User className="h-7 w-7" strokeWidth={1} />
               </div>
               <div>
-                <SheetTitle className="font-headline text-2xl italic text-primary leading-none">
+                <SheetTitle className="font-headline text-3xl italic text-primary leading-none">
                   {user ? (user.displayName || 'Artisan') : 'Guest'}
                 </SheetTitle>
-                <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">
-                  {user ? user.email : 'Explore GlamLux'}
+                <p className="text-[10px] uppercase font-black tracking-widest text-secondary mt-2">
+                  {user ? user.email : 'Explore the Registry'}
                 </p>
               </div>
             </div>
           </SheetHeader>
 
-          <div className="flex-1 px-4 py-8 space-y-2">
+          <div className="flex-1 px-6 py-10 space-y-4">
             <SheetClose asChild>
-              <Link href="/" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
-                <Home className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> Home
+              <Link href="/" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
+                <Home className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Overview</span>
               </Link>
             </SheetClose>
             
             <SheetClose asChild>
-              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
-                <LayoutDashboard className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> My Business
+              <Link href="/portal" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
+                <LayoutDashboard className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Management</span>
               </Link>
             </SheetClose>
 
             <SheetClose asChild>
-              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
-                <MessageSquare className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> Support Chat
+              <Link href="/messages" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
+                <MessageSquare className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Inquiries</span>
               </Link>
             </SheetClose>
 
             <Button 
               variant="ghost" 
               onClick={toggleRegion}
-              className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 transition-all group"
+              className="w-full justify-start gap-6 p-4 h-auto rounded-none text-primary transition-all group hover:bg-primary/5"
             >
-              <Globe className="h-4 w-4 transition-all group-hover:scale-110" strokeWidth={1.5} /> Region: {getCurrency()}
+              <Globe className="h-4 w-4 text-primary transition-all group-hover:scale-110" strokeWidth={1.5} />
+              <span className="font-bold text-xs uppercase tracking-[0.3em]">Market: {getCurrency()}</span>
             </Button>
 
-            <div className="pt-8 opacity-20">
+            <div className="pt-10 opacity-10">
               <div className="h-px bg-primary" />
             </div>
             
-            <div className="pt-4">
+            <div className="pt-6">
               {user ? (
                 <Button 
                   variant="ghost" 
                   onClick={handleLogout}
-                  className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest transition-all group"
+                  className="w-full justify-start gap-6 p-4 h-auto rounded-none text-destructive hover:bg-destructive/5 group transition-all"
                 >
-                  <LogOut className="h-4 w-4 transition-all group-hover:-translate-x-1" strokeWidth={1.5} /> Log Out
+                  <LogOut className="h-4 w-4 transition-all group-hover:-translate-x-1" strokeWidth={1.5} />
+                  <span className="font-bold text-xs uppercase tracking-[0.3em]">De-authenticate</span>
                 </Button>
               ) : (
                 <SheetClose asChild>
-                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
-                    <Settings className="h-4 w-4 transition-all group-hover:rotate-45" strokeWidth={1.5} /> Member Login
+                  <Link href="/login" className="flex items-center gap-6 p-4 border border-primary/10 bg-primary text-primary-foreground transition-all group">
+                    <Settings className="h-4 w-4 transition-all group-hover:rotate-45" strokeWidth={1.5} />
+                    <span className="font-bold text-xs uppercase tracking-[0.3em]">Access Key</span>
                   </Link>
                 </SheetClose>
               )}
             </div>
           </div>
 
-          <div className="p-8 text-center">
-            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-accent-foreground/30">GlamLux • MMXXIV</p>
+          <div className="p-10 text-center border-t border-primary/5 bg-primary/2">
+            <p className="text-[8px] font-black uppercase tracking-[0.5em] text-primary/20">MMXXIV GLAMLUX REGISTRY</p>
           </div>
         </div>
       </SheetContent>
@@ -197,67 +203,68 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full border-b border-border/5 bg-background/80 backdrop-blur-sm transition-all duration-300 hidden md:block">
-        <div className="w-full pl-2 pr-8 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      {/* Desktop Bar */}
+      <nav className="fixed top-0 z-50 w-full border-b border-primary/10 bg-background/80 backdrop-blur-xl transition-all duration-500 hidden md:block">
+        <div className="container mx-auto h-16 flex items-center justify-between px-6">
+          <div className="flex items-center gap-8">
             <SideMenu />
-            <Link href="/" className="flex items-center space-x-2 group">
-              <Sparkles className="h-6 w-6 text-accent-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
-              <span className="font-headline text-4xl tracking-tighter text-foreground italic">GlamLux</span>
+            <Link href="/" className="flex items-center space-x-3 group">
+              <Sparkles className="h-6 w-6 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+              <span className="font-headline text-4xl tracking-tighter text-primary italic leading-none">GlamLux</span>
             </Link>
           </div>
 
-          <div className="flex items-center space-x-10 text-[10px] font-black uppercase tracking-[0.3em]">
+          <div className="flex items-center space-x-12 text-[10px] font-black uppercase tracking-[0.4em]">
             {bottomNavLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href} 
                 className={cn(
-                  "hover:text-accent-foreground transition-all duration-300 relative group",
-                  pathname === link.href ? "text-accent-foreground font-black" : "text-muted-foreground"
+                  "hover:text-secondary transition-all duration-500 relative group py-2",
+                  pathname === link.href ? "text-primary" : "text-primary/40"
                 )}
               >
                 {link.label}
                 <span className={cn(
-                  "absolute -bottom-1 left-0 w-0 h-0.5 bg-accent-foreground transition-all duration-300 group-hover:w-full",
+                  "absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-500 group-hover:w-full",
                   pathname === link.href && "w-full"
                 )} />
               </Link>
             ))}
           </div>
 
-          <div className="flex items-center">
-            <UtilityGroup />
-          </div>
-        </div>
-      </nav>
-
-      <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-4 shadow-md rounded-2xl">
-        <div className="flex items-center gap-0.5">
-          <SideMenu />
-          <Link href="/" className="flex items-center space-x-1 group">
-            <span className="font-headline text-3xl tracking-tighter text-foreground italic leading-none group-hover:text-accent-foreground transition-colors">GlamLux</span>
-          </Link>
-        </div>
-
-        <div className="flex items-center">
           <UtilityGroup />
         </div>
       </nav>
 
-      <nav className="fixed bottom-4 left-6 right-6 z-50 bg-background/90 backdrop-blur-sm border border-border/20 rounded-full md:hidden flex items-center justify-around h-14 px-3 shadow-lg">
+      {/* Mobile Bar - Top */}
+      <nav className="fixed top-4 left-4 right-4 z-50 h-16 border border-primary/10 bg-background/85 backdrop-blur-2xl md:hidden flex items-center justify-between px-2 shadow-2xl transition-all duration-500">
+        <div className="flex items-center gap-1">
+          <SideMenu />
+          <Link href="/" className="flex items-center group">
+            <span className="font-headline text-3xl tracking-tighter text-primary italic leading-none group-hover:text-secondary transition-colors">GlamLux</span>
+          </Link>
+        </div>
+
+        <UtilityGroup />
+      </nav>
+
+      {/* Mobile Bar - Bottom Navigation */}
+      <nav className="fixed bottom-6 left-10 right-10 z-50 bg-primary/95 text-primary-foreground backdrop-blur-xl border border-white/5 h-16 px-4 md:hidden flex items-center justify-around shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
         {bottomNavLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative w-full h-full">
               <div className={cn(
-                "p-2.5 rounded-full transition-all duration-300",
-                isActive ? "text-primary bg-primary/5 scale-110 shadow-sm" : "text-muted-foreground/60 hover:text-primary/40"
+                "p-3 transition-all duration-500",
+                isActive ? "text-secondary scale-125" : "text-primary-foreground/40 hover:text-white"
               )}>
                 <Icon className={cn("h-6 w-6 transition-all", isActive && "fill-current")} strokeWidth={isActive ? 2 : 1.5} />
               </div>
-              {isActive && <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full animate-in zoom-in duration-300" />}
+              {isActive && (
+                <div className="absolute -bottom-1 w-1.5 h-1.5 bg-secondary rounded-full animate-in zoom-in duration-500 shadow-[0_0_10px_rgba(193,178,144,0.8)]" />
+              )}
             </Link>
           );
         })}

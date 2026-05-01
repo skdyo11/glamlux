@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const { getCurrency } = useStore();
@@ -41,90 +42,111 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow overflow-x-hidden">
-        {/* Hero Section */}
-        <section className="relative h-[80vh] md:h-[100vh] flex items-center overflow-hidden">
-          <div className="absolute inset-0 z-0">
+      <main className="flex-grow">
+        {/* Hero Section - Magazine Layout */}
+        <section className="relative min-h-screen flex flex-col md:flex-row items-stretch overflow-hidden border-b border-primary/10">
+          <div className="w-full md:w-[60%] relative min-h-[50vh] md:min-h-screen">
             <Image 
-              src="https://picsum.photos/seed/editorial-beauty/1920/1080" 
+              src="https://picsum.photos/seed/editorial-beauty-magazine/1920/1080" 
               alt="Elite Beauty" 
               fill 
-              className="object-cover brightness-[0.6]"
+              className="object-cover grayscale-[0.3] contrast-[1.1]"
               priority
-              data-ai-hint="high fashion"
+              data-ai-hint="fashion portrait"
             />
-            <div className="absolute inset-0 bg-black/40 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
           </div>
-          <div className="container mx-auto px-6 relative z-20">
-            <div className="max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 mb-2">
-                  <Sparkles className="h-4 w-4 text-secondary fill-secondary animate-pulse" strokeWidth={1.5} />
-                  <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px] block">The Editorial Registry</span>
+          
+          <div className="w-full md:w-[40%] flex flex-col justify-center p-8 md:p-20 bg-background relative border-l border-primary/10">
+            <div className="space-y-12 animate-in fade-in slide-in-from-right-8 duration-1000">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-3">
+                  <span className="h-px w-10 bg-secondary" />
+                  <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry MMXXIV</span>
                 </div>
-                <h1 className="text-5xl md:text-[6rem] font-headline leading-[0.85] text-white tracking-tighter drop-shadow-2xl">
+                <h1 className="text-6xl md:text-8xl font-headline leading-[0.8] tracking-tighter text-primary">
                   PURE <br />
-                  <span className="text-secondary italic">ESTHETIC.</span>
+                  <span className="italic text-secondary">ESTHETIC.</span>
                 </h1>
+                <p className="text-lg text-muted-foreground font-body max-w-sm leading-relaxed italic">
+                  A structured collection of the most prestigious artisan sanctuaries across the subcontinent.
+                </p>
               </div>
-              <p className="text-lg md:text-xl text-white/80 font-body max-w-xl leading-relaxed italic">
-                A structured collection of the most prestigious artisan sanctuaries across the subcontinent.
-              </p>
-              <div className="flex flex-wrap gap-6 pt-6">
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground rounded-none border-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs transition-all hover:scale-105 active:scale-95 shadow-xl">
-                  <Link href="/deals">The Services</Link>
+
+              <div className="flex flex-col gap-4">
+                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground rounded-none border-none h-16 vogue-button shadow-none border-b-4 border-secondary/20">
+                  <Link href="/deals" className="flex items-center justify-between w-full">The Services <ArrowRight className="h-4 w-4" /></Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-white/40 text-white rounded-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs hover:bg-white hover:text-black transition-all hover:scale-105 active:scale-95">
-                  <Link href="/shop">The Boutique</Link>
+                <Button asChild variant="outline" size="lg" className="border-primary/10 text-primary rounded-none h-16 vogue-button hover:bg-primary hover:text-primary-foreground">
+                  <Link href="/shop" className="flex items-center justify-between w-full">The Boutique <ArrowRight className="h-4 w-4" /></Link>
                 </Button>
               </div>
+            </div>
+            
+            {/* Design Signature */}
+            <div className="absolute bottom-10 right-10 text-[8px] font-black uppercase tracking-[0.5em] text-primary/10 rotate-90 origin-right">
+              Artisan Protocol • Verified
             </div>
           </div>
         </section>
 
-        {/* The Elite Registry */}
-        <section className="py-32 bg-white dark:bg-black/20 border-y border-primary/5">
+        {/* The Elite Registry - Asymmetric Index */}
+        <section className="py-40 bg-white dark:bg-transparent">
           <div className="container mx-auto px-6">
-            <header className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center group cursor-pointer transition-all hover:scale-110 shadow-sm">
-                  <Trophy className="h-6 w-6 text-secondary transition-all group-hover:fill-current" strokeWidth={1.5} />
-                </div>
-                <h2 className="text-6xl md:text-8xl font-headline tracking-tighter text-primary">The Ranking</h2>
-                <p className="text-lg text-muted-foreground max-w-xl font-body italic">
-                  Authenticated sanctuaries, selected by confirmed guests for their uncompromising commitment to precision.
+            <header className="grid grid-cols-1 md:grid-cols-12 mb-32 items-end">
+              <div className="md:col-span-8 space-y-6">
+                <Trophy className="h-10 w-10 text-secondary mb-4" strokeWidth={1} />
+                <h2 className="text-7xl md:text-9xl font-headline tracking-tighter text-primary leading-none">The Index.</h2>
+                <p className="text-xl text-muted-foreground max-w-md font-body italic border-l border-secondary/30 pl-8">
+                  Confirmed guests for their uncompromising commitment to precision.
                 </p>
               </div>
-              <Link href="/vendors" className="text-[11px] font-bold uppercase tracking-[0.4em] border-b-2 border-secondary pb-2 mb-2 hover:text-secondary transition-all flex items-center gap-2 group">
-                View Registry <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-              </Link>
+              <div className="md:col-span-4 flex justify-end">
+                <Link href="/vendors" className="text-[11px] font-bold uppercase tracking-[0.4em] border-b-2 border-primary pb-2 hover:border-secondary hover:text-secondary transition-all flex items-center gap-4 group">
+                  EXPLORE ALL SANCTUARIES <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
+                </Link>
+              </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-primary/10 shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 border border-primary/5">
               {isLoadingElite ? (
-                [1, 2, 3].map(n => <Skeleton key={n} className="h-[600px] border-r border-primary/10" />)
+                [1, 2, 3].map(n => <Skeleton key={n} className="md:col-span-4 h-[700px] border-r border-primary/5" />)
               ) : (
                 rankedVendors?.map((vendor, index) => {
                   const vendorSlug = vendor.slug || slugify(vendor.name);
                   return (
-                    <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group relative border-r last:border-r-0 border-primary/10 overflow-hidden bg-white dark:bg-card">
-                      <div className="relative aspect-[3/4] overflow-hidden">
-                        <Image 
-                          src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-1/800/1000'} 
-                          alt={vendor.name} 
-                          fill 
-                          className="object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110"
-                        />
-                        <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-6 py-4 font-headline text-3xl italic group-hover:bg-secondary transition-colors duration-500 z-10">
-                          0{index + 1}
+                    <Link 
+                      key={vendor.id} 
+                      href={`/vendors/${vendorSlug}`} 
+                      className={cn(
+                        "group relative md:col-span-4 border-r last:border-r-0 border-primary/5 overflow-hidden bg-white dark:bg-card/30 p-12 transition-all duration-700 hover:bg-primary hover:text-primary-foreground",
+                        index === 1 && "md:mt-24 md:-mb-24 md:z-10 md:bg-background dark:md:bg-card border-x"
+                      )}
+                    >
+                      <div className="space-y-12">
+                        <div className="flex justify-between items-start">
+                          <span className="font-headline text-5xl italic opacity-20">0{index + 1}</span>
+                          <div className="flex items-center gap-1 text-secondary">
+                             <Star className="h-4 w-4 fill-current" strokeWidth={1.5} />
+                             <span className="text-[10px] font-bold uppercase tracking-widest">{vendor.rating}</span>
+                          </div>
                         </div>
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-                      <div className="p-10 space-y-4 relative z-10">
-                        <h3 className="text-3xl font-headline tracking-tight text-primary group-hover:translate-x-2 transition-transform duration-500">{vendor.name}</h3>
-                        <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                          <span className="flex items-center gap-2 transition-all hover:text-secondary"><MapPin className="h-3.5 w-3.5 text-secondary transition-all hover:fill-current" strokeWidth={1.5} /> {vendor.areaTag}</span>
-                          <span className="flex items-center gap-2"><Star className="h-3.5 w-3.5 fill-secondary text-secondary" strokeWidth={1.5} /> {vendor.rating}</span>
+                        
+                        <div className="relative aspect-[3/4] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000">
+                          <Image 
+                            src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-1/800/1000'} 
+                            alt={vendor.name} 
+                            fill 
+                            className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                          />
+                        </div>
+
+                        <div className="space-y-4">
+                          <h3 className="text-4xl font-headline leading-[0.9] tracking-tight">{vendor.name}</h3>
+                          <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest opacity-60">
+                            <MapPin className="h-3 w-3 text-secondary" strokeWidth={2} />
+                            {vendor.areaTag}
+                          </div>
                         </div>
                       </div>
                     </Link>
@@ -135,38 +157,42 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured Transformations */}
-        <section className="py-32 bg-background">
+        {/* Featured Transformations - Editorial Grid */}
+        <section className="py-40 bg-background border-t border-primary/10">
           <div className="container mx-auto px-6">
-            <header className="mb-24 space-y-4">
-              <span className="text-secondary font-bold uppercase tracking-[0.4em] text-[10px]">Season 2024</span>
-              <h2 className="text-6xl md:text-8xl font-headline tracking-tighter text-primary italic">Signature Edits</h2>
+            <header className="mb-32 space-y-4 text-center">
+              <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Season MMXXIV</span>
+              <h2 className="text-7xl md:text-9xl font-headline tracking-tighter text-primary italic leading-none">Signature Edits.</h2>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-primary/10">
               {isLoadingServices ? (
-                 [1, 2, 3].map(n => <Skeleton key={n} className="h-[500px]" />)
+                 [1, 2, 3].map(n => <Skeleton key={n} className="h-[600px] border-r border-primary/10" />)
               ) : (
-                services?.map((service) => (
-                  <Link key={service.id} href={`/deals/${service.id}`} className="group">
-                    <article className="space-y-6">
-                      <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5 shadow-lg group-hover:shadow-2xl transition-all duration-700">
+                services?.map((service, idx) => (
+                  <Link 
+                    key={service.id} 
+                    href={`/deals/${service.id}`} 
+                    className={cn(
+                      "group relative p-12 border-r border-b border-primary/10 hover:bg-secondary/5 transition-all duration-500",
+                      (idx + 1) % 3 === 0 && "md:border-r-0"
+                    )}
+                  >
+                    <article className="space-y-10">
+                      <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5 grayscale group-hover:grayscale-0 transition-all duration-700">
                         <Image 
                           src={`https://picsum.photos/seed/service-${service.id}/800/800`} 
                           alt={service.name} 
                           fill 
-                          className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
                         />
-                        <div className="absolute bottom-0 right-0 bg-white dark:bg-black px-6 py-4 text-2xl font-bold italic tracking-tighter text-primary shadow-inner group-hover:bg-secondary group-hover:text-white transition-all">
-                          {getCurrency()} {service.discountPrice.toLocaleString()}
-                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">{service.category}</span>
+                      <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                          <h3 className="text-3xl font-headline leading-none text-primary group-hover:underline underline-offset-8 decoration-secondary/30 transition-all">{service.name}</h3>
-                          <ArrowRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all" strokeWidth={1.5} />
+                          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">{service.category}</span>
+                          <span className="text-xl font-bold tracking-tighter">{getCurrency()} {service.discountPrice.toLocaleString()}</span>
                         </div>
+                        <h3 className="text-3xl font-headline leading-[0.9] text-primary group-hover:underline underline-offset-8 decoration-secondary/30 transition-all">{service.name}</h3>
                       </div>
                     </article>
                   </Link>
@@ -177,37 +203,40 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="py-32 bg-primary text-white border-t border-white/5">
-        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-20">
-          <div className="col-span-1 md:col-span-2 space-y-8">
-            <h4 className="font-headline text-5xl italic tracking-tighter">GlamLux.</h4>
-            <p className="text-sm text-white/60 font-body leading-relaxed max-w-sm italic">
-              The premier marketplace for elite beauty sanctuaries and professional artistry essentials. Designed for the precise.
-            </p>
+      {/* Footer - Minimalist Authority */}
+      <footer className="py-40 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-20">
+            <div className="md:col-span-6 space-y-10">
+              <h4 className="font-headline text-7xl italic tracking-tighter leading-none">GlamLux.</h4>
+              <p className="text-sm opacity-40 font-body leading-relaxed max-w-sm italic">
+                The premier marketplace for elite beauty sanctuaries and professional artistry essentials. Designed for the precise.
+              </p>
+            </div>
+            <div className="md:col-span-3 space-y-8">
+              <h5 className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">Registry</h5>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-[0.2em] opacity-40">
+                <li><Link href="/vendors" className="hover:text-secondary transition-all">Sanctuaries</Link></li>
+                <li><Link href="/deals" className="hover:text-secondary transition-all">Service Edits</Link></li>
+                <li><Link href="/shop" className="hover:text-secondary transition-all">The Boutique</Link></li>
+              </ul>
+            </div>
+            <div className="md:col-span-3 space-y-8">
+              <h5 className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">Inquiries</h5>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-[0.2em] opacity-40">
+                <li><Link href="/portal" className="hover:text-secondary transition-all">Partnership</Link></li>
+                <li><Link href="/messages" className="hover:text-secondary transition-all">Support</Link></li>
+                <li><Link href="/messages" className="hover:text-secondary transition-all">Relations</Link></li>
+              </ul>
+            </div>
           </div>
-          <div className="space-y-6">
-            <h5 className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">Registry</h5>
-            <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-white/40">
-              <li><Link href="/vendors" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">Sanctuaries</Link></li>
-              <li><Link href="/deals" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">Service Edits</Link></li>
-              <li><Link href="/shop" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">The Boutique</Link></li>
-            </ul>
-          </div>
-          <div className="space-y-6">
-            <h5 className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">Inquiries</h5>
-            <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-white/40">
-              <li><Link href="/portal" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">Partnership</Link></li>
-              <li><Link href="/messages" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">Support</Link></li>
-              <li><Link href="/messages" className="hover:text-secondary transition-all hover:translate-x-1 inline-block">Relations</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="container mx-auto px-6 mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-white/20">© MMXXIV GLAMLUX ARTISAN REGISTRY</p>
-          <div className="flex gap-10 text-[9px] font-bold uppercase tracking-[0.5em] text-white/20">
-            <span className="hover:text-secondary transition-colors cursor-default">London</span>
-            <span className="hover:text-secondary transition-colors cursor-default">Lahore</span>
-            <span className="hover:text-secondary transition-colors cursor-default">Delhi</span>
+          <div className="mt-40 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-20">
+            <p className="text-[9px] font-black uppercase tracking-[0.5em]">© MMXXIV GLAMLUX ARTISAN REGISTRY</p>
+            <div className="flex gap-10 text-[9px] font-black uppercase tracking-[0.5em]">
+              <span>London</span>
+              <span>Lahore</span>
+              <span>Delhi</span>
+            </div>
           </div>
         </div>
       </footer>

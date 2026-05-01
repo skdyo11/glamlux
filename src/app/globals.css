@@ -8,12 +8,12 @@
   :root {
     /* Editorial Vogue Palette - High Contrast Artisan */
     --background: 240 10% 97%; /* Light Taupe #F7F7F9 */
-    --foreground: 240 3% 25%;  /* Dark Charcoal #3D3D40 */
+    --foreground: 240 3% 15%;  /* Very Dark Charcoal */
     --card: 0 0% 100%;
-    --card-foreground: 240 3% 25%;
+    --card-foreground: 240 3% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 3% 25%;
-    --primary: 240 3% 25%;     /* Dark Charcoal */
+    --popover-foreground: 240 3% 15%;
+    --primary: 240 3% 15%;     /* Deepest Charcoal */
     --primary-foreground: 0 0% 98%;
     --secondary: 42 30% 66%;   /* Champagne Gold #C1B290 */
     --secondary-foreground: 240 3% 15%;
@@ -25,27 +25,27 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3% 85%;
     --input: 240 3% 85%;
-    --ring: 240 3% 25%;
-    --radius: 0.125rem; /* Sharp corners for Vogue aesthetic */
+    --ring: 240 3% 15%;
+    --radius: 0rem; /* Stark edges for true Editorial look */
   }
 
   .dark {
-    --background: 240 3% 8%;
+    --background: 240 3% 6%;
     --foreground: 0 0% 98%;
-    --card: 240 3% 10%;
+    --card: 240 3% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 3% 10%;
+    --popover: 240 3% 8%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
-    --primary-foreground: 240 3% 8%;
+    --primary-foreground: 240 3% 6%;
     --secondary: 42 30% 66%;
-    --secondary-foreground: 240 3% 8%;
-    --muted: 240 3% 15%;
+    --secondary-foreground: 240 3% 6%;
+    --muted: 240 3% 12%;
     --muted-foreground: 240 3% 65%;
-    --accent: 240 3% 12%;
+    --accent: 240 3% 10%;
     --accent-foreground: 42 30% 80%;
-    --border: 240 3% 20%;
-    --input: 240 3% 20%;
+    --border: 240 3% 15%;
+    --input: 240 3% 15%;
     --ring: 0 0% 98%;
   }
 }
@@ -56,6 +56,10 @@
   }
   body {
     @apply bg-background text-foreground font-body overflow-x-hidden transition-colors duration-150 antialiased;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    background-blend-mode: overlay;
   }
 }
 
@@ -65,17 +69,17 @@
 }
 
 .wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.02] pointer-events-none;
+  @apply fixed inset-0 -z-10 opacity-[0.01] pointer-events-none;
   background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-size: 80px 80px;
 }
 
 .vogue-card {
-  @apply border-none bg-card shadow-sm transition-all duration-300;
+  @apply border border-primary/5 bg-card transition-all duration-500;
 }
 
 .vogue-button {
-  @apply uppercase tracking-[0.2em] font-bold transition-all;
+  @apply uppercase tracking-[0.3em] font-bold transition-all duration-300;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -88,7 +92,16 @@
 
 /* Leaflet Overrides */
 .leaflet-container {
-  @apply border border-primary/10 grayscale-[0.5] contrast-[1.1];
+  @apply border border-primary/10 grayscale-[0.8] contrast-[1.2];
   height: 350px;
   width: 100%;
+}
+
+/* Custom Editorial Overlaps */
+.editorial-overlap {
+  @apply relative;
+}
+.editorial-overlap::before {
+  content: '';
+  @apply absolute -top-10 -left-10 w-40 h-40 border-l border-t border-secondary/20 -z-10;
 }

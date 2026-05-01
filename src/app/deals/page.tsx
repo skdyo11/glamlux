@@ -8,11 +8,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Clock, MapPin, Sparkles, Search } from 'lucide-react';
+import { Star, Clock, MapPin, Sparkles, Search, ArrowRight } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export default function ServicesPage() {
   const { getCurrency } = useStore();
@@ -43,38 +44,38 @@ export default function ServicesPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pt-20 md:pt-24">
+    <div className="min-h-screen bg-background flex flex-col pt-20 md:pt-32">
       <Navbar />
       
-      <main className="container mx-auto px-4 md:px-6 py-12 md:py-24 pb-32 flex-grow">
-        <header className="max-w-4xl mb-20 space-y-6 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-top-2 duration-500">
-            <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Signature Services</span>
+      <main className="container mx-auto px-6 py-12 pb-32 flex-grow max-w-screen-2xl">
+        <header className="mb-32 space-y-8 animate-in fade-in slide-in-from-top-4 duration-700">
+          <div className="inline-flex items-center gap-3 bg-primary/5 px-4 py-2 border border-primary/10">
+            <Sparkles className="h-4 w-4 text-secondary fill-secondary" strokeWidth={1} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Signature Registry</span>
           </div>
-          <h1 className="text-6xl md:text-9xl font-headline text-primary tracking-tighter italic leading-none">Artisan Services</h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-body italic max-w-2xl mx-auto md:mx-0">
-            Pick the best beauty transformations from the most prestigious artisan studios.
+          <h1 className="text-7xl md:text-[10rem] font-headline text-primary tracking-tighter italic leading-[0.8] drop-shadow-sm">Artisan <br />Services.</h1>
+          <p className="text-xl text-muted-foreground font-body italic max-w-2xl border-l border-secondary pl-8 py-2">
+            The world's most prestigious transformations, curated for the uncompromising guest.
           </p>
         </header>
 
-        {/* Search and Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
-          <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
+        {/* Search & Filter - Magazine Layout */}
+        <section className="mb-40 grid grid-cols-1 md:grid-cols-12 gap-0 border border-primary/10 shadow-3xl bg-white dark:bg-card/20">
+          <div className="md:col-span-8 relative border-r border-primary/10 group">
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/20 group-focus-within:text-secondary transition-all" />
             <Input 
-              placeholder="Search for a transformation..." 
-              className="pl-16 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
+              placeholder="Search for a signature transformation..." 
+              className="pl-20 h-20 bg-transparent border-none rounded-none font-body text-xl italic focus-visible:ring-0"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="md:col-span-4 group">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-8">
+              <SelectTrigger className="h-20 w-full border-none rounded-none font-black text-[10px] uppercase tracking-[0.4em] px-10 transition-all group-hover:bg-primary group-hover:text-primary-foreground">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
-              <SelectContent className="rounded-3xl font-body border-none shadow-2xl bg-white/90 backdrop-blur-xl">
+              <SelectContent className="rounded-none font-body border-primary/10 shadow-none bg-background">
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat} className="font-bold text-[10px] uppercase tracking-widest">{cat}</SelectItem>
                 ))}
@@ -84,56 +85,59 @@ export default function ServicesPage() {
         </section>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {[1, 2, 3, 4, 5, 6].map(n => <Skeleton key={n} className="h-[450px] rounded-[3rem]" />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-primary/10">
+            {[1, 2, 3, 4, 5, 6].map(n => <Skeleton key={n} className="h-[600px] border border-primary/5" />)}
           </div>
         ) : filteredServices.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-            {filteredServices.map((service) => {
-              return (
-                <Link key={service.id} href={`/deals/${service.id}`} className="group block interactive-element">
-                  <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] h-full flex flex-col">
-                    <div className="relative h-72 md:h-96 overflow-hidden">
-                      <Image 
-                        src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
-                        alt={service.name}
-                        fill
-                        className="object-cover soft-focus group-hover:scale-110"
-                        data-ai-hint="beauty transformation"
-                      />
-                      <div className="absolute top-8 left-8">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary border-none text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-lg">
-                          {service.category}
-                        </Badge>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-primary/10">
+            {filteredServices.map((service, idx) => (
+              <Link 
+                key={service.id} 
+                href={`/deals/${service.id}`} 
+                className={cn(
+                  "group relative p-12 border-r border-b border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all duration-700",
+                  (idx + 1) % 3 === 0 && "lg:border-r-0"
+                )}
+              >
+                <div className="space-y-10">
+                  <div className="relative h-[400px] overflow-hidden bg-muted border border-primary/5 grayscale group-hover:grayscale-0 transition-all duration-1000">
+                    <Image 
+                      src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
+                      alt={service.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                    />
+                    <div className="absolute top-8 left-8">
+                      <Badge className="bg-white/95 backdrop-blur-xl text-primary border-none text-[8px] uppercase font-black px-4 py-2 tracking-[0.3em] rounded-none shadow-2xl">
+                        {service.category}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <h3 className="text-4xl font-headline leading-[0.9] tracking-tighter italic">
+                      {service.name}
+                    </h3>
+                    <div className="flex justify-between items-baseline pt-6 border-t border-current/10">
+                      <span className="text-3xl font-bold tracking-tighter">{getCurrency()} {service.discountPrice?.toLocaleString()}</span>
+                      <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.4em] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0 translate-x-4">
+                        Book Slot <ArrowRight className="h-3 w-3" />
                       </div>
                     </div>
-                    <CardHeader className="p-8 md:p-10 pb-4 space-y-4 flex-grow">
-                      <CardTitle className="text-3xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
-                        {service.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-8 md:px-10 pb-4 flex items-baseline gap-6">
-                      <span className="text-3xl md:text-5xl font-bold text-primary italic">{getCurrency()} {service.discountPrice?.toLocaleString()}</span>
-                    </CardContent>
-                    <CardFooter className="mt-8 pt-6 border-t border-muted/10 flex justify-between items-center bg-muted/5 px-8 md:px-10 h-20">
-                      <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">
-                        <Clock className="h-4 w-4" />
-                        Signature Offer
-                      </div>
-                      <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </CardFooter>
-                  </Card>
-                </Link>
-              );
-            })}
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8">
-            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
-              <Search className="h-12 w-12 text-primary/20" />
+          <div className="py-60 text-center space-y-12 border border-dashed border-primary/10 bg-primary/2">
+            <div className="bg-primary/5 w-40 h-40 rounded-full flex items-center justify-center mx-auto border border-primary/10 shadow-inner">
+              <Search className="h-16 w-16 text-primary/10" strokeWidth={1} />
             </div>
-            <h3 className="text-5xl font-headline italic">No services found</h3>
-            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed px-6">Try searching for something else like "Bridal" or "Hair".</p>
+            <div className="space-y-4">
+              <h3 className="text-6xl font-headline italic opacity-20">Registry Entry Not Found</h3>
+              <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">Search criteria did not yield any signature transformations.</p>
+            </div>
           </div>
         )}
       </main>
