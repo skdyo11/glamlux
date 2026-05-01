@@ -70,18 +70,20 @@ export function Navbar() {
 
   if (!mounted) return null;
 
-  // Global icon logic based on theme and active state
+  const isDark = theme === 'dark';
+
+  // Global icon logic: Outline in light, Solid in dark/active
   const getIconProps = (isActive: boolean) => ({
-    strokeWidth: 2.2,
+    strokeWidth: 1.8,
     className: cn(
       "h-6 w-6 transition-all duration-500",
       isActive ? "text-primary scale-110" : "text-primary/60 group-hover:text-primary"
     ),
-    fill: (theme === 'dark' || isActive) ? 'currentColor' : 'none'
+    fill: (isDark || isActive) ? 'currentColor' : 'none'
   });
 
   const UtilityGroup = () => (
-    <div className="flex items-center gap-1.5 p-1 bg-background/50 dark:bg-black/20 backdrop-blur-md rounded-full border border-primary/10">
+    <div className="flex items-center gap-1 p-1.5 bg-white/40 dark:bg-black/40 backdrop-blur-xl rounded-full border border-primary/10 shadow-sm">
       {!isHome && (
         <Link href="/">
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
@@ -93,10 +95,10 @@ export function Navbar() {
       <Button 
         variant="ghost" 
         size="icon" 
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        onClick={() => setTheme(isDark ? 'light' : 'dark')}
         className="h-10 w-10 rounded-full group"
       >
-        {theme === 'dark' ? (
+        {isDark ? (
           <Sun {...getIconProps(false)} />
         ) : (
           <Moon {...getIconProps(false)} />
@@ -113,7 +115,7 @@ export function Navbar() {
         <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
           <ShoppingBag {...getIconProps(pathname === '/cart')} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full shadow-xl">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full shadow-lg">
               {cartCount}
             </Badge>
           )}
@@ -189,13 +191,13 @@ export function Navbar() {
                   onClick={handleLogout}
                   className="w-full justify-start gap-6 p-4 h-auto rounded-none text-destructive hover:bg-destructive/5 group transition-all"
                 >
-                  <LogOut strokeWidth={2.2} className="h-4 w-4 transition-all group-hover:-translate-x-1" />
+                  <LogOut strokeWidth={1.5} className="h-4 w-4 transition-all group-hover:-translate-x-1" />
                   <span className="font-bold text-xs uppercase tracking-[0.3em]">De-authenticate</span>
                 </Button>
               ) : (
                 <SheetClose asChild>
                   <Link href="/login" className="flex items-center gap-6 p-4 border border-primary/10 bg-primary text-primary-foreground transition-all group">
-                    <Settings strokeWidth={2.2} className="h-4 w-4 transition-all group-hover:rotate-45" />
+                    <Settings strokeWidth={1.5} className="h-4 w-4 transition-all group-hover:rotate-45" />
                     <span className="font-bold text-xs uppercase tracking-[0.3em]">Access Key</span>
                   </Link>
                 </SheetClose>
@@ -218,7 +220,7 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <SideMenu />
             <Link href="/" className="flex items-center space-x-3 group">
-              <Sparkles strokeWidth={2.2} className="h-6 w-6 text-secondary transition-all group-hover:scale-110" />
+              <Sparkles strokeWidth={1.8} className="h-6 w-6 text-secondary transition-all group-hover:scale-110" />
               <span className="font-headline text-4xl tracking-tighter text-primary italic leading-none">GlamLux</span>
             </Link>
           </div>
@@ -247,6 +249,7 @@ export function Navbar() {
         </div>
       </nav>
 
+      {/* Mobile Top Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10 bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 shadow-sm">
         <div className="flex items-center gap-1">
           <SideMenu />
@@ -254,21 +257,21 @@ export function Navbar() {
             <span className="font-headline text-2xl tracking-tighter text-primary italic leading-none group-hover:text-secondary transition-colors">GlamLux</span>
           </Link>
         </div>
-
         <UtilityGroup />
       </nav>
 
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-full px-6 max-w-xl">
-        <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-20 flex items-center justify-around shadow-3xl rounded-full px-4 ring-1 ring-black/5">
+      {/* Mobile Bottom Utility Capsule */}
+      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden w-[90%] max-w-lg">
+        <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-20 flex items-center justify-between shadow-3xl rounded-full px-6 ring-1 ring-black/5">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname.startsWith(link.href);
             return (
-              <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group flex-1 h-full">
+              <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group flex-1">
                 <div className={cn(
-                  "w-12 h-12 aspect-square flex items-center justify-center transition-all duration-500 rounded-full border border-transparent",
+                  "w-12 h-12 flex items-center justify-center transition-all duration-500 rounded-full border border-transparent",
                   isActive 
-                    ? "bg-secondary/10 border-secondary/20 scale-110 shadow-lg shadow-secondary/5" 
+                    ? "bg-secondary/15 border-secondary/20 scale-110 shadow-lg shadow-secondary/5" 
                     : "hover:bg-primary/5"
                 )}>
                   <Icon {...getIconProps(isActive)} />

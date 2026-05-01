@@ -40,9 +40,11 @@ export default function Home() {
 
   if (!isMounted) return null;
 
+  const isDark = theme === 'dark';
+
   const getIconProps = (filled = false) => ({
-    strokeWidth: 2.2,
-    fill: (theme === 'dark' || filled) ? 'currentColor' : 'none'
+    strokeWidth: 1.8,
+    fill: (isDark || filled) ? 'currentColor' : 'none'
   });
 
   return (
@@ -65,13 +67,13 @@ export default function Home() {
           </div>
           
           <div className="w-full md:w-[40%] flex flex-col justify-center p-8 md:p-16 bg-background relative border-l border-primary/10">
-            <div className="max-w-md space-y-10 animate-in fade-in slide-in-from-right-8 duration-1000">
+            <div className="max-w-md space-y-8 animate-in fade-in slide-in-from-right-8 duration-1000">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-3">
                   <span className="h-px w-8 bg-secondary" />
                   <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[9px]">Registry MMXXIV</span>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-headline leading-[0.85] tracking-tighter text-primary">
+                <h1 className="text-4xl md:text-6xl font-headline leading-[0.85] tracking-tighter text-primary">
                   PURE <br />
                   <span className="italic text-secondary">ESTHETIC.</span>
                 </h1>
@@ -149,9 +151,9 @@ export default function Home() {
 
                         <div className="space-y-3">
                           <h3 className="text-3xl font-headline tracking-tight">{vendor.name}</h3>
-                          <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest opacity-60">
-                            <MapPin {...getIconProps()} className="h-3 w-3 text-secondary" />
-                            {vendor.areaTag}
+                          <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                            <span className="flex items-center gap-2"><MapPin {...getIconProps()} className="h-3 w-3 text-secondary" /> {vendor.areaTag}</span>
+                            <span className="flex items-center gap-2"><Star {...getIconProps(true)} className="h-3 w-3 fill-secondary text-secondary" /> {vendor.rating}</span>
                           </div>
                         </div>
                       </div>
