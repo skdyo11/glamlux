@@ -376,7 +376,7 @@ export default function PartnerPortalPage() {
     );
   }
 
-  const profileImageUrl = myBusiness?.myImage || (user ? `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}` : undefined);
+  const profileImageUrl = (myBusiness?.myImage && myBusiness.myImage !== "") ? myBusiness.myImage : (user ? `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}` : undefined);
   const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/vogue-portal/1600/400`;
 
   return (
@@ -389,7 +389,7 @@ export default function PartnerPortalPage() {
             <Image src={coverImageUrl} alt="Artisan Cover" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-1000" priority />
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button onClick={() => openImageModal('cover')} className="rounded-none vogue-button bg-white text-primary border-none h-14 px-10 text-[10px] shadow-2xl hover:scale-105 active:scale-95">Change Cover</Button>
+              <Button onClick={() => openImageModal('cover')} className="rounded-none vogue-button bg-primary text-primary-foreground border-none h-14 px-10 text-[10px] shadow-2xl hover:scale-105 active:scale-95">Change Cover</Button>
             </div>
           </div>
 
@@ -629,7 +629,6 @@ export default function PartnerPortalPage() {
             <div className="max-w-2xl mx-auto space-y-16 animate-in slide-in-from-bottom-8 duration-700">
               <div className="text-center space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
-                  <Sparkles className="h-3 w-3 text-secondary animate-pulse" strokeWidth={1.5} />
                   <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Audit</span>
                 </div>
                 <h2 className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest Entry'}</h2>
