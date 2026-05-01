@@ -54,9 +54,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, deleteField } from 'firebase/firestore';
+import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, deleteField, writeBatch } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { slugify } from '@/lib/utils';
 
 // Dynamically import Map to avoid SSR issues with Leaflet
 const Map = dynamic(() => import('@/components/Map'), { 
@@ -112,9 +113,20 @@ export default function PartnerPortalPage() {
       const q = query(collection(firestore, 'parlours'), where('ownerId', '==', user.uid));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
+        const docSnap = snapshot.docs[0];
+        const data = docSnap.data();
+        const docId = docSnap.id;
+        
+        // Auto-migrate: Add slug if missing
+        let currentSlug = data.slug;
+        if (!currentSlug) {
+          currentSlug = slugify(data.name || 'Artisan Studio');
+          await updateDoc(doc(firestore, 'parlours', docId), { slug: currentSlug });
+          toast({ title: "Profile Optimized", description: "Your studio now has a clean search-friendly URL." });
+        }
+
         setHasBusiness(true);
-        setMyBusiness({ ...data, id: snapshot.docs[0].id });
+        setMyBusiness({ ...data, id: docId, slug: currentSlug });
         setAddressInput(data.address || '');
         if (data.latitude && data.longitude) {
           setMapLocation([data.latitude, data.longitude]);
@@ -175,9 +187,14 @@ export default function PartnerPortalPage() {
     if (!user || !firestore) return;
     
     try {
+      const businessName = type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`;
+      const baseSlug = slugify(businessName);
+      const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
+
       const bizRef = await addDoc(collection(firestore, 'parlours'), {
         ownerId: user.uid,
-        name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`,
+        name: businessName,
+        slug: businessSlug,
         areaTag: 'Select Area',
         latitude: 31.5204,
         longitude: 74.3587,
@@ -187,13 +204,59 @@ export default function PartnerPortalPage() {
         createdAt: serverTimestamp()
       });
       
+      const bizId = bizRef.id;
+
+      // Seed dummy data
+      const batch = writeBatch(firestore);
+      
+      const dummyProducts = [
+        { name: 'Radiance Elixir', brand: 'Artisan Essentials', price: 120, category: 'Skincare', description: 'Glow from within.' },
+        { name: 'Silk Infusion Serum', brand: 'Artisan Essentials', price: 85, category: 'Haircare', description: 'Smooth as silk.' },
+        { name: 'Velvet Matte Lip', brand: 'Couture Color', price: 45, category: 'Makeup', description: 'Long lasting elegance.' },
+        { name: 'Ocean Mist Toner', brand: 'Pure Botanicals', price: 60, category: 'Skincare', description: 'Refreshing as the sea.' },
+      ];
+
+      dummyProducts.forEach(p => {
+        const ref = doc(collection(firestore, 'products'));
+        batch.set(ref, {
+          ...p,
+          id: ref.id,
+          vendorId: bizId,
+          vendorName: businessName,
+          imageUrl: `https://picsum.photos/seed/${ref.id}/600/800`,
+          isDummy: true,
+          createdAt: serverTimestamp()
+        });
+      });
+
+      const dummyDeals = [
+        { name: 'Signature Rejuvenation', category: 'Package', basePrice: 450, discountPrice: 299, description: 'Full body transformation.' },
+        { name: 'Artisan Glow Up', category: 'Combo', basePrice: 200, discountPrice: 149, description: 'Facial and style combo.' },
+      ];
+
+      dummyDeals.forEach(d => {
+        const ref = doc(collection(firestore, 'deals'));
+        batch.set(ref, {
+          ...d,
+          id: ref.id,
+          parlourId: bizId,
+          parlourName: businessName,
+          parlourOwnerId: user.uid,
+          isDummy: true,
+          createdAt: serverTimestamp()
+        });
+      });
+
+      await batch.commit();
+
       setHasBusiness(true);
-      setMyBusiness({ id: bizRef.id, name: type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop` });
+      setMyBusiness({ id: bizId, name: businessName, slug: businessSlug });
       toast({
         title: "Success",
-        description: `Your ${type} is ready.`,
+        description: `Your ${type} is ready with artisan samples.`,
       });
     } catch (e) {
+      console.error(e);
       toast({ variant: "destructive", title: "Setup Failed" });
     }
   };

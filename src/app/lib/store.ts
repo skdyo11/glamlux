@@ -64,5 +64,15 @@ export const useStore = () => {
 
   const getCurrency = () => region === 'PK' ? 'PKR' : 'INR';
 
-  return { cart, region, addToCart, updateQuantity, removeFromCart, clearCart, toggleRegion, getCurrency };
+  const toggleFavoriteProduct = (id: string) => {};
+  const toggleFavoriteVendor = (id: string) => {};
+  const isFavoriteProduct = (id: string) => false;
+  const isFavoriteVendor = (id: string) => false;
+  const favorites = { products: [], vendors: [] };
+
+  return { 
+    cart, region, favorites, addToCart, updateQuantity, removeFromCart, 
+    clearCart, toggleRegion, getCurrency, toggleFavoriteProduct, 
+    toggleFavoriteVendor, isFavoriteProduct, isFavoriteVendor 
+  };
 };

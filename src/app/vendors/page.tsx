@@ -10,10 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, MapPin, Search, ArrowRight, Navigation, Heart, Sparkles, Clock, Percent } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
-import { cn } from '@/lib/utils';
+import { cn, slugify } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit, doc, updateDoc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function VendorsPage() {
@@ -33,6 +33,18 @@ export default function VendorsPage() {
   }, [firestore]);
 
   const { data: vendors, isLoading } = useCollection(vendorsQuery);
+
+  // Lazy Migration: Update slugs if missing when the list is loaded
+  useEffect(() => {
+    if (isMounted && vendors && firestore) {
+      vendors.forEach(v => {
+        if (!v.slug && v.name) {
+          const newSlug = slugify(v.name);
+          updateDoc(doc(firestore, 'parlours', v.id), { slug: newSlug }).catch(console.error);
+        }
+      });
+    }
+  }, [isMounted, vendors, firestore]);
 
   const dealsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -154,8 +166,9 @@ export default function VendorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {filteredVendors.map((vendor) => {
               const isFav = isFavoriteVendor(vendor.id);
+              const vendorSlug = vendor.slug || slugify(vendor.name);
               return (
-                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group block interactive-element">
+                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block interactive-element">
                   <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
                     <div className="relative h-80 md:h-96 overflow-hidden">
                       <Image 

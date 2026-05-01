@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, ShieldCheck, Truck, ArrowLeft, Star, Heart, Store, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, slugify } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { useRef, use, useState, useEffect } from 'react';
@@ -164,13 +164,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 
                 {vendor && (
                   <div className="flex flex-wrap gap-4">
-                    <Link href={`/vendors/${vendor.id}`} className="inline-flex items-center gap-3 p-5 rounded-[2rem] bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all w-fit group shadow-sm">
-                      <Store className="h-5 w-5 text-primary opacity-40 group-hover:scale-110 transition-transform" />
-                      <div className="text-left">
-                        <p className="text-[8px] uppercase font-black tracking-widest opacity-40 leading-none mb-1">Elite Merchant</p>
-                        <p className="text-base font-headline italic text-primary group-hover:translate-x-1 transition-transform">{vendor.name}</p>
-                      </div>
-                    </Link>
+                    {(() => {
+                      const vendorSlug = vendor.slug || slugify(vendor.name);
+                      return (
+                        <Link href={`/vendors/${vendorSlug}`} className="inline-flex items-center gap-3 p-5 rounded-[2rem] bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all w-fit group shadow-sm">
+                          <Store className="h-5 w-5 text-primary opacity-40 group-hover:scale-110 transition-transform" />
+                          <div className="text-left">
+                            <p className="text-[8px] uppercase font-black tracking-widest opacity-40 leading-none mb-1">Elite Merchant</p>
+                            <p className="text-base font-headline italic text-primary group-hover:translate-x-1 transition-transform">{vendor.name}</p>
+                          </div>
+                        </Link>
+                      );
+                    })()}
                     <Button asChild variant="outline" className="rounded-[2rem] h-auto p-5 border-primary/10 text-primary hover:bg-primary/5 font-body shadow-sm">
                       <Link href={`/messages?vendorId=${vendor.ownerId}&vendorName=${encodeURIComponent(vendor.name)}&vendorImage=${encodeURIComponent(vendor.imageUrls?.[0] || '')}`}>
                         <MessageCircle className="h-5 w-5 mr-3" /> Contact Shop

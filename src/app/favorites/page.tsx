@@ -11,6 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { slugify } from '@/lib/utils';
 
 export default function FavoritesPage() {
   const { favorites, getCurrency, toggleFavoriteProduct, toggleFavoriteVendor } = useStore();
@@ -75,8 +76,10 @@ export default function FavoritesPage() {
                   <Badge variant="outline" className="rounded-full px-4 py-2 border-primary/10 text-primary font-black uppercase tracking-widest text-[9px] shadow-sm">{favoriteVendors.length} Registered</Badge>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-                  {favoriteVendors.map((vendor) => (
-                    <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative block overflow-hidden rounded-[3rem] bg-white/20 dark:bg-black/20 backdrop-blur-xl shadow-2xl border border-primary/5 transition-all duration-700 hover:scale-[1.02] hover:shadow-3xl ring-1 ring-primary/5">
+                  {favoriteVendors.map((vendor) => {
+                    const vendorSlug = vendor.slug || slugify(vendor.name);
+                    return (
+                      <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group relative block overflow-hidden rounded-[3rem] bg-white/20 dark:bg-black/20 backdrop-blur-xl shadow-2xl border border-primary/5 transition-all duration-700 hover:scale-[1.02] hover:shadow-3xl ring-1 ring-primary/5">
                        <div className="relative h-80 overflow-hidden">
                          <Image src={vendor.images[0]} alt={vendor.name} fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -93,7 +96,8 @@ export default function FavoritesPage() {
                           </div>
                        </div>
                     </Link>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             )}

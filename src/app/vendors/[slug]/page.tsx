@@ -1,37 +1,74 @@
-
 'use client';
 
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { useStore } from '@/app/lib/store';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart, MessageCircle } from 'lucide-react';
+import { Star, MapPin, ArrowRight, ShieldCheck, Sparkles, Heart, MessageCircle, Trash2, PlusCircle, RefreshCw, Navigation } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
-import { useRef, use, useEffect, useState } from 'react';
+import { useRef, use, useEffect, useState, useMemo } from 'react';
 import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
+import { doc, collection, query, where, getDocs, deleteDoc, writeBatch, limit, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { slugify } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
-export default function VendorProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function VendorProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const { getCurrency, toggleFavoriteVendor, isFavoriteVendor } = useStore();
   const firestore = useFirestore();
   const [isMounted, setIsMounted] = useState(false);
+  const [isCleaning, setIsCleaning] = useState(false);
+  const [isPopulating, setIsPopulating] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const vendorRef = useMemoFirebase(() => {
-    if (!firestore || !id) return null;
-    return doc(firestore, 'parlours', id);
-  }, [firestore, id]);
+  // 1. Primary: Query by slug field
+  const vendorBySlugQuery = useMemoFirebase(() => {
+    if (!firestore || !slug) return null;
+    return query(collection(firestore, 'parlours'), where('slug', '==', slug), limit(1));
+  }, [firestore, slug]);
 
-  const { data: vendor, isLoading: isLoadingVendor } = useDoc(vendorRef);
+  const { data: vendorBySlugDocs, isLoading: isLoadingBySlug } = useCollection(vendorBySlugQuery);
+  
+  // 2. Secondary Fallback: Fetch by ID (handles legacy links)
+  const vendorRefById = useMemoFirebase(() => {
+    if (!firestore || !slug || (vendorBySlugDocs && vendorBySlugDocs.length > 0)) return null;
+    return doc(firestore, 'parlours', slug);
+  }, [firestore, slug, vendorBySlugDocs?.length]);
+
+  const { data: vendorById, isLoading: isLoadingById } = useDoc(vendorRefById);
+
+  // 3. Tertiary Fallback: Fetch all and match by slugified name (handles new links for un-migrated docs)
+  const allVendorsQuery = useMemoFirebase(() => {
+    if (!firestore || (vendorBySlugDocs && vendorBySlugDocs.length > 0) || vendorById) return null;
+    return query(collection(firestore, 'parlours'), limit(20)); // Limit for performance
+  }, [firestore, vendorBySlugDocs?.length, !!vendorById]);
+
+  const { data: allVendors, isLoading: isLoadingAll } = useCollection(allVendorsQuery);
+
+  const vendorBySearch = useMemo(() => {
+    if (!allVendors || !slug) return null;
+    return allVendors.find(v => slugify(v.name || '') === slug);
+  }, [allVendors, slug]);
+
+  const vendor = vendorBySlugDocs?.[0] || vendorById || vendorBySearch;
+  const isLoadingVendor = isLoadingBySlug || (vendorBySlugDocs?.length === 0 && isLoadingById) || (vendorBySlugDocs?.length === 0 && !vendorById && isLoadingAll);
+  
+  // Auto-migrate the document if we found it via name-slug but it lacks a slug field
+  useEffect(() => {
+    if (vendor && !vendor.slug && firestore) {
+      updateDoc(doc(firestore, 'parlours', vendor.id), { slug: slugify(vendor.name) }).catch(console.error);
+    }
+  }, [vendor, firestore]);
+
+  const id = vendor?.id;
 
   const dealsQuery = useMemoFirebase(() => {
     if (!firestore || !id) return null;
@@ -51,6 +88,92 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
     Autoplay({ delay: 3000, stopOnInteraction: false })
   );
 
+  const handleSyncSlug = async () => {
+    if (!firestore || !id || !vendor) return;
+    try {
+      const newSlug = slugify(vendor.name);
+      await updateDoc(doc(firestore, 'parlours', id), { slug: newSlug });
+      window.location.href = `/vendors/${newSlug}`;
+    } catch (e) {
+      console.error("Error syncing slug:", e);
+    }
+  };
+
+  const handleClearDummyData = async () => {
+    if (!firestore || !id || !vendor) return;
+    setIsCleaning(true);
+    try {
+      const batch = writeBatch(firestore);
+      
+      // Clear dummy products
+      const pQuery = query(collection(firestore, 'products'), where('vendorId', '==', id), where('isDummy', '==', true));
+      const pSnap = await getDocs(pQuery);
+      pSnap.forEach(doc => batch.delete(doc.ref));
+
+      // Clear dummy deals
+      const dQuery = query(collection(firestore, 'deals'), where('parlourId', '==', id), where('isDummy', '==', true));
+      const dSnap = await getDocs(dQuery);
+      dSnap.forEach(doc => batch.delete(doc.ref));
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error clearing dummy data:", error);
+    } finally {
+      setIsCleaning(false);
+    }
+  };
+
+  const handlePopulateDummyData = async () => {
+    if (!firestore || !id || !vendor) return;
+    setIsPopulating(true);
+    try {
+      const batch = writeBatch(firestore);
+      
+      const dummyProducts = [
+        { name: 'Radiance Elixir', brand: 'Artisan Essentials', price: 120, category: 'Skincare', description: 'Glow from within.' },
+        { name: 'Silk Infusion Serum', brand: 'Artisan Essentials', price: 85, category: 'Haircare', description: 'Smooth as silk.' },
+        { name: 'Velvet Matte Lip', brand: 'Couture Color', price: 45, category: 'Makeup', description: 'Long lasting elegance.' },
+        { name: 'Ocean Mist Toner', brand: 'Pure Botanicals', price: 60, category: 'Skincare', description: 'Refreshing as the sea.' },
+      ];
+
+      dummyProducts.forEach(p => {
+        const ref = doc(collection(firestore, 'products'));
+        batch.set(ref, {
+          ...p,
+          id: ref.id,
+          vendorId: id,
+          vendorName: vendor.name,
+          imageUrl: `https://picsum.photos/seed/${ref.id}/600/800`,
+          isDummy: true,
+          createdAt: serverTimestamp()
+        });
+      });
+
+      const dummyDeals = [
+        { name: 'Signature Rejuvenation', category: 'Package', basePrice: 450, discountPrice: 299, description: 'Full body transformation.' },
+        { name: 'Artisan Glow Up', category: 'Combo', basePrice: 200, discountPrice: 149, description: 'Facial and style combo.' },
+      ];
+
+      dummyDeals.forEach(d => {
+        const ref = doc(collection(firestore, 'deals'));
+        batch.set(ref, {
+          ...d,
+          id: ref.id,
+          parlourId: id,
+          parlourName: vendor.name,
+          isDummy: true,
+          createdAt: serverTimestamp()
+        });
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error populating dummy data:", error);
+    } finally {
+      setIsPopulating(false);
+    }
+  };
+
   if (!isMounted || isLoadingVendor) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -60,9 +183,25 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
   }
 
   if (!vendor) return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-4 pt-20">
-      <h1 className="text-4xl font-headline italic">Studio not found</h1>
-      <Button asChild><Link href="/vendors">Back to Sanctuaries</Link></Button>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-8 pt-20 px-6 text-center">
+      <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
+        <Navigation className="h-12 w-12 text-primary/20" />
+      </div>
+      <div className="space-y-2">
+        <h1 className="text-4xl md:text-6xl font-headline italic text-primary">Sanctuary Not Found</h1>
+        <p className="text-muted-foreground italic text-lg max-w-md mx-auto">This artisan may have moved or is waiting for a registry URL optimization.</p>
+      </div>
+      
+      <div className="max-w-xs w-full space-y-4">
+        <div className="p-1 rounded-full bg-primary/5 flex items-center gap-2">
+           <Input id="manual-id" placeholder="Enter Artisan ID..." className="border-none bg-transparent rounded-full font-body italic" />
+           <Button className="rounded-full h-10 px-6 font-black uppercase tracking-widest text-[9px]" onClick={() => {
+             const val = (document.getElementById('manual-id') as HTMLInputElement).value;
+             if (val) window.location.href = `/vendors/${val}`;
+           }}>Go</Button>
+        </div>
+        <Button asChild variant="ghost" className="w-full rounded-full text-xs font-bold uppercase tracking-widest"><Link href="/vendors">Back to Sanctuaries</Link></Button>
+      </div>
     </div>
   );
 
@@ -84,7 +223,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
               }}
             >
               <CarouselContent className="h-full -ml-0">
-                {(vendor.imageUrls && vendor.imageUrls.length > 0 ? vendor.imageUrls : ['https://picsum.photos/seed/vendor-fallback/1200/800']).map((img, index) => (
+                {(vendor.imageUrls && vendor.imageUrls.length > 0 ? vendor.imageUrls : ['https://picsum.photos/seed/vendor-fallback/1200/800']).map((img: string, index: number) => (
                   <CarouselItem key={index} className="pl-0 h-full relative">
                     <Image 
                       src={img} 
@@ -165,7 +304,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
               </div>
             ) : (vendorDeals || []).length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-                {vendorDeals.map((deal) => (
+                {(vendorDeals || []).map((deal) => (
                   <Link key={deal.id} href={`/deals/${deal.id}`} className="group">
                     <Card className="rounded-[3.5rem] border-none bg-white dark:bg-black/20 flex flex-col md:flex-row overflow-hidden hover:shadow-3xl transition-all duration-700 ring-1 ring-primary/5 shadow-2xl">
                       <div className="relative w-full md:w-80 h-80 overflow-hidden">
@@ -190,6 +329,9 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
             ) : (
               <div className="py-24 text-center bg-primary/5 rounded-[3.5rem] border-2 border-dashed border-primary/10">
                 <p className="italic text-muted-foreground text-xl">No active signature transformations at this time.</p>
+                <Button variant="ghost" className="mt-4 rounded-full" onClick={handlePopulateDummyData} disabled={isPopulating}>
+                   <PlusCircle className="h-4 w-4 mr-2" /> {isPopulating ? 'Populating...' : 'Generate Artisan Data'}
+                </Button>
               </div>
             )}
           </div>
@@ -208,7 +350,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
               </div>
             ) : (vendorProducts || []).length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-                {vendorProducts.map((product) => (
+                {(vendorProducts || []).map((product) => (
                   <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-8">
                     <div className="relative aspect-[3/4] overflow-hidden rounded-[3rem] bg-white dark:bg-black/20 ring-1 ring-primary/5 shadow-2xl transition-all duration-700 hover:shadow-3xl">
                       <Image src={product.imageUrl || `https://picsum.photos/seed/${product.id}/600/800`} alt={product.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
@@ -225,8 +367,44 @@ export default function VendorProfilePage({ params }: { params: Promise<{ id: st
             ) : (
               <div className="py-24 text-center bg-primary/5 rounded-[3.5rem] border-2 border-dashed border-primary/10">
                 <p className="italic text-muted-foreground text-xl">The boutique is currently being curated.</p>
+                <Button variant="ghost" className="mt-4 rounded-full" onClick={handlePopulateDummyData} disabled={isPopulating}>
+                   <PlusCircle className="h-4 w-4 mr-2" /> {isPopulating ? 'Populating...' : 'Generate Boutique Data'}
+                </Button>
               </div>
             )}
+          </div>
+
+          {/* Admin Tools */}
+          <div className="pt-20 border-t border-primary/5 flex flex-col items-center space-y-8">
+            <div className="text-center space-y-2">
+              <h3 className="text-2xl font-headline italic text-primary/40">Studio Management</h3>
+              <p className="text-[10px] uppercase font-black tracking-widest text-primary/20">Artisan Administrative Controls</p>
+            </div>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline" 
+                className="rounded-full border-primary/10 text-primary/60 hover:bg-destructive hover:text-white transition-all h-12 px-8 text-[10px] font-black uppercase tracking-widest"
+                onClick={handleClearDummyData}
+                disabled={isCleaning}
+              >
+                <Trash2 className="h-4 w-4 mr-2" /> {isCleaning ? 'Removing...' : 'Remove Dummy Data'}
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full border-primary/10 text-primary/60 hover:bg-primary hover:text-white transition-all h-12 px-8 text-[10px] font-black uppercase tracking-widest"
+                onClick={handlePopulateDummyData}
+                disabled={isPopulating}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" /> {isPopulating ? 'Populating...' : 'Seed Dummy Data'}
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full border-primary/10 text-primary/60 hover:bg-accent hover:text-white transition-all h-12 px-8 text-[10px] font-black uppercase tracking-widest"
+                onClick={handleSyncSlug}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" /> Optimize Registry URL
+              </Button>
+            </div>
           </div>
         </section>
       </main>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ArrowRight, Sparkles, Trophy, ShieldCheck } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
-import { cn } from '@/lib/utils';
+import { cn, slugify } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
@@ -105,52 +105,57 @@ export default function Home() {
             <div className="flex gap-10 overflow-x-auto pb-12 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
               {isLoadingElite ? (
                 [1, 2, 3].map(n => <Skeleton key={n} className="w-[280px] md:w-[400px] h-[500px] rounded-[3rem] shrink-0" />)
-              ) : rankedVendors?.map((vendor, index) => (
-                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group relative shrink-0 w-[280px] md:w-[400px] snap-start">
-                  <div className="absolute -top-4 -left-4 z-10">
-                    <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-headline text-xl italic shadow-2xl ring-4 ring-background">
-                      #{index + 1}
-                    </div>
-                  </div>
-                  <Card className="rounded-[3rem] border-none bg-white dark:bg-black/40 p-6 space-y-6 shadow-2xl transition-all duration-700 hover:scale-[1.02] ring-1 ring-primary/5 h-full">
-                    <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-4 bg-muted">
-                      <Image 
-                        src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-placeholder/800/600'} 
-                        alt={vendor.name} 
-                        fill 
-                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                        data-ai-hint="elite parlour"
-                      />
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-2xl font-headline italic text-primary leading-tight">{vendor.name}</h3>
-                        <Badge variant="outline" className="rounded-full bg-primary/5 border-primary/10 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1">
-                          {vendor.rating}
-                        </Badge>
-                      </div>
-                      
-                      <div className="p-4 rounded-[1.5rem] bg-primary/5 border border-primary/5">
-                        <div className="flex items-center gap-2 text-[9px] font-bold text-primary uppercase tracking-widest">
-                          <ShieldCheck className="h-3.5 w-3.5 text-rose-500" /> Verified Artisan Score
+              ) : (
+                rankedVendors?.map((vendor, index) => {
+                  const vendorSlug = vendor.slug || slugify(vendor.name);
+                  return (
+                    <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group relative shrink-0 w-[280px] md:w-[400px] snap-start">
+                      <div className="absolute -top-4 -left-4 z-10">
+                        <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-headline text-xl italic shadow-2xl ring-4 ring-background">
+                          #{index + 1}
                         </div>
-                        <p className="text-[11px] text-muted-foreground italic leading-relaxed mt-1">
-                          Authenticated by verified completions.
-                        </p>
                       </div>
+                      <Card className="rounded-[3rem] border-none bg-white dark:bg-black/40 p-6 space-y-6 shadow-2xl transition-all duration-700 hover:scale-[1.02] ring-1 ring-primary/5 h-full">
+                        <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-4 bg-muted">
+                          <Image 
+                            src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-placeholder/800/600'} 
+                            alt={vendor.name} 
+                            fill 
+                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                            data-ai-hint="elite parlour"
+                          />
+                        </div>
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-2xl font-headline italic text-primary leading-tight">{vendor.name}</h3>
+                            <Badge variant="outline" className="rounded-full bg-primary/5 border-primary/10 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1">
+                              {vendor.rating}
+                            </Badge>
+                          </div>
+                          
+                          <div className="p-4 rounded-[1.5rem] bg-primary/5 border border-primary/5">
+                            <div className="flex items-center gap-2 text-[9px] font-bold text-primary uppercase tracking-widest">
+                              <ShieldCheck className="h-3.5 w-3.5 text-rose-500" /> Verified Artisan Score
+                            </div>
+                            <p className="text-[11px] text-muted-foreground italic leading-relaxed mt-1">
+                              Authenticated by verified completions.
+                            </p>
+                          </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-primary/5">
-                        <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((s) => (
-                            <Star key={s} className={cn("h-3 w-3", s <= Math.floor(vendor.rating) ? "fill-primary text-primary" : "text-muted-foreground/20")} />
-                          ))}
+                          <div className="flex items-center justify-between pt-4 border-t border-primary/5">
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star key={s} className={cn("h-3 w-3", s <= Math.floor(vendor.rating) ? "fill-primary text-primary" : "text-muted-foreground/20")} />
+                              ))}
+                            </div>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-primary/30 italic group-hover:text-primary transition-colors">View Profile</span>
+                          </div>
                         </div>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-primary/30 italic group-hover:text-primary transition-colors">View Profile</span>
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+                      </Card>
+                    </Link>
+                  );
+                })
+              )}
             </div>
           </div>
         </section>
@@ -171,32 +176,37 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
               {isLoadingNearby ? (
                 [1, 2, 3].map(n => <Skeleton key={n} className="aspect-[4/3] rounded-[2.5rem]" />)
-              ) : nearbyVendors?.map((vendor) => (
-                <Link key={vendor.id} href={`/vendors/${vendor.id}`} className="group interactive-element">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] shadow-2xl ring-1 ring-black/5 bg-muted transition-all duration-700 hover:shadow-3xl">
-                    <Image 
-                      src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/nearby-placeholder/800/600'} 
-                      alt={vendor.name} 
-                      fill 
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                      data-ai-hint="beauty sanctuary"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-white/95 dark:bg-black/80 text-primary border-none text-[9px] font-black px-4 py-1.5 shadow-2xl uppercase tracking-widest backdrop-blur-xl rounded-full">
-                        {vendor.areaTag}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="pt-6 px-2">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-2xl font-headline italic leading-none text-primary">{vendor.name}</h3>
-                      <div className="flex items-center gap-1 text-[10px] font-black text-accent-foreground uppercase tracking-widest">
-                        <Star className="h-3 w-3 fill-accent-foreground" /> {vendor.rating}
+              ) : (
+                nearbyVendors?.map((vendor) => {
+                  const vendorSlug = vendor.slug || slugify(vendor.name);
+                  return (
+                    <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group interactive-element">
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] shadow-2xl ring-1 ring-black/5 bg-muted transition-all duration-700 hover:shadow-3xl">
+                        <Image 
+                          src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/nearby-placeholder/800/600'} 
+                          alt={vendor.name} 
+                          fill 
+                          className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                          data-ai-hint="beauty sanctuary"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <Badge className="bg-white/95 dark:bg-black/80 text-primary border-none text-[9px] font-black px-4 py-1.5 shadow-2xl uppercase tracking-widest backdrop-blur-xl rounded-full">
+                            {vendor.areaTag}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                      <div className="pt-6 px-2">
+                        <div className="flex justify-between items-center">
+                          <h3 className="text-2xl font-headline italic leading-none text-primary">{vendor.name}</h3>
+                          <div className="flex items-center gap-1 text-[10px] font-black text-accent-foreground uppercase tracking-widest">
+                            <Star className="h-3 w-3 fill-accent-foreground" /> {vendor.rating}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
             </div>
           </div>
         </section>
@@ -213,36 +223,38 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-14">
               {isLoadingServices ? (
                  [1, 2, 3].map(n => <Skeleton key={n} className="h-[400px] rounded-[3rem]" />)
-              ) : services?.map((service) => (
-                <Link key={service.id} href={`/deals/${service.id}`} className="group block interactive-element">
-                  <Card className="rounded-[3rem] overflow-hidden border-none shadow-2xl h-full flex flex-col bg-white dark:bg-black/40 transition-all duration-700 hover:shadow-3xl">
-                    <div className="relative h-72 overflow-hidden bg-muted">
-                      <Image 
-                        src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
-                        alt={service.name} 
-                        fill 
-                        className="object-cover transition-transform duration-1000 group-hover:scale-110" 
-                        data-ai-hint="beauty transformation"
-                      />
-                    </div>
-                    <div className="p-8 space-y-4 flex-grow flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <p className="text-[9px] uppercase font-black tracking-[0.3em] text-accent-foreground/60">{service.category}</p>
-                        <h3 className="text-2xl font-headline leading-tight italic text-primary">{service.name}</h3>
+              ) : (
+                services?.map((service) => (
+                  <Link key={service.id} href={`/deals/${service.id}`} className="group block interactive-element">
+                    <Card className="rounded-[3rem] overflow-hidden border-none shadow-2xl h-full flex flex-col bg-white dark:bg-black/40 transition-all duration-700 hover:shadow-3xl">
+                      <div className="relative h-72 overflow-hidden bg-muted">
+                        <Image 
+                          src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
+                          alt={service.name} 
+                          fill 
+                          className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                          data-ai-hint="beauty transformation"
+                        />
                       </div>
-                      <div className="flex justify-between items-end pt-6 border-t border-primary/5">
-                        <div className="flex flex-col">
-                          <span className="text-[8px] uppercase font-black text-muted-foreground tracking-widest mb-1">Booking From</span>
-                          <span className="text-2xl font-bold text-accent-foreground italic tracking-tighter">{getCurrency()} {service.discountPrice.toLocaleString()}</span>
+                      <div className="p-8 space-y-4 flex-grow flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <p className="text-[9px] uppercase font-black tracking-[0.3em] text-accent-foreground/60">{service.category}</p>
+                          <h3 className="text-2xl font-headline leading-tight italic text-primary">{service.name}</h3>
                         </div>
-                        <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-3xl group-hover:scale-110 transition-transform">
-                          <ArrowRight className="h-6 w-6" />
+                        <div className="flex justify-between items-end pt-6 border-t border-primary/5">
+                          <div className="flex flex-col">
+                            <span className="text-[8px] uppercase font-black text-muted-foreground tracking-widest mb-1">Booking From</span>
+                            <span className="text-2xl font-bold text-accent-foreground italic tracking-tighter">{getCurrency()} {service.discountPrice.toLocaleString()}</span>
+                          </div>
+                          <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-3xl group-hover:scale-110 transition-transform">
+                            <ArrowRight className="h-6 w-6" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+                    </Card>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </section>

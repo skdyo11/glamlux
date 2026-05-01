@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search, ShoppingBag, Heart, Store, ArrowRight, Star } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, slugify } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -49,24 +49,7 @@ export default function ShopPage() {
     return matchesSearch && matchesBrand;
   });
 
-  const brands = ['All', ...Array.from(new Set((products || []).map(p => p.brand).filter(Boolean)))];
-
-  const handleAddToCart = (e: React.MouseEvent, product: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart({
-      id: product.id,
-      type: 'product',
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-      image: product.imageUrl
-    });
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} is now in your collection.`,
-    });
-  };
+  const brands = ['All', ...Array.from(new Set((products || []).map((p) => p.brand).filter(Boolean)))];
 
   const handleFavoriteToggle = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
@@ -99,22 +82,29 @@ export default function ShopPage() {
              <Link href="/vendors" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">View All <ArrowRight className="h-3 w-3" /></Link>
            </div>
            <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
-             {vendors?.map((v) => (
-               <Link key={v.id} href={`/vendors/${v.id}`} className="snap-start shrink-0">
-                 <Card className="w-64 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md p-6 space-y-4 shadow-xl hover:bg-primary/5 transition-all">
-                    <div className="relative aspect-square rounded-[2rem] overflow-hidden">
-                       <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" data-ai-hint="boutique shop" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{v.name}</h3>
-                      <div className="flex items-center justify-between">
-                         <p className="text-[8px] uppercase font-black tracking-widest opacity-40">{v.areaTag}</p>
-                         <div className="flex items-center gap-1 text-[8px] font-bold text-accent-foreground"><Star className="h-2 w-2 fill-current" /> {v.rating}</div>
-                      </div>
-                    </div>
-                 </Card>
-               </Link>
-             ))}
+             {isLoading ? (
+               [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-64 shrink-0 rounded-[2.5rem]" />)
+             ) : (
+               vendors?.map((v) => {
+                 const vendorSlug = v.slug || slugify(v.name);
+                 return (
+                   <Link key={v.id} href={`/vendors/${vendorSlug}`} className="snap-start shrink-0">
+                     <Card className="w-64 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md p-6 space-y-4 shadow-xl hover:bg-primary/5 transition-all">
+                        <div className="relative aspect-square rounded-[2rem] overflow-hidden">
+                           <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" data-ai-hint="boutique shop" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{v.name}</h3>
+                          <div className="flex items-center justify-between">
+                             <p className="text-[8px] uppercase font-black tracking-widest opacity-40">{v.areaTag}</p>
+                             <div className="flex items-center gap-1 text-[8px] font-bold text-accent-foreground"><Star className="h-2 w-2 fill-current" /> {v.rating}</div>
+                          </div>
+                        </div>
+                     </Card>
+                   </Link>
+                 );
+               })
+             )}
            </div>
         </section>
 
@@ -131,83 +121,80 @@ export default function ShopPage() {
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto">
             <Select value={brandFilter} onValueChange={setBrandFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] px-8">
+              <SelectTrigger className="h-16 w-full md:w-[200px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-widest px-8">
                 <SelectValue placeholder="All Brands" />
               </SelectTrigger>
-              <SelectContent className="rounded-3xl font-body border-none shadow-2xl bg-white/90 backdrop-blur-xl">
+              <SelectContent className="rounded-2xl border-none shadow-2xl font-body">
                 {brands.map((brand) => (
-                  <SelectItem key={brand} value={brand} className="font-bold text-[10px] uppercase tracking-widest">{brand}</SelectItem>
+                  <SelectItem key={brand} value={brand || 'All'} className="text-[10px] font-black uppercase tracking-widest">{brand}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            
+            <div className="relative">
+              <Button size="icon" variant="ghost" className="h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-xl hover:scale-105 transition-all">
+                <ShoppingBag className="h-6 w-6" />
+              </Button>
+              <div className="absolute -top-1 -right-1 h-5 w-5 bg-accent text-accent-foreground rounded-full text-[10px] font-black flex items-center justify-center shadow-lg border-2 border-background">
+                0
+              </div>
+            </div>
           </div>
         </section>
 
+        {/* Products Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-              <Skeleton key={n} className="h-[400px] rounded-[3rem]" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="space-y-4">
+                <Skeleton className="aspect-[3/4] rounded-[2.5rem]" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-6 w-1/2" />
+              </div>
             ))}
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12">
-            {filteredProducts.map((product) => {
-              const isFav = isFavoriteProduct(product.id);
-              return (
-                <Link key={product.id} href={`/shop/${product.id}`} className="group block interactive-element h-full">
-                  <Card className="border-none bg-white/60 dark:bg-black/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-[3rem] overflow-hidden h-full flex flex-col">
-                    <div className="relative aspect-[4/5] overflow-hidden">
-                      <Image 
-                        src={product.imageUrl} 
-                        alt={product.name}
-                        fill
-                        className="object-cover soft-focus group-hover:scale-110"
-                        data-ai-hint="makeup product"
-                      />
-                      <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={(e) => handleFavoriteToggle(e, product.id)}
-                        className={cn(
-                          "absolute top-6 right-6 h-10 w-10 rounded-full backdrop-blur-md z-20 transition-all",
-                          isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
-                        )}
-                      >
-                        <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
-                      </Button>
-
-                      <Button 
-                        variant="secondary"
-                        size="icon" 
-                        onClick={(e) => handleAddToCart(e, product)}
-                        className="absolute bottom-6 right-6 h-12 w-12 md:h-14 md:w-14 rounded-full shadow-2xl z-20 scale-100 md:scale-0 md:group-hover:scale-100 transition-all duration-500"
-                      >
-                        <ShoppingBag className="h-5 w-5 md:h-6 md:w-6" />
-                      </Button>
-                    </div>
-                    <CardHeader className="space-y-2 p-6 md:p-8 text-center flex-grow">
-                      <p className="text-[10px] uppercase tracking-[0.3em] text-primary/40 font-black">{product.brand}</p>
-                      <CardTitle className="text-lg md:text-xl font-headline group-hover:text-accent-foreground transition-colors leading-tight italic text-primary">
-                        {product.name}
-                      </CardTitle>
-                      <div className="pt-4 border-t border-border/5 mt-4">
-                         <p className="text-primary font-bold text-xl md:text-2xl italic">{getCurrency()} {product.price?.toLocaleString()}</p>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {filteredProducts.map((product) => (
+              <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6 interactive-element">
+                <div className="relative aspect-[3/4] rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl bg-white dark:bg-black/20 ring-1 ring-primary/5 transition-all duration-700 hover:shadow-3xl hover:scale-[1.02]">
+                  <Image 
+                    src={product.imageUrl || `https://picsum.photos/seed/${product.id}/600/800`} 
+                    alt={product.name} 
+                    fill 
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                    data-ai-hint="beauty product"
+                  />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <button 
+                    onClick={(e) => handleFavoriteToggle(e, product.id)}
+                    className={cn(
+                      "absolute top-6 right-6 h-12 w-12 rounded-full backdrop-blur-md z-20 transition-all flex items-center justify-center shadow-xl",
+                      isFavoriteProduct(product.id) ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
+                    )}
+                  >
+                    <Heart className={cn("h-5 w-5", isFavoriteProduct(product.id) && "fill-current")} />
+                  </button>
+                </div>
+                <div className="space-y-2 px-2">
+                  <p className="text-[9px] uppercase font-black opacity-30 tracking-[0.4em] text-primary">{product.brand}</p>
+                  <h4 className="font-headline text-3xl italic text-primary leading-tight group-hover:text-accent-foreground transition-colors">{product.name}</h4>
+                  <div className="flex items-center justify-center gap-3 pt-2">
+                    <span className="font-bold text-xl text-accent-foreground font-body tracking-tighter">{getCurrency()} {product.price?.toLocaleString()}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8">
-            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
-              <Search className="h-12 w-12 text-primary/20" />
+          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-xl border border-dashed border-primary/10 rounded-[3.5rem]">
+            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto shadow-inner ring-1 ring-primary/5">
+              <Store className="h-12 w-12 text-primary/20" />
             </div>
-            <h3 className="text-5xl font-headline italic text-primary">No items found</h3>
-            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed px-6">Try searching for a different boutique brand or item name.</p>
+            <div className="space-y-2">
+              <h3 className="text-5xl font-headline italic text-primary">No treasures found</h3>
+              <p className="text-muted-foreground font-body italic text-lg">Try adjusting your search filters to find what you are looking for.</p>
+            </div>
           </div>
         )}
       </main>
