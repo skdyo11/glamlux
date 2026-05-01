@@ -6,7 +6,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Star, ShieldCheck, Trophy } from 'lucide-react';
+import { ArrowRight, Star, ShieldCheck, Trophy, MapPin } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn, slugify } from '@/lib/utils';
 import { useState, useEffect } from 'react';
