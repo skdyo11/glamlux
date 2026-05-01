@@ -65,7 +65,7 @@ export function Navbar() {
   const bottomNavLinks = useMemo(() => [
     { href: '/shop', label: 'Products', icon: Package },
     { href: '/vendors', label: 'Parlours', icon: Store },
-    { href: '/messages', label: 'CChat', icon: MessageSquare },
+    { href: '/messages', label: 'Chat', icon: MessageSquare },
   ], []);
 
   if (!mounted) return null;
@@ -269,8 +269,8 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bar - Bottom Utility Capsule (Wider & YouTube Style) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-full px-6 max-w-lg">
-        <div className="bg-white/90 dark:bg-black/80 backdrop-blur-3xl border border-primary/10 h-16 flex items-center justify-around shadow-2xl rounded-full px-2">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-full px-6 max-w-xl">
+        <div className="bg-white/90 dark:bg-black/80 backdrop-blur-3xl border border-primary/10 h-16 flex items-center justify-around shadow-2xl rounded-full px-2 ring-1 ring-black/5">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname.startsWith(link.href);
