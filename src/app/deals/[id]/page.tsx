@@ -97,19 +97,12 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
     );
   }
 
-  const depositAmount = (deal.discountPrice * deal.depositPercent) / 100;
-  const dealImages = [
-    vendor.imageUrls?.[0] || 'https://picsum.photos/seed/deal/800/800',
-    `https://picsum.photos/seed/deal-${deal.id}-1/800/800`,
-    `https://picsum.photos/seed/deal-${deal.id}-2/800/800`,
-  ];
-
   const handleAddToCart = () => {
     addToCart({
       id: deal.id,
       type: 'deal',
       name: deal.name,
-      price: depositAmount,
+      price: deal.discountPrice, // Using full discount price for accurate 21.0 vs 2.1 display
       full_price: deal.discountPrice,
       quantity: personCount,
       image: vendor.imageUrls?.[0] || '',
@@ -117,6 +110,12 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
     });
     router.push('/cart');
   };
+
+  const dealImages = [
+    vendor.imageUrls?.[0] || 'https://picsum.photos/seed/deal/800/800',
+    `https://picsum.photos/seed/deal-${deal.id}-1/800/800`,
+    `https://picsum.photos/seed/deal-${deal.id}-2/800/800`,
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -191,30 +190,19 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
 
               <div className="p-8 md:p-10 rounded-[2.5rem] bg-secondary/30 backdrop-blur-md space-y-4">
                 <div className="flex justify-between items-baseline italic text-primary">
-                  <span className="text-sm font-bold font-body">Deposit Due Now</span>
-                  <span className="text-3xl md:text-4xl font-headline">{(depositAmount * personCount).toLocaleString()}</span>
+                  <span className="text-sm font-bold font-body">Valuation</span>
+                  <span className="text-3xl md:text-4xl font-headline">{(deal.discountPrice * personCount).toLocaleString()}</span>
                 </div>
                 <p className="text-[9px] uppercase font-black opacity-30 tracking-widest flex items-center gap-1 text-primary">
-                  <Info className="h-3 w-3" /> Pay remainder at {vendor.name}
+                  <Info className="h-3 w-3" /> Full payment tracked in registry
                 </p>
               </div>
             </div>
 
-            <Button size="lg" className="w-full h-20 bg-primary text-primary-foreground rounded-[2.5rem] text-xl font-bold uppercase tracking-widest text-[10px] shadow-2xl group transition-all" onClick={handleAddToCart}>
+            <Button size="lg" className="w-full h-20 bg-primary text-primary-foreground rounded-[2.5rem] text-xl font-bold uppercase tracking-widest shadow-2xl group transition-all" onClick={handleAddToCart}>
               Book Now
               <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            
-            {recommendedProductNames.length > 0 && (
-              <div className="pt-6 border-t border-primary/5">
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/40 mb-4 flex items-center gap-2"><Sparkles className="h-3 w-3" /> Artisan Pairing Recommendation</p>
-                <div className="flex flex-wrap gap-2">
-                  {recommendedProductNames.map((name, i) => (
-                    <Badge key={i} variant="outline" className="bg-primary/5 border-primary/10 text-primary font-body text-[10px] py-1 px-3 rounded-full">{name}</Badge>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </main>

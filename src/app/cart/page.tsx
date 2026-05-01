@@ -202,67 +202,9 @@ export default function CartPage() {
               </div>
             </section>
 
-            {/* Inspiration */}
-            <section className="space-y-10">
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">03 Vision Reference</h2>
-              {!inspirationImage ? (
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-primary/10 p-24 text-center cursor-pointer hover:bg-primary/5 transition-all bg-white dark:bg-card/20"
-                >
-                  <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                  <Camera className="h-10 w-10 mx-auto mb-6 text-secondary opacity-40" strokeWidth={1.5} />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-primary">Upload Look Inspiration</span>
-                </div>
-              ) : (
-                <div className="space-y-12">
-                  <div className="relative aspect-video bg-muted group overflow-hidden border border-primary/5">
-                    <Image src={inspirationImage} alt="Reference" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-700" />
-                    <Button 
-                      variant="destructive" size="icon" 
-                      className="absolute top-8 right-8 rounded-none h-12 w-12 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => { setInspirationImage(null); setAiSuggestions(null); }}
-                    >
-                      <X className="h-5 w-5" />
-                    </Button>
-                  </div>
-                  {isAnalyzing && (
-                    <div className="flex items-center gap-4 text-secondary italic animate-pulse">
-                      <Sparkles className="h-5 w-5" strokeWidth={1.5} />
-                      <span className="text-[11px] font-bold uppercase tracking-[0.3em]">Auditing Boutique Match...</span>
-                    </div>
-                  )}
-                  {aiSuggestions && (
-                    <div className="border border-primary/10 p-12 space-y-10 bg-white dark:bg-card/40">
-                      <div className="space-y-2">
-                        <h4 className="text-3xl font-headline text-primary italic">Artisan Pairing Recommendation</h4>
-                        <p className="text-sm italic text-muted-foreground leading-relaxed">{aiSuggestions.description}</p>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-                        {aiSuggestions.productIds.map(pid => {
-                          const p = PRODUCTS.find(prod => prod.id === pid);
-                          if (!p) return null;
-                          return (
-                            <div key={pid} className="space-y-4">
-                              <div className="relative aspect-square overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all">
-                                <Image src={p.image} alt={p.name} fill className="object-cover" />
-                              </div>
-                              <Button variant="outline" size="sm" className="w-full rounded-none vogue-button text-[9px] h-10" onClick={() => addToCart({ id: p.id, type: 'product', name: p.name, price: p.price, quantity: 1, image: p.image })}>
-                                Add Entry
-                              </Button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
-
             {/* Selection */}
             <section className="space-y-12">
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">04 Selected Collection</h2>
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">03 Selected Collection</h2>
               <div className="space-y-16">
                 {cart.map((item) => (
                   <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
@@ -303,14 +245,14 @@ export default function CartPage() {
                   <span>Catalogue Subtotal</span>
                   <span className="text-current">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center text-secondary">
+                <div className="flex justify-between items-center text-secondary font-black">
                   <span className="flex items-center gap-2">Elite Delivery</span>
                   <span>COMPLIMENTARY</span>
                 </div>
                 <Separator className="bg-current opacity-10" />
                 <div className="flex justify-between items-center text-3xl font-headline italic tracking-tighter pt-4">
                   <span>Grand Total</span>
-                  <span className="text-secondary">{getCurrency()} {subtotal.toLocaleString()}</span>
+                  <span className="text-secondary font-black">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
               </div>
               <Button 
