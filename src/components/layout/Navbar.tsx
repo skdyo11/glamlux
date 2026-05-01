@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   ShoppingBag, 
-  MapPin, 
   LayoutDashboard, 
   Sparkles, 
   Store, 
-  Scissors, 
   Moon, 
   Sun, 
   MessageSquare, 
@@ -64,7 +62,6 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  // Updated Nav order: Products, Parlours, CChat
   const bottomNavLinks = useMemo(() => [
     { href: '/shop', label: 'Products', icon: Package },
     { href: '/vendors', label: 'Parlours', icon: Store },
@@ -74,11 +71,11 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm">
+    <div className="flex items-center p-1 bg-background/50 backdrop-blur-sm rounded-full border border-border/50 shadow-sm transition-all hover:shadow-md">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-            <Home className="h-5 w-5 text-foreground" strokeWidth={1.5} />
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
+            <Home className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -87,22 +84,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-10 w-10 rounded-full"
+        className="h-10 w-10 rounded-full group"
       >
-        {theme === 'dark' ? <Sun className="h-5 w-5 text-foreground" strokeWidth={1.5} /> : <Moon className="h-5 w-5 text-foreground" strokeWidth={1.5} />}
+        {theme === 'dark' ? (
+          <Sun className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+        ) : (
+          <Moon className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+        )}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
-          <Heart className={cn("h-5 w-5 text-foreground", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
+          <Heart className={cn("h-5 w-5 text-foreground transition-all group-hover:scale-110", favCount > 0 && "fill-accent-foreground text-accent-foreground")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
-          <ShoppingBag className="h-5 w-5 text-foreground" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group">
+          <ShoppingBag className="h-5 w-5 text-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[8px] font-black border border-background z-20 rounded-full">
+            <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 bg-primary text-primary-foreground text-[8px] font-black border border-background z-20 rounded-full animate-in zoom-in duration-300">
               {cartCount}
             </Badge>
           )}
@@ -114,15 +115,15 @@ export function Navbar() {
   const SideMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-          <Menu className="h-6 w-6 text-primary" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group">
+          <Menu className="h-6 w-6 text-primary transition-all group-hover:scale-110" strokeWidth={1.5} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] rounded-r-2xl border-none bg-background/95 backdrop-blur-xl p-0">
+      <SheetContent side="left" className="w-[300px] rounded-r-2xl border-none bg-background/95 backdrop-blur-xl p-0 shadow-2xl">
         <div className="flex flex-col h-full">
           <SheetHeader className="p-8 text-left border-b border-primary/5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                 <User className="h-6 w-6" strokeWidth={1.5} />
               </div>
               <div>
@@ -138,29 +139,29 @@ export function Navbar() {
 
           <div className="flex-1 px-4 py-8 space-y-2">
             <SheetClose asChild>
-              <Link href="/" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                <Home className="h-4 w-4" strokeWidth={1.5} /> Home
+              <Link href="/" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
+                <Home className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> Home
               </Link>
             </SheetClose>
             
             <SheetClose asChild>
-              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} /> My Business
+              <Link href="/portal" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
+                <LayoutDashboard className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> My Business
               </Link>
             </SheetClose>
 
             <SheetClose asChild>
-              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                <MessageSquare className="h-4 w-4" strokeWidth={1.5} /> Support Chat
+              <Link href="/messages" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
+                <MessageSquare className="h-4 w-4 transition-all group-hover:fill-current" strokeWidth={1.5} /> Support Chat
               </Link>
             </SheetClose>
 
             <Button 
               variant="ghost" 
               onClick={toggleRegion}
-              className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 transition-all"
+              className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 transition-all group"
             >
-              <Globe className="h-4 w-4" strokeWidth={1.5} /> Region: {getCurrency()}
+              <Globe className="h-4 w-4 transition-all group-hover:scale-110" strokeWidth={1.5} /> Region: {getCurrency()}
             </Button>
 
             <div className="pt-8 opacity-20">
@@ -172,14 +173,14 @@ export function Navbar() {
                 <Button 
                   variant="ghost" 
                   onClick={handleLogout}
-                  className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest"
+                  className="w-full justify-start gap-4 p-4 h-auto rounded-xl text-destructive hover:bg-destructive/5 font-bold text-xs uppercase tracking-widest transition-all group"
                 >
-                  <LogOut className="h-4 w-4" strokeWidth={1.5} /> Log Out
+                  <LogOut className="h-4 w-4 transition-all group-hover:-translate-x-1" strokeWidth={1.5} /> Log Out
                 </Button>
               ) : (
                 <SheetClose asChild>
-                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                    <Settings className="h-4 w-4" strokeWidth={1.5} /> Member Login
+                  <Link href="/login" className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 text-primary font-bold text-xs uppercase tracking-widest transition-all group">
+                    <Settings className="h-4 w-4 transition-all group-hover:rotate-45" strokeWidth={1.5} /> Member Login
                   </Link>
                 </SheetClose>
               )}
@@ -200,8 +201,8 @@ export function Navbar() {
         <div className="w-full pl-2 pr-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <SideMenu />
-            <Link href="/" className="flex items-center space-x-2">
-              <Sparkles className="h-6 w-6 text-accent-foreground" />
+            <Link href="/" className="flex items-center space-x-2 group">
+              <Sparkles className="h-6 w-6 text-accent-foreground transition-all group-hover:scale-110 group-hover:fill-current" />
               <span className="font-headline text-4xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>
@@ -212,11 +213,15 @@ export function Navbar() {
                 key={link.href} 
                 href={link.href} 
                 className={cn(
-                  "hover:text-accent-foreground transition-colors",
+                  "hover:text-accent-foreground transition-all duration-300 relative group",
                   pathname === link.href ? "text-accent-foreground font-black" : "text-muted-foreground"
                 )}
               >
                 {link.label}
+                <span className={cn(
+                  "absolute -bottom-1 left-0 w-0 h-0.5 bg-accent-foreground transition-all duration-300 group-hover:w-full",
+                  pathname === link.href && "w-full"
+                )} />
               </Link>
             ))}
           </div>
@@ -230,8 +235,8 @@ export function Navbar() {
       <nav className="fixed top-3 left-2 right-2 z-50 h-14 border border-border/20 bg-background/80 backdrop-blur-sm md:hidden flex items-center justify-between pl-1 pr-4 shadow-md rounded-2xl">
         <div className="flex items-center gap-0.5">
           <SideMenu />
-          <Link href="/" className="flex items-center space-x-1">
-            <span className="font-headline text-3xl tracking-tighter text-foreground italic leading-none">GlamLux</span>
+          <Link href="/" className="flex items-center space-x-1 group">
+            <span className="font-headline text-3xl tracking-tighter text-foreground italic leading-none group-hover:text-accent-foreground transition-colors">GlamLux</span>
           </Link>
         </div>
 
@@ -245,14 +250,14 @@ export function Navbar() {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative">
               <div className={cn(
                 "p-2.5 rounded-full transition-all duration-300",
-                isActive ? "text-primary bg-primary/5 scale-110" : "text-muted-foreground/60 hover:text-primary/40"
+                isActive ? "text-primary bg-primary/5 scale-110 shadow-sm" : "text-muted-foreground/60 hover:text-primary/40"
               )}>
-                <Icon className={cn("h-6 w-6")} strokeWidth={1.5} />
+                <Icon className={cn("h-6 w-6 transition-all", isActive && "fill-current")} strokeWidth={isActive ? 2 : 1.5} />
               </div>
-              {isActive && <div className="absolute -bottom-1 w-1.5 h-1.5 bg-primary rounded-full" />}
+              {isActive && <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full animate-in zoom-in duration-300" />}
             </Link>
           );
         })}
