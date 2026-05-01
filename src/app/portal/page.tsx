@@ -89,7 +89,7 @@ export default function PartnerPortalPage() {
     setIsMounted(true);
   }, []);
 
-  // Frictionless Onboarding: Instead of redirecting to login, we silently sign in anonymously.
+  // Frictionless Onboarding: Automatically sign in anonymously.
   useEffect(() => {
     if (isMounted && !isUserLoading && !user && auth) {
       signInAnonymously(auth).catch(err => console.error("Silent authentication failed", err));
@@ -376,7 +376,7 @@ export default function PartnerPortalPage() {
     );
   }
 
-  const profileImageUrl = myBusiness?.myImage || (user ? `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}` : '');
+  const profileImageUrl = myBusiness?.myImage || (user ? `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}` : undefined);
   const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/vogue-portal/1600/400`;
 
   return (

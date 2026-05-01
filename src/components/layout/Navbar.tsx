@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -175,7 +174,7 @@ export function Navbar() {
         <div className="space-y-6">
           <div className="flex items-center gap-4">
              <Avatar className="h-16 w-16 border-2 border-primary/10 shadow-lg">
-               <AvatarImage src={user?.photoURL || ''} />
+               <AvatarImage src={user?.photoURL || undefined} />
                <AvatarFallback className="bg-primary text-primary-foreground text-xl font-black">
                  {user?.displayName?.[0] || user?.email?.[0] || 'G'}
                </AvatarFallback>
@@ -267,10 +266,10 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-             {/* Desktop Identity Trigger - Just as a portal link for now */}
+             {/* Desktop Identity Trigger */}
              <Link href={user ? "/portal" : "/login"}>
                <Avatar className="h-9 w-9 border border-primary/10 cursor-pointer hover:scale-105 transition-transform">
-                 <AvatarImage src={user?.photoURL || ''} />
+                 <AvatarImage src={user?.photoURL || undefined} />
                  <AvatarFallback className="bg-primary text-primary-foreground text-[10px] font-black">{user?.displayName?.[0] || user?.email?.[0] || 'G'}</AvatarFallback>
                </Avatar>
              </Link>

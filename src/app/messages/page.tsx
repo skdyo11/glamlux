@@ -91,7 +91,7 @@ function MessagesContent() {
           lastMessage: '',
           updatedAt: serverTimestamp(),
           vendorName: vendorName || 'Artisan',
-          vendorImage: vendorImage || ''
+          vendorImage: vendorImage || undefined
         });
         setActiveConversationId(newConvRef.id);
       }
@@ -123,7 +123,7 @@ function MessagesContent() {
   const filteredConversations = useMemo(() => {
     if (!conversations) return [];
     
-    // Sort manually on client to bypass Firestore index requirements for a smooth prototype
+    // Sort manually on client to bypass Firestore index requirements
     const sorted = [...conversations].sort((a, b) => {
       const getVal = (v: any) => {
         if (!v) return 0;
@@ -216,7 +216,7 @@ function MessagesContent() {
                     activeConversationId === conv.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-primary/5"
                   )}
                 >
-                  <Avatar className="h-12 w-12"><AvatarImage src={conv.vendorImage} /></Avatar>
+                  <Avatar className="h-12 w-12"><AvatarImage src={conv.vendorImage || undefined} /></Avatar>
                   <div className="flex-grow text-left min-w-0">
                     <h4 className="font-headline text-lg truncate">{conv.vendorName}</h4>
                     <p className="text-xs truncate opacity-70">{conv.lastMessage}</p>
@@ -236,7 +236,7 @@ function MessagesContent() {
           <div className="flex-grow flex flex-col bg-background md:rounded-r-3xl overflow-hidden shadow-2xl relative border-l dark:border-white/10">
             <div className="p-4 md:p-6 border-b flex items-center gap-4 bg-white/60 dark:bg-black/20 backdrop-blur-md z-10">
               <Button variant="ghost" size="icon" onClick={() => setActiveConversationId(null)} className="md:hidden"><ChevronLeft className="h-6 w-6" /></Button>
-              <Avatar className="h-10 w-10"><AvatarImage src={activeConversation.vendorImage} /></Avatar>
+              <Avatar className="h-10 w-10"><AvatarImage src={activeConversation.vendorImage || undefined} /></Avatar>
               <div className="flex-grow">
                 <h3 className="font-headline text-xl italic text-primary">{activeConversation.vendorName}</h3>
                 <p className="text-[10px] uppercase font-bold text-accent-foreground tracking-widest">Online</p>
