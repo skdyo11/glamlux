@@ -202,7 +202,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <SideMenu />
             <Link href="/" className="flex items-center space-x-2 group">
-              <Sparkles className="h-6 w-6 text-accent-foreground transition-all group-hover:scale-110 group-hover:fill-current" />
+              <Sparkles className="h-6 w-6 text-accent-foreground transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
               <span className="font-headline text-4xl tracking-tighter text-foreground italic">GlamLux</span>
             </Link>
           </div>

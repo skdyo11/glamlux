@@ -71,7 +71,7 @@ export default function Home() {
                 A structured collection of the most prestigious artisan sanctuaries across the subcontinent.
               </p>
               <div className="flex flex-wrap gap-6 pt-6">
-                <Button asChild size="lg" className="bg-white text-primary hover:bg-secondary hover:text-white rounded-none border-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs transition-all hover:scale-105 active:scale-95 shadow-xl">
+                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground rounded-none border-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs transition-all hover:scale-105 active:scale-95 shadow-xl">
                   <Link href="/deals">The Services</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="border-white/40 text-white rounded-none px-12 h-16 font-bold uppercase tracking-[0.3em] text-xs hover:bg-white hover:text-black transition-all hover:scale-105 active:scale-95">
@@ -115,7 +115,7 @@ export default function Home() {
                           fill 
                           className="object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110"
                         />
-                        <div className="absolute top-0 left-0 bg-primary text-white px-6 py-4 font-headline text-3xl italic group-hover:bg-secondary transition-colors duration-500">
+                        <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-6 py-4 font-headline text-3xl italic group-hover:bg-secondary transition-colors duration-500 z-10">
                           0{index + 1}
                         </div>
                         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
