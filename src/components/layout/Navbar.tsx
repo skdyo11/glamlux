@@ -64,18 +64,18 @@ export function Navbar() {
 
   const bottomNavLinks = useMemo(() => [
     { href: '/shop', label: 'Boutique', icon: Package },
-    { href: '/vendors', label: 'Sanctuaries', icon: Store },
+    { href: '/vendors', label: 'Parlours', icon: Store },
     { href: '/messages', label: 'CChat', icon: MessageSquare },
   ], []);
 
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center p-1 bg-background/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none rounded-full border border-primary/5 md:border-none">
+    <div className="flex items-center gap-1 p-1 bg-background/50 dark:bg-black/20 backdrop-blur-md rounded-full border border-primary/10">
       {!isHome && (
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
-            <Home className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group transition-all duration-300">
+            <Home className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
           </Button>
         </Link>
       )}
@@ -84,26 +84,26 @@ export function Navbar() {
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10"
+        className="h-10 w-10 rounded-full group transition-all duration-300"
       >
         {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Sun className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
         ) : (
-          <Moon className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+          <Moon className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
         )}
       </Button>
 
       <Link href="/favorites">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
-          <Heart className={cn("h-5 w-5 text-primary transition-all group-hover:scale-110", favCount > 0 && "fill-current text-secondary")} strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-300">
+          <Heart className={cn("h-5 w-5 text-primary transition-all group-hover:scale-110", favCount > 0 && "fill-secondary text-secondary")} strokeWidth={1.5} />
         </Button>
       </Link>
 
       <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-500 hover:bg-secondary/10">
-          <ShoppingBag className="h-5 w-5 text-primary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-300">
+          <ShoppingBag className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
           {cartCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full animate-in zoom-in duration-500 shadow-xl">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full shadow-xl">
               {cartCount}
             </Badge>
           )}
@@ -140,21 +140,21 @@ export function Navbar() {
           <div className="flex-1 px-6 py-10 space-y-4">
             <SheetClose asChild>
               <Link href="/" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <Home className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <Home className="h-4 w-4 text-primary transition-all group-hover:fill-primary/20" strokeWidth={1.5} />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Overview</span>
               </Link>
             </SheetClose>
             
             <SheetClose asChild>
               <Link href="/portal" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <LayoutDashboard className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <LayoutDashboard className="h-4 w-4 text-primary transition-all group-hover:fill-primary/20" strokeWidth={1.5} />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Management</span>
               </Link>
             </SheetClose>
 
             <SheetClose asChild>
               <Link href="/messages" className="flex items-center gap-6 p-4 border border-transparent hover:border-primary/5 hover:bg-primary/5 transition-all group">
-                <MessageSquare className="h-4 w-4 text-primary transition-all group-hover:fill-current" strokeWidth={1.5} />
+                <MessageSquare className="h-4 w-4 text-primary transition-all group-hover:fill-primary/20" strokeWidth={1.5} />
                 <span className="font-bold text-xs uppercase tracking-[0.3em] text-primary">Inquiries</span>
               </Link>
             </SheetClose>
@@ -205,11 +205,11 @@ export function Navbar() {
     <>
       {/* Desktop Bar */}
       <nav className="fixed top-0 z-50 w-full border-b border-primary/10 bg-background/80 backdrop-blur-xl transition-all duration-500 hidden md:block">
-        <div className="container mx-auto h-16 flex items-center justify-between px-6">
+        <div className="container mx-auto h-20 flex items-center justify-between px-6">
           <div className="flex items-center gap-8">
             <SideMenu />
             <Link href="/" className="flex items-center space-x-3 group">
-              <Sparkles className="h-6 w-6 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+              <Sparkles className="h-6 w-6 text-secondary transition-all group-hover:scale-110 group-hover:fill-secondary" strokeWidth={1.5} />
               <span className="font-headline text-4xl tracking-tighter text-primary italic leading-none">GlamLux</span>
             </Link>
           </div>
@@ -238,44 +238,40 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bar - Top */}
-      <nav className="fixed top-4 left-4 right-4 z-50 h-16 border border-primary/10 bg-background/85 backdrop-blur-2xl md:hidden flex items-center justify-between px-2 shadow-2xl transition-all duration-500">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10 bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 shadow-sm">
         <div className="flex items-center gap-1">
           <SideMenu />
           <Link href="/" className="flex items-center group">
-            <span className="font-headline text-3xl tracking-tighter text-primary italic leading-none group-hover:text-secondary transition-colors">GlamLux</span>
+            <span className="font-headline text-2xl tracking-tighter text-primary italic leading-none group-hover:text-secondary transition-colors">GlamLux</span>
           </Link>
         </div>
 
         <UtilityGroup />
       </nav>
 
-      {/* Mobile Bar - Bottom Navigation */}
-      <nav className="fixed bottom-6 left-10 right-10 z-50 bg-background/95 text-foreground backdrop-blur-2xl border border-primary/10 h-20 px-4 md:hidden flex items-center justify-around shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-full">
-        {bottomNavLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href;
-          return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative">
-              <div className={cn(
-                "w-14 h-14 flex items-center justify-center transition-all duration-500 rounded-full",
-                isActive 
-                  ? "bg-secondary/10 border-2 border-secondary scale-110 shadow-[0_0_15px_rgba(193,178,144,0.3)]" 
-                  : "border border-primary/5 hover:bg-primary/5"
-              )}>
-                <Icon className={cn(
-                  "h-6 w-6 transition-all", 
-                  isActive ? "text-secondary fill-secondary/20" : "text-primary/40 group-hover:text-primary"
-                )} strokeWidth={isActive ? 2 : 1.5} />
-              </div>
-              <span className={cn(
-                "text-[7px] font-black uppercase tracking-[0.2em] mt-1 transition-all duration-500",
-                isActive ? "text-secondary opacity-100" : "text-primary/20 opacity-0 group-hover:opacity-40"
-              )}>
-                {link.label}
-              </span>
-            </Link>
-          );
-        })}
+      {/* Mobile Bar - Bottom Utility Capsule */}
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-auto">
+        <div className="bg-white/80 dark:bg-black/60 backdrop-blur-3xl border border-primary/10 h-16 px-2 flex items-center justify-center gap-4 shadow-2xl rounded-full">
+          {bottomNavLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
+            return (
+              <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group">
+                <div className={cn(
+                  "w-12 h-12 flex items-center justify-center transition-all duration-300 rounded-full",
+                  isActive 
+                    ? "bg-secondary/10 border-2 border-secondary scale-110 shadow-lg" 
+                    : "hover:bg-primary/5"
+                )}>
+                  <Icon className={cn(
+                    "h-5 w-5 transition-all duration-300", 
+                    isActive ? "text-secondary fill-secondary" : "text-primary group-hover:fill-primary/20"
+                  )} strokeWidth={isActive ? 2 : 1.5} />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </nav>
     </>
   );
