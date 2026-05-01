@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -17,6 +18,7 @@ import {
   SheetContent, 
   SheetTitle, 
   SheetDescription,
+  SheetHeader
 } from '@/components/ui/sheet';
 import { 
   Dialog,
@@ -617,6 +619,9 @@ export default function PartnerPortalPage() {
 
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
         <SheetContent side="bottom" className="rounded-none border-t border-primary/10 p-20 bg-background shadow-3xl font-body">
+          <SheetHeader className="sr-only">
+             <SheetTitle>Registry Audit</SheetTitle>
+          </SheetHeader>
           {selectedArrival && (
             <div className="max-w-2xl mx-auto space-y-16 animate-in slide-in-from-bottom-8 duration-700">
               <div className="text-center space-y-6">
@@ -624,8 +629,8 @@ export default function PartnerPortalPage() {
                   <Sparkles className="h-3 w-3 text-secondary animate-pulse" strokeWidth={1.5} />
                   <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Audit</span>
                 </div>
-                <SheetTitle className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest Entry'}</SheetTitle>
-                <SheetDescription className="font-body text-lg italic text-muted-foreground tracking-tighter">Reference: {selectedArrival.referenceCode} • Status: {selectedArrival.deliveryStatus}</SheetDescription>
+                <h2 className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest Entry'}</h2>
+                <p className="font-body text-lg italic text-muted-foreground tracking-tighter">Reference: {selectedArrival.referenceCode} • Status: {selectedArrival.deliveryStatus}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-primary/10 shadow-xl overflow-hidden">
                 <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-emerald-600 hover:bg-emerald-50 transition-all group flex items-center justify-center gap-2">

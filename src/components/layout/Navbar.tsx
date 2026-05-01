@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -289,6 +290,9 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
+               <SheetHeader className="sr-only">
+                 <SheetTitle>Artisan Sidebar</SheetTitle>
+               </SheetHeader>
                <SidebarContent />
             </SheetContent>
           </Sheet>
