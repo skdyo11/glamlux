@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, Camera, Sparkles, X, Plus, Minus, MapPin, Package, ArrowRight } from 'lucide-react';
+import { Trash2, Camera, Sparkles, X, Plus, Minus, MapPin, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
@@ -132,13 +132,13 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col bg-background pt-20">
+      <div className="min-h-screen flex flex-col bg-background pt-20 font-body">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center space-y-12 max-w-lg px-6">
             <h1 className="text-7xl font-headline text-primary tracking-tighter italic">Registry Empty.</h1>
             <p className="text-muted-foreground text-lg leading-relaxed font-body">Your artisan collection awaits its first entry. Discover transformations and professional boutique essentials today.</p>
-            <Button asChild size="lg" className="rounded-none px-12 h-16 vogue-button bg-primary text-white">
+            <Button asChild size="lg" className="rounded-none px-12 h-16 vogue-button bg-primary text-primary-foreground border-none">
               <Link href="/">Discover The Registry</Link>
             </Button>
           </div>
@@ -148,13 +148,13 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-32 font-body">
       <Navbar />
       
       <main className="container mx-auto px-6 py-24 md:py-32">
         <header className="mb-32 space-y-4">
           <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">The Final Stage</span>
-          <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary">Checkout.</h1>
+          <h1 className="text-7xl md:text-[9rem] font-headline tracking-tighter italic text-primary">Checkout.</h1>
         </header>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-24">
@@ -208,10 +208,10 @@ export default function CartPage() {
               {!inspirationImage ? (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-primary/10 p-24 text-center cursor-pointer hover:bg-primary/5 transition-all bg-white dark:bg-card"
+                  className="border-2 border-dashed border-primary/10 p-24 text-center cursor-pointer hover:bg-primary/5 transition-all bg-white dark:bg-card/20"
                 >
                   <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                  <Camera className="h-10 w-10 mx-auto mb-6 text-secondary opacity-40" />
+                  <Camera className="h-10 w-10 mx-auto mb-6 text-secondary opacity-40" strokeWidth={1.5} />
                   <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-primary">Upload Look Inspiration</span>
                 </div>
               ) : (
@@ -228,12 +228,12 @@ export default function CartPage() {
                   </div>
                   {isAnalyzing && (
                     <div className="flex items-center gap-4 text-secondary italic animate-pulse">
-                      <Sparkles className="h-5 w-5" />
+                      <Sparkles className="h-5 w-5" strokeWidth={1.5} />
                       <span className="text-[11px] font-bold uppercase tracking-[0.3em]">Auditing Boutique Match...</span>
                     </div>
                   )}
                   {aiSuggestions && (
-                    <div className="border border-primary/10 p-12 space-y-10 bg-white dark:bg-card">
+                    <div className="border border-primary/10 p-12 space-y-10 bg-white dark:bg-card/40">
                       <div className="space-y-2">
                         <h4 className="text-3xl font-headline text-primary italic">Artisan Pairing Recommendation</h4>
                         <p className="text-sm italic text-muted-foreground leading-relaxed">{aiSuggestions.description}</p>
@@ -296,18 +296,18 @@ export default function CartPage() {
 
           {/* Ledger */}
           <div className="space-y-12">
-            <div className="p-12 bg-primary text-white space-y-10 border border-white/5">
+            <div className="p-12 bg-primary text-primary-foreground space-y-10 border border-white/5 shadow-3xl">
               <h4 className="font-headline text-4xl italic tracking-tighter">The Ledger.</h4>
               <div className="space-y-6 text-[11px] font-bold uppercase tracking-[0.3em]">
-                <div className="flex justify-between items-center text-white/60">
+                <div className="flex justify-between items-center opacity-60">
                   <span>Catalogue Subtotal</span>
-                  <span className="text-white">{getCurrency()} {subtotal.toLocaleString()}</span>
+                  <span className="text-current">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-secondary">
                   <span className="flex items-center gap-2">Elite Delivery</span>
                   <span>COMPLIMENTARY</span>
                 </div>
-                <Separator className="bg-white/10" />
+                <Separator className="bg-current opacity-10" />
                 <div className="flex justify-between items-center text-3xl font-headline italic tracking-tighter pt-4">
                   <span>Grand Total</span>
                   <span className="text-secondary">{getCurrency()} {subtotal.toLocaleString()}</span>
@@ -316,15 +316,15 @@ export default function CartPage() {
               <Button 
                 onClick={handleCheckout} 
                 disabled={isCheckingOut}
-                className="w-full h-16 bg-secondary text-primary hover:bg-white rounded-none vogue-button text-[11px] border-none"
+                className="w-full h-16 bg-secondary text-secondary-foreground hover:bg-white dark:hover:bg-background rounded-none vogue-button text-[11px] border-none shadow-2xl"
               >
                 {isCheckingOut ? 'Recording Transaction...' : 'Finalize Collection'}
               </Button>
             </div>
 
-            <div className="p-10 border border-primary/10 space-y-6 bg-white dark:bg-card">
+            <div className="p-10 border border-primary/10 space-y-6 bg-white dark:bg-card/20">
               <div className="flex items-center gap-3 text-[11px] font-bold text-primary uppercase tracking-[0.3em]">
-                <Package className="h-4 w-4 text-secondary" /> Registry Security
+                <Package className="h-4 w-4 text-secondary" strokeWidth={1.5} /> Registry Security
               </div>
               <p className="text-xs italic leading-relaxed text-muted-foreground">
                 Your order is audited and secured. Cash on Delivery ensures transaction integrity upon handover of your selection.

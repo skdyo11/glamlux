@@ -36,6 +36,7 @@ import {
   Upload,
   Check,
   RefreshCw,
+  MapPin
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -338,7 +339,7 @@ export default function PartnerPortalPage() {
 
   if (hasBusiness === false) {
     return (
-      <div className="min-h-screen bg-background flex flex-col pt-14">
+      <div className="min-h-screen bg-background flex flex-col pt-14 font-body">
         <Navbar />
         <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
           <header className="text-center space-y-6 max-w-2xl">
@@ -347,7 +348,7 @@ export default function PartnerPortalPage() {
             <p className="text-lg text-muted-foreground font-body italic">Select your discipline to begin the registry process.</p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl shadow-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl shadow-2xl bg-white dark:bg-card/20">
             <button onClick={() => handleStartBusiness('parlour')} className="group p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
               <Scissors className="h-12 w-12 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
               <div className="space-y-4">
@@ -374,11 +375,11 @@ export default function PartnerPortalPage() {
   const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/vogue-portal/1600/400`;
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-32 font-body">
       <Navbar />
       
       <main className="container mx-auto px-6 py-14 md:py-32">
-        <header className="relative mb-32 border border-primary/10 bg-white dark:bg-card shadow-2xl">
+        <header className="relative mb-32 border border-primary/10 bg-white dark:bg-card shadow-2xl overflow-hidden">
           <div className="relative w-full h-48 md:h-80 overflow-hidden border-b border-primary/10 group">
             <Image src={coverImageUrl} alt="Artisan Cover" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-1000" priority />
             <div className="absolute inset-0 bg-black/20" />
@@ -410,7 +411,7 @@ export default function PartnerPortalPage() {
 
             <div className="flex gap-4 pb-4">
               <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10 hover:bg-primary/5 transition-all">Auditing</Button>
-              <Button onClick={() => setActiveSheet('delivery')} className="rounded-none vogue-button bg-primary text-white text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95 transition-all">Logistics</Button>
+              <Button onClick={() => setActiveSheet('delivery')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95 transition-all">Logistics</Button>
             </div>
           </div>
         </header>
@@ -428,7 +429,7 @@ export default function PartnerPortalPage() {
           </TabsList>
 
           <TabsContent value="bookings" className="space-y-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-primary/10 shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-primary/10 shadow-2xl bg-white dark:bg-card/20">
               {arrivals.map((a) => (
                 <article 
                   key={a.id} 
@@ -439,7 +440,7 @@ export default function PartnerPortalPage() {
                     <span className="text-[10px] font-bold uppercase tracking-widest text-secondary group-hover:tracking-[0.2em] transition-all">{a.referenceCode}</span>
                     <h4 className="font-headline text-3xl text-primary">{a.userName || 'Artisan Guest'}</h4>
                   </div>
-                  <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2 bg-primary/5 transition-all group-hover:bg-primary group-hover:text-white">{a.deliveryStatus}</Badge>
+                  <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2 bg-primary/5 transition-all group-hover:bg-primary group-hover:text-primary-foreground">{a.deliveryStatus}</Badge>
                 </article>
               ))}
               {arrivals.length === 0 && (
@@ -453,7 +454,7 @@ export default function PartnerPortalPage() {
           <TabsContent value="items" className="space-y-12">
             <div className="flex justify-between items-end border-b border-primary/10 pb-8">
               <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Catalogue Inventory.</h3>
-              <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-white shadow-xl hover:scale-105 active:scale-95">
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-primary-foreground shadow-xl hover:scale-105 active:scale-95">
                 <ShoppingBag className="h-4 w-4 mr-2" strokeWidth={1.5} /> Add Entry
               </Button>
             </div>
@@ -478,7 +479,7 @@ export default function PartnerPortalPage() {
           <TabsContent value="services" className="space-y-12">
             <div className="flex justify-between items-end border-b border-primary/10 pb-8">
               <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Service Edits.</h3>
-              <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-white shadow-xl hover:scale-105 active:scale-95">
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-primary-foreground shadow-xl hover:scale-105 active:scale-95">
                 <Scissors className="h-4 w-4 mr-2" strokeWidth={1.5} /> Add Edit
               </Button>
             </div>
@@ -501,10 +502,9 @@ export default function PartnerPortalPage() {
         </Tabs>
       </main>
 
-      {/* Identity Dialog Overhaul */}
       <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none max-w-md p-10 overflow-hidden animate-in zoom-in-95 duration-300">
-          <div className="space-y-12">
+          <div className="space-y-12 font-body">
             <div className="border-b border-primary/10 pb-8 space-y-4">
               <div className="flex justify-between items-center">
                 <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Identity.</DialogTitle>
@@ -549,10 +549,9 @@ export default function PartnerPortalPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Editing Dialog Overhaul */}
       <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className={cn("rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden animate-in slide-in-from-bottom-4 duration-500", activeSheet === 'profile' ? "max-w-4xl" : "max-w-md")}>
-          <ScrollArea className="max-h-[90vh]">
+          <ScrollArea className="max-h-[90vh] font-body">
             <div className="p-12 space-y-12">
               <div className="border-b border-primary/10 pb-8 space-y-4">
                 <DialogTitle className="text-4xl font-headline tracking-tighter italic leading-none">Registry Update.</DialogTitle>
@@ -609,7 +608,7 @@ export default function PartnerPortalPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full h-20 bg-primary text-white rounded-none vogue-button text-[12px] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all">Finalize Registry Entry</Button>
+                <Button type="submit" className="w-full h-20 bg-primary text-primary-foreground rounded-none vogue-button text-[12px] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all">Finalize Registry Entry</Button>
               </form>
             </div>
           </ScrollArea>
@@ -617,12 +616,12 @@ export default function PartnerPortalPage() {
       </Dialog>
 
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-none border-t border-primary/10 p-20 bg-background shadow-3xl">
+        <SheetContent side="bottom" className="rounded-none border-t border-primary/10 p-20 bg-background shadow-3xl font-body">
           {selectedArrival && (
             <div className="max-w-2xl mx-auto space-y-16 animate-in slide-in-from-bottom-8 duration-700">
               <div className="text-center space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-                  <Sparkles className="h-3 w-3 text-secondary animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
+                  <Sparkles className="h-3 w-3 text-secondary animate-pulse" strokeWidth={1.5} />
                   <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Audit</span>
                 </div>
                 <SheetTitle className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest Entry'}</SheetTitle>
@@ -635,7 +634,7 @@ export default function PartnerPortalPage() {
                 <button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-amber-600 hover:bg-amber-50 transition-all group flex items-center justify-center gap-2">
                   <Sparkles className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:animate-spin" strokeWidth={1.5} /> Active
                 </button>
-                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-20 bg-primary text-white vogue-button text-[10px] hover:bg-secondary transition-all shadow-inner">Delivered</button>
+                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-20 bg-primary text-primary-foreground vogue-button text-[10px] hover:bg-secondary hover:text-secondary-foreground transition-all shadow-inner">Delivered</button>
               </div>
             </div>
           )}
