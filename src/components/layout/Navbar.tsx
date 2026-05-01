@@ -250,21 +250,29 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bar - Bottom Navigation */}
-      <nav className="fixed bottom-6 left-10 right-10 z-50 bg-primary/95 text-primary-foreground backdrop-blur-xl border border-white/5 h-16 px-4 md:hidden flex items-center justify-around shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+      <nav className="fixed bottom-6 left-10 right-10 z-50 bg-background/95 text-foreground backdrop-blur-2xl border border-primary/10 h-20 px-4 md:hidden flex items-center justify-around shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-full">
         {bottomNavLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
           return (
-            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative w-full h-full">
+            <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group relative">
               <div className={cn(
-                "p-3 transition-all duration-500",
-                isActive ? "text-secondary scale-125" : "text-primary-foreground/40 hover:text-white"
+                "w-14 h-14 flex items-center justify-center transition-all duration-500 rounded-full",
+                isActive 
+                  ? "bg-secondary/10 border-2 border-secondary scale-110 shadow-[0_0_15px_rgba(193,178,144,0.3)]" 
+                  : "border border-primary/5 hover:bg-primary/5"
               )}>
-                <Icon className={cn("h-6 w-6 transition-all", isActive && "fill-current")} strokeWidth={isActive ? 2 : 1.5} />
+                <Icon className={cn(
+                  "h-6 w-6 transition-all", 
+                  isActive ? "text-secondary fill-secondary/20" : "text-primary/40 group-hover:text-primary"
+                )} strokeWidth={isActive ? 2 : 1.5} />
               </div>
-              {isActive && (
-                <div className="absolute -bottom-1 w-1.5 h-1.5 bg-secondary rounded-full animate-in zoom-in duration-500 shadow-[0_0_10px_rgba(193,178,144,0.8)]" />
-              )}
+              <span className={cn(
+                "text-[7px] font-black uppercase tracking-[0.2em] mt-1 transition-all duration-500",
+                isActive ? "text-secondary opacity-100" : "text-primary/20 opacity-0 group-hover:opacity-40"
+              )}>
+                {link.label}
+              </span>
             </Link>
           );
         })}
