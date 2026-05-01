@@ -11,7 +11,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Menu, Settings } from 'lucide-react';
+import { Menu, Settings, Sun, Moon } from 'lucide-react';
 
 // Precision-Crafted Single-Path SVGs - Chunky Black Label Aesthetic
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
@@ -106,24 +106,45 @@ export function Navbar() {
 
   const UtilityGroup = () => (
     <div className="flex items-center gap-1.5 p-1 bg-white/60 dark:bg-black/40 backdrop-blur-xl rounded-full border border-primary/10 shadow-sm">
+      {/* Home - Show only when not on home page */}
+      {pathname !== '/' && (
+        <Link href="/">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary">
+            <CustomIcon type="home" isActive={false} className="h-4 w-4" />
+          </Button>
+        </Link>
+      )}
+
+      {/* Theme Toggle */}
       <Button 
         variant="ghost" 
         size="icon" 
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         className="h-9 w-9 rounded-full text-primary"
       >
-        {theme === 'dark' ? 
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg> : 
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-        }
+        {theme === 'dark' ? <Sun className="h-4 w-4" strokeWidth={2.5} /> : <Moon className="h-4 w-4" strokeWidth={2.5} />}
       </Button>
 
+      {/* Favorites */}
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary">
           <CustomIcon type="favorites" isActive={pathname === '/favorites'} className="h-4 w-4" />
         </Button>
       </Link>
 
+      {/* Cart - Mobile Utility Addition */}
+      <Link href="/cart" className="relative">
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary">
+          <CustomIcon type="cart" isActive={pathname === '/cart'} className="h-4 w-4" />
+          {cartCount > 0 && (
+            <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center bg-primary text-primary-foreground text-[8px] rounded-full ring-2 ring-background border-none">
+              {cartCount}
+            </Badge>
+          )}
+        </Button>
+      </Link>
+
+      {/* Profile/Identity */}
       <Link href={user ? "/portal" : "/login"}>
         <Avatar className="h-9 w-9 border border-primary/10 cursor-pointer hover:scale-105 transition-transform">
           <AvatarImage src={user?.photoURL || ''} />
@@ -157,10 +178,6 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="relative group">
-              <CustomIcon type="cart" isActive={pathname === '/cart'} className="h-5 w-5 text-primary" />
-              {cartCount > 0 && <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center bg-secondary text-primary-foreground text-[8px] rounded-full">{cartCount}</Badge>}
-            </Link>
             <UtilityGroup />
           </div>
         </div>
@@ -179,7 +196,7 @@ export function Navbar() {
         <UtilityGroup />
       </nav>
 
-      {/* Mobile Bottom Utility Capsule - Refined & Compact */}
+      {/* Mobile Bottom Utility Capsule */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[90%] max-w-lg">
         <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-20 flex items-center justify-between shadow-3xl rounded-full px-8 ring-1 ring-black/5">
           {bottomNavLinks.map((link) => {
