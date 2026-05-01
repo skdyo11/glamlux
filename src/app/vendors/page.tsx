@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardFooter, CardContent } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, MapPin, Search, ArrowRight, Navigation, Heart, Sparkles, Clock, Percent } from 'lucide-react';
+import { Star, MapPin, Search, ArrowRight, Heart, Sparkles, Percent } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn, slugify } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,6 @@ export default function VendorsPage() {
 
   const { data: vendors, isLoading } = useCollection(vendorsQuery);
 
-  // Lazy Migration: Update slugs if missing when the list is loaded
   useEffect(() => {
     if (isMounted && vendors && firestore) {
       vendors.forEach(v => {
@@ -71,85 +70,79 @@ export default function VendorsPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background pt-20 md:pt-24 pb-32">
+    <div className="min-h-screen bg-background flex flex-col pt-14 md:pt-24 pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-16 md:py-24">
-        <header className="max-w-4xl mb-12 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-top-2 duration-500">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Sanctuaries Registry</span>
+      <main className="container mx-auto px-6 py-20 md:py-32">
+        <header className="max-w-5xl mb-32 space-y-8">
+          <div className="space-y-4">
+             <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">The Directory</span>
+             <h1 className="text-7xl md:text-[9rem] font-headline text-primary tracking-tighter leading-[0.85] italic">Sanctuary <br />Registry.</h1>
           </div>
-          <h1 className="text-7xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Beauty <br /><span className="text-accent-foreground">Sanctuaries</span></h1>
-          <p className="text-xl text-muted-foreground font-body italic max-w-2xl">
-            The most prestigious parlours and independent artists in your region, curated for professional results.
+          <p className="text-xl text-muted-foreground font-body max-w-2xl leading-relaxed">
+            The most prestigious beauty sanctuaries and independent artists, audited and verified for professional excellence.
           </p>
         </header>
 
-        {/* Featured Deals & Combo Section */}
-        <section className="mb-24 space-y-8">
-          <div className="flex items-center justify-between px-2">
-             <div className="space-y-1">
-               <h2 className="text-3xl md:text-4xl font-headline italic text-primary">Artisan Deals & Combos</h2>
-               <p className="text-[10px] uppercase font-black tracking-widest text-primary/40">Limited Availability Discounts</p>
+        {/* Featured Combinations */}
+        <section className="mb-40 space-y-16">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-primary/10 pb-10">
+             <div className="space-y-2">
+               <h2 className="text-4xl font-headline tracking-tighter text-primary">Artisan Selection</h2>
+               <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-secondary">Limited Signature Packages</p>
              </div>
-             <Link href="/deals" className="text-[10px] font-black uppercase tracking-widest text-accent-foreground hover:underline">See All Deals</Link>
+             <Link href="/deals" className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary hover:text-secondary transition-colors">See All Transformations</Link>
           </div>
 
-          <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6 snap-x">
+          <div className="flex gap-8 overflow-x-auto pb-10 scrollbar-hide -mx-6 px-6 snap-x">
              {isLoadingDeals ? (
-               [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-80 shrink-0 rounded-[2.5rem]" />)
+               [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-96 shrink-0" />)
              ) : featuredDeals?.map((deal) => (
                <Link key={deal.id} href={`/deals/${deal.id}`} className="snap-start shrink-0 group">
-                 <Card className="w-80 h-full rounded-[2.5rem] border-none bg-white dark:bg-black/20 shadow-xl overflow-hidden hover:shadow-2xl transition-all ring-1 ring-primary/5 flex flex-col">
-                   <div className="relative h-40 overflow-hidden">
+                 <article className="w-96 space-y-6">
+                   <div className="relative h-60 overflow-hidden border border-primary/5">
                      <Image 
-                       src={`https://picsum.photos/seed/deal-${deal.id}/800/600`} 
+                       src={`https://picsum.photos/seed/vogue-deal-${deal.id}/800/600`} 
                        alt={deal.name} 
                        fill 
-                       className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                       className="object-cover transition-transform duration-700 group-hover:scale-105" 
                      />
-                     <div className="absolute top-4 left-4">
-                        <Badge className="bg-accent text-accent-foreground border-none text-[8px] font-black uppercase px-3 py-1.5 rounded-full shadow-lg">
-                          <Percent className="h-2 w-2 mr-1 inline" /> {Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% OFF
-                        </Badge>
+                     <div className="absolute top-0 right-0 bg-secondary text-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest">
+                       {Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% Discount
                      </div>
                    </div>
-                   <CardContent className="p-6 flex-grow space-y-3">
-                      <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-primary/40">
-                         <Clock className="h-2.5 w-2.5" /> Limited Combo
+                   <div className="space-y-2">
+                      <h3 className="font-headline text-3xl text-primary">{deal.name}</h3>
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-xl font-bold italic tracking-tighter text-primary">{getCurrency()} {deal.discountPrice?.toLocaleString()}</span>
+                        <span className="text-xs text-muted-foreground line-through decoration-primary/20">{getCurrency()} {deal.basePrice?.toLocaleString()}</span>
                       </div>
-                      <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{deal.name}</h3>
-                      <div className="flex items-baseline gap-2 pt-2">
-                        <span className="text-xl font-bold text-accent-foreground">{getCurrency()} {deal.discountPrice?.toLocaleString()}</span>
-                        <span className="text-[10px] text-muted-foreground line-through opacity-40">{getCurrency()} {deal.basePrice?.toLocaleString()}</span>
-                      </div>
-                   </CardContent>
-                 </Card>
+                   </div>
+                 </article>
                </Link>
              ))}
           </div>
         </section>
 
-        {/* Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/20 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/30 dark:border-white/10 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/50">
-          <div className="relative flex-grow w-full">
+        {/* Filter Registry */}
+        <section className="mb-24 flex flex-col md:flex-row gap-0 border border-primary/10">
+          <div className="relative flex-grow border-r border-primary/10">
             <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
-              placeholder="Search sanctuaries by name or area..." 
-              className="pl-20 h-16 bg-white/40 dark:bg-white/5 border-none focus-visible:ring-primary/10 rounded-full font-body text-lg italic placeholder:text-muted-foreground/60 text-primary"
+              placeholder="Search registry by name or area..." 
+              className="pl-20 h-20 bg-transparent border-none rounded-none font-body text-lg italic focus-visible:ring-0 text-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="w-full md:w-auto min-w-[300px]">
             <Select value={areaFilter} onValueChange={setAreaFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[240px] bg-white/40 dark:bg-white/5 border-none rounded-full font-black text-[10px] uppercase tracking-[0.2em] backdrop-blur-md text-primary px-10">
+              <SelectTrigger className="h-20 w-full border-none rounded-none font-bold text-[10px] uppercase tracking-[0.4em] px-10 bg-white dark:bg-card">
                 <SelectValue placeholder="All Regions" />
               </SelectTrigger>
-              <SelectContent className="rounded-3xl font-body border border-border/10 shadow-2xl backdrop-blur-3xl bg-background/95">
+              <SelectContent className="rounded-none font-body border-primary/10 shadow-none">
                 {uniqueAreas.map((area) => (
-                  <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest hover:bg-accent hover:text-accent-foreground">{area}</SelectItem>
+                  <SelectItem key={area} value={area} className="font-bold text-[10px] uppercase tracking-widest">{area}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -157,74 +150,59 @@ export default function VendorsPage() {
         </section>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-[500px] rounded-[3rem] bg-muted animate-pulse" />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[1, 2, 3].map((n) => <Skeleton key={n} className="h-[600px]" />)}
           </div>
         ) : filteredVendors.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
             {filteredVendors.map((vendor) => {
               const isFav = isFavoriteVendor(vendor.id);
               const vendorSlug = vendor.slug || slugify(vendor.name);
               return (
-                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block interactive-element">
-                  <Card className="overflow-hidden border-none bg-white/60 dark:bg-black/20 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-1000 rounded-[3rem] active:scale-[0.99] ring-1 ring-white/20 hover:ring-white/40 h-full flex flex-col">
-                    <div className="relative h-80 md:h-96 overflow-hidden">
+                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block">
+                  <article className="space-y-10">
+                    <div className="relative h-[450px] overflow-hidden border border-primary/5 bg-muted">
                       <Image 
-                        src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/vendor/800/600'} 
+                        src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/vogue-vendor/800/1000'} 
                         alt={vendor.name}
                         fill
-                        className="object-cover soft-focus group-hover:scale-110 transition-transform duration-1000"
+                        className="object-cover transition-all duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute top-8 left-8 flex items-center gap-3">
-                        <Badge className="bg-white/95 dark:bg-black/80 text-primary border border-white/20 text-[9px] uppercase font-black px-6 py-3 tracking-[0.2em] rounded-full shadow-2xl backdrop-blur-md">
-                          Elite Partner
-                        </Badge>
-                      </div>
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <button 
                         onClick={(e) => handleFavoriteToggle(e, vendor.id)}
                         className={cn(
-                          "absolute top-8 right-8 h-12 w-12 rounded-full backdrop-blur-md z-20 transition-all",
-                          isFav ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
+                          "absolute top-6 right-6 h-12 w-12 flex items-center justify-center transition-all",
+                          isFav ? "text-secondary" : "text-white hover:text-secondary"
                         )}
                       >
-                        <Heart className={cn("h-4 w-4", isFav && "fill-current")} />
-                      </Button>
+                        <Heart className={cn("h-6 w-6", isFav && "fill-current")} />
+                      </button>
                     </div>
-                    <CardHeader className="p-10 pb-6 space-y-4 flex-grow">
-                      <div className="flex items-center gap-3 text-[10px] text-accent-foreground font-black uppercase tracking-[0.3em]">
-                        <MapPin className="h-4 w-4 text-destructive" />
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">
+                        <MapPin className="h-3 w-3" />
                         {vendor.areaTag}
                       </div>
-                      <CardTitle className="text-4xl md:text-5xl font-headline group-hover:text-accent-foreground transition-colors leading-none italic text-primary">
+                      <h3 className="text-4xl md:text-5xl font-headline tracking-tighter text-primary leading-none italic group-hover:underline underline-offset-8 decoration-primary/10">
                         {vendor.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardFooter className="mt-8 pt-8 border-t border-white/20 dark:border-white/5 flex justify-between items-center bg-white/10 dark:bg-white/5 px-10 h-24 backdrop-blur-md">
-                      <div className="flex items-center gap-2 text-[10px] font-black uppercase text-accent-foreground tracking-widest">
-                        <Star className="h-4 w-4 fill-accent-foreground" />
-                        {vendor.rating} Registry
+                      </h3>
+                      <div className="pt-6 border-t border-primary/5 flex justify-between items-center">
+                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-primary/40">
+                          <Star className="h-3 w-3 fill-secondary text-secondary" />
+                          {vendor.rating} Artisan Rating
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" />
                       </div>
-                      <div className="flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-[0.2em] italic group-hover:translate-x-1 transition-transform">
-                        Explore Profile <ArrowRight className="h-4 w-4" />
-                      </div>
-                    </CardFooter>
-                  </Card>
+                    </div>
+                  </article>
                 </Link>
               );
             })}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-xl border border-dashed border-white/20 rounded-[3rem]">
-            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-primary/10">
-              <Navigation className="h-12 w-12 text-primary/20" />
-            </div>
-            <h3 className="text-5xl font-headline italic text-primary">Sanctuary Not Found</h3>
-            <p className="text-muted-foreground font-body max-w-md mx-auto italic text-lg leading-relaxed">No artisan locations matched your search. Try a different region or studio name.</p>
+          <div className="py-40 text-center space-y-10 border border-dashed border-primary/10">
+            <h3 className="text-5xl font-headline italic text-primary/30">Registry Empty.</h3>
+            <p className="text-muted-foreground font-body italic text-lg">No artisan locations matched your search criteria.</p>
           </div>
         )}
       </main>

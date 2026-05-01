@@ -1,30 +1,26 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, ShieldCheck, Truck, Camera, Sparkles, X, Info, Banknote, Plus, Minus, Users, ArrowRight, Package, MapPin } from 'lucide-react';
+import { Trash2, Camera, Sparkles, X, Plus, Minus, MapPin, Package, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFirebase, useUser, setDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, query, orderBy, limit } from 'firebase/firestore';
+import { useFirebase, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
 import { PRODUCTS } from '@/app/lib/mock-data';
 
 export default function CartPage() {
-  const { cart, region, removeFromCart, updateQuantity, getCurrency, clearCart, addToCart } = useStore();
+  const { cart, removeFromCart, updateQuantity, getCurrency, clearCart, addToCart } = useStore();
   const router = useRouter();
   const { toast } = useToast();
   const { auth, firestore } = useFirebase();
@@ -45,22 +41,7 @@ export default function CartPage() {
     setIsMounted(true);
   }, []);
 
-  // Fetch latest active order for persistent tracking
-  const bookingsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return query(
-      collection(firestore, 'localUsers', user.uid, 'bookings'),
-      orderBy('createdAt', 'desc'),
-      limit(1)
-    );
-  }, [firestore, user?.uid]);
-
-  const { data: latestBookings } = useCollection(bookingsQuery);
-  const latestOrder = latestBookings?.[0];
-  const showTracker = latestOrder && latestOrder.deliveryStatus !== 'Delivered';
-
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const totalDueNow = subtotal;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,13 +75,13 @@ export default function CartPage() {
     if (isCheckingOut) return;
     
     if (!userName.trim()) {
-      toast({ variant: "destructive", title: "Contact Required", description: "A name is required for order identification." });
+      toast({ variant: "destructive", title: "Identity Required", description: "A name is required for registry tracking." });
       return;
     }
 
     const hasProducts = cart.some(item => item.type === 'product');
     if (hasProducts && !shippingAddress.trim()) {
-      toast({ variant: "destructive", title: "Address Required", description: "A delivery address is required for boutique products." });
+      toast({ variant: "destructive", title: "Destination Required", description: "A shipping address is mandatory for boutique items." });
       return;
     }
 
@@ -113,25 +94,23 @@ export default function CartPage() {
         currentUser = cred.user;
       }
 
-      if (!currentUser || !firestore) throw new Error("Services not ready");
+      if (!currentUser || !firestore) throw new Error("Registry services unavailable");
 
       const refCode = Math.random().toString(36).substring(7).toUpperCase();
-      
       const newBookingRef = doc(collection(firestore, 'bookings'));
       
       const bookingData = {
         id: newBookingRef.id,
         localUserId: currentUser.uid,
         userName: userName,
-        userPhone: phoneNumber || 'Not provided',
-        shippingAddress: shippingAddress || 'N/A',
+        userPhone: phoneNumber || 'N/A',
+        shippingAddress: shippingAddress || 'Service Only',
         referenceCode: refCode,
-        totalPrice: totalDueNow,
+        totalPrice: subtotal,
         currency: getCurrency(),
         qrVerified: false,
         deliveryStatus: 'Pending',
-        paymentStatus: 'COD (Pending)',
-        paymentMethod: 'Cash on Delivery',
+        paymentStatus: 'COD (Awaiting)',
         createdAt: new Date().toISOString(),
         cartItems: cart,
         inspirationImageUrl: inspirationImage,
@@ -140,17 +119,12 @@ export default function CartPage() {
 
       await setDocumentNonBlocking(newBookingRef, bookingData, { merge: false });
       
-      toast({
-        title: "Order Placed",
-        description: `Your order ${refCode} is confirmed.`,
-      });
-
+      toast({ title: "Order Recorded", description: `Reference ${refCode} has been added to the registry.` });
       clearCart();
       router.push(`/booking/${newBookingRef.id}?uid=${currentUser.uid}`);
     } catch (error) {
-      console.error("Checkout failed", error);
       setIsCheckingOut(false);
-      toast({ variant: "destructive", title: "Order Error", description: "Could not place your order." });
+      toast({ variant: "destructive", title: "Registry Error", description: "Could not finalize your order." });
     }
   };
 
@@ -158,47 +132,14 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col bg-background pt-20">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <div className="text-center space-y-12 max-w-md px-6">
-            <div className="space-y-4">
-              <h1 className="text-5xl font-headline italic text-primary tracking-tighter">Your collection is empty</h1>
-              <p className="text-muted-foreground text-sm italic">Discover elite transformations and professional artistry products today.</p>
-            </div>
-            
-            {showTracker ? (
-              <Card className="rounded-[3rem] border-none bg-primary text-primary-foreground p-10 space-y-6 shadow-2xl">
-                <div className="flex items-center justify-center gap-3 font-black uppercase text-[10px] tracking-widest">
-                  <Truck className="h-5 w-5" /> Current Order: {latestOrder.referenceCode}
-                </div>
-                <div className="space-y-2">
-                  <div className="h-1 w-full bg-white/20 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent transition-all duration-1000"
-                      style={{ width: latestOrder.deliveryStatus === 'Pending' ? '25%' : latestOrder.deliveryStatus === 'Picked Up' ? '75%' : '100%' }}
-                    />
-                  </div>
-                  <p className="text-[8px] uppercase font-black tracking-widest opacity-60">Status: {latestOrder.deliveryStatus}</p>
-                </div>
-                <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-accent text-accent-foreground shadow-lg">
-                  <Link href={`/booking/${latestOrder.id}?uid=${user?.uid}`}>View Full Tracker</Link>
-                </Button>
-              </Card>
-            ) : (
-              <div className="p-10 rounded-[3rem] bg-primary/5 dark:bg-white/5 border border-primary/10 space-y-6">
-                <div className="flex items-center justify-center gap-3 text-primary font-black uppercase text-[10px] tracking-widest">
-                  <Truck className="h-5 w-5" /> Track Active Orders
-                </div>
-                <p className="text-xs italic opacity-60">Already made a purchase? Check your delivery updates here.</p>
-                <Button asChild className="w-full rounded-full h-12 font-bold text-[10px] uppercase tracking-widest bg-primary text-primary-foreground shadow-lg">
-                  <Link href="/messages">View Order History</Link>
-                </Button>
-              </div>
-            )}
-
-            <Button asChild variant="ghost" className="rounded-full px-8 font-bold text-[10px] uppercase tracking-widest text-primary">
-              <Link href="/">Return to Discovery</Link>
+          <div className="text-center space-y-12 max-w-lg px-6">
+            <h1 className="text-7xl font-headline text-primary tracking-tighter italic">Registry Empty.</h1>
+            <p className="text-muted-foreground text-lg leading-relaxed font-body">Your artisan collection awaits its first entry. Discover transformations and professional boutique essentials today.</p>
+            <Button asChild size="lg" className="rounded-none px-12 h-16 vogue-button bg-primary text-white">
+              <Link href="/">Discover The Registry</Link>
             </Button>
           </div>
         </main>
@@ -210,174 +151,142 @@ export default function CartPage() {
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-6 py-12">
-        {showTracker && (
-          <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-            <Card className="rounded-[2.5rem] border-none bg-primary/5 dark:bg-white/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl ring-1 ring-primary/10">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <Package className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-headline text-2xl italic text-primary">Recent Order: {latestOrder.referenceCode}</h3>
-                  <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Shipment Status: {latestOrder.deliveryStatus}</p>
-                </div>
-              </div>
-              
-              <div className="flex-grow max-w-md w-full px-4 hidden md:block">
-                  <div className="relative h-1 bg-muted rounded-full overflow-hidden">
-                     <div 
-                       className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000"
-                       style={{ width: latestOrder.deliveryStatus === 'Pending' ? '25%' : latestOrder.deliveryStatus === 'Picked Up' ? '75%' : '100%' }}
-                     />
-                  </div>
-                  <div className="flex justify-between mt-2 text-[8px] font-black uppercase tracking-[0.2em] opacity-30">
-                    <span>Placed</span>
-                    <span>Shipped</span>
-                    <span>Arriving</span>
-                  </div>
-              </div>
-
-              <Button asChild variant="outline" className="rounded-full border-primary/20 text-primary font-bold text-[10px] uppercase tracking-widest h-10 px-6">
-                <Link href={`/booking/${latestOrder.id}?uid=${user?.uid}`}>Track Order</Link>
-              </Button>
-            </Card>
-          </div>
-        )}
-
-        <header className="mb-16 space-y-2">
-          <Badge className="bg-primary/5 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[8px] font-black border-none">Checkout Stage</Badge>
-          <h1 className="text-6xl font-headline tracking-tighter italic text-primary">Elite Checkout</h1>
+      <main className="container mx-auto px-6 py-24 md:py-32">
+        <header className="mb-32 space-y-4">
+          <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">The Final Stage</span>
+          <h1 className="text-7xl md:text-9xl font-headline tracking-tighter italic text-primary">Checkout.</h1>
         </header>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-          <div className="lg:col-span-2 space-y-16">
-            <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">1. Local Identity</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Full Name</Label>
-                  <Input 
-                    placeholder="Artisan reference name" 
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="rounded-full border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary">Phone Number (Optional)</Label>
-                  <Input 
-                    placeholder="+92 / +91 number" 
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="rounded-full border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 h-12"
-                  />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-24">
+          <div className="lg:col-span-2 space-y-32">
+            {/* Identity & Address */}
+            <section className="space-y-16">
+              <div className="space-y-4">
+                <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">01 Identity Registry</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <Label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Full Artisan Name</Label>
+                    <Input 
+                      placeholder="Enter name for registry..." 
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-secondary h-14 text-xl italic px-1"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <Label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1">Registry Contact</Label>
+                    <Input 
+                      placeholder="+92 / +91 number" 
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-secondary h-14 text-xl italic px-1"
+                    />
+                  </div>
                 </div>
               </div>
-            </section>
 
-            <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">2. Delivery Registry</h2>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase ml-2 text-primary flex items-center gap-2">
-                    <MapPin className="h-3 w-3" /> Shipping Address
+              <div className="space-y-4 pt-10">
+                <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">02 Delivery Destination</h2>
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-primary ml-1 flex items-center gap-2">
+                    <MapPin className="h-3 w-3 text-secondary" /> Physical Shipping Address
                   </Label>
                   <Textarea 
                     placeholder="Provide full destination details for boutique shipments..." 
                     value={shippingAddress}
                     onChange={(e) => setShippingAddress(e.target.value)}
-                    className="rounded-3xl border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-primary transition-colors px-6 min-h-[100px]"
+                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-secondary min-h-[120px] text-lg italic px-1"
                   />
-                  <p className="text-[8px] text-muted-foreground italic ml-4">Required for product delivery. For sanctuary bookings, this helps our artisans prepare.</p>
+                  <p className="text-[10px] text-muted-foreground italic leading-relaxed">Mandatory for boutique product logistics. For sanctuary bookings, this helps our artisans prepare for your arrival.</p>
                 </div>
               </div>
             </section>
 
-            <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">3. Inspiration Reference</h2>
+            {/* Inspiration */}
+            <section className="space-y-10">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">03 Vision Reference</h2>
               {!inspirationImage ? (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-primary/10 rounded-[3rem] p-16 text-center cursor-pointer hover:bg-primary/5 transition-all bg-white/40 backdrop-blur-xl"
+                  className="border-2 border-dashed border-primary/10 p-24 text-center cursor-pointer hover:bg-primary/5 transition-all bg-white dark:bg-card"
                 >
                   <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                  <Camera className="h-8 w-8 mx-auto mb-4 text-primary opacity-20" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Upload Look Inspiration</span>
+                  <Camera className="h-10 w-10 mx-auto mb-6 text-secondary opacity-40" />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-primary">Upload Look Inspiration</span>
                 </div>
               ) : (
-                <div className="space-y-8">
-                  <div className="relative aspect-video bg-muted group overflow-hidden rounded-[3rem] shadow-xl">
-                    <Image src={inspirationImage} alt="Reference" fill className="object-cover" />
+                <div className="space-y-12">
+                  <div className="relative aspect-video bg-muted group overflow-hidden border border-primary/5">
+                    <Image src={inspirationImage} alt="Reference" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-700" />
                     <Button 
                       variant="destructive" size="icon" 
-                      className="absolute top-6 right-6 rounded-full h-10 w-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-8 right-8 rounded-none h-12 w-12 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => { setInspirationImage(null); setAiSuggestions(null); }}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-5 w-5" />
                     </Button>
                   </div>
                   {isAnalyzing && (
-                    <div className="flex items-center gap-3 italic text-primary/60">
-                      <Sparkles className="h-5 w-5 animate-pulse" />
-                      <span>Curating suggested bundle...</span>
+                    <div className="flex items-center gap-4 text-secondary italic animate-pulse">
+                      <Sparkles className="h-5 w-5" />
+                      <span className="text-[11px] font-bold uppercase tracking-[0.3em]">Auditing Boutique Match...</span>
                     </div>
                   )}
                   {aiSuggestions && (
-                    <Card className="rounded-[3rem] border-none bg-primary/5 p-8 space-y-6 shadow-xl">
-                      <h4 className="font-headline text-2xl text-primary italic">Suggested Artisan Bundle</h4>
-                      <p className="text-sm italic text-muted-foreground">{aiSuggestions.description}</p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="border border-primary/10 p-12 space-y-10 bg-white dark:bg-card">
+                      <div className="space-y-2">
+                        <h4 className="text-3xl font-headline text-primary italic">Artisan Pairing Recommendation</h4>
+                        <p className="text-sm italic text-muted-foreground leading-relaxed">{aiSuggestions.description}</p>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
                         {aiSuggestions.productIds.map(pid => {
                           const p = PRODUCTS.find(prod => prod.id === pid);
                           if (!p) return null;
                           return (
-                            <div key={pid} className="space-y-2">
-                              <div className="relative aspect-square rounded-[1.5rem] overflow-hidden shadow-md">
-                                <Image src={p.image} alt={p.name} fill className="object-cover soft-focus" />
+                            <div key={pid} className="space-y-4">
+                              <div className="relative aspect-square overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all">
+                                <Image src={p.image} alt={p.name} fill className="object-cover" />
                               </div>
-                              <Button variant="outline" size="sm" className="w-full text-[8px] h-8 rounded-full uppercase font-bold border-primary/10" onClick={() => addToCart({ id: p.id, type: 'product', name: p.name, price: p.price, quantity: 1, image: p.image })}>
-                                Add Item
+                              <Button variant="outline" size="sm" className="w-full rounded-none vogue-button text-[9px] h-10" onClick={() => addToCart({ id: p.id, type: 'product', name: p.name, price: p.price, quantity: 1, image: p.image })}>
+                                Add Entry
                               </Button>
                             </div>
                           );
                         })}
                       </div>
-                    </Card>
+                    </div>
                   )}
                 </div>
               )}
             </section>
 
-            <section className="space-y-6">
-              <h2 className="text-[10px] uppercase font-black tracking-[0.3em] text-primary/40">4. Your Selection</h2>
-              <div className="space-y-8">
+            {/* Selection */}
+            <section className="space-y-12">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">04 Selected Collection</h2>
+              <div className="space-y-16">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex flex-col md:flex-row gap-6 md:items-center border-b border-primary/5 pb-8">
-                    <div className="relative w-24 h-24 bg-muted rounded-[2rem] overflow-hidden shadow-sm flex-shrink-0">
-                      <Image src={item.image || ''} alt={item.name} fill className="object-cover soft-focus" />
+                  <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
+                    <div className="relative w-40 h-40 bg-muted overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all shrink-0">
+                      <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
                     </div>
-                    <div className="flex-grow space-y-2">
-                      <div className="flex items-center gap-2">
-                        <p className="text-[8px] uppercase font-black text-primary/30 tracking-[0.2em]">
-                          {item.type === 'deal' ? 'Artisan Transformation' : 'Boutique Product'}
-                        </p>
-                        {item.type === 'product' && (
-                          <Badge variant="outline" className="text-[7px] h-3.5 px-2 bg-accent/10 border-none text-primary rounded-full flex gap-1 items-center">
-                            <Truck className="h-2 w-2" /> Standard Delivery (2-4 Days)
-                          </Badge>
-                        )}
+                    <div className="flex-grow space-y-4">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">
+                          {item.type === 'deal' ? 'Transformation Service' : 'Boutique Item'}
+                        </span>
+                        <h3 className="font-headline text-4xl text-primary">{item.name}</h3>
                       </div>
-                      <h3 className="font-headline text-3xl text-primary italic leading-none">{item.name}</h3>
-                      <p className="font-bold text-lg">{getCurrency()} {item.price.toLocaleString()}</p>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="flex items-center border border-primary/10 rounded-full p-1 bg-white/40">
-                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, -1)} className="h-8 w-8 hover:bg-transparent text-primary"><Minus className="h-3 w-3" /></Button>
-                        <span className="w-8 text-center text-xs font-bold text-primary">{item.quantity}</span>
-                        <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, 1)} className="h-8 w-8 hover:bg-transparent text-primary"><Plus className="h-3 w-3" /></Button>
+                      <p className="font-bold text-2xl tracking-tighter text-primary">{getCurrency()} {item.price.toLocaleString()}</p>
+                      <div className="flex items-center gap-10 pt-4">
+                        <div className="flex items-center border border-primary/20 bg-white dark:bg-card px-4 h-12">
+                          <button onClick={() => updateQuantity(item.id, -1)} className="p-2 text-primary hover:text-secondary"><Minus className="h-4 w-4" /></button>
+                          <span className="w-12 text-center font-bold text-sm">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, 1)} className="p-2 text-primary hover:text-secondary"><Plus className="h-4 w-4" /></button>
+                        </div>
+                        <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-destructive flex items-center gap-2">
+                          <Trash2 className="h-4 w-4" /> Remove Entry
+                        </button>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
                 ))}
@@ -385,39 +294,40 @@ export default function CartPage() {
             </section>
           </div>
 
+          {/* Ledger */}
           <div className="space-y-12">
-            <Card className="border-none rounded-[3.5rem] bg-primary text-primary-foreground p-12 space-y-8 shadow-2xl">
-              <CardTitle className="font-headline text-4xl italic">Financials</CardTitle>
-              <div className="space-y-4 text-[10px] font-bold uppercase tracking-widest text-primary-foreground/60">
-                <div className="flex justify-between items-center">
-                  <span>Checkout Subtotal</span>
-                  <span className="text-primary-foreground">{getCurrency()} {subtotal.toLocaleString()}</span>
+            <div className="p-12 bg-primary text-white space-y-10 border border-white/5">
+              <h4 className="font-headline text-4xl italic tracking-tighter">The Ledger.</h4>
+              <div className="space-y-6 text-[11px] font-bold uppercase tracking-[0.3em]">
+                <div className="flex justify-between items-center text-white/60">
+                  <span>Catalogue Subtotal</span>
+                  <span className="text-white">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center text-accent">
-                  <span className="flex items-center gap-2"><Package className="h-3 w-3" /> Delivery</span>
-                  <span>FREE</span>
+                <div className="flex justify-between items-center text-secondary">
+                  <span className="flex items-center gap-2">Elite Delivery</span>
+                  <span>COMPLIMENTARY</span>
                 </div>
-                <Separator className="bg-primary-foreground/10" />
-                <div className="flex justify-between items-center text-2xl text-primary-foreground font-headline italic pt-2">
-                  <span>Total Due</span>
-                  <span className="text-accent">{getCurrency()} {totalDueNow.toLocaleString()}</span>
+                <Separator className="bg-white/10" />
+                <div className="flex justify-between items-center text-3xl font-headline italic tracking-tighter pt-4">
+                  <span>Grand Total</span>
+                  <span className="text-secondary">{getCurrency()} {subtotal.toLocaleString()}</span>
                 </div>
               </div>
               <Button 
                 onClick={handleCheckout} 
                 disabled={isCheckingOut}
-                className="w-full h-16 bg-accent text-accent-foreground hover:bg-white rounded-full font-bold uppercase tracking-[0.3em] text-[10px] border-none shadow-xl transition-all"
+                className="w-full h-16 bg-secondary text-primary hover:bg-white rounded-none vogue-button text-[11px] border-none"
               >
-                {isCheckingOut ? 'Securing Transaction...' : 'Complete Order'}
+                {isCheckingOut ? 'Recording Transaction...' : 'Finalize Collection'}
               </Button>
-            </Card>
+            </div>
 
-            <div className="p-8 bg-primary/5 dark:bg-white/5 space-y-4 rounded-[3rem] border border-primary/5">
-              <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
-                <ShieldCheck className="h-4 w-4" /> Artisan Security Active
+            <div className="p-10 border border-primary/10 space-y-6 bg-white dark:bg-card">
+              <div className="flex items-center gap-3 text-[11px] font-bold text-primary uppercase tracking-[0.3em]">
+                <Package className="h-4 w-4 text-secondary" /> Registry Security
               </div>
-              <p className="text-[9px] text-muted-foreground italic leading-relaxed">
-                Your order is secured by our platform. Cash on Delivery ensures you pay only when you receive your selection.
+              <p className="text-xs italic leading-relaxed text-muted-foreground">
+                Your order is audited and secured. Cash on Delivery ensures transaction integrity upon handover of your selection.
               </p>
             </div>
           </div>

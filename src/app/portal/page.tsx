@@ -1,9 +1,8 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { useStore } from '@/app/lib/store';
-import { Card, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,6 @@ import dynamic from 'next/dynamic';
 import { 
   Sheet, 
   SheetContent, 
-  SheetHeader, 
   SheetTitle, 
   SheetDescription,
 } from '@/components/ui/sheet';
@@ -41,9 +39,7 @@ import {
   ArrowRight,
   Store,
   Edit2,
-  Settings,
   Camera,
-  Dices,
   Upload,
   Trash2,
   Check,
@@ -59,10 +55,9 @@ import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { slugify } from '@/lib/utils';
 
-// Dynamically import Map to avoid SSR issues with Leaflet
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
-  loading: () => <Skeleton className="h-[300px] w-full rounded-[2rem]" />
+  loading: () => <Skeleton className="h-[350px] w-full" />
 });
 
 export default function PartnerPortalPage() {
@@ -93,7 +88,7 @@ export default function PartnerPortalPage() {
   const [coverPreviews, setCoverPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]); // Default to Lahore
+  const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]);
   const [addressInput, setAddressInput] = useState('');
 
   useEffect(() => {
@@ -117,12 +112,10 @@ export default function PartnerPortalPage() {
         const data = docSnap.data();
         const docId = docSnap.id;
         
-        // Auto-migrate: Add slug if missing
         let currentSlug = data.slug;
         if (!currentSlug) {
           currentSlug = slugify(data.name || 'Artisan Studio');
           await updateDoc(doc(firestore, 'parlours', docId), { slug: currentSlug });
-          toast({ title: "Profile Optimized", description: "Your studio now has a clean search-friendly URL." });
         }
 
         setHasBusiness(true);
@@ -185,9 +178,8 @@ export default function PartnerPortalPage() {
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) return;
-    
     try {
-      const businessName = type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`;
+      const businessName = type === 'parlour' ? `${user.displayName || 'The'} Sanctuary` : `${user.displayName || 'The'} House`;
       const baseSlug = slugify(businessName);
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
@@ -195,25 +187,21 @@ export default function PartnerPortalPage() {
         ownerId: user.uid,
         name: businessName,
         slug: businessSlug,
-        areaTag: 'Select Area',
+        areaTag: 'Select Region',
         latitude: 31.5204,
         longitude: 74.3587,
         rating: 5.0,
         imageUrls: [],
-        description: type === 'parlour' ? 'A nice beauty parlour.' : 'A premium makeup shop.',
+        description: type === 'parlour' ? 'An elite beauty sanctuary.' : 'A premium artistry house.',
         createdAt: serverTimestamp()
       });
       
       const bizId = bizRef.id;
-
-      // Seed dummy data
       const batch = writeBatch(firestore);
       
       const dummyProducts = [
-        { name: 'Radiance Elixir', brand: 'Artisan Essentials', price: 120, category: 'Skincare', description: 'Glow from within.' },
-        { name: 'Silk Infusion Serum', brand: 'Artisan Essentials', price: 85, category: 'Haircare', description: 'Smooth as silk.' },
-        { name: 'Velvet Matte Lip', brand: 'Couture Color', price: 45, category: 'Makeup', description: 'Long lasting elegance.' },
-        { name: 'Ocean Mist Toner', brand: 'Pure Botanicals', price: 60, category: 'Skincare', description: 'Refreshing as the sea.' },
+        { name: 'Pure Radiance Elixir', brand: 'Artisan Essence', price: 120, category: 'Skincare' },
+        { name: 'Structured Prime', brand: 'House Essentials', price: 85, category: 'Base' },
       ];
 
       dummyProducts.forEach(p => {
@@ -223,56 +211,29 @@ export default function PartnerPortalPage() {
           id: ref.id,
           vendorId: bizId,
           vendorName: businessName,
-          imageUrl: `https://picsum.photos/seed/${ref.id}/600/800`,
-          isDummy: true,
-          createdAt: serverTimestamp()
-        });
-      });
-
-      const dummyDeals = [
-        { name: 'Signature Rejuvenation', category: 'Package', basePrice: 450, discountPrice: 299, description: 'Full body transformation.' },
-        { name: 'Artisan Glow Up', category: 'Combo', basePrice: 200, discountPrice: 149, description: 'Facial and style combo.' },
-      ];
-
-      dummyDeals.forEach(d => {
-        const ref = doc(collection(firestore, 'deals'));
-        batch.set(ref, {
-          ...d,
-          id: ref.id,
-          parlourId: bizId,
-          parlourName: businessName,
-          parlourOwnerId: user.uid,
+          imageUrl: `https://picsum.photos/seed/vogue-p-${ref.id}/600/800`,
           isDummy: true,
           createdAt: serverTimestamp()
         });
       });
 
       await batch.commit();
-
       setHasBusiness(true);
       setMyBusiness({ id: bizId, name: businessName, slug: businessSlug });
-      toast({
-        title: "Success",
-        description: `Your ${type} is ready with artisan samples.`,
-      });
+      toast({ title: "Portal Operational", description: `Your ${type} has been registered.` });
     } catch (e) {
-      console.error(e);
-      toast({ variant: "destructive", title: "Setup Failed" });
+      toast({ variant: "destructive", title: "Registration Denied" });
     }
   };
 
   const updateArrivalStatus = async (id: string, newStatus: string) => {
     if (!firestore) return;
     try {
-      const docRef = doc(firestore, 'bookings', id);
-      await updateDoc(docRef, { deliveryStatus: newStatus });
-      toast({
-        title: "Status Updated",
-        description: `Guest status changed to ${newStatus}.`
-      });
+      await updateDoc(doc(firestore, 'bookings', id), { deliveryStatus: newStatus });
+      toast({ title: "Ledger Updated", description: `Status set to ${newStatus}.` });
       setSelectedArrival(null);
     } catch (e) {
-      toast({ variant: "destructive", title: "Update Failed" });
+      toast({ variant: "destructive", title: "Ledger Error" });
     }
   };
 
@@ -288,31 +249,21 @@ export default function PartnerPortalPage() {
     try {
       if (activeSheet === 'product') {
         if (editingItem) {
-          await updateDoc(doc(firestore, 'products', editingItem.id), {
-            name,
-            brand: detail,
-            price: parseFloat(value),
-          });
+          await updateDoc(doc(firestore, 'products', editingItem.id), { name, brand: detail, price: parseFloat(value) });
         } else {
           await addDoc(collection(firestore, 'products'), {
             vendorId: user.uid,
             name,
             brand: detail,
             price: parseFloat(value),
-            stockCount: 0,
-            imageUrl: 'https://picsum.photos/seed/luxury-makeup-primer/400/500',
+            imageUrl: 'https://picsum.photos/seed/vogue-new-p/400/500',
             currency: 'PKR',
             createdAt: serverTimestamp(),
           });
         }
       } else if (activeSheet === 'service') {
         if (editingItem) {
-          await updateDoc(doc(firestore, 'deals', editingItem.id), {
-            name,
-            category: detail,
-            discountPrice: parseFloat(value),
-            basePrice: parseFloat(value) * 1.2,
-          });
+          await updateDoc(doc(firestore, 'deals', editingItem.id), { name, category: detail, discountPrice: parseFloat(value) });
         } else {
           await addDoc(collection(firestore, 'deals'), {
             parlourOwnerId: user.uid,
@@ -320,32 +271,24 @@ export default function PartnerPortalPage() {
             name,
             category: detail,
             discountPrice: parseFloat(value),
-            basePrice: parseFloat(value) * 1.2,
+            basePrice: parseFloat(value) * 1.25,
             depositPercent: 10,
             currency: 'PKR',
-            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
             createdAt: serverTimestamp(),
           });
         }
-      } else if (activeSheet === 'profile') {
-        if (myBusiness) {
-          await updateDoc(doc(firestore, 'parlours', myBusiness.id), {
-            name,
-            areaTag: detail,
-            description: value,
-            address: addressInput,
-            latitude: mapLocation[0],
-            longitude: mapLocation[1],
-          });
-          setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
-        }
+      } else if (activeSheet === 'profile' && myBusiness) {
+        await updateDoc(doc(firestore, 'parlours', myBusiness.id), {
+          name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1]
+        });
+        setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
       }
 
-      toast({ title: "Success", description: `${activeSheet} updated.` });
+      toast({ title: "Registry Updated" });
       setActiveSheet(null);
       setEditingItem(null);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to update." });
+      toast({ variant: "destructive", title: "Update Failed" });
     }
   };
 
@@ -360,25 +303,10 @@ export default function PartnerPortalPage() {
     try {
       await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: url });
       setMyBusiness({ ...myBusiness, [field]: url });
-      toast({ title: "Updated", description: `Your ${imageUploadType} identity has been refreshed.` });
+      toast({ title: "Identity Finalized" });
       setActiveSheet(null);
     } catch (e) {
-      toast({ variant: "destructive", title: "Update Failed" });
-    }
-  };
-
-  const handleRemoveImage = async () => {
-    if (!firestore || !myBusiness || !imageUploadType) return;
-    const field = imageUploadType === 'cover' ? 'myCover' : 'myImage';
-    try {
-      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: deleteField() });
-      const updated = { ...myBusiness };
-      delete updated[field];
-      setMyBusiness(updated);
-      toast({ title: "Reverted", description: `${imageUploadType} has been reset to default.` });
-      setActiveSheet(null);
-    } catch (e) {
-      toast({ variant: "destructive", title: "Reset Failed" });
+      toast({ variant: "destructive", title: "Registry Denied" });
     }
   };
 
@@ -387,13 +315,8 @@ export default function PartnerPortalPage() {
     if (file && myBusiness && firestore) {
       setIsUploading(true);
       setUploadProgress(10);
-      
       const reader = new FileReader();
-      
-      const interval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 15, 90));
-      }, 200);
-
+      const interval = setInterval(() => setUploadProgress(p => Math.min(p + 15, 90)), 200);
       reader.onloadend = async () => {
         clearInterval(interval);
         setUploadProgress(100);
@@ -402,12 +325,8 @@ export default function PartnerPortalPage() {
         try {
           await updateDoc(doc(firestore, 'parlours', myBusiness.id), { [field]: base64String });
           setMyBusiness({ ...myBusiness, [field]: base64String });
-          toast({ title: "Upload Success", description: `Your ${imageUploadType} has been updated.` });
-          setTimeout(() => {
-            setIsUploading(false);
-            setUploadProgress(0);
-            setActiveSheet(null);
-          }, 500);
+          toast({ title: "Upload Confirmed" });
+          setTimeout(() => { setIsUploading(false); setUploadProgress(0); setActiveSheet(null); }, 500);
         } catch (error) {
           setIsUploading(false);
           toast({ variant: "destructive", title: "Upload Failed" });
@@ -428,53 +347,32 @@ export default function PartnerPortalPage() {
 
   if (hasBusiness === false) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col pt-14">
         <Navbar />
-        <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-12">
-          <div className="text-center space-y-4 max-w-2xl">
-            <Badge className="bg-primary/5 text-primary rounded-full px-4 py-1.5 uppercase tracking-widest text-[10px] font-black border-none">
-              <Sparkles className="h-3 w-3 mr-2 inline" /> Partner Setup
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-headline tracking-tighter italic text-primary leading-none">Start Your Business</h1>
-            <p className="text-lg text-muted-foreground italic font-body">Pick what kind of business you want to start.</p>
-          </div>
+        <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
+          <header className="text-center space-y-6 max-w-2xl">
+            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Setup</span>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">The Artisan Onboarding.</h1>
+            <p className="text-lg text-muted-foreground font-body">Select your discipline to begin the registry process.</p>
+          </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-            <Card 
-              onClick={() => handleStartBusiness('parlour')}
-              className="group cursor-pointer rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-primary/5 ring-1 ring-primary/5"
-            >
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <Scissors className="h-8 w-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl">
+            <button onClick={() => handleStartBusiness('parlour')} className="group p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all">
+              <Scissors className="h-12 w-12 text-secondary" />
+              <div className="space-y-4">
+                <h3 className="text-4xl font-headline italic text-primary">Service Sanctuary</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body">Registration for elite beauty studios and transformation experts.</p>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-3xl font-headline italic text-primary">Start Parlour</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed italic">
-                  Offer beauty services like makeup and hair styling.
-                </p>
+              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-transform">Begin <ArrowRight className="h-4 w-4" /></div>
+            </button>
+            <button onClick={() => handleStartBusiness('shop')} className="group p-16 space-y-10 text-left hover:bg-white dark:hover:bg-card transition-all">
+              <ShoppingBag className="h-12 w-12 text-secondary" />
+              <div className="space-y-4">
+                <h3 className="text-4xl font-headline italic text-primary">Artistry House</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body">Registration for professional makeup brands and curated boutique items.</p>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary pt-2">
-                Open Parlour <ArrowRight className="h-4 w-4" />
-              </div>
-            </Card>
-
-            <Card 
-              onClick={() => handleStartBusiness('shop')}
-              className="group cursor-pointer rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-xl p-10 space-y-6 shadow-xl transition-all hover:scale-[1.02] hover:bg-accent/10 ring-1 ring-accent/5"
-            >
-              <div className="h-16 w-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent-foreground">
-                <ShoppingBag className="h-8 w-8" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-3xl font-headline italic text-primary">Start Shop</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed italic">
-                  Sell professional makeup products and items.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-accent-foreground pt-2">
-                Open Shop <ArrowRight className="h-4 w-4" />
-              </div>
-            </Card>
+              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-transform">Begin <ArrowRight className="h-4 w-4" /></div>
+            </button>
           </div>
         </main>
       </div>
@@ -482,429 +380,248 @@ export default function PartnerPortalPage() {
   }
 
   const profileImageUrl = myBusiness?.myImage || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.uid}`;
-  const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/${myBusiness?.id || 'portal'}/1600/400`;
+  const coverImageUrl = myBusiness?.myCover || `https://picsum.photos/seed/vogue-portal/1600/400`;
 
   return (
     <div className="min-h-screen bg-background pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-0 md:px-6 py-4 md:py-12 pt-14 md:pt-24">
-        <div className="relative mb-12">
-          {/* Cover Photo */}
-          <div className="w-full h-48 md:h-64 lg:h-80 rounded-b-[2.5rem] md:rounded-[3rem] overflow-hidden relative shadow-xl group">
-            <Image
-              src={coverImageUrl}
-              alt="Artisan Cover"
-              fill
-              className="object-cover brightness-[0.85] transition-all group-hover:scale-105"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      <main className="container mx-auto px-6 py-14 md:py-32">
+        <header className="relative mb-32 border border-primary/10 bg-white dark:bg-card">
+          <div className="relative w-full h-48 md:h-80 overflow-hidden border-b border-primary/10 group">
+            <Image src={coverImageUrl} alt="Artisan Cover" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-700" priority />
+            <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button 
-                onClick={() => openImageModal('cover')}
-                className="rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold text-xs uppercase tracking-widest h-14 px-8 shadow-2xl hover:bg-white/40"
-              >
-                <Camera className="h-4 w-4 mr-2" /> Change Cover
-              </Button>
+              <Button onClick={() => openImageModal('cover')} className="rounded-none vogue-button bg-white text-primary border-none h-14 px-10 text-[10px]">Change Cover</Button>
             </div>
           </div>
 
-          {/* Profile Section Overlap */}
-          <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <div className="group relative h-32 w-32 md:h-44 md:w-44 rounded-[3rem] bg-white dark:bg-background p-2 shadow-2xl ring-4 ring-background overflow-hidden shrink-0 transition-transform active:scale-95">
-              <Avatar className="h-full w-full rounded-[2.5rem] overflow-hidden border-none bg-primary/5">
-                <AvatarImage src={profileImageUrl} className="object-cover" />
-                <AvatarFallback className="bg-primary/10 text-primary"><Store className="h-12 w-12 opacity-10" /></AvatarFallback>
+          <div className="p-10 flex flex-col md:flex-row items-center md:items-end gap-12 -mt-20 md:-mt-24">
+            <div className="relative h-40 w-40 md:h-56 md:w-56 overflow-hidden border border-primary/10 bg-white dark:bg-background group">
+              <Avatar className="h-full w-full rounded-none">
+                <AvatarImage src={profileImageUrl} className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                <AvatarFallback><Store className="h-10 w-10 opacity-20" /></AvatarFallback>
               </Avatar>
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onClick={() => openImageModal('profile')}>
                 <Camera className="h-6 w-6 text-white" />
               </div>
             </div>
             
-            <div className="flex-grow pb-2 space-y-3">
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                <h1 className="text-4xl md:text-6xl font-headline tracking-tighter italic text-primary leading-none drop-shadow-sm">
-                  {myBusiness?.name || 'Artisan Studio'}
-                </h1>
-                <Badge className="bg-primary/10 text-primary rounded-full px-3 py-1 uppercase tracking-widest text-[8px] font-black border-none h-fit shadow-sm">
-                  Verified Artisan
-                </Badge>
-              </div>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 text-xs font-bold uppercase tracking-widest text-primary/40">
-                <span className="flex items-center gap-2"><Navigation className="h-4 w-4 text-rose-400" /> {myBusiness?.areaTag}</span>
-                <span className="flex items-center gap-2"><Users className="h-4 w-4 text-primary/30" /> {arrivals.length} Clients Today</span>
-                <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-emerald-400" /> {arrivals.length * 15}K Revenue</span>
+            <div className="flex-grow space-y-6 pb-4">
+              <div className="space-y-2">
+                <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary">{myBusiness?.name || 'Artisan Registry'}</h1>
+                <div className="flex flex-wrap gap-8 text-[11px] font-bold uppercase tracking-[0.4em] text-muted-foreground">
+                  <span className="flex items-center gap-2"><Navigation className="h-3 w-3 text-secondary" /> {myBusiness?.areaTag}</span>
+                  <span className="flex items-center gap-2 text-primary">Verified House MMXXIV</span>
+                </div>
               </div>
             </div>
 
-            <div className="pb-2 flex gap-3 w-full md:w-auto px-6 md:px-0">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSheet('profile')}
-                className="flex-1 md:flex-none rounded-full border-primary/10 bg-white/60 dark:bg-card/60 backdrop-blur-md text-primary font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg hover:bg-primary/5"
-              >
-                <Edit2 className="h-4 w-4 mr-2" /> Customize
-              </Button>
-              <Button 
-                onClick={() => setActiveSheet('delivery')}
-                className="flex-1 md:flex-none rounded-full bg-primary text-primary-foreground font-bold uppercase tracking-widest text-[10px] h-14 px-8 shadow-lg transition-transform active:scale-95"
-              >
-                <Navigation className="h-4 w-4 mr-2" /> Logistics
-              </Button>
+            <div className="flex gap-4 pb-4">
+              <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10">Auditing</Button>
+              <Button onClick={() => setActiveSheet('delivery')} className="rounded-none vogue-button bg-primary text-white text-[10px] h-14 px-10">Logistics</Button>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="px-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
-            <TabsList className="bg-transparent h-auto gap-8 border-b w-full justify-center md:justify-start rounded-none overflow-x-auto scrollbar-hide">
-              {['bookings', 'items', 'services'].map((id) => (
-                <TabsTrigger 
-                  key={id} value={id} 
-                  className="bg-transparent px-0 pb-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent font-black text-[10px] uppercase tracking-[0.3em] text-primary"
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-16">
+          <TabsList className="bg-transparent h-auto gap-12 border-b border-primary/10 w-full justify-start rounded-none p-0">
+            {['bookings', 'items', 'services'].map((id) => (
+              <TabsTrigger 
+                key={id} value={id} 
+                className="bg-transparent px-0 pb-6 rounded-none border-b-2 border-transparent data-[state=active]:border-secondary data-[state=active]:bg-transparent font-bold text-[11px] uppercase tracking-[0.5em] text-primary/40 data-[state=active]:text-primary"
+              >
+                {id === 'bookings' ? '01 Queue' : id === 'items' ? '02 Catalogue' : '03 Edits'}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <TabsContent value="bookings" className="space-y-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-primary/10">
+              {arrivals.map((a) => (
+                <article 
+                  key={a.id} 
+                  className="p-10 space-y-6 border-r border-primary/10 last:border-r-0 hover:bg-white dark:hover:bg-card transition-all cursor-pointer"
+                  onClick={() => setSelectedArrival(a)}
                 >
-                  {id === 'bookings' ? 'Queue' : id === 'items' ? 'Inventory' : 'Services'}
-                </TabsTrigger>
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">{a.referenceCode}</span>
+                    <h4 className="font-headline text-3xl text-primary">{a.userName || 'Artisan Guest'}</h4>
+                  </div>
+                  <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2">{a.deliveryStatus}</Badge>
+                </article>
               ))}
-            </TabsList>
-
-            <TabsContent value="bookings" className="space-y-8">
-              <div className="flex items-center gap-3 mb-6">
-                <Clock className="h-6 w-6 text-primary/40" />
-                <h3 className="text-3xl font-headline italic text-primary">Arrival Queue</h3>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide">
-                {arrivals.map((a) => (
-                  <Card 
-                    key={a.id} 
-                    className="min-w-[280px] rounded-2xl border-none bg-white/40 dark:bg-card/40 backdrop-blur-md p-6 space-y-4 cursor-pointer hover:bg-primary/10 transition-all shadow-sm ring-1 ring-primary/5"
-                    onClick={() => setSelectedArrival(a)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-primary opacity-40">Identity</p>
-                        <h4 className="font-headline text-2xl text-primary italic truncate max-w-[180px]">{a.userName || a.userPhone}</h4>
-                      </div>
-                      <Badge variant="outline" className="rounded-full text-[8px] uppercase font-black">{a.deliveryStatus}</Badge>
-                    </div>
-                  </Card>
-                ))}
-                {arrivals.length === 0 && (
-                  <div className="w-full py-20 text-center space-y-4">
-                     <Users className="h-10 w-10 mx-auto text-primary/10" />
-                     <p className="italic text-muted-foreground opacity-50">No active bookings detected.</p>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="items" className="space-y-8">
-              <div className="flex justify-between items-center">
-                <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Artisan Inventory</h3>
-                <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
-                  <Plus className="h-3 w-3 mr-2" /> Add Product
-                </Button>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {myProducts.map((p) => (
-                  <div key={p.id} className="space-y-3 text-center group relative">
-                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted shadow-lg ring-1 ring-primary/5">
-                      <Image src={p.imageUrl || 'https://picsum.photos/seed/product-placeholder/400/500'} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                         <Button size="icon" variant="secondary" className="rounded-full" onClick={() => handleEdit('product', p)}>
-                           <Edit2 className="h-4 w-4" />
-                         </Button>
-                      </div>
-                    </div>
-                    <div className="space-y-0.5">
-                      <h4 className="font-headline text-xl italic text-primary truncate px-2">{p.name}</h4>
-                      <p className="text-[10px] font-bold text-accent-foreground uppercase tracking-widest">{getCurrency()} {p.price?.toLocaleString()}</p>
-                      <Button variant="link" size="sm" onClick={() => handleEdit('product', p)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0">Customize</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="services" className="space-y-8">
-              <div className="flex justify-between items-center">
-                <h3 className="text-4xl font-headline tracking-tighter italic text-primary">Studio Services</h3>
-                <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-full bg-primary h-10 px-6 font-bold uppercase tracking-widest text-[9px]">
-                  <Plus className="h-3 w-3 mr-2" /> Add Service
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {myServices.map((d) => (
-                  <Card key={d.id} className="p-8 rounded-2xl border-none bg-white dark:bg-card/40 backdrop-blur-md flex justify-between items-center shadow-xl ring-1 ring-primary/5 group relative">
-                    <div className="space-y-1">
-                      <p className="text-[8px] uppercase font-black tracking-widest text-primary/40">{d.category}</p>
-                      <h4 className="font-headline text-3xl italic text-primary leading-none">{d.name}</h4>
-                      <p className="text-xs font-bold text-accent-foreground">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit('service', d)} className="text-[8px] uppercase tracking-widest font-black text-primary/40 h-auto p-0 mt-2 hover:bg-transparent">
-                        <Edit2 className="h-3 w-3 mr-1" /> Customize
-                      </Button>
-                    </div>
-                    <div className="h-14 w-14 rounded-xl bg-primary/5 flex items-center justify-center text-primary/30">
-                      <Scissors className="h-6 w-6" />
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-
-      {/* Brand Identity Dialog */}
-      <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => { if (!isUploading) setActiveSheet(null); }}>
-        <DialogContent className="rounded-3xl border-none bg-background text-foreground shadow-3xl max-w-md p-0 overflow-hidden flex flex-col max-h-[90dvh]">
-          <ScrollArea className="flex-1 w-full">
-            <div className="p-8 space-y-10">
-              <DialogHeader>
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <DialogTitle className="text-3xl font-headline italic text-primary">
-                      Brand Identity
-                    </DialogTitle>
-                    <DialogDescription className="italic text-muted-foreground">
-                      Choose a look for your {imageUploadType}.
-                    </DialogDescription>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    disabled={isRolling}
-                    onClick={generatePreviews}
-                    className="h-10 w-10 rounded-full hover:bg-primary/5 text-primary/40 hover:text-primary transition-all group"
-                  >
-                    <RefreshCw className={cn("h-5 w-5 transition-transform duration-500", isRolling && "animate-spin")} />
-                  </Button>
-                </div>
-              </DialogHeader>
-
-              {isUploading ? (
-                <div className="py-12 space-y-6 text-center">
-                   <Sparkles className="h-8 w-8 mx-auto animate-pulse text-primary" />
-                   <p className="text-sm font-bold uppercase tracking-widest opacity-60">Synchronizing with Gallery...</p>
-                   <Progress value={uploadProgress} className="h-1.5" />
-                </div>
-              ) : (
-                <div className="space-y-10">
-                  {imageUploadType === 'profile' && (
-                    <div className="grid grid-cols-3 gap-4 md:gap-6">
-                      {isRolling ? (
-                        [1, 2, 3].map(i => <Skeleton key={i} className="aspect-square rounded-[1.5rem]" />)
-                      ) : profilePreviews.map((url, i) => (
-                        <button 
-                          key={i} 
-                          onClick={() => handleApplyIdentity(url)}
-                          className="relative aspect-square rounded-[1.5rem] overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl bg-primary/5 p-1 animate-in fade-in zoom-in duration-300"
-                        >
-                          <img src={url} alt="Profile Option" className="w-full h-full object-cover rounded-[1.2rem]" />
-                          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <Check className="h-6 w-6 text-white" />
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {imageUploadType === 'cover' && (
-                    <div className="grid grid-cols-1 gap-4">
-                      {isRolling ? (
-                        [1, 2].map(i => <Skeleton key={i} className="h-28 w-full rounded-2xl" />)
-                      ) : coverPreviews.map((url, i) => (
-                        <button 
-                          key={i} 
-                          onClick={() => handleApplyIdentity(url)}
-                          className="relative h-28 w-full rounded-2xl overflow-hidden group border-2 border-transparent hover:border-primary transition-all shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-300"
-                        >
-                          <img src={url} alt="Cover Option" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <Check className="h-6 w-6 text-white" />
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="space-y-4">
-                    <div className="relative py-2">
-                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10" /></div>
-                      <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest text-primary/30">
-                        <span className="bg-background px-4">OR CUSTOM UPLOAD</span>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                       <Button 
-                        variant="outline"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex-grow h-16 rounded-2xl border-primary/10 bg-background/50 text-primary font-bold uppercase tracking-widest text-[10px] shadow-sm hover:bg-primary/5 active:scale-95"
-                      >
-                        <Upload className="h-5 w-5 mr-3" /> Select File
-                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
-                      </Button>
-
-                      {((imageUploadType === 'cover' && myBusiness?.myCover) || (imageUploadType === 'profile' && myBusiness?.myImage)) && (
-                        <Button 
-                          variant="ghost"
-                          onClick={handleRemoveImage}
-                          className="w-16 h-16 rounded-2xl text-destructive hover:bg-destructive/10 border border-destructive/10 transition-colors"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+              {arrivals.length === 0 && (
+                <div className="col-span-full py-40 text-center space-y-4">
+                   <p className="font-headline text-4xl italic text-primary/10">Ledger Empty.</p>
                 </div>
               )}
-
-              <DialogFooter className="mt-8 border-t border-primary/5 pt-6">
-                 <p className="text-[9px] uppercase font-black tracking-[0.3em] text-primary/20 text-center w-full">Artisan Registry • Identity Management</p>
-              </DialogFooter>
             </div>
-          </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="items" className="space-y-12">
+            <div className="flex justify-between items-end border-b border-primary/10 pb-8">
+              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Catalogue Inventory.</h3>
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-white">
+                <Plus className="h-4 w-4 mr-2" /> Add Entry
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+              {myProducts.map((p) => (
+                <div key={p.id} className="space-y-6 group">
+                  <div className="relative aspect-square border border-primary/5 bg-muted overflow-hidden">
+                    <Image src={p.imageUrl || 'https://picsum.photos/seed/v-prod/400/500'} alt={p.name} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <Button variant="secondary" className="rounded-none" onClick={() => handleEdit('product', p)}>Edit Entry</Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-headline text-2xl text-primary">{p.name}</h4>
+                    <p className="text-xl font-bold tracking-tighter text-secondary">{getCurrency()} {p.price?.toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="services" className="space-y-12">
+            <div className="flex justify-between items-end border-b border-primary/10 pb-8">
+              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Service Edits.</h3>
+              <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-white">
+                <Plus className="h-4 w-4 mr-2" /> Add Edit
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {myServices.map((d) => (
+                <article key={d.id} className="p-12 border border-primary/10 bg-white dark:bg-card flex justify-between items-center group">
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">{d.category}</span>
+                      <h4 className="font-headline text-4xl text-primary">{d.name}</h4>
+                    </div>
+                    <p className="text-2xl font-bold tracking-tighter text-primary">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
+                    <button onClick={() => handleEdit('service', d)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-secondary pt-4 flex items-center gap-2">Customize Edit <ArrowRight className="h-3 w-3" /></button>
+                  </div>
+                  <Scissors className="h-12 w-12 text-primary/10 group-hover:text-secondary/20 transition-colors" />
+                </article>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </main>
+
+      {/* Identitity Dialog Overhaul */}
+      <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none max-w-md p-10">
+          <DialogHeader className="space-y-4 border-b border-primary/10 pb-8">
+            <div className="flex justify-between items-center">
+              <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Identity.</DialogTitle>
+              <RefreshCw onClick={generatePreviews} className={cn("h-5 w-5 cursor-pointer text-primary/30 hover:text-secondary", isRolling && "animate-spin")} />
+            </div>
+            <DialogDescription className="font-body text-muted-foreground italic">Choice of visual representation for the registry.</DialogDescription>
+          </DialogHeader>
+
+          <div className="py-10 space-y-12">
+            {isUploading ? (
+              <div className="space-y-6 py-10">
+                <Progress value={uploadProgress} className="h-1 rounded-none" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-center">Synchronizing Vault...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {(imageUploadType === 'profile' ? profilePreviews : coverPreviews).map((url, i) => (
+                  <button key={i} onClick={() => handleApplyIdentity(url)} className="relative aspect-square border border-primary/10 group overflow-hidden">
+                    <img src={url} alt="Option" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                    <div className="absolute inset-0 bg-secondary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center"><Check className="h-8 w-8 text-white" /></div>
+                  </button>
+                ))}
+              </div>
+            )}
+            <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full h-16 rounded-none vogue-button border-primary/10 text-[10px]">
+              <Upload className="h-4 w-4 mr-3" /> Custom Entry
+              <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Item & Deal Listing Dialog */}
-      <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => { setActiveSheet(null); setEditingItem(null); }}>
-        <DialogContent className={cn("rounded-2xl border-none bg-background text-foreground shadow-2xl", activeSheet === 'profile' ? "max-w-2xl" : "max-w-md")}>
-          <ScrollArea className="max-h-[90dvh]">
-            <div className="p-1">
-              <DialogHeader>
-                <DialogTitle className="text-3xl font-headline italic text-primary">
-                  {activeSheet === 'profile' ? 'Business Profile' : editingItem ? 'Customize Item' : 'New Listing'}
-                </DialogTitle>
-                <DialogDescription className="italic text-muted-foreground">
-                  {activeSheet === 'profile' ? 'Update your artisan identity and sanctuary location.' : 'Provide details for your marketplace offering.'}
-                </DialogDescription>
+      {/* Editing Dialog Overhaul */}
+      <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className={cn("rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden", activeSheet === 'profile' ? "max-w-4xl" : "max-w-md")}>
+          <ScrollArea className="max-h-[90vh]">
+            <div className="p-12 space-y-12">
+              <DialogHeader className="border-b border-primary/10 pb-8 space-y-4">
+                <DialogTitle className="text-4xl font-headline tracking-tighter italic">Registry Update.</DialogTitle>
+                <DialogDescription className="font-body italic">Formal audit of artisan details and sanctuary location.</DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSheetSubmit} className="space-y-6 py-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                    {activeSheet === 'profile' ? 'Parlour/Shop Name' : 'Name'}
-                  </Label>
+              <form onSubmit={handleSheetSubmit} className="space-y-12">
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40">Reference Identity</Label>
                   <Input 
                     name="name" 
                     required 
                     defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
-                    placeholder="Elite reference name..." 
-                    className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-2xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary" 
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                      {activeSheet === 'profile' ? 'Region Tag (City)' : activeSheet === 'product' ? 'Brand' : 'Category'}
-                    </Label>
+                <div className="grid grid-cols-2 gap-12">
+                  <div className="space-y-4">
+                    <Label className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40">{activeSheet === 'profile' ? 'Registry Tag' : 'Classification'}</Label>
                     <Input 
                       name="detail" 
                       required 
                       defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
-                      placeholder="Details..." 
-                      className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary" 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">
-                      {activeSheet === 'profile' ? 'Short Bio' : 'Price'}
-                    </Label>
+                  <div className="space-y-4">
+                    <Label className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40">{activeSheet === 'profile' ? 'Artisan Bio' : 'Valuation'}</Label>
                     <Input 
                       name="value" 
                       required 
                       type={activeSheet === 'profile' ? 'text' : 'number'}
                       defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : (activeSheet === 'profile' ? myBusiness?.description : '')}
-                      placeholder={activeSheet === 'profile' ? "Vision..." : "0.00"}
-                      className="rounded-full h-12 bg-primary/5 border-none px-6" 
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary" 
                     />
                   </div>
                 </div>
 
                 {activeSheet === 'profile' && (
-                  <div className="space-y-6 pt-4 border-t border-primary/5">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2 flex items-center gap-2">
-                        <MapPin className="h-3 w-3" /> Full Studio Address
-                      </Label>
+                  <div className="space-y-12 pt-8 border-t border-primary/10">
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary/40">Sanctuary Location</Label>
                       <Input 
                         value={addressInput}
                         onChange={(e) => setAddressInput(e.target.value)}
-                        placeholder="Street, Landmark, Building Number..." 
-                        className="rounded-full h-12 bg-primary/5 border-none px-6" 
-                      />
-                      <p className="text-[8px] text-muted-foreground italic ml-4">Type your physical address above, then click on the map to pin your location.</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-2">Sanctuary Pin</Label>
-                      <Map 
-                        center={mapLocation} 
-                        onLocationSelect={(lat, lng) => setMapLocation([lat, lng])} 
+                        placeholder="Street, Landmark, City..." 
+                        className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary" 
                       />
                     </div>
+                    <Map center={mapLocation} onLocationSelect={(lat, lng) => setMapLocation([lat, lng])} />
                   </div>
                 )}
 
-                <Button type="submit" className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
-                  {editingItem || activeSheet === 'profile' ? 'Save Changes' : 'Publish Listing'}
-                </Button>
+                <Button type="submit" className="w-full h-20 bg-primary text-white rounded-none vogue-button text-[12px]">Finalize Update</Button>
               </form>
             </div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
 
-      {/* Logistics Enrollment Dialog */}
-      <Dialog open={activeSheet === 'delivery'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-2xl border-none bg-background text-foreground shadow-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Logistics</DialogTitle>
-            <DialogDescription className="italic text-muted-foreground">Join our elite delivery network to reach more clients.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6 py-4">
-            <p className="text-sm text-muted-foreground italic leading-relaxed">
-              Enable professional shipping for your boutique items. Our logistics partners ensure your artistry reaches customers with the care it deserves.
-            </p>
-            <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-3">
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-primary">
-                <Navigation className="h-4 w-4" /> Service Features
-              </div>
-              <ul className="text-xs italic text-muted-foreground space-y-1">
-                <li>• Real-time tracking for customers</li>
-                <li>• Automated label generation</li>
-                <li>• Insured high-value shipments</li>
-              </ul>
-            </div>
-            <Button 
-              onClick={() => {
-                toast({ title: "Application Sent", description: "Your logistics request is under review." });
-                setActiveSheet(null);
-              }}
-              className="w-full h-14 bg-primary text-primary-foreground rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg"
-            >
-              Enroll in Delivery Network
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       <Sheet open={!!selectedArrival} onOpenChange={() => setSelectedArrival(null)}>
-        <SheetContent side="bottom" className="rounded-t-2xl border-none p-10 bg-background text-foreground shadow-2xl">
+        <SheetContent side="bottom" className="rounded-none border-t border-primary/10 p-20 bg-background">
           {selectedArrival && (
-            <div className="max-w-xl mx-auto space-y-6">
-              <div className="text-center space-y-2">
-                <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase px-4 py-1.5 rounded-full">Ref: {selectedArrival.referenceCode}</Badge>
-                <SheetTitle className="text-4xl font-headline italic text-primary">{selectedArrival.userName || selectedArrival.userPhone}</SheetTitle>
-                <SheetDescription className="italic text-muted-foreground">Manage your guest booking status.</SheetDescription>
+            <div className="max-w-2xl mx-auto space-y-16">
+              <div className="text-center space-y-6">
+                <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Audit</span>
+                <SheetTitle className="text-6xl font-headline italic text-primary">{selectedArrival.userName || 'Guest Entry'}</SheetTitle>
+                <SheetDescription className="font-body text-lg italic text-muted-foreground">Reference: {selectedArrival.referenceCode}</SheetDescription>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-14 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl uppercase tracking-widest text-[10px]">Verify</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-14 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl uppercase tracking-widest text-[10px]">Active</Button>
-                <Button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-14 bg-primary text-primary-foreground font-bold rounded-xl uppercase tracking-widest text-[10px]">Finish</Button>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-primary/10">
+                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-emerald-600 hover:bg-emerald-50">Verify</button>
+                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-amber-600 hover:bg-amber-50">Active</button>
+                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-20 bg-primary text-white vogue-button text-[10px]">Delivered</button>
               </div>
             </div>
           )}

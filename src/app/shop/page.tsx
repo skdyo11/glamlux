@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, ShoppingBag, Heart, Store, ArrowRight, Star } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Star, ArrowRight } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { cn, slugify } from '@/lib/utils';
@@ -60,47 +60,46 @@ export default function ShopPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pt-20 md:pt-24 pb-32">
+    <div className="min-h-screen bg-background flex flex-col pt-14 md:pt-24 pb-32">
       <Navbar />
       
-      <main className="container mx-auto px-4 md:px-6 py-12 md:py-24 flex-grow">
-        <header className="max-w-4xl mb-20 space-y-6 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-            <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Marketplace Collection</span>
+      <main className="container mx-auto px-6 py-20 md:py-32">
+        <header className="max-w-5xl mb-32 space-y-8">
+          <div className="space-y-4">
+             <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">The Boutique</span>
+             <h1 className="text-7xl md:text-[9rem] font-headline text-primary tracking-tighter leading-[0.85] italic text-right">Artistry <br />Essentials.</h1>
           </div>
-          <h1 className="text-6xl md:text-9xl font-headline text-primary tracking-tighter leading-none italic">Elite Boutique</h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-body italic max-w-2xl mx-auto md:mx-0">
-            Curated professional makeup and beauty essentials from our registry of elite shops.
+          <p className="text-xl text-muted-foreground font-body max-w-2xl leading-relaxed ml-auto text-right">
+            Curated professional makeup and beauty formulations, selected by the registry for unmatched performance.
           </p>
         </header>
 
-        {/* Featured Shops Row */}
-        <section className="mb-32 space-y-8">
-           <div className="flex justify-between items-end px-2">
-             <h2 className="text-3xl md:text-4xl font-headline italic text-primary">Artisan Registry</h2>
-             <Link href="/vendors" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">View All <ArrowRight className="h-3 w-3" /></Link>
+        {/* Featured Houses */}
+        <section className="mb-40 space-y-16">
+           <div className="flex justify-between items-end border-b border-primary/10 pb-8">
+             <h2 className="text-4xl font-headline tracking-tighter text-primary">Elite Houses</h2>
+             <Link href="/vendors" className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary hover:text-secondary transition-colors">The Directory</Link>
            </div>
-           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
+           <div className="flex gap-12 overflow-x-auto pb-10 scrollbar-hide -mx-6 px-6 snap-x">
              {isLoading ? (
-               [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-64 shrink-0 rounded-[2.5rem]" />)
+               [1, 2, 3].map(i => <Skeleton key={i} className="h-80 w-80 shrink-0" />)
              ) : (
                vendors?.map((v) => {
                  const vendorSlug = v.slug || slugify(v.name);
                  return (
-                   <Link key={v.id} href={`/vendors/${vendorSlug}`} className="snap-start shrink-0">
-                     <Card className="w-64 rounded-[2.5rem] border-none bg-white/40 backdrop-blur-md p-6 space-y-4 shadow-xl hover:bg-primary/5 transition-all">
-                        <div className="relative aspect-square rounded-[2rem] overflow-hidden">
-                           <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover" data-ai-hint="boutique shop" />
+                   <Link key={v.id} href={`/vendors/${vendorSlug}`} className="snap-start shrink-0 group">
+                     <article className="w-80 space-y-6">
+                        <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5">
+                           <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="font-headline text-2xl italic text-primary truncate leading-tight">{v.name}</h3>
-                          <div className="flex items-center justify-between">
-                             <p className="text-[8px] uppercase font-black tracking-widest opacity-40">{v.areaTag}</p>
-                             <div className="flex items-center gap-1 text-[8px] font-bold text-accent-foreground"><Star className="h-2 w-2 fill-current" /> {v.rating}</div>
+                          <h3 className="font-headline text-3xl text-primary">{v.name}</h3>
+                          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                             <span>{v.areaTag}</span>
+                             <span className="flex items-center gap-1 text-secondary"><Star className="h-3 w-3 fill-current" /> {v.rating}</span>
                           </div>
                         </div>
-                     </Card>
+                     </article>
                    </Link>
                  );
                })
@@ -108,93 +107,79 @@ export default function ShopPage() {
            </div>
         </section>
 
-        {/* Search and Filter Section */}
-        <section className="mb-20 flex flex-col md:flex-row gap-6 items-center bg-white/40 dark:bg-white/5 p-6 md:p-8 rounded-[3rem] border border-white/60 dark:border-white/10 backdrop-blur-xl shadow-2xl">
-          <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
+        {/* Catalog Filters */}
+        <section className="mb-24 flex flex-col md:flex-row gap-0 border border-primary/10">
+          <div className="relative flex-grow border-r border-primary/10">
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
             <Input 
-              placeholder="Search items by name or brand..." 
-              className="pl-16 h-16 bg-white/60 dark:bg-black/20 border-none focus-visible:ring-secondary rounded-full font-body text-lg italic"
+              placeholder="Search the collection..." 
+              className="pl-20 h-20 bg-transparent border-none rounded-none font-body text-lg italic focus-visible:ring-0 text-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="w-full md:w-auto min-w-[240px] border-r border-primary/10">
             <Select value={brandFilter} onValueChange={setBrandFilter}>
-              <SelectTrigger className="h-16 w-full md:w-[200px] bg-white/60 dark:bg-black/20 border-none rounded-full font-black text-[10px] uppercase tracking-widest px-8">
+              <SelectTrigger className="h-20 w-full border-none rounded-none font-bold text-[10px] uppercase tracking-[0.4em] px-10 bg-white dark:bg-card">
                 <SelectValue placeholder="All Brands" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl border-none shadow-2xl font-body">
+              <SelectContent className="rounded-none font-body border-primary/10 shadow-none">
                 {brands.map((brand) => (
-                  <SelectItem key={brand} value={brand || 'All'} className="text-[10px] font-black uppercase tracking-widest">{brand}</SelectItem>
+                  <SelectItem key={brand} value={brand || 'All'} className="text-[10px] font-bold uppercase tracking-widest">{brand}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            
-            <div className="relative">
-              <Button size="icon" variant="ghost" className="h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-xl hover:scale-105 transition-all">
-                <ShoppingBag className="h-6 w-6" />
-              </Button>
-              <div className="absolute -top-1 -right-1 h-5 w-5 bg-accent text-accent-foreground rounded-full text-[10px] font-black flex items-center justify-center shadow-lg border-2 border-background">
-                0
-              </div>
-            </div>
           </div>
+          <Link href="/cart" className="h-20 w-20 flex items-center justify-center bg-primary text-white hover:bg-secondary transition-colors">
+            <ShoppingBag className="h-6 w-6" />
+          </Link>
         </section>
 
-        {/* Products Grid */}
+        {/* Collection Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="space-y-4">
-                <Skeleton className="aspect-[3/4] rounded-[2.5rem]" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-6 w-1/2" />
-              </div>
-            ))}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-16">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <Skeleton key={i} className="aspect-[3/4]" />)}
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-16 md:gap-24">
             {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6 interactive-element">
-                <div className="relative aspect-[3/4] rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl bg-white dark:bg-black/20 ring-1 ring-primary/5 transition-all duration-700 hover:shadow-3xl hover:scale-[1.02]">
-                  <Image 
-                    src={product.imageUrl || `https://picsum.photos/seed/${product.id}/600/800`} 
-                    alt={product.name} 
-                    fill 
-                    className="object-cover transition-transform duration-1000 group-hover:scale-110" 
-                    data-ai-hint="beauty product"
-                  />
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <button 
-                    onClick={(e) => handleFavoriteToggle(e, product.id)}
-                    className={cn(
-                      "absolute top-6 right-6 h-12 w-12 rounded-full backdrop-blur-md z-20 transition-all flex items-center justify-center shadow-xl",
-                      isFavoriteProduct(product.id) ? "bg-primary text-primary-foreground" : "bg-white/20 text-white hover:bg-white/40"
-                    )}
-                  >
-                    <Heart className={cn("h-5 w-5", isFavoriteProduct(product.id) && "fill-current")} />
-                  </button>
-                </div>
-                <div className="space-y-2 px-2">
-                  <p className="text-[9px] uppercase font-black opacity-30 tracking-[0.4em] text-primary">{product.brand}</p>
-                  <h4 className="font-headline text-3xl italic text-primary leading-tight group-hover:text-accent-foreground transition-colors">{product.name}</h4>
-                  <div className="flex items-center justify-center gap-3 pt-2">
-                    <span className="font-bold text-xl text-accent-foreground font-body tracking-tighter">{getCurrency()} {product.price?.toLocaleString()}</span>
+              <Link key={product.id} href={`/shop/${product.id}`} className="group block">
+                <article className="space-y-8">
+                  <div className="relative aspect-[3/4] overflow-hidden border border-primary/5 bg-muted">
+                    <Image 
+                      src={product.imageUrl || `https://picsum.photos/seed/vogue-prod-${product.id}/600/800`} 
+                      alt={product.name} 
+                      fill 
+                      className="object-cover transition-transform duration-1000 group-hover:scale-105" 
+                    />
+                    <button 
+                      onClick={(e) => handleFavoriteToggle(e, product.id)}
+                      className={cn(
+                        "absolute top-6 right-6 h-10 w-10 flex items-center justify-center transition-all",
+                        isFavoriteProduct(product.id) ? "text-secondary" : "text-white/40 hover:text-white"
+                      )}
+                    >
+                      <Heart className={cn("h-5 w-5", isFavoriteProduct(product.id) && "fill-current")} />
+                    </button>
                   </div>
-                </div>
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">{product.brand}</span>
+                      <h4 className="font-headline text-3xl text-primary leading-none group-hover:underline underline-offset-4 decoration-primary/10">{product.name}</h4>
+                    </div>
+                    <div className="flex items-center gap-4 pt-4 border-t border-primary/5">
+                      <span className="font-bold text-xl tracking-tighter text-primary">{getCurrency()} {product.price?.toLocaleString()}</span>
+                      <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" />
+                    </div>
+                  </div>
+                </article>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="py-40 text-center space-y-8 bg-white/5 backdrop-blur-xl border border-dashed border-primary/10 rounded-[3.5rem]">
-            <div className="bg-primary/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto shadow-inner ring-1 ring-primary/5">
-              <Store className="h-12 w-12 text-primary/20" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-5xl font-headline italic text-primary">No treasures found</h3>
-              <p className="text-muted-foreground font-body italic text-lg">Try adjusting your search filters to find what you are looking for.</p>
-            </div>
+          <div className="py-40 text-center space-y-10 border border-dashed border-primary/10">
+            <h3 className="text-5xl font-headline italic text-primary/30">Catalogue Entry Missing.</h3>
+            <p className="text-muted-foreground font-body italic text-lg">No artisanal treasures matched your filters.</p>
           </div>
         )}
       </main>
