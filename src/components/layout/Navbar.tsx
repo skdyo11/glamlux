@@ -5,14 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
-  SheetTrigger,
-  SheetClose
-} from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useMemo } from 'react';
@@ -20,80 +12,75 @@ import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 
-// Precision-Crafted Single-Path SVGs - Matching Flaticon Aesthetic
+// Precision-Crafted Single-Path SVGs - Black Label Aesthetic (No weird transparency)
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
+  const commonProps = {
+    viewBox: "0 0 24 24",
+    className: className,
+    stroke: "currentColor",
+    strokeWidth: "2.5",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    fill: isActive ? "currentColor" : "none"
+  };
+
   if (type === 'home') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M3 10.11L12 2l9 8.11V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        {isActive && <path d="M3 10.11L12 2l9 8.11V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="currentColor" />}
       </svg>
     );
   }
   if (type === 'products') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" />
-        <path d="M3 8l9 4 9-4" />
-        <path d="M12 20V12" />
-        {isActive && <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" fill="currentColor" />}
+        <path d="M3 8l9 4 9-4" fill="none" />
+        <path d="M12 20V12" fill="none" />
       </svg>
     );
   }
   if (type === 'vendors') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <path d="M9 22V12h6v10" />
-        {isActive && <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="currentColor" />}
+        <path d="M9 22V12h6v10" fill="none" />
       </svg>
     );
   }
   if (type === 'chat') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        {isActive && <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor" />}
       </svg>
     );
   }
   if (type === 'favorites') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-        {isActive && <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" />}
       </svg>
     );
   }
   if (type === 'cart') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps}>
         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
-        <path d="M3 6h18" />
-        <path d="M16 10a4 4 0 0 1-8 0" />
-        {isActive && <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" fill="currentColor" />}
-      </svg>
-    );
-  }
-  if (type === 'menu') {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="4" y1="12" x2="20" y2="12" />
-        <line x1="4" y1="6" x2="20" y2="6" />
-        <line x1="4" y1="18" x2="20" y2="18" />
+        <path d="M3 6h18" fill="none" />
+        <path d="M16 10a4 4 0 0 1-8 0" fill="none" />
       </svg>
     );
   }
   if (type === 'theme-moon') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps} fill="none">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
       </svg>
     );
   }
   if (type === 'theme-sun') {
     return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg {...commonProps} fill="none">
         <circle cx="12" cy="12" r="5" />
         <line x1="12" y1="1" x2="12" y2="3" />
         <line x1="12" y1="21" x2="12" y2="23" />
@@ -110,7 +97,7 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
 };
 
 export function Navbar() {
-  const { cart, toggleRegion, getCurrency } = useStore();
+  const { cart } = useStore();
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -118,14 +105,6 @@ export function Navbar() {
   const { auth } = useFirebase();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    document.cookie = "__session=; path=/; max-age=0";
-    if (auth) {
-      await signOut(auth);
-      router.push('/');
-    }
-  };
-  
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
   const isHome = pathname === '/';
 
@@ -219,18 +198,18 @@ export function Navbar() {
         <UtilityGroup />
       </nav>
 
-      {/* Mobile Bottom Utility Capsule - Floating & Balanced */}
-      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden w-[92%] max-w-xl">
-        <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-20 flex items-center justify-between shadow-3xl rounded-full px-8 ring-1 ring-black/5">
+      {/* Mobile Bottom Utility Capsule - Black Label & Wide */}
+      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden w-[95%] max-w-xl">
+        <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-24 flex items-center justify-between shadow-3xl rounded-[3rem] px-10 ring-1 ring-black/5">
           {bottomNavLinks.map((link) => {
             const isActive = pathname.startsWith(link.href);
             return (
               <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group flex-1">
                 <div className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all duration-300 rounded-full border border-transparent mb-0.5",
-                  isActive ? "scale-110" : ""
+                  "w-14 h-14 flex items-center justify-center transition-all duration-300 rounded-full border border-transparent mb-1",
+                  isActive ? "bg-primary/5 scale-110" : ""
                 )}>
-                  <CustomIcon type={link.type} isActive={isActive} className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary" : "text-primary/60")} />
+                  <CustomIcon type={link.type} isActive={isActive} className={cn("h-7 w-7 transition-all duration-300 text-primary")} />
                 </div>
                 <span className={cn(
                   "text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 text-primary",

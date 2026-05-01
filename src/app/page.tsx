@@ -133,7 +133,7 @@ export default function Home() {
                     >
                       <div className="space-y-10">
                         <div className="flex justify-between items-start">
-                          <span className="font-headline text-4xl italic opacity-20">0{index + 1}</span>
+                          <span className="font-headline text-4xl italic opacity-20 text-primary">0{index + 1}</span>
                           <div className="flex items-center gap-1 text-secondary">
                              <Star {...getIconProps(true)} className="h-3.5 w-3.5" />
                              <span className="text-[9px] font-bold uppercase tracking-widest">{vendor.rating}</span>

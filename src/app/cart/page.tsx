@@ -17,10 +17,9 @@ import { doc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
-import { PRODUCTS } from '@/app/lib/mock-data';
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, getCurrency, clearCart, addToCart } = useStore();
+  const { cart, removeFromCart, updateQuantity, getCurrency, clearCart } = useStore();
   const router = useRouter();
   const { toast } = useToast();
   const { auth, firestore } = useFirebase();
@@ -34,7 +33,6 @@ export default function CartPage() {
 
   const [inspirationImage, setInspirationImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [aiSuggestions, setAiSuggestions] = useState<{description: string, productIds: string[]} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -42,34 +40,6 @@ export default function CartPage() {
   }, []);
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64String = reader.result as string;
-        setInspirationImage(base64String);
-        analyzeInspiration(base64String);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const analyzeInspiration = async (imageUri: string) => {
-    setIsAnalyzing(true);
-    try {
-      const result = await getMatchingProducts({ photoDataUri: imageUri });
-      setAiSuggestions({
-        description: result.bundleDescription,
-        productIds: result.recommendedProductIds
-      });
-    } catch (error) {
-      console.error("AI Analysis failed", error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   const handleCheckout = async () => {
     if (isCheckingOut) return;
@@ -209,7 +179,13 @@ export default function CartPage() {
                 {cart.map((item) => (
                   <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
                     <div className="relative w-40 h-40 bg-muted overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all shrink-0">
-                      <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
+                      <Image 
+                        src={item.image || 'https://picsum.photos/seed/luxury-registry/400/400'} 
+                        alt={item.name} 
+                        fill 
+                        className="object-cover"
+                        data-ai-hint="beauty product"
+                      />
                     </div>
                     <div className="flex-grow space-y-4">
                       <div className="space-y-1">
@@ -269,7 +245,7 @@ export default function CartPage() {
                 <Package className="h-4 w-4 text-secondary" strokeWidth={1.5} /> Registry Security
               </div>
               <p className="text-xs italic leading-relaxed text-muted-foreground">
-                Your order is audited and secured. Cash on Delivery ensures transaction integrity upon handover of your selection.
+                Your order is audited and secured. Handover ensures transaction integrity upon handover of your selection.
               </p>
             </div>
           </div>
