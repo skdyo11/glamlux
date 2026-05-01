@@ -7,16 +7,15 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, Camera, Sparkles, X, Plus, Minus, MapPin, Package } from 'lucide-react';
+import { Trash2, Plus, Minus, MapPin, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFirebase, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { getMatchingProducts } from '@/ai/flows/matching-products-from-image';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, getCurrency, clearCart } = useStore();
@@ -30,10 +29,6 @@ export default function CartPage() {
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
-
-  const [inspirationImage, setInspirationImage] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -83,7 +78,6 @@ export default function CartPage() {
         paymentStatus: 'COD (Awaiting)',
         createdAt: new Date().toISOString(),
         cartItems: cart,
-        inspirationImageUrl: inspirationImage,
         vendorId: cart[0]?.vendor_id || 'v1'
       };
 
@@ -107,7 +101,7 @@ export default function CartPage() {
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center space-y-12 max-w-lg px-6">
             <h1 className="text-7xl font-headline text-primary tracking-tighter italic">Registry Empty.</h1>
-            <p className="text-muted-foreground text-lg leading-relaxed font-body">Your artisan collection awaits its first entry. Discover transformations and professional boutique essentials today.</p>
+            <p className="text-muted-foreground text-lg leading-relaxed font-body">Your artisan collection awaits its first entry.</p>
             <Button asChild size="lg" className="rounded-none px-12 h-16 vogue-button bg-primary text-primary-foreground border-none">
               <Link href="/">Discover The Registry</Link>
             </Button>
@@ -122,14 +116,13 @@ export default function CartPage() {
       <Navbar />
       
       <main className="container mx-auto px-6 py-24 md:py-32">
-        <header className="mb-32 space-y-4">
+        <header className="mb-24 space-y-4">
           <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">The Final Stage</span>
-          <h1 className="text-7xl md:text-[9rem] font-headline tracking-tighter italic text-primary">Checkout.</h1>
+          <h1 className="text-7xl md:text-[9rem] font-headline tracking-tighter italic text-primary leading-none">Checkout.</h1>
         </header>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-24">
           <div className="lg:col-span-2 space-y-32">
-            {/* Identity & Address */}
             <section className="space-y-16">
               <div className="space-y-4">
                 <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">01 Identity Registry</h2>
@@ -167,52 +160,54 @@ export default function CartPage() {
                     onChange={(e) => setShippingAddress(e.target.value)}
                     className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent focus-visible:ring-0 focus-visible:border-secondary min-h-[120px] text-lg italic px-1"
                   />
-                  <p className="text-[10px] text-muted-foreground italic leading-relaxed">Mandatory for boutique product logistics. For sanctuary bookings, this helps our artisans prepare for your arrival.</p>
                 </div>
               </div>
             </section>
 
-            {/* Selection */}
             <section className="space-y-12">
               <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">03 Selected Collection</h2>
               <div className="space-y-16">
-                {cart.map((item) => (
-                  <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
-                    <div className="relative w-40 h-40 bg-muted overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all shrink-0">
-                      <Image 
-                        src={item.image || 'https://picsum.photos/seed/luxury-registry/400/400'} 
-                        alt={item.name} 
-                        fill 
-                        className="object-cover"
-                        data-ai-hint="beauty product"
-                      />
-                    </div>
-                    <div className="flex-grow space-y-4">
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">
-                          {item.type === 'deal' ? 'Transformation Service' : 'Boutique Item'}
-                        </span>
-                        <h3 className="font-headline text-4xl text-primary">{item.name}</h3>
+                {cart.map((item) => {
+                  const imageSrc = item.image || 'https://picsum.photos/seed/luxury-registry/400/400';
+                  return (
+                    <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
+                      <div className="relative w-40 h-40 bg-muted overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all shrink-0">
+                        {imageSrc && (
+                          <Image 
+                            src={imageSrc} 
+                            alt={item.name} 
+                            fill 
+                            className="object-cover"
+                            data-ai-hint="beauty product"
+                          />
+                        )}
                       </div>
-                      <p className="font-bold text-2xl tracking-tighter text-primary">{getCurrency()} {item.price.toLocaleString()}</p>
-                      <div className="flex items-center gap-10 pt-4">
-                        <div className="flex items-center border border-primary/20 bg-white dark:bg-card px-4 h-12">
-                          <button onClick={() => updateQuantity(item.id, -1)} className="p-2 text-primary hover:text-secondary"><Minus className="h-4 w-4" /></button>
-                          <span className="w-12 text-center font-bold text-sm">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} className="p-2 text-primary hover:text-secondary"><Plus className="h-4 w-4" /></button>
+                      <div className="flex-grow space-y-4">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">
+                            {item.type === 'deal' ? 'Transformation Service' : 'Boutique Item'}
+                          </span>
+                          <h3 className="font-headline text-4xl text-primary leading-none">{item.name}</h3>
                         </div>
-                        <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-destructive flex items-center gap-2">
-                          <Trash2 className="h-4 w-4" /> Remove Entry
-                        </button>
+                        <p className="font-bold text-2xl tracking-tighter text-primary">{getCurrency()} {item.price.toLocaleString()}</p>
+                        <div className="flex items-center gap-10 pt-4">
+                          <div className="flex items-center border border-primary/20 bg-white dark:bg-card px-4 h-12">
+                            <button onClick={() => updateQuantity(item.id, -1)} className="p-2 text-primary hover:text-secondary"><Minus className="h-4 w-4" /></button>
+                            <span className="w-12 text-center font-bold text-sm">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.id, 1)} className="p-2 text-primary hover:text-secondary"><Plus className="h-4 w-4" /></button>
+                          </div>
+                          <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-destructive flex items-center gap-2">
+                            <Trash2 className="h-4 w-4" /> Remove Entry
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           </div>
 
-          {/* Ledger */}
           <div className="space-y-12">
             <div className="p-12 bg-primary text-primary-foreground space-y-10 border border-white/5 shadow-3xl">
               <h4 className="font-headline text-4xl italic tracking-tighter">The Ledger.</h4>
@@ -238,15 +233,6 @@ export default function CartPage() {
               >
                 {isCheckingOut ? 'Recording Transaction...' : 'Finalize Collection'}
               </Button>
-            </div>
-
-            <div className="p-10 border border-primary/10 space-y-6 bg-white dark:bg-card/20">
-              <div className="flex items-center gap-3 text-[11px] font-bold text-primary uppercase tracking-[0.3em]">
-                <Package className="h-4 w-4 text-secondary" strokeWidth={1.5} /> Registry Security
-              </div>
-              <p className="text-xs italic leading-relaxed text-muted-foreground">
-                Your order is audited and secured. Handover ensures transaction integrity upon handover of your selection.
-              </p>
             </div>
           </div>
         </div>
