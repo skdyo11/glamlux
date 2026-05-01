@@ -63,7 +63,7 @@ export function Navbar() {
   }, []);
 
   const bottomNavLinks = useMemo(() => [
-    { href: '/shop', label: 'Boutique', icon: Package },
+    { href: '/shop', label: 'Products', icon: Package },
     { href: '/vendors', label: 'Parlours', icon: Store },
     { href: '/messages', label: 'CChat', icon: MessageSquare },
   ], []);
@@ -71,11 +71,17 @@ export function Navbar() {
   if (!mounted) return null;
 
   const UtilityGroup = () => (
-    <div className="flex items-center gap-1 p-1 bg-background/50 dark:bg-black/20 backdrop-blur-md rounded-full border border-primary/10">
+    <div className="flex items-center gap-1.5 p-1 bg-background/50 dark:bg-black/20 backdrop-blur-md rounded-full border border-primary/10">
       {!isHome && (
         <Link href="/">
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full group transition-all duration-300">
-            <Home className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
+            <Home 
+              className={cn(
+                "h-5 w-5 text-primary transition-all group-hover:scale-110",
+                pathname === '/' && "fill-current"
+              )} 
+              strokeWidth={1.5} 
+            />
           </Button>
         </Link>
       )}
@@ -95,13 +101,25 @@ export function Navbar() {
 
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-300">
-          <Heart className={cn("h-5 w-5 text-primary transition-all group-hover:scale-110", favCount > 0 && "fill-secondary text-secondary")} strokeWidth={1.5} />
+          <Heart 
+            className={cn(
+              "h-5 w-5 text-primary transition-all group-hover:scale-110", 
+              pathname === '/favorites' || favCount > 0 ? "fill-secondary text-secondary" : ""
+            )} 
+            strokeWidth={1.5} 
+          />
         </Button>
       </Link>
 
       <Link href="/cart">
         <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full group transition-all duration-300">
-          <ShoppingBag className="h-5 w-5 text-primary group-hover:fill-primary/20 transition-all group-hover:scale-110" strokeWidth={1.5} />
+          <ShoppingBag 
+            className={cn(
+              "h-5 w-5 text-primary transition-all group-hover:scale-110",
+              pathname === '/cart' && "fill-current"
+            )} 
+            strokeWidth={1.5} 
+          />
           {cartCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary text-secondary-foreground text-[8px] font-black border border-background z-20 rounded-full shadow-xl">
               {cartCount}
@@ -220,14 +238,15 @@ export function Navbar() {
                 key={link.href} 
                 href={link.href} 
                 className={cn(
-                  "hover:text-secondary transition-all duration-500 relative group py-2",
-                  pathname === link.href ? "text-primary" : "text-primary/40"
+                  "hover:text-secondary transition-all duration-500 relative group py-2 flex items-center gap-2",
+                  pathname.startsWith(link.href) ? "text-primary" : "text-primary/40"
                 )}
               >
+                <link.icon className={cn("h-4 w-4", pathname.startsWith(link.href) && "fill-current")} strokeWidth={1.5} />
                 {link.label}
                 <span className={cn(
                   "absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-500 group-hover:w-full",
-                  pathname === link.href && "w-full"
+                  pathname.startsWith(link.href) && "w-full"
                 )} />
               </Link>
             ))}
@@ -249,25 +268,31 @@ export function Navbar() {
         <UtilityGroup />
       </nav>
 
-      {/* Mobile Bar - Bottom Utility Capsule */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-auto">
-        <div className="bg-white/80 dark:bg-black/60 backdrop-blur-3xl border border-primary/10 h-16 px-2 flex items-center justify-center gap-4 shadow-2xl rounded-full">
+      {/* Mobile Bar - Bottom Utility Capsule (Wider & YouTube Style) */}
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-full px-6 max-w-lg">
+        <div className="bg-white/90 dark:bg-black/80 backdrop-blur-3xl border border-primary/10 h-16 flex items-center justify-around shadow-2xl rounded-full px-2">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon;
-            const isActive = pathname === link.href;
+            const isActive = pathname.startsWith(link.href);
             return (
-              <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group">
+              <Link key={link.href} href={link.href} className="flex flex-col items-center justify-center transition-all group flex-1">
                 <div className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all duration-300 rounded-full",
+                  "w-12 h-12 flex items-center justify-center transition-all duration-500 rounded-full",
                   isActive 
-                    ? "bg-secondary/10 border-2 border-secondary scale-110 shadow-lg" 
+                    ? "bg-secondary/10 scale-110" 
                     : "hover:bg-primary/5"
                 )}>
                   <Icon className={cn(
-                    "h-5 w-5 transition-all duration-300", 
-                    isActive ? "text-secondary fill-secondary" : "text-primary group-hover:fill-primary/20"
-                  )} strokeWidth={isActive ? 2 : 1.5} />
+                    "h-6 w-6 transition-all duration-500", 
+                    isActive ? "text-primary fill-current" : "text-primary/60 group-hover:text-primary"
+                  )} strokeWidth={1.5} />
                 </div>
+                <span className={cn(
+                  "text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 transition-all duration-500",
+                  isActive ? "text-primary opacity-100" : "text-primary/40 opacity-0 group-hover:opacity-100"
+                )}>
+                  {link.label}
+                </span>
               </Link>
             );
           })}
