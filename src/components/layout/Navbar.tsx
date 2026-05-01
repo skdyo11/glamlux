@@ -11,17 +11,16 @@ import { useEffect, useState, useMemo } from 'react';
 import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
 import { 
-  Menu, 
   Settings, 
   Sun, 
   Moon, 
-  X, 
-  LayoutDashboard, 
   LogOut, 
-  User as UserIcon,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  LayoutDashboard,
+  Menu as MenuIcon
 } from 'lucide-react';
 import {
   Sheet,
@@ -43,51 +42,77 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     fill: isActive ? "currentColor" : "none"
   };
 
+  // Simplified geometries to avoid "blob" effect and transparency weirdness
   if (type === 'home') {
     return (
       <svg {...commonProps}>
-        <path d="M3 10L12 2l9 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z" />
+        {isActive ? (
+          <path d="M3 10L12 2l9 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z" stroke="none" />
+        ) : (
+          <path d="M3 10L12 2l9 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z" fill="none" />
+        )}
       </svg>
     );
   }
   if (type === 'products') {
     return (
       <svg {...commonProps}>
-        <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" />
-        <path d="M12 12L3 8" fill="none" />
-        <path d="M12 12l9-4" fill="none" />
-        <path d="M12 12v9" fill="none" />
+        {isActive ? (
+          <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" stroke="none" />
+        ) : (
+          <g fill="none">
+            <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" />
+            <path d="M12 12L3 8M12 12l9-4M12 12v9" />
+          </g>
+        )}
       </svg>
     );
   }
   if (type === 'vendors') {
     return (
       <svg {...commonProps}>
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
-        <path d="M9 22V12h6v10" fill="none" />
+        {isActive ? (
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" stroke="none" />
+        ) : (
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" fill="none" />
+        )}
       </svg>
     );
   }
   if (type === 'chat') {
     return (
       <svg {...commonProps}>
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        {isActive ? (
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="none" />
+        ) : (
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none" />
+        )}
       </svg>
     );
   }
   if (type === 'favorites') {
     return (
       <svg {...commonProps}>
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        {isActive ? (
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="none" />
+        ) : (
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" />
+        )}
       </svg>
     );
   }
   if (type === 'cart') {
     return (
       <svg {...commonProps}>
-        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
-        <path d="M3 6h18" fill="none" />
-        <path d="M16 10a4 4 0 0 1-8 0" fill="none" />
+        {isActive ? (
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" stroke="none" />
+        ) : (
+          <g fill="none">
+             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
+             <path d="M3 6h18" />
+             <path d="M16 10a4 4 0 0 1-8 0" />
+          </g>
+        )}
       </svg>
     );
   }
@@ -101,6 +126,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const { user } = useUser();
   const { auth } = useFirebase();
+  const { toast } = useToast();
   const router = useRouter();
 
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
@@ -219,12 +245,15 @@ export function Navbar() {
         <div className="space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/30">Management</p>
           <div className="grid gap-2">
-            <button className="flex items-center gap-4 p-4 hover:text-secondary transition-all text-left">
+            <button 
+              onClick={() => toast({ title: "Registry Synchronized", description: "Your aesthetic preferences have been saved to the MMXXIV protocol." })}
+              className="flex items-center gap-4 p-4 hover:text-secondary transition-all text-left w-full"
+            >
               <Settings className="h-5 w-5" strokeWidth={1.5} />
               <span className="font-bold text-xs uppercase tracking-widest">Registry Settings</span>
             </button>
             {user && (
-              <button onClick={handleLogout} className="flex items-center gap-4 p-4 text-destructive hover:bg-destructive/5 transition-all text-left">
+              <button onClick={handleLogout} className="flex items-center gap-4 p-4 text-destructive hover:bg-destructive/5 transition-all text-left w-full">
                 <LogOut className="h-5 w-5" strokeWidth={1.5} />
                 <span className="font-bold text-xs uppercase tracking-widest">Formal Departure</span>
               </button>
@@ -266,13 +295,19 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-             {/* Desktop Identity Trigger */}
-             <Link href={user ? "/portal" : "/login"}>
-               <Avatar className="h-9 w-9 border border-primary/10 cursor-pointer hover:scale-105 transition-transform">
-                 <AvatarImage src={user?.photoURL || undefined} />
-                 <AvatarFallback className="bg-primary text-primary-foreground text-[10px] font-black">{user?.displayName?.[0] || user?.email?.[0] || 'G'}</AvatarFallback>
-               </Avatar>
-             </Link>
+             <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-primary hover:bg-primary/5">
+                    <MenuIcon className="h-6 w-6" strokeWidth={2.5} />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
+                   <SheetHeader className="sr-only">
+                     <SheetTitle>Artisan Sidebar</SheetTitle>
+                   </SheetHeader>
+                   <SidebarContent />
+                </SheetContent>
+              </Sheet>
              <div className="h-6 w-px bg-primary/10 mx-2" />
              <UtilityGroup />
           </div>
@@ -285,7 +320,7 @@ export function Navbar() {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-primary hover:bg-primary/5 active:scale-90 transition-all">
-                <Menu className="h-6 w-6" strokeWidth={2.5} />
+                <MenuIcon className="h-6 w-6" strokeWidth={2.5} />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
