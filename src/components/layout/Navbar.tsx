@@ -11,7 +11,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Settings } from 'lucide-react';
+import { Menu, Settings } from 'lucide-react';
 
 // Precision-Crafted Single-Path SVGs - Chunky Black Label Aesthetic
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
@@ -168,13 +168,13 @@ export function Navbar() {
 
       {/* Mobile Top Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10 bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="font-headline text-2xl tracking-tighter text-primary italic leading-none">GlamLux</Link>
+        <div className="flex items-center gap-3">
           <Link href="/portal">
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-primary/40">
-              <Settings className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-primary">
+              <Menu className="h-6 w-6" strokeWidth={2.5} />
             </Button>
           </Link>
+          <Link href="/" className="font-headline text-2xl tracking-tighter text-primary italic leading-none">GlamLux</Link>
         </div>
         <UtilityGroup />
       </nav>

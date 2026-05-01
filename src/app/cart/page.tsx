@@ -168,7 +168,9 @@ export default function CartPage() {
               <h2 className="text-[11px] font-bold uppercase tracking-[0.5em] text-secondary">03 Selected Collection</h2>
               <div className="space-y-16">
                 {cart.map((item) => {
-                  const imageSrc = item.image || 'https://picsum.photos/seed/luxury-registry/400/400';
+                  const imageSrc = (item.image && typeof item.image === 'string' && item.image.trim() !== '')
+                    ? item.image 
+                    : 'https://picsum.photos/seed/luxury-registry/400/400';
                   return (
                     <div key={item.id} className="flex flex-col md:flex-row gap-10 border-b border-primary/10 pb-16 last:border-b-0">
                       <div className="relative w-40 h-40 bg-muted overflow-hidden border border-primary/5 grayscale hover:grayscale-0 transition-all shrink-0">
