@@ -184,7 +184,8 @@ export default function PartnerPortalPage() {
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
       const batch = writeBatch(firestore);
-      const bizRef = doc(collection(firestore, 'parlours'));
+      // Precision Fix: Use user.uid as Parlour ID to satisfy security rules and ensure linked boutique data.
+      const bizRef = doc(firestore, 'parlours', user.uid);
       const bizId = bizRef.id;
 
       batch.set(bizRef, {
@@ -204,7 +205,7 @@ export default function PartnerPortalPage() {
       const pRef = doc(collection(firestore, 'products'));
       batch.set(pRef, {
         id: pRef.id,
-        vendorId: bizId,
+        vendorId: bizId, // Now user.uid, satisfying the security rule.
         vendorName: businessName,
         name: 'Signature Radiance Elixir',
         brand: 'Artisan Essence',
@@ -237,7 +238,8 @@ export default function PartnerPortalPage() {
       setMyBusiness({ id: bizId, name: businessName, slug: businessSlug });
       toast({ title: "Portal Operational", description: `Your ${type} has been registered.` });
     } catch (e) {
-      toast({ variant: "destructive", title: "Registration Denied" });
+      console.error("Registry Sync Error:", e);
+      toast({ variant: "destructive", title: "Registration Denied", description: "Identity synchronization failed." });
     }
   };
 
