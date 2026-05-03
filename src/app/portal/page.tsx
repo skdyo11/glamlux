@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -37,7 +38,8 @@ import {
   Upload,
   Check,
   RefreshCw,
-  MapPin
+  MapPin,
+  Calendar
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -199,7 +201,6 @@ export default function PartnerPortalPage() {
         createdAt: serverTimestamp()
       });
       
-      // Add one dummy product for the new artisan
       const pRef = doc(collection(firestore, 'products'));
       batch.set(pRef, {
         id: pRef.id,
@@ -207,14 +208,15 @@ export default function PartnerPortalPage() {
         vendorName: businessName,
         name: 'Signature Radiance Elixir',
         brand: 'Artisan Essence',
+        basePrice: 150,
         price: 120,
         currency: 'PKR',
+        stockCount: 10,
         imageUrl: `https://picsum.photos/seed/p-${pRef.id}/600/800`,
         isDummy: true,
         createdAt: serverTimestamp()
       });
 
-      // Add one dummy service for the new artisan
       const dRef = doc(collection(firestore, 'deals'));
       batch.set(dRef, {
         id: dRef.id,
@@ -257,34 +259,53 @@ export default function PartnerPortalPage() {
     const formData = new FormData(e.target as HTMLFormElement);
     const name = formData.get('name') as string;
     const detail = formData.get('detail') as string;
-    const value = formData.get('value') as string;
+    const priceVal = parseFloat(formData.get('price') as string);
+    const basePriceVal = parseFloat(formData.get('basePrice') as string) || priceVal;
+    const durationDays = parseInt(formData.get('duration') as string) || 0;
+    const description = formData.get('description') as string;
+
+    const expiryDate = durationDays > 0 
+      ? new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString()
+      : null;
 
     try {
       if (activeSheet === 'product') {
+        const productData = {
+          name, 
+          brand: detail, 
+          price: priceVal, 
+          basePrice: basePriceVal,
+          discountExpiry: expiryDate,
+          stockCount: 50,
+          updatedAt: serverTimestamp()
+        };
         if (editingItem) {
-          await updateDoc(doc(firestore, 'products', editingItem.id), { name, brand: detail, price: parseFloat(value) });
+          await updateDoc(doc(firestore, 'products', editingItem.id), productData);
         } else {
           await addDoc(collection(firestore, 'products'), {
+            ...productData,
             vendorId: user.uid,
-            name,
-            brand: detail,
-            price: parseFloat(value),
             imageUrl: 'https://picsum.photos/seed/vogue-new-p/400/500',
             currency: 'PKR',
             createdAt: serverTimestamp(),
           });
         }
       } else if (activeSheet === 'service') {
+        const dealData = {
+          name, 
+          category: detail, 
+          discountPrice: priceVal, 
+          basePrice: basePriceVal,
+          expiryDate: expiryDate,
+          updatedAt: serverTimestamp()
+        };
         if (editingItem) {
-          await updateDoc(doc(firestore, 'deals', editingItem.id), { name, category: detail, discountPrice: parseFloat(value) });
+          await updateDoc(doc(firestore, 'deals', editingItem.id), dealData);
         } else {
           await addDoc(collection(firestore, 'deals'), {
+            ...dealData,
             parlourOwnerId: user.uid,
             parlourId: user.uid,
-            name,
-            category: detail,
-            discountPrice: parseFloat(value),
-            basePrice: parseFloat(value) * 1.25,
             depositPercent: 10,
             currency: 'PKR',
             createdAt: serverTimestamp(),
@@ -292,9 +313,9 @@ export default function PartnerPortalPage() {
         }
       } else if (activeSheet === 'profile' && myBusiness) {
         await updateDoc(doc(firestore, 'parlours', myBusiness.id), {
-          name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1]
+          name, areaTag: detail, description: description, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1]
         });
-        setMyBusiness({ ...myBusiness, name, areaTag: detail, description: value, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
+        setMyBusiness({ ...myBusiness, name, areaTag: detail, description: description, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
       }
 
       toast({ title: "Registry Updated" });
@@ -489,7 +510,12 @@ export default function PartnerPortalPage() {
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-headline text-2xl text-primary transition-all group-hover:translate-x-1">{p.name}</h4>
-                    <p className="text-xl font-bold tracking-tighter text-secondary group-hover:text-primary transition-colors">{getCurrency()} {p.price?.toLocaleString()}</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-xl font-bold tracking-tighter text-secondary group-hover:text-primary transition-colors">{getCurrency()} {p.price?.toLocaleString()}</p>
+                      {p.basePrice && p.basePrice > p.price && (
+                        <p className="text-xs text-muted-foreground line-through opacity-40">{getCurrency()} {p.basePrice.toLocaleString()}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -511,7 +537,12 @@ export default function PartnerPortalPage() {
                       <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary group-hover:tracking-[0.6em] transition-all">{d.category}</span>
                       <h4 className="font-headline text-4xl text-primary leading-none">{d.name}</h4>
                     </div>
-                    <p className="text-2xl font-bold tracking-tighter text-primary">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
+                    <div className="flex items-baseline gap-3">
+                      <p className="text-2xl font-bold tracking-tighter text-primary">{getCurrency()} {d.discountPrice?.toLocaleString()}</p>
+                      {d.basePrice && d.basePrice > d.discountPrice && (
+                        <p className="text-sm text-muted-foreground line-through opacity-40">{getCurrency()} {d.basePrice.toLocaleString()}</p>
+                      )}
+                    </div>
                     <div className="text-[10px] font-bold uppercase tracking-widest text-primary/40 group-hover:text-secondary pt-4 flex items-center gap-2 transition-all">Customize Edit <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={1.5} /></div>
                   </div>
                   <Scissors className="h-16 w-16 text-primary/5 group-hover:text-secondary/20 transition-all group-hover:rotate-45" strokeWidth={1} />
@@ -584,6 +615,7 @@ export default function PartnerPortalPage() {
                   <Input 
                     name="name" 
                     required 
+                    placeholder={activeSheet === 'profile' ? "Studio Name" : "Item Name"}
                     defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
                     className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-2xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                   />
@@ -591,25 +623,68 @@ export default function PartnerPortalPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                   <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">{activeSheet === 'profile' ? 'Registry Tag' : 'Classification'}</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">
+                      {activeSheet === 'profile' ? 'Registry Tag' : activeSheet === 'product' ? 'Brand' : 'Category'}
+                    </Label>
                     <Input 
                       name="detail" 
                       required 
+                      placeholder={activeSheet === 'profile' ? "Gulberg, Lahore" : "Artistry Label"}
                       defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
                       className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                     />
                   </div>
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">{activeSheet === 'profile' ? 'Artisan Bio' : 'Valuation'}</Label>
-                    <Input 
-                      name="value" 
-                      required 
-                      type={activeSheet === 'profile' ? 'text' : 'number'}
-                      defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : (activeSheet === 'profile' ? myBusiness?.description : '')}
-                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
-                    />
-                  </div>
+                  
+                  {activeSheet !== 'profile' ? (
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Final Sale Price ({getCurrency()})</Label>
+                      <Input 
+                        name="price" 
+                        required 
+                        type="number"
+                        placeholder="21"
+                        defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.price : editingItem.discountPrice) : ''}
+                        className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Sanctuary Bio</Label>
+                      <Input 
+                        name="description" 
+                        required 
+                        defaultValue={myBusiness?.description || ''}
+                        className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
+                      />
+                    </div>
+                  )}
                 </div>
+
+                {activeSheet !== 'profile' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-primary/5 pt-8">
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Original Valuation (Base Price)</Label>
+                      <Input 
+                        name="basePrice" 
+                        type="number"
+                        placeholder="45"
+                        defaultValue={editingItem?.basePrice || ''}
+                        className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
+                      />
+                    </div>
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2">
+                        <Calendar className="h-3 w-3" /> Promotion Duration (Days)
+                      </Label>
+                      <Input 
+                        name="duration" 
+                        type="number"
+                        placeholder="7"
+                        className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {activeSheet === 'profile' && (
                   <div className="space-y-12 pt-8 border-t border-primary/10">

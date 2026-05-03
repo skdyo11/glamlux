@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +8,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, ShoppingBag, Heart, Star, ArrowRight } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Star, ArrowRight, Percent } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { cn, slugify } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
@@ -139,39 +140,56 @@ export default function ShopPage() {
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-16 md:gap-24">
-            {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/shop/${product.id}`} className="group block">
-                <article className="space-y-8">
-                  <div className="relative aspect-[3/4] overflow-hidden border border-primary/5 bg-muted shadow-xl group-hover:shadow-3xl transition-all duration-700">
-                    <Image 
-                      src={product.imageUrl || `https://picsum.photos/seed/vogue-prod-${product.id}/600/800`} 
-                      alt={product.name} 
-                      fill 
-                      className="object-cover transition-transform duration-1000 group-hover:scale-105 grayscale group-hover:grayscale-0" 
-                    />
-                    <button 
-                      onClick={(e) => handleFavoriteToggle(e, product.id)}
-                      className={cn(
-                        "absolute top-6 right-6 h-10 w-10 flex items-center justify-center transition-all",
-                        isFavoriteProduct(product.id) ? "text-secondary" : "text-white/40 hover:text-white"
+            {filteredProducts.map((product) => {
+              const hasDiscount = product.basePrice && product.basePrice > product.price;
+              const discountPercent = hasDiscount ? Math.round((1 - product.price / product.basePrice) * 100) : 0;
+              
+              return (
+                <Link key={product.id} href={`/shop/${product.id}`} className="group block">
+                  <article className="space-y-8">
+                    <div className="relative aspect-[3/4] overflow-hidden border border-primary/5 bg-muted shadow-xl group-hover:shadow-3xl transition-all duration-700">
+                      <Image 
+                        src={product.imageUrl || `https://picsum.photos/seed/vogue-prod-${product.id}/600/800`} 
+                        alt={product.name} 
+                        fill 
+                        className="object-cover transition-transform duration-1000 group-hover:scale-105 grayscale group-hover:grayscale-0" 
+                      />
+                      
+                      {hasDiscount && (
+                        <div className="absolute top-0 left-0 bg-secondary text-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-xl z-10">
+                          {discountPercent}% Artisan Off
+                        </div>
                       )}
-                    >
-                      <Heart className={cn("h-5 w-5", isFavoriteProduct(product.id) && "fill-current")} strokeWidth={1.5} />
-                    </button>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">{product.brand}</span>
-                      <h4 className="font-headline text-3xl text-primary leading-none group-hover:text-secondary transition-colors underline-offset-4 decoration-primary/10">{product.name}</h4>
+
+                      <button 
+                        onClick={(e) => handleFavoriteToggle(e, product.id)}
+                        className={cn(
+                          "absolute top-6 right-6 h-10 w-10 flex items-center justify-center transition-all",
+                          isFavoriteProduct(product.id) ? "text-secondary" : "text-white/40 hover:text-white"
+                        )}
+                      >
+                        <Heart className={cn("h-5 w-5", isFavoriteProduct(product.id) && "fill-current")} strokeWidth={1.5} />
+                      </button>
                     </div>
-                    <div className="flex items-center gap-4 pt-4 border-t border-primary/5">
-                      <span className="font-bold text-xl tracking-tighter text-primary">{getCurrency()} {product.price?.toLocaleString()}</span>
-                      <ArrowRight className="h-4 w-4 text-secondary opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" strokeWidth={1.5} />
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">{product.brand}</span>
+                        <h4 className="font-headline text-3xl text-primary leading-none group-hover:text-secondary transition-colors underline-offset-4 decoration-primary/10">{product.name}</h4>
+                      </div>
+                      <div className="flex items-center gap-4 pt-4 border-t border-primary/5">
+                        <div className="flex flex-col">
+                           <span className="font-bold text-xl tracking-tighter text-primary">{getCurrency()} {product.price?.toLocaleString()}</span>
+                           {hasDiscount && (
+                             <span className="text-[10px] text-muted-foreground line-through opacity-40">{getCurrency()} {product.basePrice?.toLocaleString()}</span>
+                           )}
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" strokeWidth={1.5} />
+                      </div>
                     </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
+                  </article>
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="py-40 text-center space-y-10 border border-dashed border-primary/10">

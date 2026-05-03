@@ -69,11 +69,13 @@
         "vendorId": { "type": "string" },
         "name": { "type": "string" },
         "brand": { "type": "string" },
-        "price": { "type": "number" },
+        "basePrice": { "type": "number" },
+        "price": { "type": "number", "description": "The final selling price after discount." },
         "currency": { "type": "string", "enum": ["PKR", "INR"] },
         "stockCount": { "type": "number" },
         "weightKg": { "type": "number" },
-        "imageUrl": { "type": "string" }
+        "imageUrl": { "type": "string" },
+        "discountExpiry": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "name", "brand", "price", "currency", "stockCount"]
     },

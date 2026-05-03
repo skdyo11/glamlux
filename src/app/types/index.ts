@@ -13,34 +13,41 @@ export type Vendor = {
   owner_currency: 'PKR' | 'INR';
   commission_rate: number;
   description?: string;
+  slug?: string;
+  myImage?: string;
+  myCover?: string;
 };
 
 export type DealCategory = 'Bridal' | 'Hair' | 'Skin';
 
 export type Deal = {
   id: string;
-  vendor_id: string;
+  parlourId: string;
+  parlourOwnerId: string;
   name: string;
   category: DealCategory;
-  base_price: number;
-  discount_price: number;
-  deposit_percent: number;
-  is_offpeak_active: boolean;
-  expiry_date: string;
-  upsell_product_id?: string;
+  basePrice: number;
+  discountPrice: number;
+  depositPercent: number;
+  expiryDate?: string;
+  upsellProductId?: string;
   currency: 'PKR' | 'INR';
+  isDummy?: boolean;
 };
 
 export type Product = {
   id: string;
-  vendor_id: string;
+  vendorId: string;
   name: string;
   brand: string;
+  basePrice?: number;
   price: number;
-  stock: number;
-  image: string;
+  stockCount: number;
+  imageUrl: string;
   currency: 'PKR' | 'INR';
   weightKg?: number;
+  discountExpiry?: string;
+  isDummy?: boolean;
 };
 
 export type CartItem = {
