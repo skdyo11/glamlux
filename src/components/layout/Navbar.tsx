@@ -42,7 +42,6 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     fill: isActive ? "currentColor" : "none"
   };
 
-  // Simplified geometries to avoid "blob" effect and transparency weirdness
   if (type === 'home') {
     return (
       <svg {...commonProps}>
@@ -153,7 +152,6 @@ export function Navbar() {
 
   const UtilityGroup = () => (
     <div className="flex items-center gap-1 bg-white/60 dark:bg-black/40 backdrop-blur-xl rounded-full border border-primary/10 p-1 shadow-sm">
-      {/* Home - Contextual */}
       {pathname !== '/' && (
         <Link href="/">
           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary hover:bg-primary/5">
@@ -161,8 +159,6 @@ export function Navbar() {
           </Button>
         </Link>
       )}
-
-      {/* Theme */}
       <Button 
         variant="ghost" 
         size="icon" 
@@ -171,15 +167,11 @@ export function Navbar() {
       >
         {theme === 'dark' ? <Sun className="h-4 w-4" strokeWidth={2.5} /> : <Moon className="h-4 w-4" strokeWidth={2.5} />}
       </Button>
-
-      {/* Favorites */}
       <Link href="/favorites">
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary hover:bg-primary/5">
           <CustomIcon type="favorites" isActive={pathname === '/favorites'} className="h-4 w-4" />
         </Button>
       </Link>
-
-      {/* Cart */}
       <Link href="/cart" className="relative">
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary hover:bg-primary/5">
           <CustomIcon type="cart" isActive={pathname === '/cart'} className="h-4 w-4" />
@@ -196,7 +188,6 @@ export function Navbar() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-background font-body">
       <div className="p-8 space-y-10">
-        {/* User Identity Section */}
         <div className="space-y-6">
           <div className="flex items-center gap-4">
              <Avatar className="h-16 w-16 border-2 border-primary/10 shadow-lg">
@@ -221,7 +212,6 @@ export function Navbar() {
 
         <div className="h-px bg-primary/10" />
 
-        {/* Navigation Links */}
         <div className="space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/30">Registry Access</p>
           <div className="grid gap-2">
@@ -261,7 +251,6 @@ export function Navbar() {
           </div>
         </div>
       </div>
-
       <div className="mt-auto p-8 border-t border-primary/5">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
           <Sparkles className="h-3 w-3 text-secondary" strokeWidth={1.5} />
@@ -273,11 +262,9 @@ export function Navbar() {
 
   return (
     <>
-      {/* Desktop Navigation */}
       <nav className="fixed top-0 z-50 w-full border-b border-primary/10 bg-background/80 backdrop-blur-xl hidden md:block">
         <div className="container mx-auto h-20 flex items-center justify-between px-6">
           <Link href="/" className="font-headline text-4xl tracking-tighter text-primary italic leading-none">GlamLux</Link>
-
           <div className="flex items-center space-x-12 text-[10px] font-black uppercase tracking-[0.4em]">
             {bottomNavLinks.map((link) => (
               <Link 
@@ -293,7 +280,6 @@ export function Navbar() {
               </Link>
             ))}
           </div>
-
           <div className="flex items-center gap-4">
              <Sheet>
                 <SheetTrigger asChild>
@@ -302,9 +288,7 @@ export function Navbar() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
-                   <SheetHeader className="sr-only">
-                     <SheetTitle>Artisan Sidebar</SheetTitle>
-                   </SheetHeader>
+                   <SheetHeader className="sr-only"><SheetTitle>Artisan Sidebar</SheetTitle></SheetHeader>
                    <SidebarContent />
                 </SheetContent>
               </Sheet>
@@ -314,7 +298,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Top Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10 bg-background/80 backdrop-blur-2xl md:hidden flex items-center justify-between px-4 shadow-sm">
         <div className="flex items-center gap-3">
           <Sheet>
@@ -324,9 +307,7 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
-               <SheetHeader className="sr-only">
-                 <SheetTitle>Artisan Sidebar</SheetTitle>
-               </SheetHeader>
+               <SheetHeader className="sr-only"><SheetTitle>Artisan Sidebar</SheetTitle></SheetHeader>
                <SidebarContent />
             </SheetContent>
           </Sheet>
@@ -335,9 +316,8 @@ export function Navbar() {
         <UtilityGroup />
       </nav>
 
-      {/* Mobile Bottom Utility Capsule */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[92%] max-w-xl">
-        <div className="bg-white/95 dark:bg-black/90 backdrop-blur-3xl border border-primary/10 h-20 flex items-center justify-between shadow-3xl rounded-full px-8 ring-1 ring-black/5">
+        <div className="bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-primary/10 h-20 flex items-center justify-between shadow-sm rounded-full px-8 ring-1 ring-black/5">
           {bottomNavLinks.map((link) => {
             const isActive = pathname.startsWith(link.href);
             return (
