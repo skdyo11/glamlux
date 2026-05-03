@@ -57,12 +57,9 @@ const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boo
     return (
       <svg {...commonProps}>
         {isActive ? (
-          <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" stroke="none" />
+          <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" stroke="none" />
         ) : (
-          <g fill="none">
-            <path d="M21 8l-9-4-9 4v8l9 4 9-4V8z" />
-            <path d="M12 12L3 8M12 12l9-4M12 12v9" />
-          </g>
+          <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" fill="none" />
         )}
       </svg>
     );
