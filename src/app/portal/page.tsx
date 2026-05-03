@@ -556,56 +556,58 @@ export default function PartnerPortalPage() {
       </main>
 
       <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none max-w-md p-10 overflow-hidden animate-in zoom-in-95 duration-300">
-          <div className="space-y-12 font-body">
-            <div className="border-b border-primary/10 pb-8 space-y-4">
-              <div className="flex justify-between items-center">
-                <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Identity.</DialogTitle>
-                <div className="group cursor-pointer p-2 rounded-full hover:bg-primary/5 transition-all" onClick={generatePreviews}>
-                  <RefreshCw className={cn("h-5 w-5 text-primary/30 group-hover:text-secondary transition-all", isRolling && "animate-spin")} strokeWidth={1.5} />
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none w-[92vw] sm:max-w-md p-0 overflow-hidden animate-in zoom-in-95 duration-300">
+          <ScrollArea className="max-h-[85vh]">
+            <div className="p-8 md:p-10 space-y-12 font-body">
+              <div className="border-b border-primary/10 pb-8 space-y-4">
+                <div className="flex justify-between items-center">
+                  <DialogTitle className="text-3xl font-headline italic text-primary">Artisan Identity.</DialogTitle>
+                  <div className="group cursor-pointer p-2 rounded-full hover:bg-primary/5 transition-all" onClick={generatePreviews}>
+                    <RefreshCw className={cn("h-5 w-5 text-primary/30 group-hover:text-secondary transition-all", isRolling && "animate-spin")} strokeWidth={1.5} />
+                  </div>
                 </div>
+                <DialogDescription className="font-body text-muted-foreground italic text-sm">Select a curated look or upload a custom visual for the registry.</DialogDescription>
               </div>
-              <DialogDescription className="font-body text-muted-foreground italic text-sm">Select a curated look or upload a custom visual for the registry.</DialogDescription>
-            </div>
 
-            <div className="space-y-10">
-              {isUploading ? (
-                <div className="space-y-6 py-10">
-                  <Progress value={uploadProgress} className="h-1 rounded-none bg-primary/5" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-center animate-pulse">Synchronizing Vault...</p>
+              <div className="space-y-10">
+                {isUploading ? (
+                  <div className="space-y-6 py-10">
+                    <Progress value={uploadProgress} className="h-1 rounded-none bg-primary/5" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-center animate-pulse">Synchronizing Vault...</p>
+                  </div>
+                ) : (
+                  <div className={cn("grid gap-4", imageUploadType === 'profile' ? "grid-cols-3" : "grid-cols-1")}>
+                    {(imageUploadType === 'profile' ? profilePreviews : coverPreviews).map((url, i) => (
+                      <button 
+                        key={i} 
+                        onClick={() => handleApplyIdentity(url)} 
+                        className="relative aspect-square border border-primary/10 group overflow-hidden bg-primary/5 shadow-inner transition-all hover:scale-105 active:scale-95"
+                      >
+                        <img src={url} alt="Option" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                        <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                          <Check className="h-8 w-8 text-white animate-in zoom-in duration-300" strokeWidth={2} />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="pt-6">
+                  <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full h-16 rounded-none vogue-button border-primary/10 text-[10px] group shadow-sm hover:bg-primary/5 transition-all">
+                    <Upload className="h-4 w-4 mr-3 transition-transform group-hover:-translate-y-1" strokeWidth={1.5} /> Custom Entry
+                    <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
+                  </Button>
                 </div>
-              ) : (
-                <div className={cn("grid gap-4", imageUploadType === 'profile' ? "grid-cols-3" : "grid-cols-1")}>
-                  {(imageUploadType === 'profile' ? profilePreviews : coverPreviews).map((url, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => handleApplyIdentity(url)} 
-                      className="relative aspect-square border border-primary/10 group overflow-hidden bg-primary/5 shadow-inner transition-all hover:scale-105 active:scale-95"
-                    >
-                      <img src={url} alt="Option" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                        <Check className="h-8 w-8 text-white animate-in zoom-in duration-300" strokeWidth={2} />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-              
-              <div className="pt-6">
-                <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full h-16 rounded-none vogue-button border-primary/10 text-[10px] group shadow-sm hover:bg-primary/5 transition-all">
-                  <Upload className="h-4 w-4 mr-3 transition-transform group-hover:-translate-y-1" strokeWidth={1.5} /> Custom Entry
-                  <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
-                </Button>
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
       <Dialog open={activeSheet === 'product' || activeSheet === 'service' || activeSheet === 'profile'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className={cn("rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden animate-in slide-in-from-bottom-4 duration-500", activeSheet === 'profile' ? "max-w-4xl" : "max-w-md")}>
+        <DialogContent className={cn("rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden animate-in slide-in-from-bottom-4 duration-500 w-[95vw] sm:w-full", activeSheet === 'profile' ? "max-w-4xl" : "max-w-md")}>
           <ScrollArea className="max-h-[90vh] font-body">
-            <div className="p-12 space-y-12">
+            <div className="p-8 md:p-12 space-y-12">
               <div className="border-b border-primary/10 pb-8 space-y-4">
                 <DialogTitle className="text-4xl font-headline tracking-tighter italic leading-none">Registry Update.</DialogTitle>
                 <DialogDescription className="font-body italic text-muted-foreground">A formal audit of artisan details and sanctuary location for the registry.</DialogDescription>
