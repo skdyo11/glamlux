@@ -181,7 +181,12 @@ export default function PartnerPortalPage() {
       const baseSlug = slugify(businessName);
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
-      const bizRef = await addDoc(collection(firestore, 'parlours'), {
+      const batch = writeBatch(firestore);
+      const bizRef = doc(collection(firestore, 'parlours'));
+      const bizId = bizRef.id;
+
+      batch.set(bizRef, {
+        id: bizId,
         ownerId: user.uid,
         name: businessName,
         slug: businessSlug,
@@ -194,25 +199,35 @@ export default function PartnerPortalPage() {
         createdAt: serverTimestamp()
       });
       
-      const bizId = bizRef.id;
-      const batch = writeBatch(firestore);
-      
-      const dummyProducts = [
-        { name: 'Pure Radiance Elixir', brand: 'Artisan Essence', price: 120, category: 'Skincare' },
-        { name: 'Structured Prime', brand: 'House Essentials', price: 85, category: 'Base' },
-      ];
+      // Add one dummy product for the new artisan
+      const pRef = doc(collection(firestore, 'products'));
+      batch.set(pRef, {
+        id: pRef.id,
+        vendorId: bizId,
+        vendorName: businessName,
+        name: 'Signature Radiance Elixir',
+        brand: 'Artisan Essence',
+        price: 120,
+        currency: 'PKR',
+        imageUrl: `https://picsum.photos/seed/p-${pRef.id}/600/800`,
+        isDummy: true,
+        createdAt: serverTimestamp()
+      });
 
-      dummyProducts.forEach(p => {
-        const ref = doc(collection(firestore, 'products'));
-        batch.set(ref, {
-          ...p,
-          id: ref.id,
-          vendorId: bizId,
-          vendorName: businessName,
-          imageUrl: `https://picsum.photos/seed/vogue-p-${ref.id}/600/800`,
-          isDummy: true,
-          createdAt: serverTimestamp()
-        });
+      // Add one dummy service for the new artisan
+      const dRef = doc(collection(firestore, 'deals'));
+      batch.set(dRef, {
+        id: dRef.id,
+        parlourId: bizId,
+        parlourOwnerId: user.uid,
+        name: 'Royal Transformation Edit',
+        category: 'Bridal',
+        discountPrice: 21,
+        basePrice: 45,
+        currency: 'PKR',
+        depositPercent: 10,
+        isDummy: true,
+        createdAt: serverTimestamp()
       });
 
       await batch.commit();

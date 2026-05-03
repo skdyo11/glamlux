@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc, collection, writeBatch } from 'firebase/firestore';
 import { useFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +40,9 @@ export default function SignupPage() {
 
       await updateProfile(user, { displayName: name });
 
-      await setDoc(doc(firestore, 'users', user.uid), {
+      const batch = writeBatch(firestore);
+
+      batch.set(doc(firestore, 'users', user.uid), {
         uid: user.uid,
         name,
         email,
@@ -52,8 +54,9 @@ export default function SignupPage() {
       });
 
       if (role === 'vendor') {
-        await setDoc(doc(firestore, 'parlours', user.uid), {
-          id: user.uid,
+        const parlourId = user.uid;
+        batch.set(doc(firestore, 'parlours', parlourId), {
+          id: parlourId,
           ownerId: user.uid,
           name: `${name}'s Sanctuary`,
           areaTag: 'Select Region',
@@ -61,8 +64,41 @@ export default function SignupPage() {
           imageUrls: [],
           description: `The elite beauty portfolio of ${name}.`,
           ownerDashboardStyle: 'grid',
+          createdAt: serverTimestamp(),
+        });
+
+        // Add one dummy product for the new vendor
+        const productRef = doc(collection(firestore, 'products'));
+        batch.set(productRef, {
+          id: productRef.id,
+          vendorId: parlourId,
+          name: 'Signature Radiance Elixir',
+          brand: 'Artisan Essence',
+          price: 120,
+          currency: 'PKR',
+          imageUrl: `https://picsum.photos/seed/p-${productRef.id}/600/800`,
+          isDummy: true,
+          createdAt: serverTimestamp()
+        });
+
+        // Add one dummy service for the new vendor
+        const dealRef = doc(collection(firestore, 'deals'));
+        batch.set(dealRef, {
+          id: dealRef.id,
+          parlourId: parlourId,
+          parlourOwnerId: user.uid,
+          name: 'Royal Transformation Edit',
+          category: 'Bridal',
+          discountPrice: 21,
+          basePrice: 45,
+          currency: 'PKR',
+          depositPercent: 10,
+          isDummy: true,
+          createdAt: serverTimestamp()
         });
       }
+
+      await batch.commit();
 
       document.cookie = `__session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
 
