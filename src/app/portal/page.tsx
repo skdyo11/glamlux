@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter
 } from '@/components/ui/dialog';
 import { 
   Navigation,
@@ -39,7 +40,10 @@ import {
   Check,
   RefreshCw,
   MapPin,
-  Calendar
+  Calendar,
+  ShieldCheck,
+  UserCheck,
+  Truck
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -73,7 +77,7 @@ export default function PartnerPortalPage() {
   const [myServices, setMyServices] = useState<any[]>([]);
 
   const [selectedArrival, setSelectedArrival] = useState<any>(null);
-  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | 'image-upload' | null>(null);
+  const [activeSheet, setActiveSheet] = useState<'delivery' | 'service' | 'product' | 'profile' | 'image-upload' | 'survey' | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [imageUploadType, setImageUploadType] = useState<'profile' | 'cover' | null>(null);
   
@@ -86,6 +90,14 @@ export default function PartnerPortalPage() {
 
   const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]);
   const [addressInput, setAddressInput] = useState('');
+
+  // Survey State
+  const [surveyStep, setSurveyStep] = useState(1);
+  const [surveyData, setSurveyData] = useState({
+    codeAgreed: false,
+    capacity: '',
+    logisticsPref: ''
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -184,7 +196,6 @@ export default function PartnerPortalPage() {
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
       const batch = writeBatch(firestore);
-      // Precision Fix: Use user.uid as Parlour ID to satisfy security rules and ensure linked boutique data.
       const bizRef = doc(firestore, 'parlours', user.uid);
       const bizId = bizRef.id;
 
@@ -205,7 +216,7 @@ export default function PartnerPortalPage() {
       const pRef = doc(collection(firestore, 'products'));
       batch.set(pRef, {
         id: pRef.id,
-        vendorId: bizId, // Now user.uid, satisfying the security rule.
+        vendorId: bizId, 
         vendorName: businessName,
         name: 'Signature Radiance Elixir',
         brand: 'Artisan Essence',
@@ -378,6 +389,15 @@ export default function PartnerPortalPage() {
     setActiveSheet('image-upload');
   };
 
+  const handleSurveyComplete = () => {
+    toast({
+      title: "Team Audit Synchronized",
+      description: "Your elite logistics application has been recorded for curated review.",
+    });
+    setActiveSheet(null);
+    setSurveyStep(1);
+  };
+
   if (!isMounted || isUserLoading) return null;
 
   if (hasBusiness === false) {
@@ -454,7 +474,7 @@ export default function PartnerPortalPage() {
 
             <div className="flex gap-4 pb-4">
               <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10 hover:bg-primary/5 transition-all">Auditing</Button>
-              <Button onClick={() => setActiveSheet('delivery')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95 transition-all">Logistics</Button>
+              <Button onClick={() => setActiveSheet('survey')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95 transition-all">Logistics</Button>
             </div>
           </div>
         </header>
@@ -554,6 +574,118 @@ export default function PartnerPortalPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Elite Team Survey Dialog */}
+      <Dialog open={activeSheet === 'survey'} onOpenChange={() => { setActiveSheet(null); setSurveyStep(1); }}>
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden w-[95vw] max-w-xl animate-in zoom-in-95 duration-300">
+          <ScrollArea className="max-h-[90vh]">
+            <div className="p-8 md:p-12 space-y-12 font-body">
+              <header className="space-y-4 border-b border-primary/10 pb-8">
+                <div className="flex justify-between items-center">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
+                    <ShieldCheck className="h-3 w-3 text-secondary" strokeWidth={1.5} />
+                    <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[8px]">Team Protocol Audit</span>
+                  </div>
+                  <span className="text-[10px] font-black text-primary/20 uppercase tracking-widest">Step {surveyStep} / 3</span>
+                </div>
+                <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary leading-none">Elite Team Enrollment.</DialogTitle>
+                <DialogDescription className="font-body italic text-muted-foreground text-sm">A formal audit of your logistical and artistry capabilities for official team status.</DialogDescription>
+                <Progress value={(surveyStep / 3) * 100} className="h-0.5 rounded-none bg-primary/5 mt-4" />
+              </header>
+
+              <div className="min-h-[200px]">
+                {surveyStep === 1 && (
+                  <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="flex items-start gap-6 p-6 bg-primary/5 border border-primary/5">
+                      <UserCheck className="h-10 w-10 text-secondary shrink-0" strokeWidth={1} />
+                      <div className="space-y-2">
+                        <h4 className="font-headline text-2xl italic">The Artisan Code</h4>
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">By joining the Elite Team, you commit to the registry's digital MMXXIV standards for precision and guest excellence.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setSurveyData(prev => ({ ...prev, codeAgreed: !prev.codeAgreed }))}>
+                      <div className={cn(
+                        "h-6 w-6 border-2 flex items-center justify-center transition-all",
+                        surveyData.codeAgreed ? "bg-primary border-primary" : "border-primary/20 group-hover:border-secondary"
+                      )}>
+                        {surveyData.codeAgreed && <Check className="h-4 w-4 text-white" strokeWidth={3} />}
+                      </div>
+                      <span className="text-[11px] font-bold uppercase tracking-widest">I verify my commitment to the Artisan Code.</span>
+                    </div>
+                  </section>
+                )}
+
+                {surveyStep === 2 && (
+                  <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Daily Transformation Capacity</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {['1-5 Guests', '6-12 Guests', '13-20 Guests', 'Enterprise (20+)'].map((opt) => (
+                          <button 
+                            key={opt}
+                            onClick={() => setSurveyData(prev => ({ ...prev, capacity: opt }))}
+                            className={cn(
+                              "h-16 px-6 border text-[10px] font-bold uppercase tracking-widest transition-all",
+                              surveyData.capacity === opt ? "bg-primary text-primary-foreground border-primary shadow-xl scale-105" : "border-primary/10 hover:border-secondary text-primary/60"
+                            )}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+                )}
+
+                {surveyStep === 3 && (
+                  <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="space-y-6">
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2">
+                        <Truck className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Logistical Fulfillment
+                      </Label>
+                      <div className="space-y-3">
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">Will you integrate with the GlamLux Verified Transport network for boutique fulfillment?</p>
+                        <select 
+                          value={surveyData.logisticsPref}
+                          onChange={(e) => setSurveyData(prev => ({ ...prev, logisticsPref: e.target.value }))}
+                          className="w-full h-14 bg-transparent border-b-2 border-primary/10 focus:border-secondary outline-none text-xl italic font-body px-0"
+                        >
+                          <option value="">Select Protocol...</option>
+                          <option value="verified">Use Verified Network</option>
+                          <option value="independent">Maintain Independent Logistics</option>
+                        </select>
+                      </div>
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              <DialogFooter className="flex-col sm:flex-row gap-4 pt-12 border-t border-primary/5">
+                {surveyStep > 1 && (
+                  <Button variant="ghost" onClick={() => setSurveyStep(s => s - 1)} className="rounded-none vogue-button text-[9px]">Back</Button>
+                )}
+                {surveyStep < 3 ? (
+                  <Button 
+                    onClick={() => setSurveyStep(s => s + 1)} 
+                    disabled={(surveyStep === 1 && !surveyData.codeAgreed) || (surveyStep === 2 && !surveyData.capacity)}
+                    className="flex-grow h-16 bg-primary text-primary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
+                  >
+                    Continue Audit
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleSurveyComplete}
+                    disabled={!surveyData.logisticsPref}
+                    className="flex-grow h-16 bg-secondary text-secondary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
+                  >
+                    Finalize Enrollment
+                  </Button>
+                )}
+              </DialogFooter>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={activeSheet === 'image-upload'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none w-[92vw] sm:max-w-md p-0 overflow-hidden animate-in zoom-in-95 duration-300">
