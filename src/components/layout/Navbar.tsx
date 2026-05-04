@@ -141,7 +141,7 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
     
-    if ('serviceWorker' in navigator) {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           console.log('Registry Service Worker registered');
@@ -151,7 +151,7 @@ export function Navbar() {
       });
     }
 
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };

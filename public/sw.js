@@ -1,3 +1,6 @@
+// GlamLux Registry Service Worker
+const CACHE_NAME = 'glamlux-v1';
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,6 +10,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // This satisfies the browser's PWA requirement for a fetch handler
-  event.respondWith(fetch(event.request));
+  // Satisfies the PWA 'fetch' requirement for installation
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return new Response('Offline: The Registry Hub requires a connection for real-time updates.');
+    })
+  );
 });
