@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -143,6 +144,15 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
     
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+          console.error('Registry Service Worker failed to synchronize:', err);
+        });
+      });
+    }
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
