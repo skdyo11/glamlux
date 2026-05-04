@@ -18,8 +18,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    apple: 'https://picsum.photos/seed/glam-apple/512/512',
-    icon: 'https://picsum.photos/seed/glam-icon/192/192',
+    apple: '/Glamlux',
+    icon: '/Glamlux',
   },
 };
 
