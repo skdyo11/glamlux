@@ -161,16 +161,8 @@ export function Navbar() {
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
 
-  const handleInstall = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-      }
-    } else {
-      setShowInstallGuide(true);
-    }
+  const handleInstallClick = () => {
+    setShowInstallGuide(true);
   };
 
   const isIOS = useMemo(() => {
@@ -288,7 +280,7 @@ export function Navbar() {
             </button>
             
             <button 
-              onClick={handleInstall}
+              onClick={handleInstallClick}
               className="flex items-center gap-4 p-4 hover:bg-primary/5 transition-all text-left w-full text-primary"
             >
               <Smartphone className="h-5 w-5" strokeWidth={1.5} />
@@ -405,17 +397,29 @@ export function Navbar() {
               {isIOS ? (
                 <>Tap the <Share className="inline h-4 w-4 mx-1" /> icon and select <strong>"Add to Home Screen"</strong> to install.</>
               ) : (
-                <>Select <strong>"Install App"</strong> in your browser menu to download the Registry Hub.</>
+                <>Experience the registry as a native application with real-time updates and offline access.</>
               )}
             </DialogDescription>
           </DialogHeader>
           <div className="pt-8 flex flex-col gap-4">
             <div className="flex items-center gap-4 p-4 bg-primary/5 border border-primary/10">
                <PlusSquare className="h-6 w-6 text-secondary" strokeWidth={1.5} />
-               <p className="text-[10px] font-bold uppercase tracking-widest">Pin to Home Screen</p>
+               <p className="text-[10px] font-bold uppercase tracking-widest">{isIOS ? 'Pin to Home Screen' : 'Standalone Protocol'}</p>
             </div>
-            <Button onClick={() => setShowInstallGuide(false)} className="rounded-none h-14 vogue-button bg-primary text-primary-foreground border-none">
-              Got it
+            <Button 
+              onClick={async () => {
+                if (deferredPrompt) {
+                  deferredPrompt.prompt();
+                  const { outcome } = await deferredPrompt.userChoice;
+                  if (outcome === 'accepted') {
+                    setDeferredPrompt(null);
+                  }
+                }
+                setShowInstallGuide(false);
+              }} 
+              className="rounded-none h-14 vogue-button bg-primary text-primary-foreground border-none"
+            >
+              {isIOS ? 'Got it' : 'Download'}
             </Button>
           </div>
         </DialogContent>

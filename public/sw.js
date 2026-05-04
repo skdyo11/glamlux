@@ -1,22 +1,23 @@
 
-/**
- * GlamLux Registry Service Worker
- * Satisfies PWA installation requirements and provides baseline offline capabilities.
- */
+// PWA Service Worker for GlamLux Artisan Registry
+const CACHE_NAME = 'glamlux-registry-v1';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/manifest.json'
+];
 
-self.addEventListener('install', () => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Maintain real-time connectivity for the artisan registry
-  event.respondWith(fetch(event.request).catch(() => {
-    return new Response("You are currently disconnected from the registry.", {
-      headers: { "Content-Type": "text/plain" }
-    });
-  }));
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });
