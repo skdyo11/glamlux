@@ -20,7 +20,11 @@ import {
   ChevronRight,
   Sparkles,
   LayoutDashboard,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  Download,
+  Share,
+  PlusSquare,
+  Smartphone
 } from 'lucide-react';
 import {
   Sheet,
@@ -29,6 +33,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Precision-Crafted Single-Path SVGs - Chunky Black Label Aesthetic
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
@@ -120,6 +131,8 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const { user } = useUser();
   const { auth } = useFirebase();
   const { toast } = useToast();
@@ -129,6 +142,31 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
+    
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      setShowInstallGuide(true);
+    }
+  };
+
+  const isIOS = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
   }, []);
 
   const bottomNavLinks = useMemo(() => [
@@ -239,6 +277,15 @@ export function Navbar() {
               <Settings className="h-5 w-5" strokeWidth={1.5} />
               <span className="font-bold text-xs uppercase tracking-widest">Registry Settings</span>
             </button>
+            
+            <button 
+              onClick={handleInstall}
+              className="flex items-center gap-4 p-4 hover:bg-primary/5 transition-all text-left w-full text-primary"
+            >
+              <Smartphone className="h-5 w-5" strokeWidth={1.5} />
+              <span className="font-bold text-xs uppercase tracking-widest">Install Registry Hub</span>
+            </button>
+
             {user && (
               <button onClick={handleLogout} className="flex items-center gap-4 p-4 text-destructive hover:bg-destructive/5 transition-all text-left w-full">
                 <LogOut className="h-5 w-5" strokeWidth={1.5} />
@@ -285,7 +332,9 @@ export function Navbar() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
-                   <SheetHeader className="sr-only"><SheetTitle>Artisan Sidebar</SheetTitle></SheetHeader>
+                   <SheetHeader className="sr-only">
+                     <SheetTitle>Artisan Sidebar</SheetTitle>
+                   </SheetHeader>
                    <SidebarContent />
                 </SheetContent>
               </Sheet>
@@ -304,7 +353,9 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/10">
-               <SheetHeader className="sr-only"><SheetTitle>Artisan Sidebar</SheetTitle></SheetHeader>
+               <SheetHeader className="sr-only">
+                 <SheetTitle>Artisan Sidebar</SheetTitle>
+               </SheetHeader>
                <SidebarContent />
             </SheetContent>
           </Sheet>
@@ -336,6 +387,30 @@ export function Navbar() {
           })}
         </div>
       </nav>
+
+      <Dialog open={showInstallGuide} onOpenChange={setShowInstallGuide}>
+        <DialogContent className="rounded-none border-none bg-background p-10 max-w-sm shadow-3xl font-body">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary">Install Registry Hub.</DialogTitle>
+            <DialogDescription className="font-body italic text-muted-foreground text-base leading-relaxed">
+              {isIOS ? (
+                <>To install on iOS, tap the <Share className="inline h-4 w-4 mx-1" /> icon in Safari and select <strong>"Add to Home Screen"</strong>.</>
+              ) : (
+                <>Optimize your artisan experience. Select <strong>"Install App"</strong> in your browser menu to pin the Registry Hub to your home screen.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="pt-8 flex flex-col gap-4">
+            <div className="flex items-center gap-4 p-4 bg-primary/5 border border-primary/10">
+               <PlusSquare className="h-6 w-6 text-secondary" strokeWidth={1.5} />
+               <p className="text-[10px] font-bold uppercase tracking-widest">Pin to Home Screen</p>
+            </div>
+            <Button onClick={() => setShowInstallGuide(false)} className="rounded-none h-14 vogue-button bg-primary text-primary-foreground border-none">
+              Acknowledge
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
