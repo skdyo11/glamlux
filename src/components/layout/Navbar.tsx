@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -41,7 +40,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-// Precision-Crafted Single-Path SVGs - Chunky Black Label Aesthetic
 const CustomIcon = ({ type, isActive, className }: { type: string, isActive: boolean, className?: string }) => {
   const commonProps = {
     viewBox: "0 0 24 24",
@@ -143,11 +141,10 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(err => {
-          console.error('Registry Service Worker failed to synchronize:', err);
+          console.error('Registry Service Worker failed:', err);
         });
       });
     }
