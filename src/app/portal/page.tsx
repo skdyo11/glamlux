@@ -517,10 +517,10 @@ export default function PartnerPortalPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-16">
           <TabsList className="bg-transparent h-auto gap-12 border-b border-primary/10 w-full justify-start rounded-none p-0 overflow-x-auto scrollbar-hide">
             {[
-              { id: 'bookings', label: '01 Queue' },
-              { id: 'items', label: '02 Catalogue' },
-              { id: 'services', label: '03 Edits' },
-              myBusiness?.isDeliveryTeam ? { id: 'dispatch', label: '04 Dispatch' } : null
+              myBusiness?.isDeliveryTeam ? { id: 'dispatch', label: '01 Dispatch' } : null,
+              { id: 'bookings', label: myBusiness?.isDeliveryTeam ? '02 Queue' : '01 Queue' },
+              { id: 'items', label: myBusiness?.isDeliveryTeam ? '03 Catalogue' : '02 Catalogue' },
+              { id: 'services', label: myBusiness?.isDeliveryTeam ? '04 Edits' : '03 Edits' },
             ].filter(Boolean).map((tab: any) => (
               <TabsTrigger 
                 key={tab.id} value={tab.id} 
@@ -530,29 +530,6 @@ export default function PartnerPortalPage() {
               </TabsTrigger>
             ))}
           </TabsList>
-
-          <TabsContent value="bookings" className="space-y-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-primary/10 shadow-2xl bg-white dark:bg-card/20">
-              {arrivals.map((a) => (
-                <article 
-                  key={a.id} 
-                  className="p-10 space-y-6 border-r border-primary/10 last:border-r-0 hover:bg-white dark:hover:bg-card transition-all cursor-pointer group"
-                  onClick={() => setSelectedArrival(a)}
-                >
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-secondary group-hover:tracking-[0.2em] transition-all">{a.referenceCode}</span>
-                    <h4 className="font-headline text-3xl text-primary">{a.userName || 'Artisan Guest'}</h4>
-                  </div>
-                  <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2 bg-primary/5 transition-all group-hover:bg-primary group-hover:text-primary-foreground">{a.deliveryStatus}</Badge>
-                </article>
-              ))}
-              {arrivals.length === 0 && (
-                <div className="col-span-full py-40 text-center space-y-4">
-                   <p className="font-headline text-4xl italic text-primary/10">Ledger Empty.</p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
 
           <TabsContent value="dispatch" className="space-y-24">
              <section className="space-y-12">
@@ -619,6 +596,29 @@ export default function PartnerPortalPage() {
                  ))}
                </div>
              </section>
+          </TabsContent>
+
+          <TabsContent value="bookings" className="space-y-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-primary/10 shadow-2xl bg-white dark:bg-card/20">
+              {arrivals.map((a) => (
+                <article 
+                  key={a.id} 
+                  className="p-10 space-y-6 border-r border-primary/10 last:border-r-0 hover:bg-white dark:hover:bg-card transition-all cursor-pointer group"
+                  onClick={() => setSelectedArrival(a)}
+                >
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-secondary group-hover:tracking-[0.2em] transition-all">{a.referenceCode}</span>
+                    <h4 className="font-headline text-3xl text-primary">{a.userName || 'Artisan Guest'}</h4>
+                  </div>
+                  <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2 bg-primary/5 transition-all group-hover:bg-primary group-hover:text-primary-foreground">{a.deliveryStatus}</Badge>
+                </article>
+              ))}
+              {arrivals.length === 0 && (
+                <div className="col-span-full py-40 text-center space-y-4">
+                   <p className="font-headline text-4xl italic text-primary/10">Ledger Empty.</p>
+                </div>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="items" className="space-y-12">
