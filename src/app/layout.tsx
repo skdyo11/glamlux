@@ -34,6 +34,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
         <meta name="theme-color" content="#1A1A1A" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="font-body antialiased selection:bg-secondary/30 pb-20 md:pb-0">
         <ThemeProvider

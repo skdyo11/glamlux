@@ -143,7 +143,9 @@ export function Navbar() {
     
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('Registry Service Worker registered');
+        }).catch(err => {
           console.error('Registry Service Worker failed:', err);
         });
       });

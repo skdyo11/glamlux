@@ -11,13 +11,13 @@
       "src": "https://picsum.photos/seed/glamlux-192/192/192",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "https://picsum.photos/seed/glamlux-512/512/512",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
