@@ -35,7 +35,8 @@
         "myImage": { "type": "string", "description": "Custom artisan profile image." },
         "myCover": { "type": "string", "description": "Custom artisan cover banner." },
         "description": { "type": "string" },
-        "ownerDashboardStyle": { "type": "string", "enum": ["list", "grid"] }
+        "ownerDashboardStyle": { "type": "string", "enum": ["list", "grid"] },
+        "isDeliveryTeam": { "type": "boolean", "description": "True if this artisan is enrolled in the logistics team." }
       },
       "required": ["id", "name", "ownerId", "latitude", "longitude", "areaTag"]
     },
@@ -88,12 +89,13 @@
         "id": { "type": "string" },
         "localUserId": { "type": "string" },
         "vendorId": { "type": "string" },
+        "riderId": { "type": "string", "description": "The ID of the rider/artisan who committed to this delivery." },
         "referenceCode": { "type": "string" },
         "totalPrice": { "type": "number" },
         "shippingCost": { "type": "number" },
         "currency": { "type": "string", "enum": ["PKR", "INR"] },
         "qrVerified": { "type": "boolean" },
-        "deliveryStatus": { "type": "string", "enum": ["Pending", "Picked Up", "Delivered"] },
+        "deliveryStatus": { "type": "string", "enum": ["Pending", "Picked Up", "Delivered", "Committed"] },
         "paymentStatus": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "groupSize": { "type": "number" },

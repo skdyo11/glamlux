@@ -43,12 +43,14 @@ import {
   Calendar,
   ShieldCheck,
   UserCheck,
-  Truck
+  Truck,
+  Package,
+  Clock
 } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useUser, useFirestore, useFirebase } from '@/firebase';
+import { useUser, useFirestore, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -103,7 +105,6 @@ export default function PartnerPortalPage() {
     setIsMounted(true);
   }, []);
 
-  // Frictionless Onboarding: Automatically sign in anonymously.
   useEffect(() => {
     if (isMounted && !isUserLoading && !user && auth) {
       signInAnonymously(auth).catch(err => console.error("Silent authentication failed", err));
@@ -166,6 +167,20 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
+  // Dispatch Tab Logic
+  const globalOrdersQuery = useMemoFirebase(() => {
+    if (!firestore || !myBusiness?.isDeliveryTeam) return null;
+    return query(collection(firestore, 'bookings'), where('deliveryStatus', '==', 'Pending'), where('riderId', '==', null));
+  }, [firestore, myBusiness?.isDeliveryTeam]);
+
+  const myCommitmentsQuery = useMemoFirebase(() => {
+    if (!firestore || !user || !myBusiness?.isDeliveryTeam) return null;
+    return query(collection(firestore, 'bookings'), where('riderId', '==', user.uid));
+  }, [firestore, user?.uid, myBusiness?.isDeliveryTeam]);
+
+  const { data: globalOrders, isLoading: isLoadingGlobal } = useCollection(globalOrdersQuery);
+  const { data: myCommitments, isLoading: isLoadingMyDeliveries } = useCollection(myCommitmentsQuery);
+
   const generatePreviews = useCallback(() => {
     setIsRolling(true);
     setTimeout(() => {
@@ -187,7 +202,7 @@ export default function PartnerPortalPage() {
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) {
-      toast({ variant: "destructive", title: "Identity Pending", description: "Waiting for registry synchronization..." });
+      toast({ variant: "destructive", title: "Identity Pending" });
       return;
     }
     try {
@@ -197,10 +212,9 @@ export default function PartnerPortalPage() {
 
       const batch = writeBatch(firestore);
       const bizRef = doc(firestore, 'parlours', user.uid);
-      const bizId = bizRef.id;
-
+      
       batch.set(bizRef, {
-        id: bizId,
+        id: user.uid,
         ownerId: user.uid,
         name: businessName,
         slug: businessSlug,
@@ -216,11 +230,9 @@ export default function PartnerPortalPage() {
       const pRef = doc(collection(firestore, 'products'));
       batch.set(pRef, {
         id: pRef.id,
-        vendorId: bizId, 
-        vendorName: businessName,
+        vendorId: user.uid, 
         name: 'Signature Radiance Elixir',
         brand: 'Artisan Essence',
-        basePrice: 150,
         price: 120,
         currency: 'PKR',
         stockCount: 10,
@@ -232,7 +244,7 @@ export default function PartnerPortalPage() {
       const dRef = doc(collection(firestore, 'deals'));
       batch.set(dRef, {
         id: dRef.id,
-        parlourId: bizId,
+        parlourId: user.uid,
         parlourOwnerId: user.uid,
         name: 'Royal Transformation Edit',
         category: 'Bridal',
@@ -246,11 +258,10 @@ export default function PartnerPortalPage() {
 
       await batch.commit();
       setHasBusiness(true);
-      setMyBusiness({ id: bizId, name: businessName, slug: businessSlug });
-      toast({ title: "Portal Operational", description: `Your ${type} has been registered.` });
+      setMyBusiness({ id: user.uid, name: businessName, slug: businessSlug });
+      toast({ title: "Portal Operational" });
     } catch (e) {
-      console.error("Registry Sync Error:", e);
-      toast({ variant: "destructive", title: "Registration Denied", description: "Identity synchronization failed." });
+      toast({ variant: "destructive", title: "Registration Denied" });
     }
   };
 
@@ -258,10 +269,24 @@ export default function PartnerPortalPage() {
     if (!firestore) return;
     try {
       await updateDoc(doc(firestore, 'bookings', id), { deliveryStatus: newStatus });
-      toast({ title: "Ledger Updated", description: `Status set to ${newStatus}.` });
+      toast({ title: "Ledger Updated" });
       setSelectedArrival(null);
     } catch (e) {
       toast({ variant: "destructive", title: "Ledger Error" });
+    }
+  };
+
+  const handleCommitToOrder = async (orderId: string) => {
+    if (!firestore || !user) return;
+    try {
+      await updateDoc(doc(firestore, 'bookings', orderId), {
+        riderId: user.uid,
+        deliveryStatus: 'Committed',
+        updatedAt: serverTimestamp()
+      });
+      toast({ title: "Commitment Registered", description: "You have been assigned to this delivery." });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Commitment Denied" });
     }
   };
 
@@ -389,13 +414,20 @@ export default function PartnerPortalPage() {
     setActiveSheet('image-upload');
   };
 
-  const handleSurveyComplete = () => {
-    toast({
-      title: "Team Audit Synchronized",
-      description: "Your elite logistics application has been recorded for curated review.",
-    });
-    setActiveSheet(null);
-    setSurveyStep(1);
+  const handleSurveyComplete = async () => {
+    if (!firestore || !myBusiness) return;
+    try {
+      await updateDoc(doc(firestore, 'parlours', myBusiness.id), { isDeliveryTeam: true });
+      setMyBusiness({ ...myBusiness, isDeliveryTeam: true });
+      toast({
+        title: "Team Audit Synchronized",
+        description: "Your elite logistics application has been approved. Dispatch registry is now active.",
+      });
+      setActiveSheet(null);
+      setSurveyStep(1);
+    } catch (e) {
+      toast({ variant: "destructive", title: "Audit Error" });
+    }
   };
 
   if (!isMounted || isUserLoading) return null;
@@ -468,6 +500,9 @@ export default function PartnerPortalPage() {
                 <div className="flex flex-wrap gap-8 text-[11px] font-bold uppercase tracking-[0.4em] text-muted-foreground italic">
                   <span className="flex items-center gap-2 group cursor-default transition-all hover:text-secondary"><Navigation className="h-3 w-3 text-secondary transition-all group-hover:fill-current" strokeWidth={1.5} /> {myBusiness?.areaTag}</span>
                   <span className="flex items-center gap-2 text-primary group cursor-default transition-all hover:text-secondary"><Sparkles className="h-3 w-3 text-secondary group-hover:animate-spin" strokeWidth={1.5} /> Verified House MMXXIV</span>
+                  {myBusiness?.isDeliveryTeam && (
+                    <span className="flex items-center gap-2 text-emerald-600"><ShieldCheck className="h-3 w-3" strokeWidth={1.5} /> Elite Team Protocol</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -481,12 +516,17 @@ export default function PartnerPortalPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-16">
           <TabsList className="bg-transparent h-auto gap-12 border-b border-primary/10 w-full justify-start rounded-none p-0 overflow-x-auto scrollbar-hide">
-            {['bookings', 'items', 'services'].map((id) => (
+            {[
+              { id: 'bookings', label: '01 Queue' },
+              { id: 'items', label: '02 Catalogue' },
+              { id: 'services', label: '03 Edits' },
+              myBusiness?.isDeliveryTeam ? { id: 'dispatch', label: '04 Dispatch' } : null
+            ].filter(Boolean).map((tab: any) => (
               <TabsTrigger 
-                key={id} value={id} 
+                key={tab.id} value={tab.id} 
                 className="bg-transparent px-0 pb-6 rounded-none border-b-2 border-transparent data-[state=active]:border-secondary data-[state=active]:bg-transparent font-bold text-[11px] uppercase tracking-[0.5em] text-primary/40 data-[state=active]:text-primary transition-all hover:text-primary whitespace-nowrap"
               >
-                {id === 'bookings' ? '01 Queue' : id === 'items' ? '02 Catalogue' : '03 Edits'}
+                {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -512,6 +552,73 @@ export default function PartnerPortalPage() {
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="dispatch" className="space-y-24">
+             <section className="space-y-12">
+               <div className="border-b border-primary/10 pb-8 space-y-2">
+                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Global Dispatch Ledger.</h3>
+                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Available Orders MMXXIV</p>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 {isLoadingGlobal ? (
+                   [1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-none border border-primary/10" />)
+                 ) : globalOrders?.map((order) => (
+                   <article key={order.id} className="p-8 border border-primary/10 bg-white dark:bg-card space-y-6 shadow-sm hover:shadow-xl transition-all">
+                     <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <span className="text-[9px] font-black text-secondary uppercase tracking-widest">{order.referenceCode}</span>
+                          <h4 className="font-headline text-2xl">{order.shippingAddress || 'Sanctuary Pickup'}</h4>
+                        </div>
+                        <Truck className="h-6 w-6 text-primary/10" strokeWidth={1} />
+                     </div>
+                     <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest opacity-60">
+                        <Package className="h-3 w-3" /> {order.cartItems?.length || 0} Items
+                        <Clock className="h-3 w-3 ml-2" /> Pending
+                     </div>
+                     <Button 
+                       onClick={() => handleCommitToOrder(order.id)}
+                       className="w-full h-12 bg-primary text-primary-foreground rounded-none vogue-button text-[9px] shadow-lg"
+                      >
+                        Commit to Dispatch
+                      </Button>
+                   </article>
+                 ))}
+                 {!isLoadingGlobal && globalOrders?.length === 0 && (
+                   <div className="col-span-full py-20 text-center border border-dashed border-primary/10">
+                     <p className="font-headline text-2xl italic text-primary/20">No pending dispatch items.</p>
+                   </div>
+                 )}
+               </div>
+             </section>
+
+             <section className="space-y-12">
+               <div className="border-b border-primary/10 pb-8 space-y-2">
+                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">My Commitments.</h3>
+                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Active Artisan Logistics</p>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 {isLoadingMyDeliveries ? (
+                   [1, 2].map(i => <Skeleton key={i} className="h-48 rounded-none border border-primary/10" />)
+                 ) : myCommitments?.map((order) => (
+                   <article key={order.id} className="p-8 border-2 border-primary bg-primary/5 space-y-6 relative overflow-hidden group">
+                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:rotate-12 transition-transform">
+                       <ShieldCheck className="h-20 w-20" />
+                     </div>
+                     <div className="space-y-1">
+                        <Badge className="bg-primary text-primary-foreground rounded-none text-[8px] uppercase font-black px-2 py-0.5 mb-2">Artisan Assigned</Badge>
+                        <span className="block text-[9px] font-black text-secondary uppercase tracking-widest">{order.referenceCode}</span>
+                        <h4 className="font-headline text-2xl">{order.userName}</h4>
+                        <p className="text-xs italic text-muted-foreground">{order.shippingAddress}</p>
+                     </div>
+                     <div className="pt-4 border-t border-primary/10 flex justify-between items-center">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Committed MMXXIV</span>
+                        <Button variant="outline" size="sm" onClick={() => setSelectedArrival(order)} className="rounded-none h-8 text-[8px] font-black uppercase border-primary/20">Update Ledger</Button>
+                     </div>
+                   </article>
+                 ))}
+               </div>
+             </section>
           </TabsContent>
 
           <TabsContent value="items" className="space-y-12">
