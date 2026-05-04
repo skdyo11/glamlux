@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    apple: 'https://picsum.photos/seed/glamlux-apple/180/180',
+    apple: '/icon-512x512.png',
+    icon: '/icon-192x192.png',
   },
 };
 
