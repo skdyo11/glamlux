@@ -59,7 +59,7 @@ export default function Home() {
               src="https://picsum.photos/seed/editorial-beauty-magazine/1920/1080" 
               alt="Elite Beauty" 
               fill 
-              className="object-cover grayscale-[0.3] contrast-[1.1]"
+              className="object-cover contrast-[1.1]"
               priority
               data-ai-hint="fashion portrait"
             />
@@ -127,7 +127,7 @@ export default function Home() {
                       key={vendor.id} 
                       href={`/vendors/${vendorSlug}`} 
                       className={cn(
-                        "group relative md:col-span-4 border-r last:border-r-0 border-primary/5 overflow-hidden bg-white dark:bg-card/30 p-10 transition-all duration-700 hover:bg-primary hover:text-primary-foreground",
+                        "group relative md:col-span-4 border-r last:border-r-0 border-primary/5 overflow-hidden bg-white dark:bg-card/30 p-10 transition-all duration-700 hover:bg-primary hover:text-primary-foreground hover:-translate-y-4 hover:shadow-3xl hover:z-20",
                         index === 1 && "md:mt-16 md:-mb-16 md:z-10 md:bg-background dark:md:bg-card border-x"
                       )}
                     >
@@ -140,7 +140,7 @@ export default function Home() {
                           </div>
                         </div>
                         
-                        <div className="relative aspect-[3/4] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000">
+                        <div className="relative aspect-[3/4] overflow-hidden transition-all duration-1000">
                           <Image 
                             src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-1/800/1000'} 
                             alt={vendor.name} 
@@ -182,12 +182,12 @@ export default function Home() {
                     key={service.id} 
                     href={`/deals/${service.id}`} 
                     className={cn(
-                      "group relative p-10 border-r border-b border-primary/10 hover:bg-secondary/5 transition-all duration-500",
+                      "group relative p-10 border-r border-b border-primary/10 hover:bg-secondary/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl z-10",
                       (idx + 1) % 3 === 0 && "md:border-r-0"
                     )}
                   >
                     <article className="space-y-8">
-                      <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5 grayscale group-hover:grayscale-0 transition-all duration-700">
+                      <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5 transition-all duration-700">
                         <Image 
                           src={`https://picsum.photos/seed/service-${service.id}/800/800`} 
                           alt={service.name} 

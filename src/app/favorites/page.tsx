@@ -106,13 +106,13 @@ export default function FavoritesPage() {
                   {favoriteVendors.map((vendor) => {
                     const vendorSlug = vendor.slug || slugify(vendor.name || '');
                     return (
-                      <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group relative block overflow-hidden bg-white dark:bg-card/20 shadow-2xl border border-primary/5 transition-all duration-700 hover:scale-[1.02] ring-1 ring-primary/5">
+                      <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group relative block overflow-hidden bg-white dark:bg-card/20 shadow-2xl border border-primary/5 transition-all duration-700 hover:-translate-y-4 hover:scale-[1.02] ring-1 ring-primary/5">
                        <div className="relative h-80 overflow-hidden">
                          <Image 
                            src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/fav-v/800/600'} 
                            alt={vendor.name || 'Vendor'} 
                            fill 
-                           className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" 
+                           className="object-cover transition-transform duration-1000 group-hover:scale-110" 
                          />
                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                        </div>
@@ -145,13 +145,13 @@ export default function FavoritesPage() {
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
                   {favoriteProducts.map((product) => (
-                    <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6">
+                    <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-6 hover:-translate-y-2 transition-all duration-500">
                       <div className="relative aspect-[4/5] rounded-none overflow-hidden shadow-2xl bg-white dark:bg-card/20 border border-primary/5 group-hover:scale-105 transition-all duration-700 ring-1 ring-primary/5">
                         <Image 
                           src={product.imageUrl || 'https://picsum.photos/seed/fav-p/600/800'} 
                           alt={product.name || 'Product'} 
                           fill 
-                          className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" 
+                          className="object-cover transition-transform duration-1000 group-hover:scale-110" 
                         />
                         <button onClick={(e) => { e.preventDefault(); toggleFavoriteProduct(product.id); }} className="absolute top-6 right-6 text-secondary z-20 transition-transform active:scale-125">
                            <Heart className={cn("h-7 w-7", isFavoriteProduct(product.id) && "fill-current")} />

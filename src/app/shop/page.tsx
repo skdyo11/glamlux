@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -85,10 +84,10 @@ export default function ShopPage() {
                vendors?.map((v) => {
                  const vendorSlug = v.slug || slugify(v.name);
                  return (
-                   <Link key={v.id} href={`/vendors/${vendorSlug}`} className="snap-start shrink-0 group">
+                   <Link key={v.id} href={`/vendors/${vendorSlug}`} className="snap-start shrink-0 group hover:-translate-y-4 transition-all duration-500">
                      <article className="w-80 space-y-6">
                         <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5">
-                           <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                           <Image src={v.imageUrls?.[0] || 'https://picsum.photos/seed/shop/400/400'} alt={v.name} fill className="object-cover transition-all duration-700" />
                         </div>
                         <div className="space-y-1">
                           <h3 className="font-headline text-3xl text-primary group-hover:text-secondary transition-colors">{v.name}</h3>
@@ -145,14 +144,14 @@ export default function ShopPage() {
               const discountPercent = hasDiscount ? Math.round((1 - product.price / product.basePrice) * 100) : 0;
               
               return (
-                <Link key={product.id} href={`/shop/${product.id}`} className="group block">
+                <Link key={product.id} href={`/shop/${product.id}`} className="group block hover:-translate-y-2 transition-all duration-500">
                   <article className="space-y-8">
-                    <div className="relative aspect-[3/4] overflow-hidden border border-primary/5 bg-muted shadow-xl group-hover:shadow-3xl transition-all duration-700">
+                    <div className="relative aspect-[3/4] overflow-hidden border border-primary/5 bg-muted shadow-xl transition-all duration-700">
                       <Image 
                         src={product.imageUrl || `https://picsum.photos/seed/vogue-prod-${product.id}/600/800`} 
                         alt={product.name} 
                         fill 
-                        className="object-cover transition-transform duration-1000 group-hover:scale-105 grayscale group-hover:grayscale-0" 
+                        className="object-cover transition-transform duration-1000 group-hover:scale-105" 
                       />
                       
                       {hasDiscount && (

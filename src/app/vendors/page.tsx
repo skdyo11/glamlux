@@ -105,7 +105,7 @@ export default function VendorsPage() {
              {isLoadingDeals ? (
                [1, 2, 3].map(i => <Skeleton key={i} className="h-64 w-96 shrink-0 rounded-none" />)
              ) : featuredDeals?.map((deal) => (
-               <Link key={deal.id} href={`/deals/${deal.id}`} className="snap-start shrink-0 group relative overflow-hidden transition-all duration-700">
+               <Link key={deal.id} href={`/deals/${deal.id}`} className="snap-start shrink-0 group relative overflow-hidden transition-all duration-700 hover:-translate-y-2">
                  <article className="w-96 space-y-6">
                    <div className="relative h-60 overflow-hidden border border-primary/5 shadow-lg group-hover:shadow-2xl transition-all duration-700">
                      <Image 
@@ -169,14 +169,14 @@ export default function VendorsPage() {
               const isFav = isFavoriteVendor(vendor.id);
               const vendorSlug = vendor.slug || slugify(vendor.name);
               return (
-                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block relative">
+                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block relative hover:-translate-y-4 hover:shadow-3xl transition-all duration-500 z-10">
                   <article className="space-y-10">
-                    <div className="relative h-[450px] overflow-hidden border border-primary/5 bg-muted shadow-xl group-hover:shadow-3xl transition-all duration-1000">
+                    <div className="relative h-[450px] overflow-hidden border border-primary/5 bg-muted shadow-xl transition-all duration-1000">
                       <Image 
                         src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/vogue-vendor/800/1000'} 
                         alt={vendor.name}
                         fill
-                        className="object-cover grayscale transition-all duration-1000 group-hover:scale-110 group-hover:grayscale-0"
+                        className="object-cover transition-all duration-1000 group-hover:scale-110"
                       />
                       <button 
                         onClick={(e) => handleFavoriteToggle(e, vendor.id)}
