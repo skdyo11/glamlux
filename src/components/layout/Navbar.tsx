@@ -31,7 +31,7 @@ import {
   Download,
   Map as MapIcon,
   ArrowLeft,
-  Home
+  House
 } from 'lucide-react';
 import {
   Sheet,
@@ -207,7 +207,7 @@ export function Navbar() {
               <div className="flex items-center gap-2">
                 {pathname !== '/' && (
                   <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/"><Home className="h-5 w-5" /></Link>
+                    <Link href="/"><House className="h-5 w-5" /></Link>
                   </Button>
                 )}
                 <Button 
@@ -229,7 +229,7 @@ export function Navbar() {
               <div className="flex items-center gap-3">
                 {pathname !== '/' && (
                   <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/"><Home className="h-5 w-5" /></Link>
+                    <Link href="/"><House className="h-5 w-5" /></Link>
                   </Button>
                 )}
                 <Button 
