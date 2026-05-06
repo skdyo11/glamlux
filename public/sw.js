@@ -7,6 +7,5 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Standard fetch handler to satisfy PWA requirements
-  event.respondWith(fetch(event.request));
+  // Standard PWA fetch handler
 });
