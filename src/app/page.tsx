@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Star, Trophy, MapPin, Sparkles } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowRight, Star, MapPin, Search, Scissors, Heart, Sparkles, ShoppingBag } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { slugify } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -12,150 +13,173 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
 
 export default function Home() {
   const { getCurrency } = useStore();
   const firestore = useFirestore();
-  const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
+  const [searchVal, setSearchVal] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const eliteQuery = useMemoFirebase(() => {
+  const topVendorsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'parlours'), orderBy('rating', 'desc'), limit(3));
+    return query(collection(firestore, 'parlours'), orderBy('rating', 'desc'), limit(4));
   }, [firestore]);
 
-  const { data: rankedVendors, isLoading: isLoadingElite } = useCollection(eliteQuery);
+  const { data: topVendors, isLoading: isLoadingVendors } = useCollection(topVendorsQuery);
 
-  const servicesQuery = useMemoFirebase(() => {
+  const featuredDealsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'deals'), limit(6));
   }, [firestore]);
 
-  const { data: services, isLoading: isLoadingServices } = useCollection(servicesQuery);
+  const { data: deals, isLoading: isLoadingDeals } = useCollection(featuredDealsQuery);
 
   if (!isMounted) return null;
 
-  const isDark = theme === 'dark';
-
-  const getIconProps = (filled = false) => ({
-    strokeWidth: 1.8,
-    fill: (isDark || filled) ? 'currentColor' : 'none'
-  });
+  const categories = [
+    { name: 'Bridal', icon: <Sparkles className="h-6 w-6" /> },
+    { name: 'Hair', icon: <Scissors className="h-6 w-6" /> },
+    { name: 'Skin', icon: <Heart className="h-6 w-6" /> },
+    { name: 'Products', icon: <ShoppingBag className="h-6 w-6" />, href: '/shop' },
+    { name: 'Nails', icon: <Sparkles className="h-6 w-6" /> },
+    { name: 'Spa', icon: <MapPin className="h-6 w-6" /> },
+  ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow">
-        {/* Hero Section - Compact Editorial */}
-        <section className="relative min-h-[90vh] flex flex-col md:flex-row items-stretch overflow-hidden border-b border-primary/10">
-          <div className="w-full md:w-[60%] relative min-h-[40vh] md:min-h-[90vh]">
-            <Image 
-              src="https://picsum.photos/seed/editorial-beauty-magazine/1920/1080" 
-              alt="Elite Beauty" 
-              fill 
-              className="object-cover contrast-[1.1]"
-              priority
-              data-ai-hint="fashion portrait"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
-          </div>
-          
-          <div className="w-full md:w-[40%] flex flex-col justify-center p-8 md:p-16 bg-background relative border-l border-primary/10">
-            <div className="max-w-md space-y-8 animate-in fade-in slide-in-from-right-8 duration-1000">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-3">
-                  <span className="h-px w-8 bg-secondary" />
-                  <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[9px]">Registry MMXXIV</span>
-                </div>
-                <h1 className="text-4xl md:text-6xl font-headline leading-[0.85] tracking-tighter text-primary">
-                  PURE <br />
-                  <span className="italic text-secondary">ESTHETIC.</span>
-                </h1>
-                <p className="text-base text-muted-foreground font-body max-w-sm leading-relaxed italic pt-2">
-                  A structured collection of the most prestigious artisan sanctuaries across the subcontinent.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground rounded-none border-none h-14 vogue-button shadow-none border-b-2 border-secondary/20">
-                  <Link href="/deals" className="flex items-center justify-between w-full">The Services <ArrowRight {...getIconProps(true)} className="h-4 w-4" /></Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary/10 text-primary rounded-none h-14 vogue-button hover:bg-primary hover:text-primary-foreground">
-                  <Link href="/shop" className="flex items-center justify-between w-full">The Boutique <ArrowRight {...getIconProps()} className="h-4 w-4" /></Link>
-                </Button>
+      <main className="flex-grow pt-28">
+        {/* Marketplace Hero */}
+        <section className="bg-secondary/40 dark:bg-muted/10 py-12 md:py-20 px-4 md:px-6">
+          <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
+            <div className="flex-1 space-y-8">
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
+                Beauty services and products, <span className="text-primary italic">delivered to you.</span>
+              </h1>
+              <div className="max-w-xl relative flex items-center shadow-marketplace bg-white dark:bg-card rounded-2xl p-2">
+                <MapPin className="ml-4 h-5 w-5 text-primary" />
+                <Input 
+                  placeholder="Enter your location to find parlours" 
+                  className="flex-grow border-none focus-visible:ring-0 text-base py-6 px-4"
+                  value={searchVal}
+                  onChange={(e) => setSearchVal(e.target.value)}
+                />
+                <Button size="lg" className="rounded-xl px-8 font-bold">Find Parlours</Button>
               </div>
             </div>
-            
-            <div className="absolute bottom-10 right-10 text-[8px] font-black uppercase tracking-[0.5em] text-primary/10 rotate-90 origin-right">
-              Artisan Protocol • Verified
+            <div className="hidden md:block flex-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
+              <Image 
+                src="https://picsum.photos/seed/beauty-marketplace/800/600" 
+                alt="Beauty Marketplace" 
+                fill 
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </section>
 
-        {/* The Elite Registry */}
-        <section className="py-32 bg-white dark:bg-transparent">
-          <div className="container mx-auto px-6">
-            <header className="grid grid-cols-1 md:grid-cols-12 mb-24 items-end">
-              <div className="md:col-span-8 space-y-6">
-                <Trophy {...getIconProps()} className="h-8 w-8 text-secondary mb-4" />
-                <h2 className="text-6xl md:text-8xl font-headline tracking-tighter text-primary leading-none">The Index.</h2>
-                <p className="text-lg text-muted-foreground max-w-md font-body italic border-l border-secondary/30 pl-8">
-                  Confirmed guests for their uncompromising commitment to precision.
-                </p>
-              </div>
-              <div className="md:col-span-4 flex justify-end">
-                <Link href="/vendors" className="text-[10px] font-bold uppercase tracking-[0.4em] border-b-2 border-primary pb-2 hover:border-secondary hover:text-secondary transition-all flex items-center gap-4 group">
-                  EXPLORE ALL SANCTUARIES <ArrowRight {...getIconProps()} className="h-3 w-3 group-hover:translate-x-2 transition-transform" />
+        {/* Categories Grid */}
+        <section className="py-16">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold">Explore Categories</h2>
+            </div>
+            <div className="flex gap-8 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4">
+              {categories.map((cat, i) => (
+                <Link 
+                  key={i} 
+                  href={cat.href || `/vendors?category=${cat.name}`}
+                  className="group flex flex-col items-center gap-4 shrink-0 transition-transform active:scale-95"
+                >
+                  <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-muted flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-marketplace">
+                    {cat.icon}
+                  </div>
+                  <span className="text-sm font-bold">{cat.name}</span>
                 </Link>
-              </div>
-            </header>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 border border-primary/5">
-              {isLoadingElite ? (
-                [1, 2, 3].map(n => <Skeleton key={n} className="md:col-span-4 h-[600px] border-r border-primary/5" />)
+        {/* Your Daily Deals */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="text-2xl font-bold mb-8">Best Offers for You</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {isLoadingDeals ? (
+                 [1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-2xl" />)
               ) : (
-                rankedVendors?.map((vendor, index) => {
+                deals?.map((deal) => (
+                  <Link 
+                    key={deal.id} 
+                    href={`/deals/${deal.id}`}
+                    className="group relative h-48 rounded-2xl overflow-hidden shadow-marketplace bg-white dark:bg-card border hover:-translate-y-1 transition-all"
+                  >
+                    <Image src={`https://picsum.photos/seed/deal-${deal.id}/600/400`} alt={deal.name} fill className="object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
+                      <p className="text-white font-bold text-xl leading-tight">{deal.name}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge className="bg-primary text-white border-none">{Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% Off</Badge>
+                        <span className="text-white text-sm font-medium">{getCurrency()} {deal.discountPrice.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Parlours */}
+        <section className="py-20">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex items-center justify-between mb-10">
+              <div className="space-y-1">
+                <h2 className="text-3xl font-bold">Top Rated Parlours</h2>
+                <p className="text-muted-foreground">The most loved beauty destinations on GlamLux.</p>
+              </div>
+              <Link href="/vendors" className="text-primary font-bold flex items-center gap-2 hover:underline">
+                View all <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {isLoadingVendors ? (
+                [1, 2, 3, 4].map(n => <Skeleton key={n} className="h-[350px] rounded-2xl" />)
+              ) : (
+                topVendors?.map((vendor) => {
                   const vendorSlug = vendor.slug || slugify(vendor.name);
                   return (
                     <Link 
                       key={vendor.id} 
                       href={`/vendors/${vendorSlug}`} 
-                      className={cn(
-                        "group relative md:col-span-4 border-r last:border-r-0 border-primary/5 overflow-hidden bg-white dark:bg-card/30 p-10 transition-all duration-700 hover:bg-primary hover:text-primary-foreground hover:-translate-y-4 hover:shadow-3xl hover:z-20",
-                        index === 1 && "md:mt-16 md:-mb-16 md:z-10 md:bg-background dark:md:bg-card border-x"
-                      )}
+                      className="group flex flex-col gap-4 transition-all"
                     >
-                      <div className="space-y-10">
-                        <div className="flex justify-between items-start">
-                          <span className="font-headline text-4xl italic opacity-20 text-primary">0{index + 1}</span>
-                          <div className="flex items-center gap-1 text-secondary">
-                             <Star {...getIconProps(true)} className="h-3.5 w-3.5" />
-                             <span className="text-[9px] font-bold uppercase tracking-widest">{vendor.rating}</span>
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-marketplace">
+                        <Image 
+                          src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/p-1/400/300'} 
+                          alt={vendor.name} 
+                          fill 
+                          className="object-cover transition-transform group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-bold truncate pr-4">{vendor.name}</h3>
+                          <div className="flex items-center gap-1 text-sm font-bold text-amber-500">
+                             <Star className="h-4 w-4 fill-current" />
+                             <span>{vendor.rating}</span>
                           </div>
                         </div>
-                        
-                        <div className="relative aspect-[3/4] overflow-hidden transition-all duration-1000">
-                          <Image 
-                            src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/elite-1/800/1000'} 
-                            alt={vendor.name} 
-                            fill 
-                            className="object-cover group-hover:scale-110 transition-transform duration-1000"
-                          />
-                        </div>
-
-                        <div className="space-y-3">
-                          <h3 className="text-3xl font-headline tracking-tight">{vendor.name}</h3>
-                          <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                            <span className="flex items-center gap-2"><MapPin {...getIconProps()} className="h-3 w-3 text-secondary" /> {vendor.areaTag}</span>
-                            <span className="flex items-center gap-2"><Star {...getIconProps(true)} className="h-3 w-3 fill-secondary text-secondary" /> {vendor.rating}</span>
-                          </div>
-                        </div>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> {vendor.areaTag}
+                        </p>
                       </div>
                     </Link>
                   );
@@ -164,87 +188,36 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Featured Transformations */}
-        <section className="py-32 bg-background border-t border-primary/10">
-          <div className="container mx-auto px-6">
-            <header className="mb-24 space-y-3 text-center">
-              <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[9px]">Season MMXXIV</span>
-              <h2 className="text-6xl md:text-8xl font-headline tracking-tighter text-primary italic leading-none">Signature Edits.</h2>
-            </header>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-primary/10">
-              {isLoadingServices ? (
-                 [1, 2, 3].map(n => <Skeleton key={n} className="h-[500px] border-r border-primary/10" />)
-              ) : (
-                services?.map((service, idx) => (
-                  <Link 
-                    key={service.id} 
-                    href={`/deals/${service.id}`} 
-                    className={cn(
-                      "group relative p-10 border-r border-b border-primary/10 hover:bg-secondary/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl z-10",
-                      (idx + 1) % 3 === 0 && "md:border-r-0"
-                    )}
-                  >
-                    <article className="space-y-8">
-                      <div className="relative aspect-square overflow-hidden bg-muted border border-primary/5 transition-all duration-700">
-                        <Image 
-                          src={`https://picsum.photos/seed/service-${service.id}/800/800`} 
-                          alt={service.name} 
-                          fill 
-                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
-                        />
-                      </div>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[9px] font-bold uppercase tracking-[0.5em] text-secondary">{service.category}</span>
-                          <span className="text-lg font-bold tracking-tighter">{getCurrency()} {service.discountPrice.toLocaleString()}</span>
-                        </div>
-                        <h3 className="text-2xl font-headline leading-[0.9] text-primary group-hover:underline underline-offset-4 decoration-secondary/30 transition-all">{service.name}</h3>
-                      </div>
-                    </article>
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
-        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="py-32 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
-            <div className="md:col-span-6 space-y-8">
-              <h4 className="font-headline text-6xl italic tracking-tighter leading-none">GlamLux.</h4>
-              <p className="text-xs opacity-40 font-body leading-relaxed max-w-sm italic">
-                The premier marketplace for elite beauty sanctuaries and professional artistry essentials. Designed for the precise.
+      <footer className="bg-muted py-20 mt-20 border-t">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div className="col-span-1 md:col-span-2 space-y-6">
+              <h4 className="font-bold text-3xl text-primary">GlamLux</h4>
+              <p className="text-muted-foreground max-w-md">
+                The leading beauty marketplace connecting you with top-tier parlours and professional products.
               </p>
             </div>
-            <div className="md:col-span-3 space-y-6">
-              <h5 className="text-[9px] font-bold uppercase tracking-[0.4em] text-secondary">Registry</h5>
-              <ul className="space-y-3 text-xs font-bold uppercase tracking-[0.2em] opacity-40">
-                <li><Link href="/vendors" className="hover:text-secondary transition-all">Sanctuaries</Link></li>
-                <li><Link href="/deals" className="hover:text-secondary transition-all">Service Edits</Link></li>
-                <li><Link href="/shop" className="hover:text-secondary transition-all">The Boutique</Link></li>
+            <div>
+              <h5 className="font-bold mb-6">Quick Links</h5>
+              <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+                <li><Link href="/vendors" className="hover:text-primary transition-colors">Find Parlours</Link></li>
+                <li><Link href="/shop" className="hover:text-primary transition-colors">Shop Products</Link></li>
+                <li><Link href="/deals" className="hover:text-primary transition-colors">Browse Deals</Link></li>
               </ul>
             </div>
-            <div className="md:col-span-3 space-y-6">
-              <h5 className="text-[9px] font-bold uppercase tracking-[0.4em] text-secondary">Inquiries</h5>
-              <ul className="space-y-3 text-xs font-bold uppercase tracking-[0.2em] opacity-40">
-                <li><Link href="/portal" className="hover:text-secondary transition-all">Partnership</Link></li>
-                <li><Link href="/messages" className="hover:text-secondary transition-all">Support</Link></li>
-                <li><Link href="/messages" className="hover:text-secondary transition-all">Relations</Link></li>
+            <div>
+              <h5 className="font-bold mb-6">For Partners</h5>
+              <ul className="space-y-4 text-sm font-medium text-muted-foreground">
+                <li><Link href="/portal" className="hover:text-primary transition-colors">List your Parlour</Link></li>
+                <li><Link href="/portal" className="hover:text-primary transition-colors">Become a Rider</Link></li>
+                <li><Link href="/signup?role=vendor" className="hover:text-primary transition-colors">Partner Signup</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-32 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 opacity-20">
-            <p className="text-[8px] font-black uppercase tracking-[0.5em]">© MMXXIV GLAMLUX ARTISAN REGISTRY</p>
-            <div className="flex gap-8 text-[8px] font-black uppercase tracking-[0.5em]">
-              <span>London</span>
-              <span>Lahore</span>
-              <span>Delhi</span>
-            </div>
+          <div className="mt-20 pt-8 border-t text-center text-xs text-muted-foreground">
+            <p>© 2024 GlamLux Marketplace. All rights reserved.</p>
           </div>
         </div>
       </footer>

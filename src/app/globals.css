@@ -6,27 +6,27 @@
 
 @layer base {
   :root {
-    /* Editorial Vogue Palette - High Contrast Artisan */
-    --background: 240 10% 97%; /* Light Taupe #F7F7F9 */
-    --foreground: 240 3% 15%;  /* Very Dark Charcoal */
+    /* Marketplace Brand Palette - Glam Pink & Clean White */
+    --background: 0 0% 100%;
+    --foreground: 240 3% 15%;
     --card: 0 0% 100%;
     --card-foreground: 240 3% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 3% 15%;
-    --primary: 240 3% 15%;     /* Deepest Charcoal */
+    --primary: 332 87% 45%;    /* Foodpanda-style vibrant Pink #D70F64 */
     --primary-foreground: 0 0% 98%;
-    --secondary: 42 30% 66%;   /* Champagne Gold #C1B290 */
+    --secondary: 0 0% 96%;
     --secondary-foreground: 240 3% 15%;
-    --muted: 240 5% 90%;
+    --muted: 240 5% 96%;
     --muted-foreground: 240 3% 45%;
-    --accent: 42 30% 95%;      /* Very faint gold */
-    --accent-foreground: 42 30% 40%;
+    --accent: 332 87% 97%;     /* Soft Pink background */
+    --accent-foreground: 332 87% 45%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3% 85%;
-    --input: 240 3% 85%;
-    --ring: 240 3% 15%;
-    --radius: 0rem; /* Stark edges for true Editorial look */
+    --border: 240 5% 90%;
+    --input: 240 5% 90%;
+    --ring: 332 87% 45%;
+    --radius: 0.75rem; /* Friendly rounded corners for marketplace feel */
   }
 
   .dark {
@@ -36,17 +36,17 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 3% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 3% 6%;
-    --secondary: 42 30% 66%;
-    --secondary-foreground: 240 3% 6%;
+    --primary: 332 87% 55%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3% 12%;
+    --secondary-foreground: 0 0% 98%;
     --muted: 240 3% 12%;
     --muted-foreground: 240 3% 65%;
-    --accent: 240 3% 10%;
-    --accent-foreground: 42 30% 80%;
+    --accent: 332 87% 10%;
+    --accent-foreground: 332 87% 80%;
     --border: 240 3% 15%;
     --input: 240 3% 15%;
-    --ring: 0 0% 98%;
+    --ring: 332 87% 55%;
   }
 }
 
@@ -56,30 +56,7 @@
   }
   body {
     @apply bg-background text-foreground font-body overflow-x-hidden transition-colors duration-150 antialiased;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
-    background-repeat: repeat;
-    background-blend-mode: overlay;
   }
-}
-
-/* Sharp UI Signatures */
-.soft-focus {
-  @apply saturate-[0.85] transition-opacity duration-300 ease-in-out;
-}
-
-.wavy-bg {
-  @apply fixed inset-0 -z-10 opacity-[0.01] pointer-events-none;
-  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 80px 80px;
-}
-
-.vogue-card {
-  @apply border border-primary/5 bg-card transition-all duration-500;
-}
-
-.vogue-button {
-  @apply uppercase tracking-[0.3em] font-bold transition-all duration-300;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -90,18 +67,13 @@
   scrollbar-width: none;
 }
 
-/* Leaflet Overrides */
-.leaflet-container {
-  @apply border border-primary/10 grayscale-[0.8] contrast-[1.2];
-  height: 350px;
-  width: 100%;
+/* Marketplace Shadows */
+.shadow-marketplace {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 
-/* Custom Editorial Overlaps */
-.editorial-overlap {
-  @apply relative;
-}
-.editorial-overlap::before {
-  content: '';
-  @apply absolute -top-10 -left-10 w-40 h-40 border-l border-t border-secondary/20 -z-10;
+.leaflet-container {
+  @apply border border-border;
+  height: 350px;
+  width: 100%;
 }
