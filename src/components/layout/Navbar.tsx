@@ -90,11 +90,6 @@ export function Navbar() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.error);
-    }
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
@@ -150,10 +145,10 @@ export function Navbar() {
   return (
     <>
       <nav className={cn(
-        "fixed top-0 z-50 w-full border-b bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
+        "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
         showBanner ? "h-[100px]" : "h-16"
       )}>
-        {/* PWA Download Banner - Slimmed Down */}
+        {/* PWA Download Banner */}
         {showBanner && (
           <div className="h-9 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -388,7 +383,7 @@ export function Navbar() {
       </nav>
 
       <div className={cn(
-        "fixed z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-6 text-sm font-bold shadow-sm transition-all duration-300",
+        "fixed inset-x-0 z-40 h-16 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-[100px]" : "top-16"
       )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
