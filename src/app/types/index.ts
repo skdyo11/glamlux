@@ -1,5 +1,5 @@
 
-export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered';
+export type DeliveryStatus = 'Pending' | 'Picked Up' | 'Delivered' | 'Committed' | 'Verified';
 
 export type Vendor = {
   id: string;
@@ -9,6 +9,7 @@ export type Vendor = {
   area_tag: string;
   address?: string;
   rating: number;
+  reviewCount?: number;
   images: string[];
   owner_currency: 'PKR' | 'INR';
   commission_rate: number;
@@ -16,6 +17,8 @@ export type Vendor = {
   slug?: string;
   myImage?: string;
   myCover?: string;
+  ownerId: string;
+  isDeliveryTeam?: boolean;
 };
 
 export type DealCategory = 'Bridal' | 'Hair' | 'Skin';
@@ -33,6 +36,8 @@ export type Deal = {
   upsellProductId?: string;
   currency: 'PKR' | 'INR';
   isDummy?: boolean;
+  rating?: number;
+  reviewCount?: number;
 };
 
 export type Product = {
@@ -48,6 +53,8 @@ export type Product = {
   weightKg?: number;
   discountExpiry?: string;
   isDummy?: boolean;
+  rating?: number;
+  reviewCount?: number;
 };
 
 export type CartItem = {
@@ -80,12 +87,14 @@ export type Booking = {
   inspirationImageUrl?: string | null;
   arrival_time?: string;
   shippingAddress?: string;
+  isReviewed?: boolean;
 };
 
 export type Review = {
   id: string;
   bookingId?: string;
   targetId: string;
+  vendorId: string;
   userId: string;
   userName: string;
   rating: number;

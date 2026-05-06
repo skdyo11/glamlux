@@ -31,6 +31,7 @@
         "areaTag": { "type": "string" },
         "address": { "type": "string", "description": "Full physical address of the studio." },
         "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
         "imageUrls": { "type": "array", "items": { "type": "string" } },
         "myImage": { "type": "string", "description": "Custom artisan profile image." },
         "myCover": { "type": "string", "description": "Custom artisan cover banner." },
@@ -56,7 +57,9 @@
         "currency": { "type": "string", "enum": ["PKR", "INR"] },
         "expiryDate": { "type": "string", "format": "date-time" },
         "depositPercent": { "type": "number" },
-        "upsellProductId": { "type": "string" }
+        "upsellProductId": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" }
       },
       "required": ["id", "parlourId", "name", "category", "discountPrice", "currency", "depositPercent"]
     },
@@ -76,7 +79,9 @@
         "stockCount": { "type": "number" },
         "weightKg": { "type": "number" },
         "imageUrl": { "type": "string" },
-        "discountExpiry": { "type": "string", "format": "date-time" }
+        "discountExpiry": { "type": "string", "format": "date-time" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" }
       },
       "required": ["id", "name", "brand", "price", "currency", "stockCount"]
     },
@@ -95,12 +100,13 @@
         "shippingCost": { "type": "number" },
         "currency": { "type": "string", "enum": ["PKR", "INR"] },
         "qrVerified": { "type": "boolean" },
-        "deliveryStatus": { "type": "string", "enum": ["Pending", "Picked Up", "Delivered", "Committed"] },
+        "deliveryStatus": { "type": "string", "enum": ["Pending", "Picked Up", "Delivered", "Committed", "Verified"] },
         "paymentStatus": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "groupSize": { "type": "number" },
         "inspirationImageUrl": { "type": "string" },
-        "shippingAddress": { "type": "string", "description": "Customer provided delivery address." }
+        "shippingAddress": { "type": "string", "description": "Customer provided delivery address." },
+        "isReviewed": { "type": "boolean" }
       },
       "required": ["id", "localUserId", "referenceCode", "totalPrice", "currency", "deliveryStatus", "createdAt"]
     },
@@ -113,6 +119,7 @@
         "id": { "type": "string" },
         "bookingId": { "type": "string" },
         "targetId": { "type": "string" },
+        "vendorId": { "type": "string" },
         "userId": { "type": "string" },
         "userName": { "type": "string" },
         "rating": { "type": "number" },
