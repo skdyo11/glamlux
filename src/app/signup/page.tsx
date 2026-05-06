@@ -103,15 +103,15 @@ export default function SignupPage() {
       document.cookie = `__session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
 
       toast({
-        title: "Account Registered",
-        description: `Identity verified. Welcome to the artisan gallery, ${name}!`,
+        title: "Account Created",
+        description: `Welcome to GlamLux, ${name}!`,
       });
 
       router.push(role === 'vendor' ? '/portal' : '/');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Registration Denied",
+        title: "Sign up Failed",
         description: error.message,
       });
     } finally {
@@ -131,7 +131,7 @@ export default function SignupPage() {
       if (!userDoc.exists()) {
         await setDoc(doc(firestore, 'users', user.uid), {
           uid: user.uid,
-          name: user.displayName || 'Artisan Guest',
+          name: user.displayName || 'Guest',
           email: user.email,
           role: 'customer',
           isVerified: true,
@@ -143,15 +143,15 @@ export default function SignupPage() {
       document.cookie = `__session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
 
       toast({
-        title: "Google Registry Active",
-        description: `Identity confirmed for ${user.displayName}.`,
+        title: "Sign up Successful",
+        description: `Welcome, ${user.displayName}.`,
       });
 
       router.push('/');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Verification Timed Out",
+        title: "Verification Failed",
         description: error.message,
       });
     } finally {
@@ -165,9 +165,9 @@ export default function SignupPage() {
       <main className="container mx-auto px-4 py-24 md:py-32 flex items-center justify-center">
         <Card className="w-full max-w-lg border-none shadow-3xl rounded-[3.5rem] bg-white/40 dark:bg-black/40 backdrop-blur-2xl p-6 md:p-10 ring-1 ring-black/5">
           <CardHeader className="text-center space-y-4">
-            <h1 className="text-5xl md:text-7xl font-headline italic text-primary tracking-tighter leading-none">Artisan Collection</h1>
+            <h1 className="text-5xl md:text-7xl font-headline italic text-primary tracking-tighter leading-none">Join GlamLux</h1>
             <CardDescription className="font-body italic text-muted-foreground text-base">
-              Begin your journey in professional beauty artistry.
+              Start your journey in the beauty marketplace.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8 pt-6">
@@ -183,13 +183,13 @@ export default function SignupPage() {
                 ) : (
                   <ShieldCheck className="h-5 w-5 mr-3 text-green-600" />
                 )}
-                {isVerifying ? "Confirming Registry..." : "Join with Google"}
+                {isVerifying ? "Processing..." : "Sign up with Google"}
               </Button>
               
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10"></span></div>
                 <div className="relative flex justify-center text-[8px] uppercase font-black tracking-[0.4em] text-primary/30">
-                  <span className="bg-white dark:bg-card px-4 py-1 rounded-full backdrop-blur-sm border border-primary/5">Manual Entry</span>
+                  <span className="bg-white dark:bg-card px-4 py-1 rounded-full backdrop-blur-sm border border-primary/5">Or use email</span>
                 </div>
               </div>
             </div>
@@ -197,11 +197,11 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Full Identity</Label>
+                  <Label htmlFor="name" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Full Name</Label>
                   <Input 
                     id="name" 
                     required 
-                    placeholder="Sara Khan" 
+                    placeholder="Jane Doe" 
                     className="rounded-full h-14 bg-white/80 dark:bg-white/5 border-primary/10 px-8 font-body shadow-inner"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -225,7 +225,7 @@ export default function SignupPage() {
                   id="email" 
                   type="email" 
                   required 
-                  placeholder="artisan@example.com" 
+                  placeholder="name@example.com" 
                   className="rounded-full h-14 bg-white/80 dark:bg-white/5 border-primary/10 px-8 font-body shadow-inner"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -233,7 +233,7 @@ export default function SignupPage() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Secure Key</Label>
+                <Label htmlFor="password" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Password</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -257,7 +257,7 @@ export default function SignupPage() {
               </div>
               
               <div className="space-y-4 pt-4">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 text-center block">Role Selection</Label>
+                <Label className="text-[10px] uppercase font-black tracking-widest text-primary/60 text-center block">I am joining as a:</Label>
                 <RadioGroup 
                   value={role} 
                   onValueChange={(v: any) => setRole(v)}
@@ -265,11 +265,11 @@ export default function SignupPage() {
                 >
                   <div className="flex items-center space-x-3">
                     <RadioGroupItem value="customer" id="customer" className="border-primary text-primary h-5 w-5" />
-                    <Label htmlFor="customer" className="font-bold text-xs uppercase tracking-widest cursor-pointer font-body">Guest</Label>
+                    <Label htmlFor="customer" className="font-bold text-xs uppercase tracking-widest cursor-pointer font-body">Customer</Label>
                   </div>
                   <div className="flex items-center space-x-3">
                     <RadioGroupItem value="vendor" id="vendor" className="border-primary text-primary h-5 w-5" />
-                    <Label htmlFor="vendor" className="font-bold text-xs uppercase tracking-widest cursor-pointer font-body">Artisan</Label>
+                    <Label htmlFor="vendor" className="font-bold text-xs uppercase tracking-widest cursor-pointer font-body">Business</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -279,15 +279,15 @@ export default function SignupPage() {
                 disabled={isLoading}
                 className="w-full h-20 bg-primary text-primary-foreground hover:bg-primary/95 rounded-full font-bold uppercase tracking-[0.3em] text-[11px] shadow-3xl transition-all duration-300 mt-6 active:scale-95"
               >
-                {isLoading ? "Synchronizing..." : "Create Artisan Account"}
+                {isLoading ? "Signing up..." : "Sign Up"}
               </Button>
 
               <div className="text-center pt-6">
                 <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-2">
-                  Already Registered?
+                  Already have an account?
                 </p>
                 <Link href="/login" className="text-primary font-bold italic font-headline text-2xl hover:text-accent-foreground transition-colors">
-                  Log In to Collection
+                  Login
                 </Link>
               </div>
             </form>

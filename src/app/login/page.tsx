@@ -40,15 +40,15 @@ export default function LoginPage() {
       document.cookie = `__session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
 
       toast({
-        title: "Identity Authenticated",
-        description: `Welcome back to the collection, ${user.displayName || email}.`,
+        title: "Login Successful",
+        description: `Welcome back, ${user.displayName || email}.`,
       });
 
       router.push(role === 'vendor' ? '/portal' : '/');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Authentication Failed",
+        title: "Login Failed",
         description: error.message,
       });
     } finally {
@@ -67,15 +67,15 @@ export default function LoginPage() {
       document.cookie = `__session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
 
       toast({
-        title: "Verified via Google",
-        description: `Access granted for ${user.displayName}.`,
+        title: "Google Login Successful",
+        description: `Welcome, ${user.displayName}.`,
       });
 
       router.push('/');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Verification Denied",
+        title: "Verification Failed",
         description: error.message,
       });
     } finally {
@@ -89,9 +89,9 @@ export default function LoginPage() {
       <main className="container mx-auto px-4 py-24 md:py-32 flex items-center justify-center">
         <Card className="w-full max-w-md border-none shadow-3xl rounded-[3rem] bg-white/40 dark:bg-black/40 backdrop-blur-2xl p-4 md:p-8 ring-1 ring-black/5">
           <CardHeader className="text-center space-y-4">
-            <h1 className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter leading-none">Artisan Registry</h1>
+            <h1 className="text-5xl md:text-6xl font-headline italic text-primary tracking-tighter leading-none">Welcome Back</h1>
             <CardDescription className="font-body italic text-muted-foreground text-base">
-              Secure authentication for verified members.
+              Login to access your beauty account.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8 pt-6">
@@ -107,32 +107,32 @@ export default function LoginPage() {
                 ) : (
                   <ShieldCheck className="h-5 w-5 mr-3 text-green-600" />
                 )}
-                {isVerifying ? "Verifying Identity..." : "Continue with Google"}
+                {isVerifying ? "Verifying..." : "Continue with Google"}
               </Button>
               
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-primary/10"></span></div>
                 <div className="relative flex justify-center text-[8px] uppercase font-black tracking-[0.4em] text-primary/30">
-                  <span className="bg-white dark:bg-card px-4 py-1 rounded-full backdrop-blur-sm border border-primary/5">Credential Access</span>
+                  <span className="bg-white dark:bg-card px-4 py-1 rounded-full backdrop-blur-sm border border-primary/5">Or use email</span>
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Registry Email</Label>
+                <Label htmlFor="email" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Email Address</Label>
                 <Input 
                   id="email" 
                   type="email" 
                   required 
-                  placeholder="artisan@glamlux.com" 
+                  placeholder="name@example.com" 
                   className="rounded-full h-14 bg-white/80 dark:bg-white/5 border-primary/10 px-8 font-body shadow-inner focus-visible:ring-primary/20"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Secure Key</Label>
+                <Label htmlFor="password" className="text-[10px] uppercase font-black tracking-widest text-primary/60 ml-4">Password</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -160,15 +160,15 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="w-full h-16 bg-primary text-primary-foreground hover:bg-primary/95 rounded-full font-bold uppercase tracking-[0.3em] text-[11px] shadow-2xl transition-all duration-300 mt-4 active:scale-95"
               >
-                {isLoading ? "Authenticating..." : "Verified Access"}
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
 
               <div className="text-center pt-4">
                 <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-2">
-                  Not on the registry?
+                  New to GlamLux?
                 </p>
                 <Link href="/signup" className="text-primary font-bold italic font-headline text-2xl hover:text-accent-foreground transition-colors">
-                  Join Artisan Collection
+                  Create an account
                 </Link>
               </div>
             </form>
