@@ -69,7 +69,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
             </div>
             <div className="space-y-2">
               <h1 className="text-6xl md:text-8xl font-headline text-primary italic tracking-tighter leading-none">Order Confirmed</h1>
-              <p className="text-muted-foreground italic text-lg font-body">Your artisan collection is being curated with precision.</p>
+              <p className="text-muted-foreground italic text-lg font-body">Your order is being prepared with care.</p>
             </div>
           </div>
 
@@ -77,8 +77,8 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
             {/* Voucher Card */}
             <Card className="rounded-[3.5rem] border-none shadow-3xl overflow-hidden bg-white/40 backdrop-blur-xl ring-1 ring-black/5">
               <div className="bg-primary p-10 text-center space-y-2">
-                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary-foreground/60">Registry Document</span>
-                <h2 className="font-headline text-4xl text-primary-foreground italic">Elite Access Pass</h2>
+                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary-foreground/60">Order Document</span>
+                <h2 className="font-headline text-4xl text-primary-foreground italic">Booking Pass</h2>
               </div>
               <CardContent className="p-12 space-y-10 text-center">
                 <div className="bg-white p-6 inline-block rounded-[3rem] shadow-inner ring-1 ring-black/5 scale-110 mb-4">
@@ -89,7 +89,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 text-primary">Identity Reference</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 text-primary">Order Reference</p>
                   <p className="font-headline text-4xl text-primary italic">{booking?.referenceCode || id}</p>
                 </div>
                 <div className="flex gap-4 pt-4">
@@ -106,7 +106,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
             {/* Delivery Tracker */}
             <Card className="rounded-[3.5rem] border-none shadow-3xl bg-white/40 backdrop-blur-xl p-12 space-y-10 ring-1 ring-black/5">
               <div className="flex items-center justify-between">
-                <h3 className="font-headline text-4xl italic text-primary">Logistics Registry</h3>
+                <h3 className="font-headline text-4xl italic text-primary">Tracking Status</h3>
                 <Badge variant="outline" className="rounded-full bg-primary/5 border-none text-[9px] font-black uppercase px-4 py-1.5 text-primary shadow-sm">
                   {booking?.deliveryStatus || 'Pending'}
                 </Badge>
@@ -143,14 +143,14 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
               <div className="pt-8 border-t border-primary/5 space-y-6">
                  <div className="flex flex-col gap-2 text-primary/60 italic text-sm font-body">
                    <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-rose-400" /> Recipient: <span className="font-bold text-primary not-italic">{booking?.userName}</span>
+                    <MapPin className="h-5 w-5 text-rose-400" /> Guest: <span className="font-bold text-primary not-italic">{booking?.userName}</span>
                    </div>
                    <div className="flex items-center gap-3 ml-8 text-[11px] font-mono tracking-widest">
                     {booking?.userPhone}
                    </div>
                  </div>
                  <Button asChild variant="ghost" className="w-full h-16 rounded-full font-bold text-[11px] uppercase tracking-widest text-primary hover:bg-primary/5 font-body">
-                   <Link href="/messages" className="flex items-center justify-center gap-2">Artisan Support Chat <ArrowRight className="h-4 w-4" /></Link>
+                   <Link href="/messages" className="flex items-center justify-center gap-2">Chat with Support <ArrowRight className="h-4 w-4" /></Link>
                  </Button>
               </div>
             </Card>
@@ -158,7 +158,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
 
           <div className="text-center pt-8">
             <Button asChild variant="link" className="text-primary hover:text-accent-foreground font-bold italic text-lg font-headline tracking-tight">
-              <Link href="/">Return to Artisan Collection</Link>
+              <Link href="/">Return to Home</Link>
             </Button>
           </div>
         </div>

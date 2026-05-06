@@ -7,6 +7,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Basic fetch handler required for PWA installability
+  // Mandatory fetch handler for PWA installability
   event.respondWith(fetch(event.request));
 });
