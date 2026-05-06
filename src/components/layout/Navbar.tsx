@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -52,7 +53,7 @@ const CustomHomeIcon = ({ className }: { className?: string }) => (
     className={className} 
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M12 2c-1.3 0-2.6.5-3.5 1.5L3.5 8.5C2.5 9.5 2 10.8 2 12.2V17c0 2.8 2.2 5 5 5h3v-3c0-1.1.9-2 2-2s2 .9 2 2v3h3c2.8 0 5-2.2 5-5v-4.8c0-1.4-.5-2.7-1.5-3.7l-5-5C14.6 2.5 13.3 2 12 2z" />
+    <path d="M12 2c-1.1 0-2.1.4-2.9 1.1L3.9 8.3C3.3 8.9 3 9.7 3 10.6V18c0 2.2 1.8 4 4 4h2c.6 0 1-.4 1-1v-4c0-1.1.9-2 2-2s2 .9 2 2v4c0 .6.4 1 1 1h2c2.2 0 4-1.8 4-4v-7.4c0-.9-.3-1.7-.9-2.3L14.9 3.1C14.1 2.4 13.1 2 12 2z" />
   </svg>
 );
 
