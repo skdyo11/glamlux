@@ -1,3 +1,5 @@
+
+// Simple Service Worker for PWA compliance
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,6 +9,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple pass-through for prototype
-  event.respondWith(fetch(event.request));
+  // Network-first strategy for dynamic registry data
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });

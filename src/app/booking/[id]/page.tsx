@@ -6,10 +6,10 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Download, Share2, CheckCircle2, QrCode, Truck, Package, MapPin, Clock, ArrowRight, Star, StarHalf } from 'lucide-react';
+import { Sparkles, Download, Share2, CheckCircle2, QrCode, Package, Clock, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useDoc, useMemoFirebase, useFirestore, useUser, addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { doc, getDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, collection } from 'firebase/firestore';
 import { QRCodeCanvas } from 'qrcode.react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState, use, Suspense } from 'react';
@@ -19,7 +19,6 @@ import { useToast } from '@/hooks/use-toast';
 
 function BookingContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const searchParams = useSearchParams();
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
@@ -47,83 +46,77 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
     setIsSubmittingReview(true);
 
     try {
-      // 1. Create reviews for each item in the cart
       const cartItems = booking.cartItems || [];
-      const reviewPromises = cartItems.map(async (item) => {
-        const reviewRef = collection(firestore, 'reviews');
-        const reviewData = {
-          bookingId: booking.id,
-          targetId: item.id,
-          vendorId: booking.vendorId || 'v1',
-          userId: user.uid,
-          userName: booking.userName || user.displayName || 'Guest',
-          rating: rating,
-          comment: comment,
-          isVerified: true,
-          createdAt: new Date().toISOString()
-        };
+      
+      // 1. Create a master review entry
+      const reviewRef = collection(firestore, 'reviews');
+      addDocumentNonBlocking(reviewRef, {
+        bookingId: booking.id,
+        vendorId: booking.vendorId || 'v1',
+        userId: user.uid,
+        userName: booking.userName || user.displayName || 'Guest',
+        rating: rating,
+        comment: comment,
+        isVerified: true,
+        createdAt: new Date().toISOString()
+      });
 
-        addDocumentNonBlocking(reviewRef, reviewData);
-
-        // 2. Impact specific Product/Deal Rating
+      // 2. Update Ratings for all items in the booking
+      for (const item of cartItems) {
         const targetColl = item.type === 'product' ? 'products' : 'deals';
         const targetRef = doc(firestore, targetColl, item.id);
-        const targetSnap = await getDoc(targetRef);
+        const snap = await getDoc(targetRef);
         
-        if (targetSnap.exists()) {
-          const data = targetSnap.data();
-          const currentRating = data.rating || 5.0;
-          const currentCount = data.reviewCount || 10; // Base count for dummy data
-          const newCount = currentCount + 1;
-          const newRating = ((currentRating * currentCount) + rating) / newCount;
+        if (snap.exists()) {
+          const data = snap.data();
+          const oldRating = data.rating || 5.0;
+          const oldCount = data.reviewCount || 10;
+          const newCount = oldCount + 1;
+          const newRating = ((oldRating * oldCount) + rating) / newCount;
 
           updateDocumentNonBlocking(targetRef, {
             rating: Number(newRating.toFixed(1)),
             reviewCount: newCount
           });
         }
-      });
+      }
 
-      await Promise.all(reviewPromises);
-
-      // 3. Impact Overall Parlour Rating
+      // 3. Update Overall Parlour prestige
       if (booking.vendorId) {
         const parlourRef = doc(firestore, 'parlours', booking.vendorId);
         const parlourSnap = await getDoc(parlourRef);
         if (parlourSnap.exists()) {
-          const data = parlourSnap.data();
-          const currentRating = data.rating || 5.0;
-          const currentCount = data.reviewCount || 20;
-          const newCount = currentCount + 1;
-          const newRating = ((currentRating * currentCount) + rating) / newCount;
+          const pData = parlourSnap.data();
+          const pOldRating = pData.rating || 5.0;
+          const pOldCount = pData.reviewCount || 20;
+          const pNewCount = pOldCount + 1;
+          const pNewRating = ((pOldRating * pOldCount) + rating) / pNewCount;
 
           updateDocumentNonBlocking(parlourRef, {
-            rating: Number(newRating.toFixed(1)),
-            reviewCount: newCount
+            rating: Number(pNewRating.toFixed(1)),
+            reviewCount: pNewCount
           });
         }
       }
 
-      // 4. Mark booking as reviewed
+      // 4. Mark as reviewed
       updateDocumentNonBlocking(bookingRef!, { isReviewed: true });
 
       toast({
-        title: "Rating Received",
-        description: "Your verified feedback has been added to the artisan registry."
+        title: "Feedback Verified",
+        description: "Your rating has been synced with the artisan registry."
       });
     } catch (e) {
-      console.error(e);
-      toast({ variant: "destructive", title: "Rating Failed", description: "Could not sync review data." });
+      toast({ variant: "destructive", title: "Rating Failed", description: "Could not finalize feedback." });
     } finally {
       setIsSubmittingReview(false);
     }
   };
 
-  // Simulating the QR verification (This would normally happen on the vendor's scanner app)
   const simulateQrVerification = () => {
-    if (!bookingRef) return;
+    if (!bookingRef || booking?.deliveryStatus === 'Verified') return;
     updateDocumentNonBlocking(bookingRef, { deliveryStatus: 'Verified', qrVerified: true });
-    toast({ title: "Status Updated", description: "Service marked as Verified via QR scan." });
+    toast({ title: "Artisan Scan Verified", description: "The session is complete. You can now leave a rating." });
   };
 
   if (!isMounted) return null;
@@ -134,22 +127,14 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
         <Navbar />
         <main className="container mx-auto px-6 py-24 flex flex-col items-center space-y-12">
           <Skeleton className="h-20 w-20 rounded-full" />
-          <Skeleton className="h-16 w-1/2 rounded-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl">
-             <Skeleton className="h-[500px] rounded-[3rem]" />
-             <Skeleton className="h-[500px] rounded-[3rem]" />
+             <Skeleton className="h-[400px] rounded-[3rem]" />
+             <Skeleton className="h-[400px] rounded-[3rem]" />
           </div>
         </main>
       </div>
     );
   }
-
-  const steps = [
-    { label: 'Order Placed', icon: Package, date: 'Today', status: 'completed' },
-    { label: 'Processing', icon: Clock, date: 'Pending', status: booking?.deliveryStatus === 'Pending' ? 'current' : 'completed' },
-    { label: 'Verified', icon: Sparkles, date: 'QR scan', status: booking?.deliveryStatus === 'Verified' ? 'completed' : booking?.deliveryStatus === 'Committed' ? 'current' : 'upcoming' },
-    { label: 'Delivered', icon: CheckCircle2, date: 'Finalized', status: booking?.deliveryStatus === 'Delivered' ? 'current' : 'upcoming' },
-  ];
 
   const isVerified = booking?.deliveryStatus === 'Verified' || booking?.deliveryStatus === 'Delivered';
 
@@ -159,26 +144,30 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
       
       <main className="container mx-auto px-6 py-12 md:py-24 flex flex-col items-center">
         <div className="max-w-4xl w-full space-y-16">
-          {/* Header */}
           <div className="text-center space-y-6">
-            <div className="bg-primary/5 h-24 w-24 rounded-full flex items-center justify-center mx-auto shadow-2xl ring-1 ring-primary/10 animate-in zoom-in duration-700">
+            <div className="bg-primary/5 h-24 w-24 rounded-full flex items-center justify-center mx-auto shadow-2xl ring-1 ring-primary/10">
               <CheckCircle2 className="h-12 w-12 text-primary" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-6xl md:text-8xl font-headline text-primary italic tracking-tighter leading-none">Order Confirmed</h1>
-              <p className="text-muted-foreground italic text-lg font-body">Your beauty pass is ready for confirmation.</p>
+              <h1 className="text-6xl md:text-8xl font-headline text-primary italic tracking-tighter leading-none">Pass Ready.</h1>
+              <p className="text-muted-foreground italic text-lg font-body">Your beauty credentials have been issued.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            {/* Voucher Card */}
+            {/* Voucher */}
             <Card className="rounded-[3.5rem] border-none shadow-3xl overflow-hidden bg-white/40 backdrop-blur-xl ring-1 ring-black/5">
-              <div className="bg-primary p-10 text-center space-y-2">
-                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary-foreground/60">Registry Pass</span>
-                <h2 className="font-headline text-4xl text-primary-foreground italic">Booking Voucher</h2>
+              <div className="bg-primary p-10 text-center">
+                <h2 className="font-headline text-4xl text-primary-foreground italic">Studio Voucher</h2>
               </div>
               <CardContent className="p-12 space-y-10 text-center">
-                <div className="bg-white p-6 inline-block rounded-[3rem] shadow-inner ring-1 ring-black/5 scale-110 mb-4 cursor-pointer" onClick={simulateQrVerification}>
+                <div 
+                  className={cn(
+                    "bg-white p-6 inline-block rounded-[3rem] shadow-inner ring-1 ring-black/5 scale-110 mb-4 transition-transform active:scale-105 cursor-pointer",
+                    !isVerified && "animate-pulse ring-primary/20"
+                  )} 
+                  onClick={simulateQrVerification}
+                >
                   {booking?.referenceCode ? (
                     <QRCodeCanvas value={booking.referenceCode} size={180} level="H" includeMargin={true} />
                   ) : (
@@ -190,61 +179,26 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                   <p className="font-headline text-4xl text-primary italic">{booking?.referenceCode || id}</p>
                 </div>
                 <div className="flex gap-4 pt-4">
-                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10 font-body shadow-sm">
+                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
                     <Download className="h-4 w-4 mr-2" /> Save
                   </Button>
-                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10 font-body shadow-sm">
+                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
                     <Share2 className="h-4 w-4 mr-2" /> Share
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Delivery Tracker & Review */}
+            {/* Rating Section */}
             <div className="space-y-12">
-              <Card className="rounded-[3.5rem] border-none shadow-3xl bg-white/40 backdrop-blur-xl p-12 space-y-10 ring-1 ring-black/5">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-headline text-4xl italic text-primary">Tracking</h3>
-                  <Badge variant="outline" className="rounded-full bg-primary/5 border-none text-[9px] font-black uppercase px-4 py-1.5 text-primary shadow-sm">
-                    {booking?.deliveryStatus || 'Pending'}
-                  </Badge>
-                </div>
-
-                <div className="space-y-10">
-                  {steps.map((step, idx) => (
-                    <div key={idx} className="flex gap-8 relative">
-                      {idx !== steps.length - 1 && (
-                        <div className={cn(
-                          "absolute left-[1.375rem] top-10 w-0.5 h-16",
-                          step.status === 'completed' ? "bg-primary" : "bg-muted"
-                        )} />
-                      )}
-                      <div className={cn(
-                        "h-11 w-11 rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg transition-all",
-                        step.status === 'completed' ? "bg-primary text-primary-foreground" : 
-                        step.status === 'current' ? "bg-accent text-primary animate-pulse ring-4 ring-primary/10" : 
-                        "bg-muted text-muted-foreground"
-                      )}>
-                        <step.icon className="h-5 w-5" />
-                      </div>
-                      <div className="space-y-1 pt-1">
-                        <p className={cn(
-                          "text-lg font-bold font-body tracking-tight",
-                          step.status === 'upcoming' ? "text-muted-foreground/60" : "text-primary"
-                        )}>{step.label}</p>
-                        <p className="text-[10px] uppercase font-black opacity-30 tracking-[0.2em]">{step.date}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Rating Section - Verified Only */}
               {isVerified && !booking?.isReviewed ? (
-                <Card className="rounded-[3.5rem] border-none shadow-3xl bg-primary text-primary-foreground p-12 space-y-10 animate-in slide-in-from-bottom-4 duration-1000">
+                <Card className="rounded-[3.5rem] border-none shadow-3xl bg-primary text-primary-foreground p-12 space-y-10 animate-in slide-in-from-bottom-4 duration-700">
                   <div className="space-y-2 text-center">
-                    <h3 className="font-headline text-4xl italic">Rate Artisan</h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Impact the sanctuary ranking</p>
+                    <div className="bg-white/10 w-fit mx-auto px-4 py-1 rounded-full mb-4">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="font-headline text-4xl italic leading-none">Rate Your Experience</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Help others find elite artistry</p>
                   </div>
                   
                   <div className="flex justify-center gap-2">
@@ -254,7 +208,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
                         onClick={() => setRating(star)}
-                        className="transition-all active:scale-125"
+                        className="transition-all active:scale-125 hover:scale-110"
                       >
                         <Star 
                           className={cn(
@@ -279,7 +233,7 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                     disabled={rating === 0 || isSubmittingReview}
                     className="w-full h-16 bg-white text-primary hover:bg-white/90 rounded-full font-bold uppercase tracking-widest text-[11px] shadow-2xl"
                   >
-                    {isSubmittingReview ? "Submitting..." : "Submit verified rating"}
+                    {isSubmittingReview ? "Processing..." : "Submit verified rating"}
                   </Button>
                 </Card>
               ) : booking?.isReviewed ? (
@@ -289,11 +243,34 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                   <p className="text-xs opacity-80 italic">Your rating has been synced with the artisan registry.</p>
                 </Card>
               ) : (
-                <Card className="rounded-[3.5rem] border-none shadow-3xl bg-muted/40 p-12 text-center space-y-4 border border-dashed border-primary/10">
-                  <Sparkles className="h-10 w-10 mx-auto text-primary/20" />
-                  <h3 className="font-headline text-2xl italic text-primary/40">Verified Ratings</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary/20">Ratings unlock after QR confirmation</p>
-                </Card>
+                <div className="space-y-12">
+                   <Card className="rounded-[3.5rem] border-none shadow-3xl bg-white/40 backdrop-blur-xl p-12 space-y-8 ring-1 ring-black/5">
+                      <div className="space-y-1">
+                        <h3 className="font-headline text-4xl italic text-primary">Instructions</h3>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Verification required</p>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="flex gap-6 items-start">
+                          <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0 text-primary font-bold">1</div>
+                          <p className="text-sm italic font-body text-muted-foreground pt-2">Present the QR code to the artisan upon arrival at the studio.</p>
+                        </div>
+                        <div className="flex gap-6 items-start">
+                          <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0 text-primary font-bold">2</div>
+                          <p className="text-sm italic font-body text-muted-foreground pt-2">Once scanned, your experience will be marked as verified in the registry.</p>
+                        </div>
+                        <div className="flex gap-6 items-start">
+                          <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0 text-primary font-bold">3</div>
+                          <p className="text-sm italic font-body text-muted-foreground pt-2">Provide your verified rating to impact the sanctuary's global ranking.</p>
+                        </div>
+                      </div>
+                   </Card>
+
+                   <Card className="rounded-[3.5rem] border-none shadow-3xl bg-muted/20 p-12 text-center space-y-4 border border-dashed border-primary/10">
+                    <Sparkles className="h-10 w-10 mx-auto text-primary/20" />
+                    <h3 className="font-headline text-2xl italic text-primary/40">Ratings Locked</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary/20">Available after artisan confirmation</p>
+                  </Card>
+                </div>
               )}
             </div>
           </div>

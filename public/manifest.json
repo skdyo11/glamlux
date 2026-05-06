@@ -1,3 +1,4 @@
+
 {
   "name": "GlamLux Beauty Marketplace",
   "short_name": "GlamLux",
@@ -8,14 +9,16 @@
   "theme_color": "#D70F64",
   "icons": [
     {
-      "src": "https://picsum.photos/seed/glam-icon/192/192",
+      "src": "https://api.dicebear.com/9.x/initials/svg?seed=GL&backgroundColor=D70F64",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "https://picsum.photos/seed/glam-icon/512/512",
+      "src": "https://api.dicebear.com/9.x/initials/svg?seed=GL&backgroundColor=D70F64",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
