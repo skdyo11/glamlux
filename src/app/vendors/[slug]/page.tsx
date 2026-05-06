@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -203,7 +202,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ slug: 
               <CarouselContent className="h-full -ml-0">
                 {(vendor.imageUrls && vendor.imageUrls.length > 0 ? vendor.imageUrls : ['https://picsum.photos/seed/vendor-fallback/1200/800']).map((img: string, index: number) => (
                   <CarouselItem key={index} className="pl-0 h-full relative">
-                    <Image src={img} alt={`${vendor.name} ${index + 1}`} fill className="object-cover soft-focus brightness-[0.7] md:brightness-[0.75]" priority={index === 0} />
+                    <Image src={img} alt={`${vendor.name} ${index + 1}`} fill className="object-cover brightness-[0.7] md:brightness-[0.75]" priority={index === 0} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -274,7 +273,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ slug: 
                           </div>
                         )}
                         <div className="relative w-full md:w-80 h-80 overflow-hidden">
-                          <Image src={`https://picsum.photos/seed/deal-${deal.id}/800/800`} alt={deal.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-105" />
+                          <Image src={`https://picsum.photos/seed/deal-${deal.id}/800/800`} alt={deal.name} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" />
                         </div>
                         <CardHeader className="flex-grow p-12 space-y-8">
                            <div className="space-y-3">
@@ -326,7 +325,7 @@ export default function VendorProfilePage({ params }: { params: Promise<{ slug: 
                   return (
                     <Link key={product.id} href={`/shop/${product.id}`} className="group block text-center space-y-8 relative">
                       <div className="relative aspect-[3/4] overflow-hidden rounded-[3rem] bg-white dark:bg-black/20 ring-1 ring-primary/5 shadow-2xl transition-all duration-700 hover:shadow-3xl">
-                        <Image src={product.imageUrl || `https://picsum.photos/seed/${product.id}/600/800`} alt={product.name} fill className="object-cover soft-focus transition-transform duration-1000 group-hover:scale-110" />
+                        <Image src={product.imageUrl || `https://picsum.photos/seed/${product.id}/600/800`} alt={product.name} fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
                         {hasDiscount && (
                           <div className="absolute top-6 left-6 bg-secondary text-primary px-3 py-1 text-[8px] font-bold uppercase tracking-widest shadow-xl z-20">
                             {discountPercent}% Off
