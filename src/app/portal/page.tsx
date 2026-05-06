@@ -46,12 +46,11 @@ import {
   Package,
   Clock
 } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useUser, useFirestore, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
@@ -66,7 +65,6 @@ export default function PartnerPortalPage() {
   const { user, isUserLoading } = useUser();
   const { auth, firestore } = useFirebase();
   const { getCurrency } = useStore();
-  const router = useRouter();
   
   const [activeTab, setActiveTab] = useState('bookings');
   const [isMounted, setIsMounted] = useState(false);
@@ -166,7 +164,6 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
-  // Dispatch Tab Logic
   const globalOrdersQuery = useMemoFirebase(() => {
     if (!firestore || !myBusiness?.isDeliveryTeam) return null;
     return query(collection(firestore, 'bookings'), where('deliveryStatus', '==', 'Pending'), where('riderId', '==', null));
@@ -419,8 +416,8 @@ export default function PartnerPortalPage() {
       await updateDoc(doc(firestore, 'parlours', myBusiness.id), { isDeliveryTeam: true });
       setMyBusiness({ ...myBusiness, isDeliveryTeam: true });
       toast({
-        title: "Team Audit Synchronized",
-        description: "Your elite logistics application has been approved. Dispatch registry is now active.",
+        title: "Application Complete",
+        description: "Your application has been approved. You can now manage deliveries.",
       });
       setActiveSheet(null);
       setSurveyStep(1);
@@ -630,7 +627,7 @@ export default function PartnerPortalPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
               {myProducts.map((p) => (
                 <div key={p.id} className="space-y-6 group cursor-pointer" onClick={() => handleEdit('product', p)}>
-                  <div className="relative aspect-square border border-primary/5 bg-muted overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-700">
+                  <div className="relative aspect-square border border-primary/5 bg-muted overflow-hidden shadow-lg transition-all duration-700">
                     <Image src={p.imageUrl || 'https://picsum.photos/seed/v-prod/400/500'} alt={p.name} fill className="object-cover transition-all duration-1000 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                        <Button variant="secondary" className="rounded-none font-bold text-[10px] tracking-widest uppercase border-none">Edit Entry</Button>
@@ -690,12 +687,12 @@ export default function PartnerPortalPage() {
                 <div className="flex justify-between items-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
                     <ShieldCheck className="h-3 w-3 text-secondary" strokeWidth={1.5} />
-                    <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[8px]">Team Protocol Audit</span>
+                    <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[8px]">Partner Application</span>
                   </div>
                   <span className="text-[10px] font-black text-primary/20 uppercase tracking-widest">Step {surveyStep} / 3</span>
                 </div>
-                <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary leading-none">Elite Team Enrollment.</DialogTitle>
-                <DialogDescription className="font-body italic text-muted-foreground text-sm">A formal audit of your logistical and artistry capabilities for official team status.</DialogDescription>
+                <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary leading-none">Join our Team.</DialogTitle>
+                <DialogDescription className="font-body italic text-muted-foreground text-sm">Apply to join our partner network and manage your deliveries.</DialogDescription>
                 <Progress value={(surveyStep / 3) * 100} className="h-0.5 rounded-none bg-primary/5 mt-4" />
               </header>
 
@@ -705,8 +702,8 @@ export default function PartnerPortalPage() {
                     <div className="flex items-start gap-6 p-6 bg-primary/5 border border-primary/5">
                       <UserCheck className="h-10 w-10 text-secondary shrink-0" strokeWidth={1} />
                       <div className="space-y-2">
-                        <h4 className="font-headline text-2xl italic">The Artisan Code</h4>
-                        <p className="text-xs text-muted-foreground italic leading-relaxed">By joining the Elite Team, you commit to the registry's digital MMXXIV standards for precision and guest excellence.</p>
+                        <h4 className="font-headline text-2xl italic">Service Guidelines</h4>
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">By joining, you agree to provide high-quality service and follow our marketplace standards for excellence.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setSurveyData(prev => ({ ...prev, codeAgreed: !prev.codeAgreed }))}>
@@ -716,7 +713,7 @@ export default function PartnerPortalPage() {
                       )}>
                         {surveyData.codeAgreed && <Check className="h-4 w-4 text-white" strokeWidth={3} />}
                       </div>
-                      <span className="text-[11px] font-bold uppercase tracking-widest">I verify my commitment to the Artisan Code.</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest">I agree to the guidelines.</span>
                     </div>
                   </section>
                 )}
@@ -724,7 +721,7 @@ export default function PartnerPortalPage() {
                 {surveyStep === 2 && (
                   <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Daily Transformation Capacity</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Your Daily Capacity</Label>
                       <div className="grid grid-cols-2 gap-4">
                         {['1-5 Guests', '6-12 Guests', '13-20 Guests', 'Enterprise (20+)'].map((opt) => (
                           <button 
@@ -747,18 +744,18 @@ export default function PartnerPortalPage() {
                   <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="space-y-6">
                       <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2">
-                        <Truck className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Logistical Fulfillment
+                        <Truck className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Delivery Setup
                       </Label>
                       <div className="space-y-3">
-                        <p className="text-xs text-muted-foreground italic leading-relaxed">Will you integrate with the GlamLux Verified Transport network for boutique fulfillment?</p>
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">How do you want to handle your product deliveries?</p>
                         <select 
                           value={surveyData.logisticsPref}
                           onChange={(e) => setSurveyData(prev => ({ ...prev, logisticsPref: e.target.value }))}
                           className="w-full h-14 bg-transparent border-b-2 border-primary/10 focus:border-secondary outline-none text-xl italic font-body px-0"
                         >
-                          <option value="">Select Protocol...</option>
-                          <option value="verified">Use Verified Network</option>
-                          <option value="independent">Maintain Independent Logistics</option>
+                          <option value="">Select Method...</option>
+                          <option value="verified">Use GlamLux delivery service</option>
+                          <option value="independent">I will deliver items myself</option>
                         </select>
                       </div>
                     </div>
@@ -776,7 +773,7 @@ export default function PartnerPortalPage() {
                     disabled={(surveyStep === 1 && !surveyData.codeAgreed) || (surveyStep === 2 && !surveyData.capacity)}
                     className="flex-grow h-16 bg-primary text-primary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
                   >
-                    Continue Audit
+                    Continue
                   </Button>
                 ) : (
                   <Button 
@@ -784,7 +781,7 @@ export default function PartnerPortalPage() {
                     disabled={!surveyData.logisticsPref}
                     className="flex-grow h-16 bg-secondary text-secondary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
                   >
-                    Finalize Enrollment
+                    Finish Application
                   </Button>
                 )}
               </DialogFooter>
