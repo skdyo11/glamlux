@@ -1,3 +1,4 @@
+// Simple Service Worker for PWA compliance
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,6 +8,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple pass-through for prototype
-  event.respondWith(fetch(event.request));
+  // Required for PWA installation eligibility
+  return;
 });

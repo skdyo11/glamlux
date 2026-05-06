@@ -44,7 +44,9 @@ import {
   UserCheck,
   Truck,
   Package,
-  Clock
+  Clock,
+  TrendingUp,
+  Users
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -104,7 +106,7 @@ export default function PartnerPortalPage() {
 
   useEffect(() => {
     if (isMounted && !isUserLoading && !user && auth) {
-      signInAnonymously(auth).catch(err => console.error("Silent authentication failed", err));
+      signInAnonymously(auth).catch(err => console.error("Identity check failed", err));
     }
   }, [user, isUserLoading, isMounted, auth]);
 
@@ -198,11 +200,11 @@ export default function PartnerPortalPage() {
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) {
-      toast({ variant: "destructive", title: "Identity Pending" });
+      toast({ variant: "destructive", title: "Login Required" });
       return;
     }
     try {
-      const businessName = type === 'parlour' ? `${user.displayName || 'The'} Parlour` : `${user.displayName || 'The'} Shop`;
+      const businessName = type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`;
       const baseSlug = slugify(businessName);
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
@@ -214,12 +216,12 @@ export default function PartnerPortalPage() {
         ownerId: user.uid,
         name: businessName,
         slug: businessSlug,
-        areaTag: 'Your Location',
+        areaTag: 'Select Area',
         latitude: 31.5204,
         longitude: 74.3587,
         rating: 5.0,
         imageUrls: [],
-        description: type === 'parlour' ? 'A high-end beauty parlour.' : 'A premium makeup shop.',
+        description: type === 'parlour' ? 'High-end beauty services.' : 'Premium makeup products.',
         createdAt: serverTimestamp()
       });
       
@@ -227,7 +229,7 @@ export default function PartnerPortalPage() {
       batch.set(pRef, {
         id: pRef.id,
         vendorId: user.uid, 
-        name: 'Signature Foundation',
+        name: 'Classic Foundation',
         brand: 'Your Brand',
         price: 120,
         currency: 'PKR',
@@ -242,7 +244,7 @@ export default function PartnerPortalPage() {
         id: dRef.id,
         parlourId: user.uid,
         parlourOwnerId: user.uid,
-        name: 'Classic Transformation',
+        name: 'Transformation Package',
         category: 'Bridal',
         discountPrice: 21,
         basePrice: 45,
@@ -255,7 +257,7 @@ export default function PartnerPortalPage() {
       await batch.commit();
       setHasBusiness(true);
       setMyBusiness({ id: user.uid, name: businessName, slug: businessSlug });
-      toast({ title: "Setup Complete" });
+      toast({ title: "Shop Created" });
     } catch (e) {
       toast({ variant: "destructive", title: "Setup Failed" });
     }
@@ -265,7 +267,7 @@ export default function PartnerPortalPage() {
     if (!firestore) return;
     try {
       await updateDoc(doc(firestore, 'bookings', id), { deliveryStatus: newStatus });
-      toast({ title: "Status Updated" });
+      toast({ title: "Status Saved" });
       setSelectedArrival(null);
     } catch (e) {
       toast({ variant: "destructive", title: "Update Failed" });
@@ -280,7 +282,7 @@ export default function PartnerPortalPage() {
         deliveryStatus: 'Committed',
         updatedAt: serverTimestamp()
       });
-      toast({ title: "Order Accepted", description: "You are now managing this delivery." });
+      toast({ title: "Order Accepted", description: "You are handling this delivery." });
     } catch (e) {
       toast({ variant: "destructive", title: "Action Failed" });
     }
@@ -319,7 +321,7 @@ export default function PartnerPortalPage() {
           await addDoc(collection(firestore, 'products'), {
             ...productData,
             vendorId: user.uid,
-            imageUrl: 'https://picsum.photos/seed/vogue-new-p/400/500',
+            imageUrl: 'https://picsum.photos/seed/v-new/400/500',
             currency: 'PKR',
             createdAt: serverTimestamp(),
           });
@@ -352,11 +354,11 @@ export default function PartnerPortalPage() {
         setMyBusiness({ ...myBusiness, name, areaTag: detail, description: description, address: addressInput, latitude: mapLocation[0], longitude: mapLocation[1] });
       }
 
-      toast({ title: "Save Successful" });
+      toast({ title: "Changes Saved" });
       setActiveSheet(null);
       setEditingItem(null);
     } catch (error) {
-      toast({ variant: "destructive", title: "Update Failed" });
+      toast({ variant: "destructive", title: "Save Failed" });
     }
   };
 
@@ -416,13 +418,13 @@ export default function PartnerPortalPage() {
       await updateDoc(doc(firestore, 'parlours', myBusiness.id), { isDeliveryTeam: true });
       setMyBusiness({ ...myBusiness, isDeliveryTeam: true });
       toast({
-        title: "Application Complete",
-        description: "You can now manage local deliveries.",
+        title: "Setup Complete",
+        description: "You can now handle local deliveries.",
       });
       setActiveSheet(null);
       setSurveyStep(1);
     } catch (e) {
-      toast({ variant: "destructive", title: "Action Failed" });
+      toast({ variant: "destructive", title: "Setup Failed" });
     }
   };
 
@@ -434,27 +436,27 @@ export default function PartnerPortalPage() {
         <Navbar />
         <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
           <header className="text-center space-y-6 max-w-2xl">
-            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Start Here</span>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Set up your shop.</h1>
-            <p className="text-lg text-muted-foreground font-body italic">Choose your business type to get started on GlamLux.</p>
+            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Portal Setup</span>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Setup your shop.</h1>
+            <p className="text-lg text-muted-foreground font-body italic">Choose your business type to start selling on GlamLux.</p>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl shadow-2xl bg-white dark:bg-card/20">
             <button onClick={() => handleStartBusiness('parlour')} className="group p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
-              <Scissors className="h-12 w-12 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+              <Scissors className="h-12 w-12 text-secondary transition-all group-hover:scale-110" strokeWidth={1.5} />
               <div className="space-y-4">
                 <h3 className="text-4xl font-headline italic text-primary">Beauty Parlour</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Register to offer beauty services and bookings.</p>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Offer beauty services and take online bookings.</p>
               </div>
-              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Begin <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
+              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Start <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
             </button>
             <button onClick={() => handleStartBusiness('shop')} className="group p-16 space-y-10 text-left hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
-              <ShoppingBag className="h-12 w-12 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
+              <ShoppingBag className="h-12 w-12 text-secondary transition-all group-hover:scale-110" strokeWidth={1.5} />
               <div className="space-y-4">
                 <h3 className="text-4xl font-headline italic text-primary">Product Shop</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Sell your makeup and beauty products online.</p>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Sell makeup and skincare items online.</p>
               </div>
-              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Begin <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
+              <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Start <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
             </button>
           </div>
         </main>
@@ -472,7 +474,7 @@ export default function PartnerPortalPage() {
       <main className="container mx-auto px-6 py-14 md:py-32">
         <header className="relative mb-32 border border-primary/10 bg-white dark:bg-card shadow-2xl overflow-hidden">
           <div className="relative w-full h-48 md:h-80 overflow-hidden border-b border-primary/10 group">
-            <Image src={coverImageUrl} alt="Business Cover" fill className="object-cover transition-all duration-1000" priority />
+            <Image src={coverImageUrl} alt="Cover" fill className="object-cover transition-all duration-1000" priority />
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Button onClick={() => openImageModal('cover')} className="rounded-none vogue-button bg-primary text-primary-foreground border-none h-14 px-10 text-[10px] shadow-2xl hover:scale-105 active:scale-95">Change Cover</Button>
@@ -485,37 +487,54 @@ export default function PartnerPortalPage() {
                 <AvatarImage src={profileImageUrl} className="object-cover transition-all duration-1000" />
                 <AvatarFallback className="bg-primary/5"><Store className="h-10 w-10 opacity-20" strokeWidth={1.5} /></AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer group-hover:scale-105" onClick={() => openImageModal('profile')}>
-                <Camera className="h-8 w-8 text-white transition-all" strokeWidth={1.5} />
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onClick={() => openImageModal('profile')}>
+                <Camera className="h-8 w-8 text-white" strokeWidth={1.5} />
               </div>
             </div>
             
             <div className="flex-grow space-y-6 pb-4">
               <div className="space-y-2">
-                <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary drop-shadow-sm">{myBusiness?.name || 'My Business'}</h1>
+                <h1 className="text-5xl md:text-7xl font-headline tracking-tighter text-primary">{myBusiness?.name || 'Shop'}</h1>
                 <div className="flex flex-wrap gap-8 text-[11px] font-bold uppercase tracking-[0.4em] text-muted-foreground italic">
-                  <span className="flex items-center gap-2 group cursor-default transition-all hover:text-secondary"><Navigation className="h-3 w-3 text-secondary transition-all group-hover:fill-current" strokeWidth={1.5} /> {myBusiness?.areaTag}</span>
-                  <span className="flex items-center gap-2 text-primary group cursor-default transition-all hover:text-secondary"><Sparkles className="h-3 w-3 text-secondary group-hover:animate-spin" strokeWidth={1.5} /> Verified Partner</span>
+                  <span className="flex items-center gap-2 hover:text-secondary transition-all"><Navigation className="h-3 w-3 text-secondary" strokeWidth={1.5} /> {myBusiness?.areaTag}</span>
+                  <span className="flex items-center gap-2 text-primary"><Sparkles className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Verified</span>
                   {myBusiness?.isDeliveryTeam && (
-                    <span className="flex items-center gap-2 text-emerald-600"><ShieldCheck className="h-3 w-3" strokeWidth={1.5} /> Delivery Partner</span>
+                    <span className="flex items-center gap-2 text-emerald-600"><ShieldCheck className="h-3 w-3" strokeWidth={1.5} /> Delivery Team</span>
                   )}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-4 pb-4">
-              <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10 hover:bg-primary/5 transition-all">Edit Info</Button>
-              <Button onClick={() => setActiveSheet('survey')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95 transition-all">Logistics</Button>
+              <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10 hover:bg-primary/5">Edit Profile</Button>
+              <Button onClick={() => setActiveSheet('survey')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95">Deliveries</Button>
             </div>
           </div>
+        </header>
+
+        <header className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          <Card className="bg-primary p-10 rounded-none border-none shadow-xl text-primary-foreground flex items-center justify-between group">
+            <div className="space-y-2">
+               <p className="text-5xl font-bold font-headline">{arrivals.length}</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-80">Total Orders</p>
+            </div>
+            <Users className="h-12 w-12 opacity-20 group-hover:scale-110 transition-transform" />
+          </Card>
+          <Card className="bg-white dark:bg-card p-10 rounded-none border border-primary/10 shadow-xl text-primary flex items-center justify-between group">
+            <div className="space-y-2">
+               <p className="text-5xl font-bold font-headline">{(arrivals.length * 12.5).toFixed(1)}k</p>
+               <p className="text-[10px] uppercase font-black tracking-widest opacity-40">Est. Revenue</p>
+            </div>
+            <TrendingUp className="h-12 w-12 opacity-10 group-hover:scale-110 transition-transform text-secondary" />
+          </Card>
         </header>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-16">
           <TabsList className="bg-transparent h-auto gap-12 border-b border-primary/10 w-full justify-start rounded-none p-0 overflow-x-auto scrollbar-hide">
             {[
-              myBusiness?.isDeliveryTeam ? { id: 'dispatch', label: '01 Deliveries' } : null,
-              { id: 'bookings', label: myBusiness?.isDeliveryTeam ? '02 Bookings' : '01 Bookings' },
-              { id: 'items', label: myBusiness?.isDeliveryTeam ? '03 Products' : '02 Products' },
+              myBusiness?.isDeliveryTeam ? { id: 'dispatch', label: '01 Orders' } : null,
+              { id: 'bookings', label: myBusiness?.isDeliveryTeam ? '02 Queue' : '01 Queue' },
+              { id: 'items', label: myBusiness?.isDeliveryTeam ? '03 Items' : '02 Items' },
               { id: 'services', label: myBusiness?.isDeliveryTeam ? '04 Services' : '03 Services' },
             ].filter(Boolean).map((tab: any) => (
               <TabsTrigger 
@@ -530,8 +549,8 @@ export default function PartnerPortalPage() {
           <TabsContent value="dispatch" className="space-y-24">
              <section className="space-y-12">
                <div className="border-b border-primary/10 pb-8 space-y-2">
-                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Available Orders.</h3>
-                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Local area orders ready for delivery</p>
+                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Available Deliveries.</h3>
+                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Orders in your area ready for pickup</p>
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  {isLoadingGlobal ? (
@@ -541,7 +560,7 @@ export default function PartnerPortalPage() {
                      <div className="flex justify-between items-start">
                         <div className="space-y-1">
                           <span className="text-[9px] font-black text-secondary uppercase tracking-widest">{order.referenceCode}</span>
-                          <h4 className="font-headline text-2xl">{order.shippingAddress || 'Store Pickup'}</h4>
+                          <h4 className="font-headline text-2xl">{order.shippingAddress || 'Pickup'}</h4>
                         </div>
                         <Truck className="h-6 w-6 text-primary/10" strokeWidth={1} />
                      </div>
@@ -553,13 +572,13 @@ export default function PartnerPortalPage() {
                        onClick={() => handleCommitToOrder(order.id)}
                        className="w-full h-12 bg-primary text-primary-foreground rounded-none vogue-button text-[9px] shadow-lg"
                       >
-                        Accept Delivery
+                        Accept
                       </Button>
                    </article>
                  ))}
                  {!isLoadingGlobal && globalOrders?.length === 0 && (
                    <div className="col-span-full py-20 text-center border border-dashed border-primary/10">
-                     <p className="font-headline text-2xl italic text-primary/20">No orders waiting for delivery.</p>
+                     <p className="font-headline text-2xl italic text-primary/20">No active delivery requests.</p>
                    </div>
                  )}
                </div>
@@ -567,8 +586,8 @@ export default function PartnerPortalPage() {
 
              <section className="space-y-12">
                <div className="border-b border-primary/10 pb-8 space-y-2">
-                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">My Deliveries.</h3>
-                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Your active delivery tasks</p>
+                 <h3 className="text-4xl font-headline tracking-tighter text-primary italic">My Tasks.</h3>
+                 <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Your active delivery assignments</p>
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  {isLoadingMyDeliveries ? (
@@ -586,7 +605,7 @@ export default function PartnerPortalPage() {
                      </div>
                      <div className="pt-4 border-t border-primary/10 flex justify-between items-center">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Assigned</span>
-                        <Button variant="outline" size="sm" onClick={() => setSelectedArrival(order)} className="rounded-none h-8 text-[8px] font-black uppercase border-primary/20">Update Status</Button>
+                        <Button variant="outline" size="sm" onClick={() => setSelectedArrival(order)} className="rounded-none h-8 text-[8px] font-black uppercase border-primary/20">Update</Button>
                      </div>
                    </article>
                  ))}
@@ -604,7 +623,7 @@ export default function PartnerPortalPage() {
                 >
                   <div className="space-y-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-secondary group-hover:tracking-[0.2em] transition-all">{a.referenceCode}</span>
-                    <h4 className="font-headline text-3xl text-primary">{a.userName || 'Guest User'}</h4>
+                    <h4 className="font-headline text-3xl text-primary">{a.userName || 'Guest'}</h4>
                   </div>
                   <Badge variant="outline" className="rounded-none border-primary/10 text-[9px] uppercase tracking-widest px-4 py-2 bg-primary/5 transition-all group-hover:bg-primary group-hover:text-primary-foreground">{a.deliveryStatus}</Badge>
                 </article>
@@ -619,16 +638,16 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="items" className="space-y-12">
             <div className="flex justify-between items-end border-b border-primary/10 pb-8">
-              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">My Products.</h3>
+              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Catalogue.</h3>
               <Button onClick={() => { setEditingItem(null); setActiveSheet('product'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-primary-foreground shadow-xl hover:scale-105 active:scale-95">
-                <ShoppingBag className="h-4 w-4 mr-2" strokeWidth={1.5} /> Add Product
+                <ShoppingBag className="h-4 w-4 mr-2" strokeWidth={1.5} /> Add Item
               </Button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
               {myProducts.map((p) => (
                 <div key={p.id} className="space-y-6 group cursor-pointer" onClick={() => handleEdit('product', p)}>
                   <div className="relative aspect-square border border-primary/5 bg-muted overflow-hidden shadow-lg transition-all duration-700">
-                    <Image src={p.imageUrl || 'https://picsum.photos/seed/v-prod/400/500'} alt={p.name} fill className="object-cover transition-all duration-1000 group-hover:scale-110" />
+                    <Image src={p.imageUrl || 'https://picsum.photos/seed/p-1/400/500'} alt={p.name} fill className="object-cover transition-all duration-1000" />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                        <Button variant="secondary" className="rounded-none font-bold text-[10px] tracking-widest uppercase border-none">Edit</Button>
                     </div>
@@ -649,7 +668,7 @@ export default function PartnerPortalPage() {
 
           <TabsContent value="services" className="space-y-12">
             <div className="flex justify-between items-end border-b border-primary/10 pb-8">
-              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">My Services.</h3>
+              <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Services.</h3>
               <Button onClick={() => { setEditingItem(null); setActiveSheet('service'); }} size="sm" className="rounded-none vogue-button text-[10px] h-12 px-8 bg-primary text-primary-foreground shadow-xl hover:scale-105 active:scale-95">
                 <Scissors className="h-4 w-4 mr-2" strokeWidth={1.5} /> Add Service
               </Button>
@@ -668,7 +687,7 @@ export default function PartnerPortalPage() {
                         <p className="text-sm text-muted-foreground line-through opacity-40">{getCurrency()} {d.basePrice.toLocaleString()}</p>
                       )}
                     </div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-primary/40 group-hover:text-secondary pt-4 flex items-center gap-2 transition-all">Edit Service <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={1.5} /></div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-primary/40 group-hover:text-secondary pt-4 flex items-center gap-2 transition-all">Edit <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={1.5} /></div>
                   </div>
                   <Scissors className="h-16 w-16 text-primary/5 group-hover:text-secondary/20 transition-all group-hover:rotate-45" strokeWidth={1} />
                 </article>
@@ -687,12 +706,12 @@ export default function PartnerPortalPage() {
                 <div className="flex justify-between items-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
                     <ShieldCheck className="h-3 w-3 text-secondary" strokeWidth={1.5} />
-                    <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[8px]">Partner Setup</span>
+                    <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[8px]">Delivery Setup</span>
                   </div>
                   <span className="text-[10px] font-black text-primary/20 uppercase tracking-widest">Step {surveyStep} / 3</span>
                 </div>
-                <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary leading-none">Join the Team.</DialogTitle>
-                <DialogDescription className="font-body italic text-muted-foreground text-sm">Apply to manage local deliveries in your area.</DialogDescription>
+                <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary leading-none">Partner Team.</DialogTitle>
+                <DialogDescription className="font-body italic text-muted-foreground text-sm">Join the network to handle local area deliveries.</DialogDescription>
                 <Progress value={(surveyStep / 3) * 100} className="h-0.5 rounded-none bg-primary/5 mt-4" />
               </header>
 
@@ -702,8 +721,8 @@ export default function PartnerPortalPage() {
                     <div className="flex items-start gap-6 p-6 bg-primary/5 border border-primary/5">
                       <UserCheck className="h-10 w-10 text-secondary shrink-0" strokeWidth={1} />
                       <div className="space-y-2">
-                        <h4 className="font-headline text-2xl italic">Community Guidelines</h4>
-                        <p className="text-xs text-muted-foreground italic leading-relaxed">By joining, you agree to provide high-quality service and timely deliveries for the marketplace.</p>
+                        <h4 className="font-headline text-2xl italic">Guidelines</h4>
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">By joining the team, you agree to provide timely deliveries and professional service.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setSurveyData(prev => ({ ...prev, codeAgreed: !prev.codeAgreed }))}>
@@ -713,7 +732,7 @@ export default function PartnerPortalPage() {
                       )}>
                         {surveyData.codeAgreed && <Check className="h-4 w-4 text-white" strokeWidth={3} />}
                       </div>
-                      <span className="text-[11px] font-bold uppercase tracking-widest">I agree to the guidelines.</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest">I agree to the terms.</span>
                     </div>
                   </section>
                 )}
@@ -723,13 +742,13 @@ export default function PartnerPortalPage() {
                     <div className="space-y-4">
                       <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Daily Capacity</Label>
                       <div className="grid grid-cols-2 gap-4">
-                        {['1-5 Deliveries', '6-12 Deliveries', '13-20 Deliveries', 'Enterprise (20+)'].map((opt) => (
+                        {['1-5 Jobs', '6-12 Jobs', '13-20 Jobs', 'Unlimited'].map((opt) => (
                           <button 
                             key={opt}
                             onClick={() => setSurveyData(prev => ({ ...prev, capacity: opt }))}
                             className={cn(
                               "h-16 px-6 border text-[10px] font-bold uppercase tracking-widest transition-all",
-                              surveyData.capacity === opt ? "bg-primary text-primary-foreground border-primary shadow-xl scale-105" : "border-primary/10 hover:border-secondary text-primary/60"
+                              surveyData.capacity === opt ? "bg-primary text-primary-foreground border-primary shadow-xl" : "border-primary/10 hover:border-secondary text-primary/60"
                             )}
                           >
                             {opt}
@@ -744,17 +763,17 @@ export default function PartnerPortalPage() {
                   <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="space-y-6">
                       <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2">
-                        <Truck className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Delivery Method
+                        <Truck className="h-3 w-3 text-secondary" strokeWidth={1.5} /> Fulfillment
                       </Label>
                       <div className="space-y-3">
-                        <p className="text-xs text-muted-foreground italic leading-relaxed">How will you fulfill product orders?</p>
+                        <p className="text-xs text-muted-foreground italic leading-relaxed">How will you handle your shop's orders?</p>
                         <select 
                           value={surveyData.logisticsPref}
                           onChange={(e) => setSurveyData(prev => ({ ...prev, logisticsPref: e.target.value }))}
                           className="w-full h-14 bg-transparent border-b-2 border-primary/10 focus:border-secondary outline-none text-xl italic font-body px-0"
                         >
-                          <option value="">Select Method...</option>
-                          <option value="verified">Use GlamLux Delivery Team</option>
+                          <option value="">Select Option...</option>
+                          <option value="verified">Use Delivery Team</option>
                           <option value="independent">I will deliver items myself</option>
                         </select>
                       </div>
@@ -773,7 +792,7 @@ export default function PartnerPortalPage() {
                     disabled={(surveyStep === 1 && !surveyData.codeAgreed) || (surveyStep === 2 && !surveyData.capacity)}
                     className="flex-grow h-16 bg-primary text-primary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
                   >
-                    Continue
+                    Next
                   </Button>
                 ) : (
                   <Button 
@@ -781,7 +800,7 @@ export default function PartnerPortalPage() {
                     disabled={!surveyData.logisticsPref}
                     className="flex-grow h-16 bg-secondary text-secondary-foreground rounded-none vogue-button text-[10px] shadow-2xl hover:scale-105"
                   >
-                    Finish Setup
+                    Finish
                   </Button>
                 )}
               </DialogFooter>
@@ -796,12 +815,12 @@ export default function PartnerPortalPage() {
             <div className="p-8 md:p-10 space-y-12 font-body">
               <div className="border-b border-primary/10 pb-8 space-y-4">
                 <div className="flex justify-between items-center">
-                  <DialogTitle className="text-3xl font-headline italic text-primary">Business Profile.</DialogTitle>
+                  <DialogTitle className="text-3xl font-headline italic text-primary">Identity.</DialogTitle>
                   <div className="group cursor-pointer p-2 rounded-full hover:bg-primary/5 transition-all" onClick={generatePreviews}>
-                    <RefreshCw className={cn("h-5 w-5 text-primary/30 group-hover:text-secondary transition-all", isRolling && "animate-spin")} strokeWidth={1.5} />
+                    <RefreshCw className={cn("h-5 w-5 text-primary/30 group-hover:text-secondary", isRolling && "animate-spin")} strokeWidth={1.5} />
                   </div>
                 </div>
-                <DialogDescription className="font-body text-muted-foreground italic text-sm">Select a style or upload your own photo.</DialogDescription>
+                <DialogDescription className="font-body text-muted-foreground italic text-sm">Choose a generated look or upload your own.</DialogDescription>
               </div>
 
               <div className="space-y-10">
@@ -816,11 +835,11 @@ export default function PartnerPortalPage() {
                       <button 
                         key={i} 
                         onClick={() => handleApplyIdentity(url)} 
-                        className="relative aspect-square border border-primary/10 group overflow-hidden bg-primary/5 shadow-inner transition-all hover:scale-105 active:scale-95"
+                        className="relative aspect-square border border-primary/10 group overflow-hidden bg-primary/5 shadow-inner transition-all hover:scale-105"
                       >
-                        <img src={url} alt="Option" className="w-full h-full object-cover transition-all duration-700" />
+                        <img src={url} alt="Option" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                          <Check className="h-8 w-8 text-white animate-in zoom-in duration-300" strokeWidth={2} />
+                          <Check className="h-8 w-8 text-white" strokeWidth={2} />
                         </div>
                       </button>
                     ))}
@@ -829,7 +848,7 @@ export default function PartnerPortalPage() {
                 
                 <div className="pt-6">
                   <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full h-16 rounded-none vogue-button border-primary/10 text-[10px] group shadow-sm hover:bg-primary/5 transition-all">
-                    <Upload className="h-4 w-4 mr-3 transition-transform group-hover:-translate-y-1" strokeWidth={1.5} /> Custom Upload
+                    <Upload className="h-4 w-4 mr-3 transition-transform group-hover:-translate-y-1" strokeWidth={1.5} /> Custom Photo
                     <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
                   </Button>
                 </div>
@@ -845,16 +864,16 @@ export default function PartnerPortalPage() {
             <div className="p-8 md:p-12 space-y-12">
               <div className="border-b border-primary/10 pb-8 space-y-4">
                 <DialogTitle className="text-4xl font-headline tracking-tighter italic leading-none">Edit Details.</DialogTitle>
-                <DialogDescription className="font-body italic text-muted-foreground">Update your business information or item details.</DialogDescription>
+                <DialogDescription className="font-body italic text-muted-foreground">Update your listing or profile information.</DialogDescription>
               </div>
               
               <form onSubmit={handleSheetSubmit} className="space-y-12">
                 <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Business Name</Label>
+                  <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Name</Label>
                   <Input 
                     name="name" 
                     required 
-                    placeholder={activeSheet === 'profile' ? "Shop Name" : "Item Name"}
+                    placeholder={activeSheet === 'profile' ? "Business Name" : "Item Name"}
                     defaultValue={editingItem?.name || (activeSheet === 'profile' ? myBusiness?.name : '')}
                     className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-2xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                   />
@@ -863,12 +882,12 @@ export default function PartnerPortalPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                   <div className="space-y-4">
                     <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">
-                      {activeSheet === 'profile' ? 'Area / City' : activeSheet === 'product' ? 'Brand' : 'Category'}
+                      {activeSheet === 'profile' ? 'Area' : activeSheet === 'product' ? 'Brand' : 'Category'}
                     </Label>
                     <Input 
                       name="detail" 
                       required 
-                      placeholder={activeSheet === 'profile' ? "e.g. Gulberg, Lahore" : "Brand Name"}
+                      placeholder={activeSheet === 'profile' ? "e.g. Gulberg, Lahore" : "Detail"}
                       defaultValue={editingItem ? (activeSheet === 'product' ? editingItem.brand : editingItem.category) : (activeSheet === 'profile' ? myBusiness?.areaTag : '')}
                       className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                     />
@@ -888,7 +907,7 @@ export default function PartnerPortalPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Description</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">About</Label>
                       <Input 
                         name="description" 
                         required 
@@ -903,18 +922,18 @@ export default function PartnerPortalPage() {
                 {activeSheet !== 'profile' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-primary/5 pt-8">
                     <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Original Price (Before Discount)</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Full Price</Label>
                       <Input 
                         name="basePrice" 
                         type="number"
-                        placeholder="Optional"
+                        placeholder="Before discount"
                         defaultValue={editingItem?.basePrice || ''}
                         className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                       />
                     </div>
                     <div className="space-y-4">
                       <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2">
-                        <Calendar className="h-3 w-3" /> Duration (Days)
+                        <Calendar className="h-3 w-3" /> Expiry (Days)
                       </Label>
                       <Input 
                         name="duration" 
@@ -929,11 +948,11 @@ export default function PartnerPortalPage() {
                 {activeSheet === 'profile' && (
                   <div className="space-y-12 pt-8 border-t border-primary/10">
                     <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2"><MapPin className="h-3 w-3 text-secondary fill-secondary" strokeWidth={1.5} /> Exact Map Location</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2"><MapPin className="h-3 w-3 text-secondary fill-secondary" strokeWidth={1.5} /> Map Location</Label>
                       <Input 
                         value={addressInput}
                         onChange={(e) => setAddressInput(e.target.value)}
-                        placeholder="Full Address..." 
+                        placeholder="Full physical address..." 
                         className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-secondary transition-all" 
                       />
                     </div>
@@ -961,8 +980,8 @@ export default function PartnerPortalPage() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-primary/5 border border-primary/10">
                   <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Update Status</span>
                 </div>
-                <h2 className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest User'}</h2>
-                <p className="font-body text-lg italic text-muted-foreground tracking-tighter">Order: {selectedArrival.referenceCode} • Status: {selectedArrival.deliveryStatus}</p>
+                <h2 className="text-6xl font-headline italic text-primary leading-none drop-shadow-sm">{selectedArrival.userName || 'Guest'}</h2>
+                <p className="font-body text-lg italic text-muted-foreground tracking-tighter">Ref: {selectedArrival.referenceCode} • Status: {selectedArrival.deliveryStatus}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-primary/10 shadow-xl overflow-hidden">
                 <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Verified')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-emerald-600 hover:bg-emerald-50 transition-all group flex items-center justify-center gap-2">
@@ -971,7 +990,7 @@ export default function PartnerPortalPage() {
                 <button onClick={() => updateArrivalStatus(selectedArrival.id, 'In-Progress')} className="h-20 bg-white dark:bg-card border-r border-primary/10 vogue-button text-[10px] text-amber-600 hover:bg-amber-50 transition-all group flex items-center justify-center gap-2">
                   <Sparkles className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:animate-spin" strokeWidth={1.5} /> Active
                 </button>
-                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-20 bg-primary text-primary-foreground vogue-button text-[10px] hover:bg-secondary hover:text-secondary-foreground transition-all shadow-inner">Delivered</button>
+                <button onClick={() => updateArrivalStatus(selectedArrival.id, 'Delivered')} className="h-20 bg-primary text-primary-foreground vogue-button text-[10px] hover:bg-secondary hover:text-secondary-foreground transition-all shadow-inner">Finished</button>
               </div>
             </div>
           )}

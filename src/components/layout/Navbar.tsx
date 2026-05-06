@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -46,6 +45,7 @@ const Map = dynamic(() => import('@/components/Map'), {
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
 
+// Custom House Icon based on user provided aesthetic
 const CustomHomeIcon = ({ className }: { className?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
@@ -85,6 +85,11 @@ export function Navbar() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
@@ -100,8 +105,8 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "Download GlamLux App",
-        description: "On iOS: Tap Share > Add to Home Screen. On PC/Android: Look for the Install icon in your browser address bar.",
+        title: "Download App",
+        description: "On iOS: Tap Share > Add to Home Screen. On PC/Android: Check your browser's install icon.",
       });
     }
   };
@@ -130,7 +135,7 @@ export function Navbar() {
     setLocation(locString);
     setIsLocationSheetOpen(false);
     setLocationView('search');
-    toast({ title: "Location Pinned", description: "Your coordinates have been saved for delivery." });
+    toast({ title: "Location Saved", description: "Coordinates confirmed for delivery." });
   };
 
   if (!mounted) return null;
@@ -160,7 +165,7 @@ export function Navbar() {
                           </Button>
                         )}
                         <MapIcon className="h-6 w-6 text-primary" /> 
-                        {locationView === 'search' ? 'Select Delivery Area' : 'Pin your Location'}
+                        {locationView === 'search' ? 'Delivery Area' : 'Pin Location'}
                       </SheetTitle>
                     </div>
                   </SheetHeader>
@@ -200,7 +205,7 @@ export function Navbar() {
                         <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
                       </div>
                       <div className="p-4 bg-primary/5 rounded-2xl text-center">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-1">Target Coordinates</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-1">Coordinates</p>
                         <p className="font-mono text-sm text-primary font-bold">{mapCenter[0].toFixed(6)}, {mapCenter[1].toFixed(6)}</p>
                       </div>
                       <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-xl font-bold text-lg shadow-2xl">
@@ -235,7 +240,7 @@ export function Navbar() {
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button asChild size="sm" className="font-bold rounded-full px-6">
-                  <Link href="/signup">Sign up</Link>
+                  <Link href="/signup">Join</Link>
                 </Button>
               </div>
             ) : (
@@ -283,7 +288,7 @@ export function Navbar() {
                   </SheetTrigger>
                   <SheetContent side="right" className="w-[300px] p-0 border-none shadow-3xl">
                     <SheetHeader className="sr-only">
-                      <SheetTitle>User Menu</SheetTitle>
+                      <SheetTitle>Menu</SheetTitle>
                     </SheetHeader>
                     <div className="flex flex-col h-full bg-background">
                       <div className="p-6 border-b">
@@ -295,7 +300,7 @@ export function Navbar() {
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
-                            <p className="font-bold truncate">{user?.displayName || 'User'}</p>
+                            <p className="font-bold truncate">{user?.displayName || 'Guest'}</p>
                             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                           </div>
                         </div>
@@ -322,7 +327,7 @@ export function Navbar() {
                         
                         <button 
                           onClick={handleInstallClick}
-                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors"
+                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left"
                         >
                           <div className="flex items-center gap-3">
                             <Download className="h-5 w-5 text-muted-foreground" />
@@ -333,7 +338,7 @@ export function Navbar() {
 
                         <button 
                           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors"
+                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left"
                         >
                           <div className="flex items-center gap-3">
                             {theme === 'dark' ? <Sun className="h-5 w-5 text-muted-foreground" /> : <Moon className="h-5 w-5 text-muted-foreground" />}
@@ -360,7 +365,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Sub-nav Category bar */}
       <div className="fixed top-16 left-0 right-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-6 text-sm font-bold shadow-sm">
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>
