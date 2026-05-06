@@ -78,6 +78,14 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {!user ? (
               <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-9 w-9 rounded-full mr-1"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
                 <Button asChild variant="ghost" size="sm" className="hidden md:flex font-bold">
                   <Link href="/login">Login</Link>
                 </Button>
@@ -87,6 +95,14 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-9 w-9 rounded-full"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
                 <Link href="/favorites">
                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                     <Heart className={cn("h-5 w-5", pathname === '/favorites' && "fill-primary text-primary")} />
