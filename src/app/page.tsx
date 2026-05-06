@@ -42,12 +42,12 @@ export default function Home() {
   if (!isMounted) return null;
 
   const categories = [
-    { name: 'Bridal', icon: <Sparkles className="h-6 w-6" /> },
-    { name: 'Hair', icon: <Scissors className="h-6 w-6" /> },
-    { name: 'Skin', icon: <Heart className="h-6 w-6" /> },
+    { name: 'Bridal', icon: <Sparkles className="h-6 w-6" />, href: '/deals?category=Bridal' },
+    { name: 'Hair', icon: <Scissors className="h-6 w-6" />, href: '/deals?category=Hair' },
+    { name: 'Skin', icon: <Heart className="h-6 w-6" />, href: '/deals?category=Skin' },
     { name: 'Products', icon: <ShoppingBag className="h-6 w-6" />, href: '/shop' },
-    { name: 'Nails', icon: <Sparkles className="h-6 w-6" /> },
-    { name: 'Spa', icon: <MapPin className="h-6 w-6" /> },
+    { name: 'Nails', icon: <Sparkles className="h-6 w-6" />, href: '/deals?category=Nails' },
+    { name: 'Spa', icon: <MapPin className="h-6 w-6" />, href: '/deals?category=Spa' },
   ];
 
   return (
@@ -95,7 +95,7 @@ export default function Home() {
               {categories.map((cat, i) => (
                 <Link 
                   key={i} 
-                  href={cat.href || `/vendors?category=${cat.name}`}
+                  href={cat.href}
                   className="group flex flex-col items-center gap-4 shrink-0 transition-transform active:scale-95"
                 >
                   <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-muted flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-marketplace">
@@ -126,7 +126,9 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
                       <p className="text-white font-bold text-xl leading-tight">{deal.name}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Badge className="bg-primary text-white border-none">{Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% Off</Badge>
+                        {deal.basePrice && (
+                          <Badge className="bg-primary text-white border-none">{Math.round((1 - deal.discountPrice / deal.basePrice) * 100)}% Off</Badge>
+                        )}
                         <span className="text-white text-sm font-medium">{getCurrency()} {deal.discountPrice.toLocaleString()}</span>
                       </div>
                     </div>

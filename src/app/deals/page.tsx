@@ -1,34 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Clock, MapPin, Sparkles, Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, Sparkles } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
-export default function ServicesPage() {
+function DealsContent() {
   const { getCurrency } = useStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [isMounted, setIsMounted] = useState(false);
+  const searchParams = useSearchParams();
   const firestore = useFirestore();
+  
+  const initialCategory = searchParams.get('category') || 'All';
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat) {
+      setCategoryFilter(cat);
+    }
+  }, [searchParams]);
+
   const servicesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'deals'), limit(20));
+    return query(collection(firestore, 'deals'), limit(40));
   }, [firestore]);
 
   const { data: services, isLoading } = useCollection(servicesQuery);
@@ -39,7 +49,7 @@ export default function ServicesPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const categories = ['All', 'Bridal', 'Hair', 'Skin'];
+  const categories = ['All', 'Bridal', 'Hair', 'Skin', 'Nails', 'Spa'];
 
   if (!isMounted) return null;
 
@@ -100,7 +110,7 @@ export default function ServicesPage() {
                 )}
               >
                 <div className="space-y-10">
-                  <div className="relative h-[400px] overflow-hidden bg-muted border border-primary/5 grayscale group-hover:grayscale-0 transition-all duration-1000">
+                  <div className="relative h-[400px] overflow-hidden bg-muted border border-primary/5 group-hover:scale-[1.02] transition-transform duration-500">
                     <Image 
                       src={`https://picsum.photos/seed/deal-${service.id}/800/600`} 
                       alt={service.name}
@@ -142,5 +152,17 @@ export default function ServicesPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+      </div>
+    }>
+      <DealsContent />
+    </Suspense>
   );
 }
