@@ -60,7 +60,7 @@ function DealsContent() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pt-20 md:pt-32">
+    <div className="min-h-screen bg-background flex flex-col pt-44">
       <Navbar />
       
       <main className="container mx-auto px-6 py-12 pb-32 flex-grow max-w-screen-2xl">

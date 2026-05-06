@@ -54,7 +54,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-32">
+      <main className="flex-grow pt-44">
         {/* Marketplace Hero */}
         <section className="bg-secondary/40 dark:bg-muted/10 py-12 md:py-20 px-4 md:px-6">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
