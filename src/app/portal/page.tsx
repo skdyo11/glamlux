@@ -438,25 +438,25 @@ export default function PartnerPortalPage() {
         <Navbar />
         <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
           <header className="text-center space-y-6 max-w-2xl">
-            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Registry Setup</span>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">The Artisan Onboarding.</h1>
-            <p className="text-lg text-muted-foreground font-body italic">Select your discipline to begin the registry process.</p>
+            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Step 01</span>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Partner Onboarding.</h1>
+            <p className="text-lg text-muted-foreground font-body italic">Choose your business type to get started.</p>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl shadow-2xl bg-white dark:bg-card/20">
             <button onClick={() => handleStartBusiness('parlour')} className="group p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
               <Scissors className="h-12 w-12 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
               <div className="space-y-4">
-                <h3 className="text-4xl font-headline italic text-primary">Service Sanctuary</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Registration for elite beauty studios and transformation experts.</p>
+                <h3 className="text-4xl font-headline italic text-primary">Beauty Parlour</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Register your salon or studio to offer beauty services.</p>
               </div>
               <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Begin <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
             </button>
             <button onClick={() => handleStartBusiness('shop')} className="group p-16 space-y-10 text-left hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
               <ShoppingBag className="h-12 w-12 text-secondary transition-all group-hover:scale-110 group-hover:fill-current" strokeWidth={1.5} />
               <div className="space-y-4">
-                <h3 className="text-4xl font-headline italic text-primary">Artistry House</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Registration for professional makeup brands and curated boutique items.</p>
+                <h3 className="text-4xl font-headline italic text-primary">Product Shop</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body italic">Sell your beauty products directly on our marketplace.</p>
               </div>
               <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Begin <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
             </button>
