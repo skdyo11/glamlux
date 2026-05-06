@@ -1,4 +1,4 @@
-// Simple Service Worker for PWA compliance
+// Basic Service Worker for PWA compliance
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -8,6 +8,5 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Required for PWA installation eligibility
-  return;
+  // Pass-through fetch handler
 });

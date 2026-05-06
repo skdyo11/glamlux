@@ -30,7 +30,9 @@ import {
   UserCircle,
   Download,
   Map as MapIcon,
-  ArrowLeft
+  ArrowLeft,
+  X,
+  Smartphone
 } from 'lucide-react';
 import {
   Sheet,
@@ -45,15 +47,17 @@ const Map = dynamic(() => import('@/components/Map'), {
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
 
-// Custom House Icon based on user provided aesthetic
+// Custom House Icon - Rounded/Blobby aesthetic
 const CustomHomeIcon = ({ className }: { className?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
-    fill="currentColor" 
     className={className} 
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M12 2c-1.1 0-2.1.4-2.9 1.1L3.9 8.3C3.3 8.9 3 9.7 3 10.6V18c0 2.2 1.8 4 4 4h2c.6 0 1-.4 1-1v-4c0-1.1.9-2 2-2s2 .9 2 2v4c0 .6.4 1 1 1h2c2.2 0 4-1.8 4-4v-7.4c0-.9-.3-1.7-.9-2.3L14.9 3.1C14.1 2.4 13.1 2 12 2z" />
+    <path 
+      d="M12.707 2.293a1 1 0 00-1.414 0l-9 9A1 1 0 003 13h1v7a2 2 0 002 2h4v-5a2 2 0 014 0v5h4a2 2 0 002-2v-7h1a1 1 0 00.707-1.707l-9-9z" 
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -68,6 +72,7 @@ export function Navbar() {
   const router = useRouter();
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   const [location, setLocation] = useState('Select your location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
@@ -138,11 +143,43 @@ export function Navbar() {
     toast({ title: "Location Saved", description: "Coordinates confirmed for delivery." });
   };
 
+  const showBanner = mounted && deferredPrompt && !isBannerDismissed;
+
   if (!mounted) return null;
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full border-b bg-white/95 dark:bg-black/95 backdrop-blur-md">
+      <nav className={cn(
+        "fixed top-0 z-50 w-full border-b bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
+        showBanner ? "h-28" : "h-16"
+      )}>
+        {/* PWA Download Banner */}
+        {showBanner && (
+          <div className="h-12 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+            <div className="flex items-center gap-3">
+              <Smartphone className="h-4 w-4 animate-bounce" />
+              <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest truncate">
+                Get the full marketplace experience on your phone
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={handleInstallClick}
+                className="bg-white text-primary text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95"
+              >
+                Download
+              </button>
+              <button 
+                onClick={() => setIsBannerDismissed(true)}
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6 text-foreground">
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
@@ -219,23 +256,23 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-2">
+            {pathname !== '/' && (
+              <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                <Link href="/">
+                  <CustomHomeIcon className="h-5 w-5" />
+                </Link>
+              </Button>
+            )}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9 rounded-full mr-1"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
             {!user ? (
               <div className="flex items-center gap-2">
-                {pathname !== '/' && (
-                  <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/">
-                      <CustomHomeIcon className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                )}
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-9 w-9 rounded-full mr-1"
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                >
-                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </Button>
                 <Button asChild variant="ghost" size="sm" className="hidden md:flex font-bold">
                   <Link href="/login">Login</Link>
                 </Button>
@@ -245,21 +282,6 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                {pathname !== '/' && (
-                  <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/">
-                      <CustomHomeIcon className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                )}
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-9 w-9 rounded-full"
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                >
-                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </Button>
                 <Link href="/favorites" title="My Collection">
                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                     <Heart className={cn("h-5 w-5", pathname === '/favorites' && "fill-primary text-primary")} />
@@ -365,7 +387,10 @@ export function Navbar() {
         </div>
       </nav>
 
-      <div className="fixed top-16 left-0 right-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-6 text-sm font-bold shadow-sm">
+      <div className={cn(
+        "fixed z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-6 text-sm font-bold shadow-sm transition-all duration-300",
+        showBanner ? "top-28" : "top-16"
+      )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>
         <Link href="/deals" className={cn("whitespace-nowrap transition-colors", pathname === '/deals' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Deals</Link>
