@@ -1,7 +1,7 @@
 {
   "name": "GlamLux Marketplace",
   "short_name": "GlamLux",
-  "description": "Elite beauty marketplace for parlours and products.",
+  "description": "Elite Beauty Parlours and Products Marketplace",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

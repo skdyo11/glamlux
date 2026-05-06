@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useStore } from '@/app/lib/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useMemo } from 'react';
@@ -26,7 +27,8 @@ import {
   Heart,
   Store,
   UserCircle,
-  Download
+  Download,
+  Map as MapIcon
 } from 'lucide-react';
 import {
   Sheet,
@@ -47,6 +49,8 @@ export function Navbar() {
   const router = useRouter();
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [location, setLocation] = useState('Select your location');
+  const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
 
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
 
@@ -94,6 +98,17 @@ export function Navbar() {
     }
   };
 
+  const handleSetLocation = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const newLoc = formData.get('area') as string;
+    if (newLoc) {
+      setLocation(newLoc);
+      setIsLocationSheetOpen(false);
+      toast({ title: "Location Updated", description: `Delivering to ${newLoc}` });
+    }
+  };
+
   if (!mounted) return null;
 
   return (
@@ -103,10 +118,47 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
             
-            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm cursor-pointer hover:bg-muted/80 transition-colors">
-              <MapPin className="h-4 w-4 text-primary" />
-              <span className="font-medium">Deliver to: <span className="text-muted-foreground">Select your location</span></span>
-            </div>
+            <Sheet open={isLocationSheetOpen} onOpenChange={setIsLocationSheetOpen}>
+              <SheetTrigger asChild>
+                <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm cursor-pointer hover:bg-muted/80 transition-colors">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span className="font-medium truncate max-w-[200px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
+                </div>
+              </SheetTrigger>
+              <SheetContent side="top" className="h-auto pb-12 rounded-b-[2rem]">
+                <div className="container mx-auto max-w-xl space-y-8 py-6">
+                  <SheetHeader>
+                    <SheetTitle className="text-2xl font-bold flex items-center gap-3">
+                      <MapIcon className="h-6 w-6 text-primary" /> Select Delivery Area
+                    </SheetTitle>
+                  </SheetHeader>
+                  <form onSubmit={handleSetLocation} className="space-y-4">
+                    <div className="relative group">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input 
+                        name="area"
+                        placeholder="Enter your area (e.g. Gulberg, Lahore)" 
+                        className="pl-12 h-14 rounded-xl border-border bg-muted/30 focus-visible:ring-primary text-lg"
+                        autoFocus
+                      />
+                    </div>
+                    <Button type="submit" className="w-full h-14 rounded-xl font-bold text-lg">Set Location</Button>
+                  </form>
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t">
+                    {['Gulberg III', 'DHA Phase 5', 'South Delhi', 'Bandra West'].map(area => (
+                      <Button 
+                        key={area} 
+                        variant="outline" 
+                        className="h-12 rounded-xl justify-start px-4 text-xs font-bold uppercase tracking-widest border-muted-foreground/10 hover:border-primary/50"
+                        onClick={() => { setLocation(area); setIsLocationSheetOpen(false); }}
+                      >
+                        <MapPin className="h-3 w-3 mr-2 text-primary" /> {area}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
 
           <div className="flex items-center gap-2">
