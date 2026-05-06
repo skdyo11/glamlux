@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Star, MapPin, Search, Scissors, Heart, Sparkles, ShoppingBag } from 'lucide-react';
 import { useStore } from '@/app/lib/store';
 import { slugify } from '@/lib/utils';
