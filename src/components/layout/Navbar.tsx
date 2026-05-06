@@ -30,8 +30,7 @@ import {
   UserCircle,
   Download,
   Map as MapIcon,
-  ArrowLeft,
-  House
+  ArrowLeft
 } from 'lucide-react';
 import {
   Sheet,
@@ -45,6 +44,17 @@ const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
+
+const CustomHomeIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className} 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2c-1.5 0-2.9.6-4 1.7L3.4 8.4C2.5 9.3 2 10.6 2 12v5c0 2.8 2.2 5 5 5h3v-4c0-1.1.9-2 2-2s2 .9 2 2v4h3c2.8 0 5-2.2 5-5v-5c0-1.4-.5-2.7-1.4-3.6l-4.7-4.7C14.9 2.6 13.5 2 12 2z" />
+  </svg>
+);
 
 export function Navbar() {
   const { cart } = useStore();
@@ -149,7 +159,7 @@ export function Navbar() {
                           </Button>
                         )}
                         <MapIcon className="h-6 w-6 text-primary" /> 
-                        {locationView === 'search' ? 'Select Delivery Area' : 'Pin your Sanctuary'}
+                        {locationView === 'search' ? 'Select Delivery Area' : 'Pin your Location'}
                       </SheetTitle>
                     </div>
                   </SheetHeader>
@@ -207,7 +217,9 @@ export function Navbar() {
               <div className="flex items-center gap-2">
                 {pathname !== '/' && (
                   <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/"><House className="h-5 w-5" /></Link>
+                    <Link href="/">
+                      <CustomHomeIcon className="h-5 w-5" />
+                    </Link>
                   </Button>
                 )}
                 <Button 
@@ -229,7 +241,9 @@ export function Navbar() {
               <div className="flex items-center gap-3">
                 {pathname !== '/' && (
                   <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Link href="/"><House className="h-5 w-5" /></Link>
+                    <Link href="/">
+                      <CustomHomeIcon className="h-5 w-5" />
+                    </Link>
                   </Button>
                 )}
                 <Button 
