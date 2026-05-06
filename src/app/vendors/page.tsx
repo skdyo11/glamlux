@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, MapPin, Search, ArrowRight, Heart, Sparkles, Percent, SlidersHorizontal } from 'lucide-react';
@@ -98,13 +99,13 @@ export default function VendorsPage() {
               const isFav = isFavoriteVendor(vendor.id);
               const vendorSlug = vendor.slug || slugify(vendor.name);
               return (
-                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block relative border rounded-2xl overflow-hidden hover:shadow-marketplace transition-all">
+                <Link key={vendor.id} href={`/vendors/${vendorSlug}`} className="group block relative border rounded-2xl overflow-hidden hover:shadow-marketplace transition-all hover:-translate-y-2">
                   <div className="relative aspect-video">
                     <Image 
                       src={vendor.imageUrls?.[0] || 'https://picsum.photos/seed/v-1/800/450'} 
                       alt={vendor.name}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform group-hover:scale-105"
                     />
                     <button 
                       onClick={(e) => handleFavoriteToggle(e, vendor.id)}

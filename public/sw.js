@@ -1,4 +1,4 @@
-// Core Service Worker for GlamLux Registry Hub
+// Simple Service Worker to satisfy PWA requirements
 const CACHE_NAME = 'glamlux-v1';
 
 self.addEventListener('install', (event) => {
@@ -10,8 +10,9 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Satisfies Chrome install requirements
+  // Pass-through strategy (network-first/only) for MVP
+  // This satisfies browser installability checks
   event.respondWith(fetch(event.request).catch(() => {
-    return new Response('Offline content placeholder');
+    return caches.match(event.request);
   }));
 });
