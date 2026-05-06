@@ -25,7 +25,8 @@ import {
   ShoppingCart,
   Heart,
   Store,
-  UserCircle
+  UserCircle,
+  Download
 } from 'lucide-react';
 import {
   Sheet,
@@ -45,11 +46,45 @@ export function Navbar() {
   const { toast } = useToast();
   const router = useRouter();
 
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
 
   useEffect(() => {
     setMounted(true);
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+        if (choiceResult.outcome === 'accepted') {
+          setDeferredPrompt(null);
+        }
+      });
+    } else {
+      toast({
+        title: "Download GlamLux App",
+        description: "On iOS: Tap Share > Add to Home Screen. On PC/Android: Look for the Install icon in your browser address bar.",
+      });
+    }
+  };
 
   const handleLogout = async () => {
     if (auth) {
@@ -68,7 +103,6 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
             
-            {/* Desktop Location Placeholder */}
             <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm cursor-pointer hover:bg-muted/80 transition-colors">
               <MapPin className="h-4 w-4 text-primary" />
               <span className="font-medium">Deliver to: <span className="text-muted-foreground">Select your location</span></span>
@@ -130,6 +164,9 @@ export function Navbar() {
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="right" className="w-[300px] p-0">
+                    <SheetHeader className="sr-only">
+                      <SheetTitle>User Menu</SheetTitle>
+                    </SheetHeader>
                     <div className="flex flex-col h-full">
                       <div className="p-6 border-b">
                         <div className="flex items-center gap-4 mb-6">
@@ -164,6 +201,18 @@ export function Navbar() {
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </Link>
+                        
+                        <button 
+                          onClick={handleInstallClick}
+                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Download className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm font-medium">Download App</span>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+
                         <button 
                           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                           className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors"
