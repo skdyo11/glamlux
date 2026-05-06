@@ -30,7 +30,8 @@ import {
   UserCircle,
   Download,
   Map as MapIcon,
-  ArrowLeft
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 import {
   Sheet,
@@ -204,6 +205,11 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {!user ? (
               <div className="flex items-center gap-2">
+                {pathname !== '/' && (
+                  <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <Link href="/"><Home className="h-5 w-5" /></Link>
+                  </Button>
+                )}
                 <Button 
                   variant="ghost" 
                   size="icon" 
@@ -221,6 +227,11 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
+                {pathname !== '/' && (
+                  <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <Link href="/"><Home className="h-5 w-5" /></Link>
+                  </Button>
+                )}
                 <Button 
                   variant="ghost" 
                   size="icon" 
