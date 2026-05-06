@@ -476,7 +476,7 @@ export default function PartnerPortalPage() {
       <main className="container mx-auto px-6 py-14 md:py-32">
         <header className="relative mb-32 border border-primary/10 bg-white dark:bg-card shadow-2xl overflow-hidden">
           <div className="relative w-full h-48 md:h-80 overflow-hidden border-b border-primary/10 group">
-            <Image src={coverImageUrl} alt="Artisan Cover" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-1000" priority />
+            <Image src={coverImageUrl} alt="Artisan Cover" fill className="object-cover transition-all duration-1000" priority />
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Button onClick={() => openImageModal('cover')} className="rounded-none vogue-button bg-primary text-primary-foreground border-none h-14 px-10 text-[10px] shadow-2xl hover:scale-105 active:scale-95">Change Cover</Button>
@@ -486,7 +486,7 @@ export default function PartnerPortalPage() {
           <div className="p-10 flex flex-col md:flex-row items-center md:items-end gap-12 -mt-20 md:-mt-24">
             <div className="relative h-40 w-40 md:h-56 md:w-56 overflow-hidden border-4 border-white dark:border-card bg-white dark:bg-background group shadow-2xl z-10">
               <Avatar className="h-full w-full rounded-none">
-                <AvatarImage src={profileImageUrl} className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000" />
+                <AvatarImage src={profileImageUrl} className="object-cover transition-all duration-1000" />
                 <AvatarFallback className="bg-primary/5"><Store className="h-10 w-10 opacity-20" strokeWidth={1.5} /></AvatarFallback>
               </Avatar>
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer group-hover:scale-105" onClick={() => openImageModal('profile')}>
@@ -632,7 +632,7 @@ export default function PartnerPortalPage() {
               {myProducts.map((p) => (
                 <div key={p.id} className="space-y-6 group cursor-pointer" onClick={() => handleEdit('product', p)}>
                   <div className="relative aspect-square border border-primary/5 bg-muted overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-700">
-                    <Image src={p.imageUrl || 'https://picsum.photos/seed/v-prod/400/500'} alt={p.name} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" />
+                    <Image src={p.imageUrl || 'https://picsum.photos/seed/v-prod/400/500'} alt={p.name} fill className="object-cover transition-all duration-1000 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                        <Button variant="secondary" className="rounded-none font-bold text-[10px] tracking-widest uppercase border-none">Edit Entry</Button>
                     </div>
@@ -822,7 +822,7 @@ export default function PartnerPortalPage() {
                         onClick={() => handleApplyIdentity(url)} 
                         className="relative aspect-square border border-primary/10 group overflow-hidden bg-primary/5 shadow-inner transition-all hover:scale-105 active:scale-95"
                       >
-                        <img src={url} alt="Option" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                        <img src={url} alt="Option" className="w-full h-full object-cover transition-all duration-700" />
                         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
                           <Check className="h-8 w-8 text-white animate-in zoom-in duration-300" strokeWidth={2} />
                         </div>
