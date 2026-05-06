@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -47,7 +48,10 @@ import {
   Package,
   Clock,
   TrendingUp,
-  Users
+  Users,
+  QrCode,
+  ScanLine,
+  AlertCircle
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -57,6 +61,8 @@ import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapsho
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
+import { Html5Qrcode } from 'html5-qrcode';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
@@ -92,6 +98,11 @@ export default function PartnerPortalPage() {
 
   const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]);
   const [addressInput, setAddressInput] = useState('');
+
+  // Scanner State
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const videoRegionId = "qr-reader";
 
   // Survey State
   const [surveyStep, setSurveyStep] = useState(1);
@@ -166,6 +177,56 @@ export default function PartnerPortalPage() {
       unsubBookings();
     };
   }, [user, firestore, hasBusiness]);
+
+  // Scanner Logic
+  const startScanner = useCallback(async () => {
+    if (scannerRef.current) return;
+    
+    const html5QrCode = new Html5Qrcode(videoRegionId);
+    scannerRef.current = html5QrCode;
+
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          // Find matching arrival
+          const found = arrivals.find(a => a.referenceCode === decodedText || a.id === decodedText);
+          if (found) {
+            html5QrCode.stop();
+            scannerRef.current = null;
+            setSelectedArrival(found);
+            toast({ title: "Guest Recognized", description: `Scanned ${found.userName}` });
+            setActiveTab('bookings');
+          }
+        },
+        () => {} // Silent on failure
+      );
+      setHasCameraPermission(true);
+    } catch (err) {
+      setHasCameraPermission(false);
+      scannerRef.current = null;
+    }
+  }, [arrivals, toast]);
+
+  useEffect(() => {
+    if (activeTab === 'scanner') {
+      startScanner();
+    } else {
+      if (scannerRef.current) {
+        scannerRef.current.stop().then(() => {
+          scannerRef.current = null;
+        }).catch(() => {
+          scannerRef.current = null;
+        });
+      }
+    }
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {});
+      }
+    };
+  }, [activeTab, startScanner]);
 
   const globalOrdersQuery = useMemoFirebase(() => {
     if (!firestore || !myBusiness?.isDeliveryTeam) return null;
@@ -437,8 +498,8 @@ export default function PartnerPortalPage() {
         <Navbar />
         <main className="flex-grow container mx-auto px-6 py-20 flex flex-col items-center justify-center space-y-16">
           <header className="text-center space-y-6 max-w-2xl">
-            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Portal Setup</span>
-            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Setup your shop.</h1>
+            <span className="text-secondary font-bold uppercase tracking-[0.5em] text-[10px]">Set up your shop</span>
+            <h1 className="text-6xl md:text-8xl font-headline tracking-tighter italic text-primary leading-none">Setup your business.</h1>
             <p className="text-lg text-muted-foreground font-body italic">Choose your business type to start selling on GlamLux.</p>
           </header>
 
@@ -537,6 +598,7 @@ export default function PartnerPortalPage() {
               { id: 'bookings', label: myBusiness?.isDeliveryTeam ? '02 Queue' : '01 Queue' },
               { id: 'items', label: myBusiness?.isDeliveryTeam ? '03 Items' : '02 Items' },
               { id: 'services', label: myBusiness?.isDeliveryTeam ? '04 Services' : '03 Services' },
+              { id: 'scanner', label: myBusiness?.isDeliveryTeam ? '05 Scan QR' : '04 Scan QR' },
             ].filter(Boolean).map((tab: any) => (
               <TabsTrigger 
                 key={tab.id} value={tab.id} 
@@ -635,6 +697,44 @@ export default function PartnerPortalPage() {
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="scanner" className="space-y-12">
+             <div className="border-b border-primary/10 pb-8 space-y-2">
+               <h3 className="text-4xl font-headline tracking-tighter text-primary italic">Verify Guest.</h3>
+               <p className="text-[10px] uppercase font-black tracking-[0.4em] text-primary/30">Scan the digital voucher to recognize guest</p>
+             </div>
+             
+             <div className="max-w-xl mx-auto space-y-8">
+               <div className="relative aspect-square rounded-[3rem] overflow-hidden border border-primary/10 shadow-3xl bg-black">
+                 <div id={videoRegionId} className="w-full h-full" />
+                 {hasCameraPermission === false && (
+                   <div className="absolute inset-0 flex items-center justify-center p-12 text-center bg-background/90 backdrop-blur-xl">
+                      <div className="space-y-6">
+                        <AlertCircle className="h-12 w-12 text-primary mx-auto opacity-20" />
+                        <div className="space-y-2">
+                          <p className="font-headline text-2xl text-primary">Camera Required.</p>
+                          <p className="text-sm text-muted-foreground italic">Please enable camera access to verify arrivals.</p>
+                        </div>
+                        <Button onClick={startScanner} className="rounded-full px-8 h-14 font-bold uppercase tracking-widest text-[10px]">Retry Access</Button>
+                      </div>
+                   </div>
+                 )}
+                 <div className="absolute inset-0 pointer-events-none border-[4rem] border-black/20 flex items-center justify-center">
+                    <div className="w-full h-full border-2 border-white/40 border-dashed rounded-3xl animate-pulse" />
+                 </div>
+               </div>
+               
+               <Card className="p-8 rounded-[2rem] border-none shadow-xl bg-primary/5 border border-primary/5 flex items-center gap-6">
+                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                   <ScanLine className="h-6 w-6" />
+                 </div>
+                 <div className="space-y-1">
+                   <h4 className="font-headline text-xl italic">Instant Recognition</h4>
+                   <p className="text-xs text-muted-foreground italic leading-relaxed">Position the guest's QR code within the frame to automatically retrieve their booking credentials.</p>
+                 </div>
+               </Card>
+             </div>
           </TabsContent>
 
           <TabsContent value="items" className="space-y-12">
