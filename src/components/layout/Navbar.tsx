@@ -52,7 +52,7 @@ const CustomHomeIcon = ({ className }: { className?: string }) => (
     className={className} 
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M12 2c-1.5 0-2.9.6-4 1.7L3.4 8.4C2.5 9.3 2 10.6 2 12v5c0 2.8 2.2 5 5 5h3v-4c0-1.1.9-2 2-2s2 .9 2 2v4h3c2.8 0 5-2.2 5-5v-5c0-1.4-.5-2.7-1.4-3.6l-4.7-4.7C14.9 2.6 13.5 2 12 2z" />
+    <path d="M12 2c-1.3 0-2.6.5-3.5 1.5L3.5 8.5C2.5 9.5 2 10.8 2 12.2V17c0 2.8 2.2 5 5 5h3v-3c0-1.1.9-2 2-2s2 .9 2 2v3h3c2.8 0 5-2.2 5-5v-4.8c0-1.4-.5-2.7-1.5-3.7l-5-5C14.6 2.5 13.3 2 12 2z" />
   </svg>
 );
 
@@ -137,7 +137,7 @@ export function Navbar() {
   return (
     <>
       <nav className="fixed top-0 z-50 w-full border-b bg-white/95 dark:bg-black/95 backdrop-blur-md">
-        <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6">
+        <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6 text-foreground">
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
             
