@@ -1,20 +1,21 @@
 {
   "name": "GlamLux Marketplace",
   "short_name": "GlamLux",
-  "description": "Elite Beauty Parlours and Products Marketplace",
+  "description": "Premium Beauty & Artistry Marketplace",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#D70F64",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://picsum.photos/seed/glam-icon-192/192/192",
+      "src": "https://placehold.co/192x192/D70F64/white?text=GL",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://picsum.photos/seed/glam-icon-512/512/512",
+      "src": "https://placehold.co/512x512/D70F64/white?text=GL",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
