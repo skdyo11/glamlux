@@ -47,7 +47,6 @@ const Map = dynamic(() => import('@/components/Map'), {
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
 
-// Custom House Icon - Rounded/Blobby aesthetic
 const CustomHomeIcon = ({ className }: { className?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
@@ -106,7 +105,7 @@ export function Navbar() {
     } else {
       toast({
         title: "Download App",
-        description: "On iOS: Tap Share > Add to Home Screen. On PC/Android: Check your browser's install icon.",
+        description: "Install GlamLux directly to your home screen via your browser's menu.",
       });
     }
   };
@@ -148,7 +147,6 @@ export function Navbar() {
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
         showBanner ? "h-[100px]" : "h-16"
       )}>
-        {/* PWA Download Banner */}
         {showBanner && (
           <div className="h-9 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -218,27 +216,11 @@ export function Navbar() {
                           <MapPin className="h-5 w-5 mr-2" /> Select on Map
                         </Button>
                       </form>
-                      <div className="grid grid-cols-2 gap-3 pt-4 border-t">
-                        {['Gulberg III', 'DHA Phase 5', 'South Delhi', 'Bandra West'].map(area => (
-                          <Button 
-                            key={area} 
-                            variant="outline" 
-                            className="h-12 rounded-xl justify-start px-4 text-xs font-bold uppercase tracking-widest border-muted-foreground/10 hover:border-primary/50"
-                            onClick={() => { setLocation(area); setIsLocationSheetOpen(false); }}
-                          >
-                            <MapPin className="h-3 w-3 mr-2 text-primary" /> {area}
-                          </Button>
-                        ))}
-                      </div>
                     </div>
                   ) : (
                     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
                       <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[350px]">
                         <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
-                      </div>
-                      <div className="p-4 bg-primary/5 rounded-2xl text-center">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-1">Coordinates</p>
-                        <p className="font-mono text-sm text-primary font-bold">{mapCenter[0].toFixed(6)}, {mapCenter[1].toFixed(6)}</p>
                       </div>
                       <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-xl font-bold text-lg shadow-2xl">
                         Confirm Location
@@ -277,12 +259,12 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Link href="/favorites" title="My Collection">
+                <Link href="/favorites">
                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                     <Heart className={cn("h-5 w-5", pathname === '/favorites' && "fill-primary text-primary")} />
                   </Button>
                 </Link>
-                <Link href="/cart" className="relative" title="Cart">
+                <Link href="/cart" className="relative">
                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                     <ShoppingCart className={cn("h-5 w-5", pathname === '/cart' && "text-primary")} />
                     {cartCount > 0 && (
@@ -352,16 +334,6 @@ export function Navbar() {
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </button>
-
-                        <button 
-                          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left"
-                        >
-                          <div className="flex items-center gap-3">
-                            {theme === 'dark' ? <Sun className="h-5 w-5 text-muted-foreground" /> : <Moon className="h-5 w-5 text-muted-foreground" />}
-                            <span className="text-sm font-medium">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                          </div>
-                        </button>
                       </div>
 
                       <div className="p-6 border-t">
@@ -382,6 +354,7 @@ export function Navbar() {
         </div>
       </nav>
 
+      {/* Full-width, taller, flush sub-nav strip */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-24 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-[100px]" : "top-16"

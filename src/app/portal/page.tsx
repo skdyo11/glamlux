@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -178,35 +177,44 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
-  // Scanner Logic
+  // Scanner Logic with Refined Initialization
   const startScanner = useCallback(async () => {
     if (scannerRef.current) return;
     
-    const html5QrCode = new Html5Qrcode(videoRegionId);
-    scannerRef.current = html5QrCode;
+    // Safety delay to ensure the DOM element with id="qr-reader" is rendered by the Tabs content
+    setTimeout(async () => {
+      const element = document.getElementById(videoRegionId);
+      if (!element) {
+        console.warn("Scanner element not ready");
+        return;
+      }
 
-    try {
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          // Find matching arrival
-          const found = arrivals.find(a => a.referenceCode === decodedText || a.id === decodedText);
-          if (found) {
-            html5QrCode.stop();
-            scannerRef.current = null;
-            setSelectedArrival(found);
-            toast({ title: "Guest Recognized", description: `Scanned ${found.userName}` });
-            setActiveTab('bookings');
-          }
-        },
-        () => {} // Silent on failure
-      );
-      setHasCameraPermission(true);
-    } catch (err) {
-      setHasCameraPermission(false);
-      scannerRef.current = null;
-    }
+      const html5QrCode = new Html5Qrcode(videoRegionId);
+      scannerRef.current = html5QrCode;
+
+      try {
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decodedText) => {
+            // Find matching arrival
+            const found = arrivals.find(a => a.referenceCode === decodedText || a.id === decodedText);
+            if (found) {
+              html5QrCode.stop();
+              scannerRef.current = null;
+              setSelectedArrival(found);
+              toast({ title: "Guest Recognized", description: `Scanned ${found.userName}` });
+              setActiveTab('bookings');
+            }
+          },
+          () => {} // Silent on failure
+        );
+        setHasCameraPermission(true);
+      } catch (err) {
+        setHasCameraPermission(false);
+        scannerRef.current = null;
+      }
+    }, 150);
   }, [arrivals, toast]);
 
   useEffect(() => {
