@@ -101,6 +101,7 @@ export default function PartnerPortalPage() {
   // Scanner State
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerTransitionRef = useRef(false);
   const videoRegionId = "qr-reader";
 
   // Survey State
@@ -177,64 +178,78 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
-  // Scanner Logic with Refined Initialization
-  const startScanner = useCallback(async () => {
-    if (scannerRef.current) return;
-    
-    // Safety delay to ensure the DOM element with id="qr-reader" is rendered by the Tabs content
-    setTimeout(async () => {
-      const element = document.getElementById(videoRegionId);
-      if (!element) {
-        console.warn("Scanner element not ready");
-        return;
+  // Robust Scanner Transitions
+  const stopScanner = useCallback(async () => {
+    if (scannerTransitionRef.current) return;
+    if (!scannerRef.current) return;
+
+    scannerTransitionRef.current = true;
+    try {
+      if (scannerRef.current.isScanning) {
+        await scannerRef.current.stop();
       }
+      scannerRef.current = null;
+    } catch (err) {
+      console.warn("Scanner stop warning:", err);
+      scannerRef.current = null;
+    } finally {
+      scannerTransitionRef.current = false;
+    }
+  }, []);
 
-      const html5QrCode = new Html5Qrcode(videoRegionId);
-      scannerRef.current = html5QrCode;
+  const startScanner = useCallback(async () => {
+    if (scannerTransitionRef.current || scannerRef.current) return;
+    
+    scannerTransitionRef.current = true;
 
-      try {
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            // Find matching arrival
-            const found = arrivals.find(a => a.referenceCode === decodedText || a.id === decodedText);
-            if (found) {
-              html5QrCode.stop();
-              scannerRef.current = null;
+    // Small delay to ensure the tab content is fully mounted in the DOM
+    await new Promise(r => setTimeout(r, 200));
+
+    const element = document.getElementById(videoRegionId);
+    if (!element) {
+      scannerTransitionRef.current = false;
+      return;
+    }
+
+    const html5QrCode = new Html5Qrcode(videoRegionId);
+    scannerRef.current = html5QrCode;
+
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          const found = arrivals.find(a => a.referenceCode === decodedText || a.id === decodedText);
+          if (found) {
+            stopScanner().then(() => {
               setSelectedArrival(found);
               toast({ title: "Guest Recognized", description: `Scanned ${found.userName}` });
               setActiveTab('bookings');
-            }
-          },
-          () => {} // Silent on failure
-        );
-        setHasCameraPermission(true);
-      } catch (err) {
-        setHasCameraPermission(false);
-        scannerRef.current = null;
-      }
-    }, 150);
-  }, [arrivals, toast]);
+            });
+          }
+        },
+        () => {} // Ignored
+      );
+      setHasCameraPermission(true);
+    } catch (err) {
+      console.error("Scanner start error:", err);
+      setHasCameraPermission(false);
+      scannerRef.current = null;
+    } finally {
+      scannerTransitionRef.current = false;
+    }
+  }, [arrivals, toast, stopScanner]);
 
   useEffect(() => {
     if (activeTab === 'scanner') {
       startScanner();
     } else {
-      if (scannerRef.current) {
-        scannerRef.current.stop().then(() => {
-          scannerRef.current = null;
-        }).catch(() => {
-          scannerRef.current = null;
-        });
-      }
+      stopScanner();
     }
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
-      }
+      stopScanner();
     };
-  }, [activeTab, startScanner]);
+  }, [activeTab, startScanner, stopScanner]);
 
   const globalOrdersQuery = useMemoFirebase(() => {
     if (!firestore || !myBusiness?.isDeliveryTeam) return null;
@@ -606,7 +621,7 @@ export default function PartnerPortalPage() {
               { id: 'bookings', label: myBusiness?.isDeliveryTeam ? '02 Queue' : '01 Queue' },
               { id: 'items', label: myBusiness?.isDeliveryTeam ? '03 Items' : '02 Items' },
               { id: 'services', label: myBusiness?.isDeliveryTeam ? '04 Services' : '03 Services' },
-              { id: 'scanner', label: myBusiness?.isDeliveryTeam ? '05 Scan QR' : '04 Scan QR' },
+              { id: 'scanner', label: '05 Scan QR' },
             ].filter(Boolean).map((tab: any) => (
               <TabsTrigger 
                 key={tab.id} value={tab.id} 
