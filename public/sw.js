@@ -1,8 +1,8 @@
-// GlamLux Service Worker
 const CACHE_NAME = 'glamlux-v1';
 const ASSETS = [
   '/',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon.png'
 ];
 
 self.addEventListener('install', (event) => {

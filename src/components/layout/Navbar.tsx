@@ -70,8 +70,10 @@ export function Navbar() {
   const { toast } = useToast();
   const router = useRouter();
 
+  // PWA States
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
+
   const [location, setLocation] = useState('Select your location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
@@ -83,7 +85,9 @@ export function Navbar() {
     setMounted(true);
 
     const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
+      // Stash the event so it can be triggered later.
       setDeferredPrompt(e);
     };
 
@@ -96,10 +100,15 @@ export function Navbar() {
 
   const handleInstallClick = () => {
     if (deferredPrompt) {
+      // Show the install prompt
       deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
       deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
         if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
           setDeferredPrompt(null);
+        } else {
+          console.log('User dismissed the install prompt');
         }
       });
     } else {
@@ -147,6 +156,7 @@ export function Navbar() {
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
         showBanner ? "h-[96px]" : "h-16"
       )}>
+        {/* PWA Install Popup Bar */}
         {showBanner && (
           <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
