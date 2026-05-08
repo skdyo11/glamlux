@@ -85,7 +85,6 @@ export function Navbar() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      console.log('Install prompt captured');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -106,7 +105,7 @@ export function Navbar() {
     } else {
       toast({
         title: "PWA Readiness",
-        description: "Install options vary by browser. Look for 'Add to Home Screen' in your browser settings.",
+        description: "Checking browser compatibility... Try again in a few seconds or use your browser's 'Add to Home Screen' menu.",
       });
     }
   };

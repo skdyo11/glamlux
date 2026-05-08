@@ -1,7 +1,7 @@
 {
   "name": "GlamLux Beauty Marketplace",
   "short_name": "GlamLux",
-  "description": "Elite beauty curators and professional artistry registry.",
+  "description": "Elite parlour deals and designer makeup collections.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

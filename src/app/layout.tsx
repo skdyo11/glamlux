@@ -4,7 +4,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { StoreProvider } from '@/app/lib/store';
-import Script from 'next/experimental/script';
 
 export const metadata: Metadata = {
   title: 'GlamLux | The Editorial Registry',
@@ -61,7 +60,7 @@ export default function RootLayout({
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    console.log('ServiceWorker registration successful');
                   }, function(err) {
                     console.log('ServiceWorker registration failed: ', err);
                   });
