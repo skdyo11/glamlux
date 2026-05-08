@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -104,8 +105,8 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "Download App",
-        description: "Install GlamLux directly to your home screen via your browser's menu.",
+        title: "Download Ready",
+        description: "The app is already optimized for your browser's 'Add to Home Screen' option.",
       });
     }
   };

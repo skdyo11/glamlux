@@ -1,9 +1,24 @@
-self.addEventListener('install', function(event) {
-  event.waitUntil(self.skipWaiting());
+
+// Service Worker for GlamLux PWA
+const CACHE_NAME = 'glamlux-v1';
+const ASSETS = [
+  '/',
+  '/manifest.json',
+  '/icon.png'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
 });
-self.addEventListener('activate', function(event) {
-  event.waitUntil(self.clients.claim());
-});
-self.addEventListener('fetch', function(event) {
-  event.respondWith(fetch(event.request));
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });
