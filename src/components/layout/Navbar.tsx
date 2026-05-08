@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -86,6 +85,7 @@ export function Navbar() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      console.log('Install prompt captured');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -105,8 +105,8 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "Download Ready",
-        description: "The app is already optimized for your browser's 'Add to Home Screen' option.",
+        title: "PWA Readiness",
+        description: "Install options vary by browser. Look for 'Add to Home Screen' in your browser settings.",
       });
     }
   };
@@ -146,7 +146,7 @@ export function Navbar() {
     <>
       <nav className={cn(
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
-        showBanner ? "h-[92px]" : "h-16"
+        showBanner ? "h-[96px]" : "h-16"
       )}>
         {showBanner && (
           <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
@@ -162,7 +162,7 @@ export function Navbar() {
                 onClick={handleInstallClick}
                 className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-0.5 rounded-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95"
               >
-                Download
+                Install
               </button>
               <button 
                 onClick={() => setIsBannerDismissed(true)}
