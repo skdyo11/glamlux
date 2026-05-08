@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -51,7 +50,7 @@ export default function ShopPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pt-44">
+    <div className="min-h-screen bg-background flex flex-col pt-32">
       <Navbar />
       
       <main className="container mx-auto px-4 md:px-6 py-8">

@@ -354,10 +354,10 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Full-width, taller, flush sub-nav strip */}
+      {/* Unified header strip - Slimmed to h-12 */}
       <div className={cn(
-        "fixed inset-x-0 z-40 h-24 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
-        showBanner ? "top-[92px]" : "top-16"
+        "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
+        showBanner ? "top-24" : "top-16"
       )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>

@@ -1,13 +1,9 @@
-// Minimal Service Worker for PWA compliance
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
+self.addEventListener('install', function(event) {
+  event.waitUntil(self.skipWaiting());
 });
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim());
 });
-
-self.addEventListener('fetch', (event) => {
-  // Simple pass-through for prototype
+self.addEventListener('fetch', function(event) {
   event.respondWith(fetch(event.request));
 });

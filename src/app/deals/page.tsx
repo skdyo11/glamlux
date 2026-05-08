@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -61,7 +60,7 @@ function DealsContent() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pt-44">
+    <div className="min-h-screen bg-background flex flex-col pt-32">
       <Navbar />
       
       <main className="container mx-auto px-6 py-12 pb-32 flex-grow max-w-screen-2xl">
