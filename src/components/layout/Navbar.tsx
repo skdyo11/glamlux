@@ -145,21 +145,21 @@ export function Navbar() {
     <>
       <nav className={cn(
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
-        showBanner ? "h-[100px]" : "h-16"
+        showBanner ? "h-[92px]" : "h-16"
       )}>
         {showBanner && (
-          <div className="h-9 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
+          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             <div className="flex items-center gap-3">
-              <Smartphone className="h-3.5 w-3.5 animate-bounce" />
-              <p className="text-[9px] md:text-[11px] font-bold uppercase tracking-widest truncate">
-                Get the full experience on your phone
+              <Smartphone className="h-3 w-3 animate-bounce" />
+              <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest truncate">
+                Get GlamLux for mobile
               </p>
             </div>
             <div className="flex items-center gap-4">
               <button 
                 onClick={handleInstallClick}
-                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95"
+                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-0.5 rounded-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95"
               >
                 Download
               </button>
@@ -167,7 +167,7 @@ export function Navbar() {
                 onClick={() => setIsBannerDismissed(true)}
                 className="text-white/60 hover:text-white transition-colors"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3 w-3" />
               </button>
             </div>
           </div>
@@ -357,7 +357,7 @@ export function Navbar() {
       {/* Full-width, taller, flush sub-nav strip */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-24 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
-        showBanner ? "top-[100px]" : "top-16"
+        showBanner ? "top-[92px]" : "top-16"
       )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>
