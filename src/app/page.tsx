@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -14,10 +15,12 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { getCurrency } = useStore();
   const firestore = useFirestore();
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [searchVal, setSearchVal] = useState('');
 
@@ -38,6 +41,14 @@ export default function Home() {
   }, [firestore]);
 
   const { data: deals, isLoading: isLoadingDeals } = useCollection(featuredDealsQuery);
+
+  const handleFindParlours = () => {
+    if (searchVal.trim()) {
+      router.push(`/vendors?area=${encodeURIComponent(searchVal.trim())}`);
+    } else {
+      router.push('/vendors');
+    }
+  };
 
   if (!isMounted) return null;
 
@@ -69,8 +80,9 @@ export default function Home() {
                   className="flex-grow border-none focus-visible:ring-0 text-base py-6 px-4"
                   value={searchVal}
                   onChange={(e) => setSearchVal(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
                 />
-                <Button size="lg" className="rounded-xl px-8 font-bold">Find Parlours</Button>
+                <Button onClick={handleFindParlours} size="lg" className="rounded-xl px-8 font-bold">Find Parlours</Button>
               </div>
             </div>
             <div className="hidden md:block flex-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
@@ -114,7 +126,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-8">Best Offers for You</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isLoadingDeals ? (
-                 [1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-2xl" />)
+                 [1, 2, 3].map(i => <Skeleton className="h-48 rounded-2xl" />)
               ) : (
                 deals?.map((deal) => (
                   <Link 
@@ -154,7 +166,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {isLoadingVendors ? (
-                [1, 2, 3, 4].map(n => <Skeleton key={n} className="h-[350px] rounded-2xl" />)
+                [1, 2, 3, 4].map(n => <Skeleton className="h-[350px] rounded-2xl" />)
               ) : (
                 topVendors?.map((vendor) => {
                   const vendorSlug = vendor.slug || slugify(vendor.name);

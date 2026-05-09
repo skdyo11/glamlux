@@ -1,8 +1,10 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,16 +18,26 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit, doc, updateDoc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function VendorsPage() {
+function VendorsContent() {
   const { getCurrency, isFavoriteVendor, toggleFavoriteVendor } = useStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [areaFilter, setAreaFilter] = useState('All');
-  const [isMounted, setIsMounted] = useState(false);
+  const searchParams = useSearchParams();
   const firestore = useFirestore();
+  
+  const initialArea = searchParams.get('area') || 'All';
+  const [searchQuery, setSearchQuery] = useState('');
+  const [areaFilter, setAreaFilter] = useState(initialArea);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    const area = searchParams.get('area');
+    if (area) {
+      setAreaFilter(area);
+    }
+  }, [searchParams]);
 
   const vendorsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -34,12 +46,18 @@ export default function VendorsPage() {
 
   const { data: vendors, isLoading } = useCollection(vendorsQuery);
 
-  const uniqueAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.areaTag?.split(',').pop()?.trim() || v.areaTag).filter(Boolean)))];
+  const uniqueAreas = useMemo(() => {
+    const baseAreas = ['All', ...Array.from(new Set((vendors || []).map(v => v.areaTag?.split(',').pop()?.trim() || v.areaTag).filter(Boolean)))];
+    if (areaFilter !== 'All' && !baseAreas.includes(areaFilter)) {
+      baseAreas.push(areaFilter);
+    }
+    return baseAreas;
+  }, [vendors, areaFilter]);
 
   const filteredVendors = (vendors || []).filter((v) => {
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           v.areaTag?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesArea = areaFilter === 'All' || v.areaTag?.includes(areaFilter);
+    const matchesArea = areaFilter === 'All' || v.areaTag?.toLowerCase().includes(areaFilter.toLowerCase());
     return matchesSearch && matchesArea;
   });
 
@@ -147,5 +165,17 @@ export default function VendorsPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function VendorsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+      </div>
+    }>
+      <VendorsContent />
+    </Suspense>
   );
 }
