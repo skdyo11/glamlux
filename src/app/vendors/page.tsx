@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -100,9 +99,6 @@ function VendorsContent() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl shrink-0">
-                <SlidersHorizontal className="h-5 w-5" />
-              </Button>
             </div>
           </div>
         </header>

@@ -1,4 +1,3 @@
-
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -8,6 +7,9 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple pass-through fetch handler for PWA installability
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
