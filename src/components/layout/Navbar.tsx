@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -85,9 +86,7 @@ export function Navbar() {
     setMounted(true);
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
       setDeferredPrompt(e);
     };
 
@@ -100,21 +99,16 @@ export function Navbar() {
 
   const handleInstallClick = () => {
     if (deferredPrompt) {
-      // Show the install prompt
       deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
       deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
         if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
           setDeferredPrompt(null);
-        } else {
-          console.log('User dismissed the install prompt');
         }
       });
     } else {
       toast({
-        title: "PWA Readiness",
-        description: "Checking browser compatibility... Try again in a few seconds or use your browser's 'Add to Home Screen' menu.",
+        title: "App Already Installed",
+        description: "Or checking browser compatibility. Use your browser's menu to 'Add to Home Screen'.",
       });
     }
   };
@@ -154,30 +148,31 @@ export function Navbar() {
     <>
       <nav className={cn(
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
-        showBanner ? "h-[96px]" : "h-16"
+        showBanner ? "h-[112px]" : "h-16"
       )}>
-        {/* PWA Install Popup Bar */}
+        {/* PWA Install Popup Bar - Above main header content */}
         {showBanner && (
-          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <div className="h-12 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1500" />
             <div className="flex items-center gap-3">
-              <Smartphone className="h-3 w-3 animate-bounce" />
-              <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest truncate">
-                Get GlamLux for mobile
-              </p>
+              <Smartphone className="h-4 w-4 animate-bounce" />
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-black uppercase tracking-widest leading-none">Get the Mobile Experience</p>
+                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Install GlamLux on your home screen</p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <button 
                 onClick={handleInstallClick}
-                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-0.5 rounded-full hover:bg-opacity-90 transition-all shadow-lg active:scale-95"
+                className="bg-white text-primary text-[9px] font-black uppercase tracking-widest px-5 py-1.5 rounded-full hover:scale-105 transition-all shadow-2xl active:scale-95"
               >
-                Install
+                Download
               </button>
               <button 
                 onClick={() => setIsBannerDismissed(true)}
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-white/40 hover:text-white transition-colors"
               >
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -187,7 +182,7 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
             
-            <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
+            <Sheet open={isLocationSheetOpen} onValueChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
                 <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm cursor-pointer hover:bg-muted/80 transition-colors">
                   <MapPin className="h-4 w-4 text-primary" />
@@ -367,7 +362,7 @@ export function Navbar() {
       {/* Unified header strip - Slimmed to h-12 */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
-        showBanner ? "top-24" : "top-16"
+        showBanner ? "top-[112px]" : "top-16"
       )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>
