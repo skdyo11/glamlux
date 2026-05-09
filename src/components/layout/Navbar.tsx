@@ -32,7 +32,8 @@ import {
   Map as MapIcon,
   ArrowLeft,
   X,
-  Smartphone
+  Smartphone,
+  Check
 } from 'lucide-react';
 import {
   Sheet,
@@ -107,7 +108,7 @@ export function Navbar() {
     } else {
       toast({
         title: "Install Ready",
-        description: "If your device supports PWA, use 'Add to Home Screen' in your browser settings.",
+        description: "Add GlamLux to your home screen using your browser settings.",
       });
     }
   };
@@ -124,10 +125,10 @@ export function Navbar() {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const newLoc = formData.get('area') as string;
-    if (newLoc) {
-      setLocation(newLoc);
+    if (newLoc && newLoc.trim()) {
+      setLocation(newLoc.trim());
       setIsLocationSheetOpen(false);
-      toast({ title: "Location Updated", description: `Delivering to ${newLoc}` });
+      toast({ title: "Location Updated", description: `Delivering to ${newLoc.trim()}` });
     }
   };
 
@@ -149,15 +150,15 @@ export function Navbar() {
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
         showBanner ? "h-[112px]" : "h-16"
       )}>
-        {/* PWA Install Popup Bar - Slim discreet luxury */}
+        {/* PWA Install Popup Bar */}
         {showBanner && (
           <div className="h-12 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[2000ms]" />
             <div className="flex items-center gap-3">
               <Smartphone className="h-4 w-4 animate-bounce" />
               <div className="space-y-0.5">
-                <p className="text-[10px] font-black uppercase tracking-widest leading-none">The Mobile Experience</p>
-                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Add GlamLux to your home screen</p>
+                <p className="text-[10px] font-black uppercase tracking-widest leading-none">Elite Mobile Experience</p>
+                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Install GlamLux Sanctuary App</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -181,44 +182,49 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
             
-            <Sheet open={isLocationSheetOpen} onValueChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
+            <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs md:text-sm hover:bg-muted/80 transition-colors group">
+                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs md:sm hover:bg-muted/80 transition-colors group">
                   <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary group-hover:scale-110 transition-transform" />
                   <span className="font-medium truncate max-w-[120px] md:max-w-[200px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
                 </button>
               </SheetTrigger>
-              <SheetContent side="top" className="h-auto pb-12 rounded-b-[2rem] border-none shadow-3xl">
+              <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl">
                 <div className="container mx-auto max-w-xl space-y-8 py-6">
                   <SheetHeader>
-                    <div className="flex justify-between items-center">
-                      <SheetTitle className="text-2xl font-bold flex items-center gap-3">
-                        {locationView === 'map' && (
-                          <Button variant="ghost" size="icon" onClick={() => setLocationView('search')} className="mr-2 rounded-full">
-                            <ArrowLeft className="h-5 w-5" />
-                          </Button>
-                        )}
-                        <MapIcon className="h-6 w-6 text-primary" /> 
-                        {locationView === 'search' ? 'Delivery Area' : 'Pin Location'}
-                      </SheetTitle>
+                    <div className="flex items-center gap-4">
+                      {locationView === 'map' && (
+                        <Button variant="ghost" size="icon" onClick={() => setLocationView('search')} className="rounded-full">
+                          <ArrowLeft className="h-5 w-5" />
+                        </Button>
+                      )}
+                      <div className="space-y-1">
+                        <SheetTitle className="text-2xl font-headline italic text-primary">Delivery Area.</SheetTitle>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Set your sanctuary location</p>
+                      </div>
                     </div>
                   </SheetHeader>
 
                   {locationView === 'search' ? (
-                    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+                    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
                       <form onSubmit={handleSetLocation} className="space-y-4">
                         <div className="relative group">
-                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
                           <Input 
                             name="area"
                             placeholder="Enter your area (e.g. Gulberg, Lahore)" 
-                            className="pl-12 h-14 rounded-xl border-border bg-muted/30 focus-visible:ring-primary text-lg"
+                            className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
                             autoFocus
                           />
                         </div>
-                        <Button type="button" onClick={() => setLocationView('map')} className="w-full h-14 rounded-xl font-bold text-lg bg-primary text-primary-foreground hover:opacity-90">
-                          <MapPin className="h-5 w-5 mr-2" /> Select on Map
-                        </Button>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Button type="button" onClick={() => setLocationView('map')} variant="outline" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border-primary/10 hover:bg-primary/5">
+                            <MapIcon className="h-4 w-4 mr-2" /> Pin on Map
+                          </Button>
+                          <Button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
+                            <Check className="h-4 w-4 mr-2" /> Confirm Area
+                          </Button>
+                        </div>
                       </form>
                     </div>
                   ) : (
@@ -226,8 +232,8 @@ export function Navbar() {
                       <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[350px]">
                         <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
                       </div>
-                      <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-xl font-bold text-lg shadow-2xl">
-                        Confirm Location
+                      <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
+                        Save Pinned Location
                       </Button>
                     </div>
                   )}
@@ -239,15 +245,13 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {pathname !== '/' && (
               <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                <Link href="/">
-                  <CustomHomeIcon className="h-5 w-5" />
-                </Link>
+                <Link href="/"><CustomHomeIcon className="h-5 w-5" /></Link>
               </Button>
             )}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-9 w-9 rounded-full mr-1"
+              className="h-9 w-9 rounded-full"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -307,7 +311,7 @@ export function Navbar() {
                             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                           </div>
                         </div>
-                        <Button asChild className="w-full rounded-full font-bold" variant="outline">
+                        <Button asChild className="w-full rounded-full font-bold uppercase tracking-widest text-[10px]" variant="outline">
                           <Link href="/portal">Partner Portal</Link>
                         </Button>
                       </div>
@@ -358,14 +362,14 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Unified slim sub-header wide strip */}
+      {/* Unified slim sub-header strip */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-[112px]" : "top-16"
       )}>
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/vendors' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/shop' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/deals' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
+        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
+        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
+        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
       </div>
     </>
   );
