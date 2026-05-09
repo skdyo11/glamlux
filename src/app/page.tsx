@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -65,7 +64,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-32">
+      <main className="flex-grow pt-44 md:pt-44">
         {/* Marketplace Hero */}
         <section className="bg-secondary/40 dark:bg-muted/10 py-12 md:py-20 px-4 md:px-6">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
@@ -106,7 +105,7 @@ export default function Home() {
             <div className="flex gap-8 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4">
               {categories.map((cat, i) => (
                 <Link 
-                  key={i} 
+                  key={`cat-${i}`} 
                   href={cat.href}
                   className="group flex flex-col items-center gap-4 shrink-0 transition-transform active:scale-95"
                 >

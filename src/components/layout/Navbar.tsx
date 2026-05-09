@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -107,8 +106,8 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "App Already Installed",
-        description: "Or checking browser compatibility. Use your browser's menu to 'Add to Home Screen'.",
+        title: "Install Ready",
+        description: "If your device supports PWA, use 'Add to Home Screen' in your browser settings.",
       });
     }
   };
@@ -150,15 +149,15 @@ export function Navbar() {
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
         showBanner ? "h-[112px]" : "h-16"
       )}>
-        {/* PWA Install Popup Bar - Above main header content */}
+        {/* PWA Install Popup Bar - Slim discreet luxury */}
         {showBanner && (
           <div className="h-12 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1500" />
             <div className="flex items-center gap-3">
               <Smartphone className="h-4 w-4 animate-bounce" />
               <div className="space-y-0.5">
-                <p className="text-[10px] font-black uppercase tracking-widest leading-none">Get the Mobile Experience</p>
-                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Install GlamLux on your home screen</p>
+                <p className="text-[10px] font-black uppercase tracking-widest leading-none">The Mobile Experience</p>
+                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Add GlamLux to your home screen</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -184,10 +183,10 @@ export function Navbar() {
             
             <Sheet open={isLocationSheetOpen} onValueChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
-                <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm cursor-pointer hover:bg-muted/80 transition-colors">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span className="font-medium truncate max-w-[200px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
-                </div>
+                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs md:text-sm hover:bg-muted/80 transition-colors group">
+                  <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary group-hover:scale-110 transition-transform" />
+                  <span className="font-medium truncate max-w-[120px] md:max-w-[200px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
+                </button>
               </SheetTrigger>
               <SheetContent side="top" className="h-auto pb-12 rounded-b-[2rem] border-none shadow-3xl">
                 <div className="container mx-auto max-w-xl space-y-8 py-6">
@@ -359,14 +358,14 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Unified header strip - Slimmed to h-12 */}
+      {/* Unified slim sub-header wide strip */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-[112px]" : "top-16"
       )}>
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors", pathname === '/vendors' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-colors", pathname === '/shop' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-colors", pathname === '/deals' ? "text-primary border-b-2 border-primary h-full flex items-center" : "text-muted-foreground hover:text-primary")}>Deals</Link>
+        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/vendors' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
+        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/shop' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
+        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname === '/deals' ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
       </div>
     </>
   );
