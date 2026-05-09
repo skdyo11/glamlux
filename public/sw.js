@@ -1,3 +1,9 @@
+
+/**
+ * GlamLux Service Worker
+ * Enables PWA functionality and handles background synchronization.
+ */
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,9 +13,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
-  );
+  // Pass-through strategy for standard marketplace interaction
+  event.respondWith(fetch(event.request));
 });

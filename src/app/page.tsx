@@ -126,7 +126,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-8">Best Offers for You</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isLoadingDeals ? (
-                 [1, 2, 3].map(i => <Skeleton className="h-48 rounded-2xl" />)
+                 [1, 2, 3].map(i => <Skeleton key={`deal-skeleton-${i}`} className="h-48 rounded-2xl" />)
               ) : (
                 deals?.map((deal) => (
                   <Link 
@@ -166,7 +166,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {isLoadingVendors ? (
-                [1, 2, 3, 4].map(n => <Skeleton className="h-[350px] rounded-2xl" />)
+                [1, 2, 3, 4].map(n => <Skeleton key={`vendor-skeleton-${n}`} className="h-[350px] rounded-2xl" />)
               ) : (
                 topVendors?.map((vendor) => {
                   const vendorSlug = vendor.slug || slugify(vendor.name);
