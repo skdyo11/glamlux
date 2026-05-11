@@ -8,26 +8,22 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import dynamic from 'next/dynamic';
 import { 
-  Settings, 
   Sun, 
   Moon, 
   LogOut, 
   ChevronRight,
-  LayoutDashboard,
-  Menu as MenuIcon,
   MapPin,
   Search,
   ShoppingCart,
   Heart,
   Store,
-  UserCircle,
   Download,
   Map as MapIcon,
   ArrowLeft,
@@ -71,10 +67,8 @@ export function Navbar() {
   const { toast } = useToast();
   const router = useRouter();
 
-  // PWA States
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
-
   const [location, setLocation] = useState('Select your location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
@@ -84,20 +78,15 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
 
-  const handleInstallClick = () => {
+  const handleInstallClick = useCallback(() => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
@@ -107,11 +96,11 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "Install Ready",
-        description: "Add GlamLux to your home screen using your browser settings.",
+        title: "Download Ready",
+        description: "Add GlamLux to your home screen using browser settings.",
       });
     }
-  };
+  }, [deferredPrompt, toast]);
 
   const handleLogout = async () => {
     if (auth) {
@@ -148,45 +137,37 @@ export function Navbar() {
     <>
       <nav className={cn(
         "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
-        showBanner ? "h-[112px]" : "h-16"
+        showBanner ? "h-24" : "h-16"
       )}>
-        {/* PWA Install Popup Bar */}
         {showBanner && (
-          <div className="h-12 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[2000ms]" />
-            <div className="flex items-center gap-3">
-              <Smartphone className="h-4 w-4 animate-bounce" />
-              <div className="space-y-0.5">
-                <p className="text-[10px] font-black uppercase tracking-widest leading-none">Elite Mobile Experience</p>
-                <p className="text-[8px] opacity-70 uppercase tracking-widest leading-none">Install GlamLux Sanctuary App</p>
-              </div>
+          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
+            <div className="flex items-center gap-2">
+              <Smartphone className="h-3 w-3 animate-bounce" />
+              <p className="text-[8px] font-black uppercase tracking-widest leading-none">Install GlamLux Sanctuary App</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button 
                 onClick={handleInstallClick}
-                className="bg-white text-primary text-[9px] font-black uppercase tracking-widest px-5 py-1.5 rounded-full hover:scale-105 transition-all shadow-2xl active:scale-95"
+                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-4 py-1 rounded-full hover:scale-105 transition-all active:scale-95"
               >
                 Download
               </button>
-              <button 
-                onClick={() => setIsBannerDismissed(true)}
-                className="text-white/40 hover:text-white transition-colors"
-              >
-                <X className="h-4 w-4" />
+              <button onClick={() => setIsBannerDismissed(true)} className="text-white/40 hover:text-white transition-colors">
+                <X className="h-3 w-3" />
               </button>
             </div>
           </div>
         )}
 
         <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6 text-foreground">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="font-bold text-2xl text-primary tracking-tight">GlamLux</Link>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="font-bold text-2xl text-primary tracking-tighter">GlamLux</Link>
             
             <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs md:sm hover:bg-muted/80 transition-colors group">
-                  <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary group-hover:scale-110 transition-transform" />
-                  <span className="font-medium truncate max-w-[120px] md:max-w-[200px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
+                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs hover:bg-muted/80 transition-colors group">
+                  <MapPin className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
+                  <span className="font-medium truncate max-w-[100px] md:max-w-[180px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
                 </button>
               </SheetTrigger>
               <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl">
@@ -198,7 +179,7 @@ export function Navbar() {
                           <ArrowLeft className="h-5 w-5" />
                         </Button>
                       )}
-                      <div className="space-y-1">
+                      <div className="space-y-1 text-left">
                         <SheetTitle className="text-2xl font-headline italic text-primary">Delivery Area.</SheetTitle>
                         <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Set your sanctuary location</p>
                       </div>
@@ -206,29 +187,27 @@ export function Navbar() {
                   </SheetHeader>
 
                   {locationView === 'search' ? (
-                    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-                      <form onSubmit={handleSetLocation} className="space-y-4">
-                        <div className="relative group">
-                          <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
-                          <Input 
-                            name="area"
-                            placeholder="Enter your area (e.g. Gulberg, Lahore)" 
-                            className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
-                            autoFocus
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Button type="button" onClick={() => setLocationView('map')} variant="outline" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border-primary/10 hover:bg-primary/5">
-                            <MapIcon className="h-4 w-4 mr-2" /> Pin on Map
-                          </Button>
-                          <Button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
-                            <Check className="h-4 w-4 mr-2" /> Confirm Area
-                          </Button>
-                        </div>
-                      </form>
-                    </div>
+                    <form onSubmit={handleSetLocation} className="space-y-4">
+                      <div className="relative group">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
+                        <Input 
+                          name="area"
+                          placeholder="Enter your area..." 
+                          className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Button type="button" onClick={() => setLocationView('map')} variant="outline" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border-primary/10">
+                          <MapIcon className="h-4 w-4 mr-2" /> Pin on Map
+                        </Button>
+                        <Button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
+                          <Check className="h-4 w-4 mr-2" /> Confirm Area
+                        </Button>
+                      </div>
+                    </form>
                   ) : (
-                    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="space-y-6">
                       <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[350px]">
                         <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
                       </div>
@@ -294,9 +273,6 @@ export function Navbar() {
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="right" className="w-[300px] p-0 border-none shadow-3xl">
-                    <SheetHeader className="sr-only">
-                      <SheetTitle>Menu</SheetTitle>
-                    </SheetHeader>
                     <div className="flex flex-col h-full bg-background">
                       <div className="p-6 border-b">
                         <div className="flex items-center gap-4 mb-6">
@@ -324,18 +300,7 @@ export function Navbar() {
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </Link>
-                        <Link href="/messages" className="flex items-center justify-between px-6 py-3 hover:bg-muted transition-colors">
-                          <div className="flex items-center gap-3">
-                            <Store className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm font-medium">Chats</span>
-                          </div>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </Link>
-                        
-                        <button 
-                          onClick={handleInstallClick}
-                          className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left"
-                        >
+                        <button onClick={handleInstallClick} className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left">
                           <div className="flex items-center gap-3">
                             <Download className="h-5 w-5 text-muted-foreground" />
                             <span className="text-sm font-medium">Download App</span>
@@ -345,12 +310,8 @@ export function Navbar() {
                       </div>
 
                       <div className="p-6 border-t">
-                        <button 
-                          onClick={handleLogout}
-                          className="flex items-center gap-3 w-full text-destructive hover:opacity-80 transition-all font-bold text-sm"
-                        >
-                          <LogOut className="h-5 w-5" />
-                          Logout
+                        <button onClick={handleLogout} className="flex items-center gap-3 w-full text-destructive hover:opacity-80 transition-all font-bold text-sm">
+                          <LogOut className="h-5 w-5" /> Logout
                         </button>
                       </div>
                     </div>
@@ -362,10 +323,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Unified slim sub-header strip */}
       <div className={cn(
         "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
-        showBanner ? "top-[112px]" : "top-16"
+        showBanner ? "top-24" : "top-16"
       )}>
         <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
