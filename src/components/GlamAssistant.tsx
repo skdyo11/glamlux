@@ -35,9 +35,9 @@ export function GlamAssistant() {
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
-            className="h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-3xl hover:scale-110 active:scale-95 transition-all p-0 border-none group"
+            className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-3xl hover:scale-110 active:scale-95 transition-all p-0 border-none group"
           >
-            <Sparkles className="h-7 w-7 group-hover:rotate-12 transition-transform" />
+            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[90vw] sm:w-[450px] p-0 border-none shadow-3xl bg-background/95 backdrop-blur-xl">
