@@ -176,11 +176,12 @@ export function Navbar() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-9 w-9 rounded-full hidden md:flex"
+              className="h-9 w-9 rounded-full"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
+            
             {!user ? (
               <Button asChild size="sm" className="font-bold rounded-full px-6 h-9 text-[10px] uppercase tracking-widest">
                 <Link href="/signup">Join</Link>
@@ -247,7 +248,6 @@ export function Navbar() {
                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30">Settings & Regional</span>
                           </div>
                           <div className="space-y-1">
-                            {/* Nested Location Sheet within User Sheet logic */}
                             <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
                               <SheetTrigger asChild>
                                 <button className="w-full flex items-center justify-between px-4 py-4 rounded-2xl hover:bg-primary/5 transition-all text-left group">
@@ -264,7 +264,7 @@ export function Navbar() {
                                 </button>
                               </SheetTrigger>
                               <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl z-[70]">
-                                <div className="container mx-auto max-w-xl space-y-8 py-6">
+                                <div className="container mx-auto max-xl space-y-8 py-6">
                                   <SheetHeader>
                                     <div className="flex items-center gap-4">
                                       {locationView === 'map' && (
