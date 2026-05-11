@@ -64,7 +64,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-44 md:pt-44">
+      <main className="flex-grow pt-32 md:pt-44">
         {/* Marketplace Hero */}
         <section className="bg-secondary/40 dark:bg-muted/10 py-12 md:py-20 px-4 md:px-6">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
@@ -73,15 +73,15 @@ export default function Home() {
                 Beauty services and products, <span className="text-primary italic">delivered to you.</span>
               </h1>
               <div className="max-w-xl relative flex items-center shadow-marketplace bg-white dark:bg-card rounded-2xl p-2">
-                <MapPin className="ml-4 h-5 w-5 text-primary" />
+                <MapPin className="ml-2 md:ml-4 h-5 w-5 text-primary" />
                 <Input 
-                  placeholder="Enter your location to find parlours" 
-                  className="flex-grow border-none focus-visible:ring-0 text-base py-6 px-4"
+                  placeholder="Enter area..." 
+                  className="flex-grow border-none focus-visible:ring-0 text-sm md:text-base py-6 px-2 md:px-4"
                   value={searchVal}
                   onChange={(e) => setSearchVal(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
                 />
-                <Button onClick={handleFindParlours} size="lg" className="rounded-xl px-8 font-bold">Find Parlours</Button>
+                <Button onClick={handleFindParlours} size="lg" className="rounded-xl px-4 md:px-8 font-bold h-12 md:h-14">Find</Button>
               </div>
             </div>
             <div className="hidden md:block flex-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">

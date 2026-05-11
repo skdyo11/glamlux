@@ -41,7 +41,7 @@ import {
 
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
-  loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
+  loading: () => <div className="h-[300px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
 
 const CustomHomeIcon = ({ className }: { className?: string }) => (
@@ -69,7 +69,7 @@ export function Navbar() {
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
-  const [location, setLocation] = useState('Select your location');
+  const [location, setLocation] = useState('Location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
   const [mapCenter, setMapCenter] = useState<[number, number]>([31.5204, 74.3587]);
@@ -96,8 +96,8 @@ export function Navbar() {
       });
     } else {
       toast({
-        title: "Download Ready",
-        description: "Add GlamLux to your home screen using browser settings.",
+        title: "PWA Handshake",
+        description: "Add to home screen using your browser's menu for the best experience.",
       });
     }
   }, [deferredPrompt, toast]);
@@ -117,16 +117,16 @@ export function Navbar() {
     if (newLoc && newLoc.trim()) {
       setLocation(newLoc.trim());
       setIsLocationSheetOpen(false);
-      toast({ title: "Location Updated", description: `Delivering to ${newLoc.trim()}` });
+      toast({ title: "Location Updated", description: `Registry filtered for ${newLoc.trim()}` });
     }
   };
 
   const handleConfirmMapLocation = () => {
-    const locString = `Pinned: ${mapCenter[0].toFixed(2)}, ${mapCenter[1].toFixed(2)}`;
+    const locString = `${mapCenter[0].toFixed(2)}, ${mapCenter[1].toFixed(2)}`;
     setLocation(locString);
     setIsLocationSheetOpen(false);
     setLocationView('search');
-    toast({ title: "Location Saved", description: "Coordinates confirmed for delivery." });
+    toast({ title: "Location Pinned", description: "Coordinates confirmed for registry filtering." });
   };
 
   const showBanner = mounted && deferredPrompt && !isBannerDismissed;
@@ -140,17 +140,17 @@ export function Navbar() {
         showBanner ? "h-24" : "h-16"
       )}>
         {showBanner && (
-          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 md:px-6 relative overflow-hidden group border-b border-white/10 shadow-lg">
+          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 relative overflow-hidden group border-b border-white/10 shadow-lg">
             <div className="flex items-center gap-2">
               <Smartphone className="h-3 w-3 animate-bounce" />
-              <p className="text-[8px] font-black uppercase tracking-widest leading-none">Install GlamLux Sanctuary App</p>
+              <p className="text-[9px] font-black uppercase tracking-widest leading-none">Download GlamLux App</p>
             </div>
             <div className="flex items-center gap-3">
               <button 
                 onClick={handleInstallClick}
-                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-4 py-1 rounded-full hover:scale-105 transition-all active:scale-95"
+                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full hover:scale-105 transition-all active:scale-95 shadow-sm"
               >
-                Download
+                Install
               </button>
               <button onClick={() => setIsBannerDismissed(true)} className="text-white/40 hover:text-white transition-colors">
                 <X className="h-3 w-3" />
@@ -160,14 +160,14 @@ export function Navbar() {
         )}
 
         <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6 text-foreground">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="font-bold text-2xl text-primary tracking-tighter">GlamLux</Link>
+          <div className="flex items-center gap-3 md:gap-6">
+            <Link href="/" className="font-bold text-xl md:text-2xl text-primary tracking-tighter shrink-0">GlamLux</Link>
             
             <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-1.5 md:px-4 bg-muted rounded-full text-xs hover:bg-muted/80 transition-colors group">
-                  <MapPin className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
-                  <span className="font-medium truncate max-w-[100px] md:max-w-[180px]">Deliver to: <span className="text-muted-foreground">{location}</span></span>
+                <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted rounded-full text-[10px] md:text-xs hover:bg-muted/80 transition-colors group max-w-[120px] md:max-w-[220px]">
+                  <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-medium truncate text-muted-foreground">{location}</span>
                 </button>
               </SheetTrigger>
               <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl">
@@ -180,8 +180,8 @@ export function Navbar() {
                         </Button>
                       )}
                       <div className="space-y-1 text-left">
-                        <SheetTitle className="text-2xl font-headline italic text-primary">Delivery Area.</SheetTitle>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Set your sanctuary location</p>
+                        <SheetTitle className="text-2xl font-headline italic text-primary">Registry Filter.</SheetTitle>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Select your sanctuary region</p>
                       </div>
                     </div>
                   </SheetHeader>
@@ -192,27 +192,27 @@ export function Navbar() {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
                         <Input 
                           name="area"
-                          placeholder="Enter your area..." 
+                          placeholder="Search region..." 
                           className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
                           autoFocus
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
-                        <Button type="button" onClick={() => setLocationView('map')} variant="outline" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border-primary/10">
-                          <MapIcon className="h-4 w-4 mr-2" /> Pin on Map
-                        </Button>
-                        <Button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
-                          <Check className="h-4 w-4 mr-2" /> Confirm Area
-                        </Button>
+                        <button type="button" onClick={() => setLocationView('map')} className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border border-primary/10 flex items-center justify-center gap-2 hover:bg-primary/5 transition-all">
+                          <MapIcon className="h-4 w-4" /> Pin Map
+                        </button>
+                        <button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                          <Check className="h-4 w-4" /> Confirm
+                        </button>
                       </div>
                     </form>
                   ) : (
                     <div className="space-y-6">
-                      <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[350px]">
+                      <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[300px]">
                         <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
                       </div>
                       <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
-                        Save Pinned Location
+                        Apply Coordinates
                       </Button>
                     </div>
                   )}
@@ -221,41 +221,36 @@ export function Navbar() {
             </Sheet>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-3">
             {pathname !== '/' && (
-              <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                <Link href="/"><CustomHomeIcon className="h-5 w-5" /></Link>
+              <Button asChild variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                <Link href="/"><CustomHomeIcon className="h-4 w-4 md:h-5 md:w-5" /></Link>
               </Button>
             )}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-9 w-9 rounded-full"
+              className="h-8 w-8 md:h-9 md:w-9 rounded-full"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {theme === 'dark' ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
             </Button>
             {!user ? (
-              <div className="flex items-center gap-2">
-                <Button asChild variant="ghost" size="sm" className="hidden md:flex font-bold">
-                  <Link href="/login">Login</Link>
-                </Button>
-                <Button asChild size="sm" className="font-bold rounded-full px-6">
-                  <Link href="/signup">Join</Link>
-                </Button>
-              </div>
+              <Button asChild size="sm" className="font-bold rounded-full px-4 md:px-6 h-8 md:h-10 text-[10px] md:text-xs">
+                <Link href="/signup">Join</Link>
+              </Button>
             ) : (
-              <div className="flex items-center gap-3">
-                <Link href="/favorites">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Heart className={cn("h-5 w-5", pathname === '/favorites' && "fill-primary text-primary")} />
+              <div className="flex items-center gap-1.5 md:gap-3">
+                <Link href="/favorites" className="hidden xs:block">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                    <Heart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/favorites' && "fill-primary text-primary")} />
                   </Button>
                 </Link>
                 <Link href="/cart" className="relative">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <ShoppingCart className={cn("h-5 w-5", pathname === '/cart' && "text-primary")} />
+                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                    <ShoppingCart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/cart' && "text-primary")} />
                     {cartCount > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background">
+                      <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background">
                         {cartCount}
                       </Badge>
                     )}
@@ -263,16 +258,16 @@ export function Navbar() {
                 </Link>
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full overflow-hidden border">
+                    <button className="h-8 w-8 md:h-9 md:w-9 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={user?.photoURL || undefined} />
                         <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
                           {user?.displayName?.[0] || 'U'}
                         </AvatarFallback>
                       </Avatar>
-                    </Button>
+                    </button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-[300px] p-0 border-none shadow-3xl">
+                  <SheetContent side="right" className="w-[280px] p-0 border-none shadow-3xl">
                     <div className="flex flex-col h-full bg-background">
                       <div className="p-6 border-b">
                         <div className="flex items-center gap-4 mb-6">
@@ -284,10 +279,10 @@ export function Navbar() {
                           </Avatar>
                           <div className="min-w-0">
                             <p className="font-bold truncate">{user?.displayName || 'Guest'}</p>
-                            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                            <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
                           </div>
                         </div>
-                        <Button asChild className="w-full rounded-full font-bold uppercase tracking-widest text-[10px]" variant="outline">
+                        <Button asChild className="w-full rounded-full font-bold uppercase tracking-widest text-[9px] h-12" variant="outline">
                           <Link href="/portal">Partner Portal</Link>
                         </Button>
                       </div>
@@ -302,7 +297,7 @@ export function Navbar() {
                         </Link>
                         <button onClick={handleInstallClick} className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left">
                           <div className="flex items-center gap-3">
-                            <Download className="h-5 w-5 text-muted-foreground" />
+                            <Smartphone className="h-5 w-5 text-muted-foreground" />
                             <span className="text-sm font-medium">Download App</span>
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -324,12 +319,12 @@ export function Navbar() {
       </nav>
 
       <div className={cn(
-        "fixed inset-x-0 z-40 h-12 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center gap-12 text-sm font-bold shadow-sm transition-all duration-300",
+        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-start md:gap-12 text-[10px] md:text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-24" : "top-16"
       )}>
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
+        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
+        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
+        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
       </div>
     </>
   );
