@@ -29,7 +29,8 @@ import {
   ArrowLeft,
   X,
   Smartphone,
-  Check
+  Check,
+  MessageSquare
 } from 'lucide-react';
 import {
   Sheet,
@@ -241,6 +242,11 @@ export function Navbar() {
               </Button>
             ) : (
               <div className="flex items-center gap-1.5 md:gap-3">
+                <Link href="/messages">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                    <MessageSquare className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/messages' && "text-primary")} />
+                  </Button>
+                </Link>
                 <Link href="/favorites" className="hidden xs:block">
                   <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
                     <Heart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/favorites' && "fill-primary text-primary")} />
@@ -288,6 +294,13 @@ export function Navbar() {
                       </div>
 
                       <div className="flex-1 py-4">
+                        <Link href="/messages" className="flex items-center justify-between px-6 py-3 hover:bg-muted transition-colors">
+                          <div className="flex items-center gap-3">
+                            <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm font-medium">Inquiries</span>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </Link>
                         <Link href="/favorites" className="flex items-center justify-between px-6 py-3 hover:bg-muted transition-colors">
                           <div className="flex items-center gap-3">
                             <Heart className="h-5 w-5 text-muted-foreground" />

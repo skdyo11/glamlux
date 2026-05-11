@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { StoreProvider } from '@/app/lib/store';
+import { GlamAssistant } from '@/components/GlamAssistant';
 
 export const metadata: Metadata = {
   title: 'GlamLux | The Editorial Registry',
@@ -50,6 +51,7 @@ export default function RootLayout({
             <StoreProvider>
               <div className="wavy-bg" />
               {children}
+              <GlamAssistant />
               <Toaster />
             </StoreProvider>
           </FirebaseClientProvider>

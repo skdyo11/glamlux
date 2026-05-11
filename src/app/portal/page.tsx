@@ -50,7 +50,8 @@ import {
   Users,
   QrCode,
   ScanLine,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -62,6 +63,7 @@ import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import Link from 'next/link';
 
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
@@ -591,8 +593,10 @@ export default function PartnerPortalPage() {
             </div>
 
             <div className="flex gap-4 pb-4">
+              <Button asChild className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95">
+                <Link href="/messages"><MessageSquare className="h-4 w-4 mr-2" /> Inquiries</Link>
+              </Button>
               <Button variant="outline" onClick={() => setActiveSheet('profile')} className="rounded-none border-primary/20 vogue-button text-[10px] h-14 px-10 hover:bg-primary/5">Edit Profile</Button>
-              <Button onClick={() => setActiveSheet('survey')} className="rounded-none vogue-button bg-primary text-primary-foreground text-[10px] h-14 px-10 shadow-xl hover:scale-105 active:scale-95">Deliveries</Button>
             </div>
           </div>
         </header>

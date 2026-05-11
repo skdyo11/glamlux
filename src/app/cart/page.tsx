@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, Plus, Minus, MapPin, Package } from 'lucide-react';
+import { Trash2, Plus, Minus, MapPin, Package, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -187,11 +187,18 @@ export default function CartPage() {
                         )}
                       </div>
                       <div className="flex-grow space-y-4">
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
-                            {item.type === 'deal' ? 'Service' : 'Product'}
-                          </span>
-                          <h3 className="font-headline text-4xl text-primary leading-none">{item.name}</h3>
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
+                              {item.type === 'deal' ? 'Service' : 'Product'}
+                            </span>
+                            <h3 className="font-headline text-4xl text-primary leading-none">{item.name}</h3>
+                          </div>
+                          <Button asChild variant="ghost" className="rounded-full text-primary hover:text-secondary h-12 px-6 border border-primary/10">
+                            <Link href={`/messages?vendorId=${item.vendor_id || 'v1'}`}>
+                              <MessageCircle className="h-4 w-4 mr-2" /> Chat with Shop
+                            </Link>
+                          </Button>
                         </div>
                         <p className="font-bold text-2xl tracking-tighter text-primary">{getCurrency()} {item.price.toLocaleString()}</p>
                         <div className="flex items-center gap-10 pt-4">

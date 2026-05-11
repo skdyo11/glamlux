@@ -7,6 +7,5 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple fetch pass-through
-  event.respondWith(fetch(event.request));
+  // PWA placeholder fetch listener
 });

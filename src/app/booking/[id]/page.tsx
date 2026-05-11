@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useSearchParams } from 'next/navigation';
@@ -6,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Download, Share2, CheckCircle2, QrCode, Package, Clock, Star } from 'lucide-react';
+import { Sparkles, Download, Share2, CheckCircle2, QrCode, Package, Clock, Star, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useDoc, useMemoFirebase, useFirestore, useUser, addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, getDoc, collection } from 'firebase/firestore';
@@ -178,13 +177,20 @@ function BookingContent({ params }: { params: Promise<{ id: string }> }) {
                   <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 text-primary">Booking Reference</p>
                   <p className="font-headline text-4xl text-primary italic">{booking?.referenceCode || id}</p>
                 </div>
-                <div className="flex gap-4 pt-4">
-                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
-                    <Download className="h-4 w-4 mr-2" /> Save
+                <div className="flex flex-col gap-4 pt-4">
+                  <Button asChild className="w-full rounded-full h-14 bg-primary text-primary-foreground font-bold uppercase tracking-widest text-[10px]">
+                    <Link href={`/messages?vendorId=${booking?.vendorId || 'v1'}`}>
+                      <MessageCircle className="h-4 w-4 mr-2" /> Message Artisan
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
-                    <Share2 className="h-4 w-4 mr-2" /> Share
-                  </Button>
+                  <div className="flex gap-4">
+                    <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
+                      <Download className="h-4 w-4 mr-2" /> Save
+                    </Button>
+                    <Button variant="outline" className="flex-1 rounded-full h-14 text-[10px] uppercase font-bold tracking-widest border-primary/10">
+                      <Share2 className="h-4 w-4 mr-2" /> Share
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
