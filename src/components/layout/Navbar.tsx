@@ -31,7 +31,8 @@ import {
   Smartphone,
   Check,
   MessageSquare,
-  Settings
+  Settings,
+  RefreshCw
 } from 'lucide-react';
 import {
   Sheet,
