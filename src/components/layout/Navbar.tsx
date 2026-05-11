@@ -98,7 +98,7 @@ export function Navbar() {
     } else {
       toast({
         title: "PWA Handshake",
-        description: "Add to home screen using your browser's menu for the best experience.",
+        description: "Install from your browser's menu for the best experience.",
       });
     }
   }, [deferredPrompt, toast]);
@@ -160,14 +160,14 @@ export function Navbar() {
           </div>
         )}
 
-        <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6 text-foreground">
-          <div className="flex items-center gap-3 md:gap-6">
-            <Link href="/" className="font-bold text-xl md:text-2xl text-primary tracking-tighter shrink-0">GlamLux</Link>
+        <div className="container mx-auto h-16 flex items-center justify-between px-3 md:px-6 text-foreground">
+          <div className="flex items-center gap-1.5 md:gap-6">
+            <Link href="/" className="font-bold text-lg md:text-2xl text-primary tracking-tighter shrink-0">GlamLux</Link>
             
             <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
               <SheetTrigger asChild>
-                <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted rounded-full text-[10px] md:text-xs hover:bg-muted/80 transition-colors group max-w-[120px] md:max-w-[220px]">
-                  <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                <button className="flex items-center gap-1 px-2 py-1 bg-muted rounded-full text-[9px] md:text-xs hover:bg-muted/80 transition-colors group max-w-[80px] xs:max-w-[120px] md:max-w-[220px]">
+                  <MapPin className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
                   <span className="font-medium truncate text-muted-foreground">{location}</span>
                 </button>
               </SheetTrigger>
@@ -222,38 +222,38 @@ export function Navbar() {
             </Sheet>
           </div>
 
-          <div className="flex items-center gap-1.5 md:gap-3">
+          <div className="flex items-center gap-1 md:gap-3">
             {pathname !== '/' && (
-              <Button asChild variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+              <Button asChild variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
                 <Link href="/"><CustomHomeIcon className="h-4 w-4 md:h-5 md:w-5" /></Link>
               </Button>
             )}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8 md:h-9 md:w-9 rounded-full"
+              className="h-7 w-7 md:h-9 md:w-9 rounded-full"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
             </Button>
             {!user ? (
-              <Button asChild size="sm" className="font-bold rounded-full px-4 md:px-6 h-8 md:h-10 text-[10px] md:text-xs">
+              <Button asChild size="sm" className="font-bold rounded-full px-3 md:px-6 h-7 md:h-10 text-[9px] md:text-xs">
                 <Link href="/signup">Join</Link>
               </Button>
             ) : (
-              <div className="flex items-center gap-1.5 md:gap-3">
+              <div className="flex items-center gap-1 md:gap-3">
                 <Link href="/messages">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
                     <MessageSquare className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/messages' && "text-primary")} />
                   </Button>
                 </Link>
                 <Link href="/favorites" className="hidden xs:block">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
                     <Heart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/favorites' && "fill-primary text-primary")} />
                   </Button>
                 </Link>
                 <Link href="/cart" className="relative">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full">
+                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
                     <ShoppingCart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/cart' && "text-primary")} />
                     {cartCount > 0 && (
                       <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background">
@@ -264,10 +264,10 @@ export function Navbar() {
                 </Link>
                 <Sheet>
                   <SheetTrigger asChild>
-                    <button className="h-8 w-8 md:h-9 md:w-9 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
+                    <button className="h-7 w-7 md:h-9 md:w-9 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={user?.photoURL || undefined} />
-                        <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
+                        <AvatarFallback className="bg-primary/5 text-primary text-[9px] font-bold">
                           {user?.displayName?.[0] || 'U'}
                         </AvatarFallback>
                       </Avatar>
@@ -332,12 +332,12 @@ export function Navbar() {
       </nav>
 
       <div className={cn(
-        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-start md:gap-12 text-[10px] md:text-sm font-bold shadow-sm transition-all duration-300",
+        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-3 md:px-6 flex items-center justify-between md:justify-start md:gap-12 text-[10px] md:text-sm font-bold shadow-sm transition-all duration-300",
         showBanner ? "top-24" : "top-16"
       )}>
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
+        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
+        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
+        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
       </div>
     </>
   );
