@@ -1,12 +1,8 @@
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  console.log('GlamLux Service Worker installed.');
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple pass-through for the prototype
+  // Essential for PWA installation detection
   event.respondWith(fetch(event.request));
 });

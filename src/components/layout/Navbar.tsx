@@ -30,7 +30,8 @@ import {
   X,
   Smartphone,
   Check,
-  MessageSquare
+  MessageSquare,
+  Settings
 } from 'lucide-react';
 import {
   Sheet,
@@ -137,7 +138,7 @@ export function Navbar() {
   return (
     <>
       <nav className={cn(
-        "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300",
+        "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300 border-b",
         showBanner ? "h-24" : "h-16"
       )}>
         {showBanner && (
@@ -160,101 +161,39 @@ export function Navbar() {
           </div>
         )}
 
-        <div className="container mx-auto h-16 flex items-center justify-between px-3 md:px-6 text-foreground">
-          <div className="flex items-center gap-1.5 md:gap-6">
-            <Link href="/" className="font-bold text-lg md:text-2xl text-primary tracking-tighter shrink-0">GlamLux</Link>
-            
-            <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
-              <SheetTrigger asChild>
-                <button className="flex items-center gap-1 px-2 py-1 bg-muted rounded-full text-[9px] md:text-xs hover:bg-muted/80 transition-colors group max-w-[80px] xs:max-w-[120px] md:max-w-[220px]">
-                  <MapPin className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="font-medium truncate text-muted-foreground">{location}</span>
-                </button>
-              </SheetTrigger>
-              <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl">
-                <div className="container mx-auto max-w-xl space-y-8 py-6">
-                  <SheetHeader>
-                    <div className="flex items-center gap-4">
-                      {locationView === 'map' && (
-                        <Button variant="ghost" size="icon" onClick={() => setLocationView('search')} className="rounded-full">
-                          <ArrowLeft className="h-5 w-5" />
-                        </Button>
-                      )}
-                      <div className="space-y-1 text-left">
-                        <SheetTitle className="text-2xl font-headline italic text-primary">Registry Filter.</SheetTitle>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Select your sanctuary region</p>
-                      </div>
-                    </div>
-                  </SheetHeader>
-
-                  {locationView === 'search' ? (
-                    <form onSubmit={handleSetLocation} className="space-y-4">
-                      <div className="relative group">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
-                        <Input 
-                          name="area"
-                          placeholder="Search region..." 
-                          className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
-                          autoFocus
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <button type="button" onClick={() => setLocationView('map')} className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border border-primary/10 flex items-center justify-center gap-2 hover:bg-primary/5 transition-all">
-                          <MapIcon className="h-4 w-4" /> Pin Map
-                        </button>
-                        <button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-all">
-                          <Check className="h-4 w-4" /> Confirm
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="space-y-6">
-                      <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[300px]">
-                        <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
-                      </div>
-                      <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
-                        Apply Coordinates
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          <div className="flex items-center gap-1 md:gap-3">
-            {pathname !== '/' && (
-              <Button asChild variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
-                <Link href="/"><CustomHomeIcon className="h-4 w-4 md:h-5 md:w-5" /></Link>
+        <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-4">
+             {pathname !== '/' && (
+              <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                <Link href="/"><CustomHomeIcon className="h-4 w-4" /></Link>
               </Button>
             )}
+            <Link href="/" className="font-headline italic text-2xl text-primary tracking-tighter shrink-0 drop-shadow-sm">GlamLux</Link>
+          </div>
+
+          <div className="flex items-center gap-1.5 md:gap-3">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-7 w-7 md:h-9 md:w-9 rounded-full"
+              className="h-9 w-9 rounded-full hidden md:flex"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
-              {theme === 'dark' ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
+              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             {!user ? (
-              <Button asChild size="sm" className="font-bold rounded-full px-3 md:px-6 h-7 md:h-10 text-[9px] md:text-xs">
+              <Button asChild size="sm" className="font-bold rounded-full px-6 h-9 text-[10px] uppercase tracking-widest">
                 <Link href="/signup">Join</Link>
               </Button>
             ) : (
               <div className="flex items-center gap-1 md:gap-3">
                 <Link href="/messages">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
-                    <MessageSquare className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/messages' && "text-primary")} />
-                  </Button>
-                </Link>
-                <Link href="/favorites" className="hidden xs:block">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
-                    <Heart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/favorites' && "fill-primary text-primary")} />
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <MessageSquare className={cn("h-4 w-4", pathname === '/messages' && "text-primary")} />
                   </Button>
                 </Link>
                 <Link href="/cart" className="relative">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9 rounded-full">
-                    <ShoppingCart className={cn("h-4 w-4 md:h-5 md:w-5", pathname === '/cart' && "text-primary")} />
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <ShoppingCart className={cn("h-4 w-4", pathname === '/cart' && "text-primary")} />
                     {cartCount > 0 && (
                       <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background">
                         {cartCount}
@@ -262,64 +201,164 @@ export function Navbar() {
                     )}
                   </Button>
                 </Link>
+                
                 <Sheet>
                   <SheetTrigger asChild>
-                    <button className="h-7 w-7 md:h-9 md:w-9 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
-                      <Avatar className="h-full w-full">
-                        <AvatarImage src={user?.photoURL || undefined} />
-                        <AvatarFallback className="bg-primary/5 text-primary text-[9px] font-bold">
+                    <button className="h-9 w-9 rounded-full overflow-hidden border-2 border-primary/10 bg-muted flex items-center justify-center transition-all hover:border-primary/30 active:scale-95">
+                      <Avatar className="h-full w-full rounded-none">
+                        <AvatarImage src={user?.photoURL || undefined} className="object-cover" />
+                        <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase">
                           {user?.displayName?.[0] || 'U'}
                         </AvatarFallback>
                       </Avatar>
                     </button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-[280px] p-0 border-none shadow-3xl">
-                    <div className="flex flex-col h-full bg-background">
-                      <div className="p-6 border-b">
-                        <div className="flex items-center gap-4 mb-6">
-                          <Avatar className="h-12 w-12 border">
-                            <AvatarImage src={user?.photoURL || undefined} />
-                            <AvatarFallback className="bg-primary text-white text-lg font-bold">
+                  <SheetContent side="right" className="w-[300px] md:w-[400px] p-0 border-none shadow-3xl bg-background/95 backdrop-blur-xl">
+                    <div className="flex flex-col h-full">
+                      <div className="p-8 border-b border-primary/5 space-y-6">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16 border-2 border-primary/10 shadow-xl">
+                            <AvatarImage src={user?.photoURL || undefined} className="object-cover" />
+                            <AvatarFallback className="bg-primary text-white text-xl font-headline italic">
                               {user?.displayName?.[0] || 'U'}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="min-w-0">
-                            <p className="font-bold truncate">{user?.displayName || 'Guest'}</p>
-                            <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
+                          <div className="min-w-0 space-y-0.5">
+                            <p className="font-headline italic text-2xl truncate text-primary">{user?.displayName || 'Artisan Guest'}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">{user?.email}</p>
                           </div>
                         </div>
-                        <Button asChild className="w-full rounded-full font-bold uppercase tracking-widest text-[9px] h-12" variant="outline">
-                          <Link href="/portal">Partner Portal</Link>
-                        </Button>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Button asChild className="rounded-2xl font-black uppercase tracking-widest text-[8px] h-12 shadow-md" variant="default">
+                            <Link href="/portal">Partner Portal</Link>
+                          </Button>
+                          <Button asChild className="rounded-2xl font-black uppercase tracking-widest text-[8px] h-12" variant="outline">
+                            <Link href="/favorites"><Heart className="h-3 w-3 mr-2 fill-primary" /> Saved</Link>
+                          </Button>
+                        </div>
                       </div>
 
-                      <div className="flex-1 py-4">
-                        <Link href="/messages" className="flex items-center justify-between px-6 py-3 hover:bg-muted transition-colors">
-                          <div className="flex items-center gap-3">
-                            <MessageSquare className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm font-medium">Inquiries</span>
+                      <div className="flex-1 overflow-y-auto scrollbar-hide py-6 px-4 space-y-8">
+                        {/* Settings Section */}
+                        <section className="space-y-4">
+                          <div className="px-4 flex items-center gap-2">
+                             <Settings className="h-3 w-3 text-primary/30" />
+                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30">Settings & Regional</span>
                           </div>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </Link>
-                        <Link href="/favorites" className="flex items-center justify-between px-6 py-3 hover:bg-muted transition-colors">
-                          <div className="flex items-center gap-3">
-                            <Heart className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm font-medium">My Collection</span>
+                          <div className="space-y-1">
+                            {/* Nested Location Sheet within User Sheet logic */}
+                            <Sheet open={isLocationSheetOpen} onOpenChange={(open) => { setIsLocationSheetOpen(open); if (!open) setLocationView('search'); }}>
+                              <SheetTrigger asChild>
+                                <button className="w-full flex items-center justify-between px-4 py-4 rounded-2xl hover:bg-primary/5 transition-all text-left group">
+                                  <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary transition-all group-hover:scale-110">
+                                      <MapPin className="h-5 w-5" />
+                                    </div>
+                                    <div className="space-y-0.5">
+                                      <p className="text-sm font-bold">Delivery Location</p>
+                                      <p className="text-xs text-muted-foreground italic truncate max-w-[150px]">{location}</p>
+                                    </div>
+                                  </div>
+                                  <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                              </SheetTrigger>
+                              <SheetContent side="top" className="h-auto pb-12 rounded-b-[2.5rem] border-none shadow-3xl bg-background/95 backdrop-blur-xl z-[70]">
+                                <div className="container mx-auto max-w-xl space-y-8 py-6">
+                                  <SheetHeader>
+                                    <div className="flex items-center gap-4">
+                                      {locationView === 'map' && (
+                                        <Button variant="ghost" size="icon" onClick={() => setLocationView('search')} className="rounded-full">
+                                          <ArrowLeft className="h-5 w-5" />
+                                        </Button>
+                                      )}
+                                      <div className="space-y-1 text-left">
+                                        <SheetTitle className="text-2xl font-headline italic text-primary">Registry Filter.</SheetTitle>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">Select your sanctuary region</p>
+                                      </div>
+                                    </div>
+                                  </SheetHeader>
+
+                                  {locationView === 'search' ? (
+                                    <form onSubmit={handleSetLocation} className="space-y-4">
+                                      <div className="relative group">
+                                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30 group-focus-within:text-primary transition-colors" />
+                                        <Input 
+                                          name="area"
+                                          placeholder="Search region..." 
+                                          className="pl-14 h-16 rounded-2xl border-primary/10 bg-primary/5 focus-visible:ring-primary/20 text-lg italic"
+                                          autoFocus
+                                        />
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <button type="button" onClick={() => setLocationView('map')} className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] border border-primary/10 flex items-center justify-center gap-2 hover:bg-primary/5 transition-all">
+                                          <MapIcon className="h-4 w-4" /> Pin Map
+                                        </button>
+                                        <button type="submit" className="h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                                          <Check className="h-4 w-4" /> Confirm
+                                        </button>
+                                      </div>
+                                    </form>
+                                  ) : (
+                                    <div className="space-y-6">
+                                      <div className="rounded-[2rem] overflow-hidden border border-primary/10 shadow-inner h-[300px]">
+                                        <Map center={mapCenter} onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
+                                      </div>
+                                      <Button onClick={handleConfirmMapLocation} className="w-full h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-2xl">
+                                        Apply Coordinates
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
+                              </SheetContent>
+                            </Sheet>
+
+                            <button 
+                              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                              className="w-full flex items-center justify-between px-4 py-4 rounded-2xl hover:bg-primary/5 transition-all text-left group"
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary transition-all group-hover:scale-110">
+                                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                                </div>
+                                <div className="space-y-0.5">
+                                  <p className="text-sm font-bold">Appearance</p>
+                                  <p className="text-xs text-muted-foreground italic uppercase tracking-widest">{theme} mode</p>
+                                </div>
+                              </div>
+                              <RefreshCw className="h-4 w-4 text-muted-foreground/30 group-hover:rotate-180 transition-transform duration-500" />
+                            </button>
                           </div>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </Link>
-                        <button onClick={handleInstallClick} className="flex items-center justify-between w-full px-6 py-3 hover:bg-muted transition-colors text-left">
-                          <div className="flex items-center gap-3">
-                            <Smartphone className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm font-medium">Download App</span>
+                        </section>
+
+                        <section className="space-y-4">
+                          <div className="px-4 flex items-center gap-2">
+                             <Download className="h-3 w-3 text-primary/30" />
+                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30">Native Experience</span>
                           </div>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </button>
+                          <button 
+                            onClick={handleInstallClick}
+                            className="w-full flex items-center justify-between px-4 py-4 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all text-left group shadow-sm"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transition-all group-hover:rotate-12">
+                                <Smartphone className="h-5 w-5" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <p className="text-sm font-black uppercase tracking-widest">Download App</p>
+                                <p className="text-[10px] text-primary/60 italic font-bold">One-tap registry access</p>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-primary/30 group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        </section>
                       </div>
 
-                      <div className="p-6 border-t">
-                        <button onClick={handleLogout} className="flex items-center gap-3 w-full text-destructive hover:opacity-80 transition-all font-bold text-sm">
-                          <LogOut className="h-5 w-5" /> Logout
+                      <div className="p-8 border-t border-primary/5 bg-primary/2">
+                        <button onClick={handleLogout} className="flex items-center gap-4 w-full text-destructive hover:opacity-80 transition-all font-black uppercase tracking-widest text-[11px] group">
+                          <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center group-hover:bg-destructive group-hover:text-white transition-all">
+                            <LogOut className="h-4 w-4" />
+                          </div>
+                          <span>End Session</span>
                         </button>
                       </div>
                     </div>
@@ -332,12 +371,12 @@ export function Navbar() {
       </nav>
 
       <div className={cn(
-        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-3 md:px-6 flex items-center justify-between md:justify-start md:gap-12 text-[10px] md:text-sm font-bold shadow-sm transition-all duration-300",
+        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-center md:gap-12 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm transition-all duration-300",
         showBanner ? "top-24" : "top-16"
       )}>
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-colors h-full flex items-center border-b-2 px-1 md:px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-primary")}>Deals</Link>
+        <Link href="/vendors" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Parlours</Link>
+        <Link href="/shop" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Products</Link>
+        <Link href="/deals" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Deals</Link>
       </div>
     </>
   );
