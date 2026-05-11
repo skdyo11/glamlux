@@ -33,13 +33,15 @@ export function GlamAssistant() {
   return (
     <div className="fixed bottom-6 right-6 z-[60] font-body">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <Button 
-            className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-3xl hover:scale-110 active:scale-95 transition-all p-0 border-none group"
-          >
-            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
-          </Button>
-        </SheetTrigger>
+        {!isOpen && (
+          <SheetTrigger asChild>
+            <Button 
+              className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-3xl hover:scale-110 active:scale-95 transition-all p-0 border-none group"
+            >
+              <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+            </Button>
+          </SheetTrigger>
+        )}
         <SheetContent side="right" className="w-[90vw] sm:w-[450px] p-0 border-none shadow-3xl bg-background/95 backdrop-blur-xl">
           <div className="flex flex-col h-full">
             <SheetHeader className="p-8 border-b border-primary/10">
