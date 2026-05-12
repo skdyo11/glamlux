@@ -163,7 +163,7 @@ export function Navbar() {
         )}
 
         <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
              {pathname !== '/' && (
               <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                 <Link href="/"><CustomHomeIcon className="h-4 w-4" /></Link>
@@ -172,11 +172,11 @@ export function Navbar() {
             <Link href="/" className="font-headline italic text-2xl text-primary tracking-tighter shrink-0 drop-shadow-sm">GlamLux</Link>
           </div>
 
-          <div className="flex items-center gap-1.5 md:gap-3">
+          <div className="flex items-center gap-1 md:gap-3">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-9 w-9 rounded-full"
+              className="h-9 w-9 rounded-full hidden md:flex"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -187,7 +187,7 @@ export function Navbar() {
                 <Link href="/signup">Join</Link>
               </Button>
             ) : (
-              <div className="flex items-center gap-1 md:gap-3">
+              <div className="flex items-center gap-1 md:gap-2">
                 <Link href="/messages">
                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                     <MessageSquare className={cn("h-4 w-4", pathname === '/messages' && "text-primary")} />

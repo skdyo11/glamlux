@@ -1,5 +1,5 @@
 {
-  "name": "GlamLux Beauty Marketplace",
+  "name": "GlamLux | Beauty Marketplace",
   "short_name": "GlamLux",
   "description": "Elite beauty curators and professional artistry registry.",
   "start_url": "/",
@@ -11,12 +11,13 @@
       "src": "/Glamlux.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Glamlux.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
