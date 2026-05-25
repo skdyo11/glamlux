@@ -369,11 +369,15 @@ export default function PartnerPortalPage() {
                 <ShieldCheck className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.5} />
               </div>
               <div className="text-left space-y-0.5">
-                <h4 className="text-xl md:text-2xl font-headline tracking-tight italic">Join Partner Team</h4>
-                <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-all">Earn by delivering items</p>
+                <h4 className="text-xl md:text-2xl font-headline tracking-tight italic">{myBusiness?.isDeliveryTeam ? 'Team Member' : 'Join Partner Team'}</h4>
+                <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-all">{myBusiness?.isDeliveryTeam ? 'Elite status confirmed' : 'Earn by delivering items'}</p>
               </div>
             </div>
-            <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40 group-hover:translate-x-2 transition-all" />
+            {myBusiness?.isDeliveryTeam ? (
+              <Badge className="bg-white/10 text-white border-white/20">Active</Badge>
+            ) : (
+              <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40 group-hover:translate-x-2 transition-all" />
+            )}
           </button>
 
           {/* Detailed Navigation Tabs */}
@@ -403,12 +407,14 @@ export default function PartnerPortalPage() {
               >
                 SCAN
               </TabsTrigger>
-              <TabsTrigger 
-                value="fleet" 
-                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
-              >
-                FLEET
-              </TabsTrigger>
+              {myBusiness?.isDeliveryTeam && (
+                <TabsTrigger 
+                  value="fleet" 
+                  className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                >
+                  FLEET
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="queue" className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -521,20 +527,19 @@ export default function PartnerPortalPage() {
                </div>
             </TabsContent>
 
-            <TabsContent value="fleet" className="py-20 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
-               <div className="max-w-md mx-auto space-y-10">
-                 <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
-                   <Truck className="h-10 w-10 text-primary" strokeWidth={1.5} />
+            {myBusiness?.isDeliveryTeam && (
+              <TabsContent value="fleet" className="py-20 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+                 <div className="max-w-md mx-auto space-y-10">
+                   <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
+                     <Truck className="h-10 w-10 text-primary" strokeWidth={1.5} />
+                   </div>
+                   <div className="space-y-4">
+                     <h3 className="text-4xl font-headline italic text-primary">Logistics Team.</h3>
+                     <p className="text-muted-foreground italic leading-relaxed">Manage your artisan fulfillment team or self-enroll to handle local area deliveries.</p>
+                   </div>
                  </div>
-                 <div className="space-y-4">
-                   <h3 className="text-4xl font-headline italic text-primary">Logistics Team.</h3>
-                   <p className="text-muted-foreground italic leading-relaxed">Manage your artisan fulfillment team or self-enroll to handle local area deliveries.</p>
-                 </div>
-                 {!myBusiness?.isDeliveryTeam && (
-                   <Button onClick={() => setActiveSheet('survey')} className="w-full h-16 rounded-full bg-black text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">Enroll in Fleet</Button>
-                 )}
-               </div>
-            </TabsContent>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </main>
