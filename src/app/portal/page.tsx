@@ -383,32 +383,32 @@ export default function PartnerPortalPage() {
             <TabsList className="bg-muted/30 dark:bg-white/5 rounded-full p-1.5 h-16 border-none w-full flex overflow-x-auto scrollbar-hide">
               <TabsTrigger 
                 value="queue" 
-                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
               >
                 QUEUE
               </TabsTrigger>
               <TabsTrigger 
                 value="items" 
-                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
               >
                 ITEMS
               </TabsTrigger>
               <TabsTrigger 
                 value="services" 
-                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
               >
                 SERVICES
               </TabsTrigger>
               <TabsTrigger 
                 value="scan" 
-                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
               >
                 SCAN
               </TabsTrigger>
               {myBusiness?.isDeliveryTeam && (
                 <TabsTrigger 
                   value="fleet" 
-                  className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+                  className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
                 >
                   FLEET
                 </TabsTrigger>
