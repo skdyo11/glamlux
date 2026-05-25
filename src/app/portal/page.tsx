@@ -294,15 +294,16 @@ export default function PartnerPortalPage() {
     <div className="min-h-screen bg-background pb-32 font-body">
       <Navbar />
       
-      <main className="container mx-auto px-0 md:px-6 pt-16 md:pt-24">
-        <div className="relative w-full h-48 md:h-72 bg-muted overflow-hidden border-b md:rounded-b-[2rem]">
+      <main className="container mx-auto px-6 pt-24 md:pt-32">
+        {/* Banner Section */}
+        <div className="w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden relative shadow-lg">
           <Image 
-            src={myBusiness?.myCover || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80"} 
+            src={myBusiness?.myCover || `https://picsum.photos/seed/${myBusiness?.id || 'portal'}/1600/400`} 
             alt="Business Cover" 
             fill 
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
 
         <div className="px-6 -mt-16 md:-mt-24 relative z-10 space-y-8 md:space-y-10">
@@ -361,8 +362,12 @@ export default function PartnerPortalPage() {
           </div>
 
           <button 
-            onClick={() => setActiveSheet('survey')}
-            className="w-full bg-primary text-white p-6 md:p-8 rounded-[2rem] flex items-center justify-between shadow-2xl"
+            onClick={() => {
+              if (!myBusiness?.isDeliveryTeam) {
+                setActiveSheet('survey');
+              }
+            }}
+            className="w-full bg-primary text-white p-6 md:p-8 rounded-[2rem] flex items-center justify-between shadow-2xl cursor-default"
           >
             <div className="flex items-center gap-6 md:gap-8">
               <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border border-white/20 flex items-center justify-center">
@@ -376,7 +381,7 @@ export default function PartnerPortalPage() {
             {myBusiness?.isDeliveryTeam ? (
               <Badge className="bg-white/10 text-white border-white/20">Active</Badge>
             ) : (
-              <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40" />
+              <div className="p-2 rounded-full bg-white/10"><ArrowRight className="h-5 w-5 text-white" /></div>
             )}
           </button>
 
