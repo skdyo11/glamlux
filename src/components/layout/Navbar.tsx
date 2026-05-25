@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useUser, useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,11 +24,9 @@ import {
   ShoppingCart,
   Heart,
   Store,
-  Download,
   Map as MapIcon,
   ArrowLeft,
   X,
-  Smartphone,
   Check,
   MessageSquare,
   Settings,
@@ -70,8 +68,6 @@ export function Navbar() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   const [location, setLocation] = useState('Location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
@@ -81,29 +77,7 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
-
-  const handleInstallClick = useCallback(() => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
-        if (choiceResult.outcome === 'accepted') {
-          setDeferredPrompt(null);
-        }
-      });
-    } else {
-      toast({
-        title: "PWA Handshake",
-        description: "Install from your browser's menu for the best experience.",
-      });
-    }
-  }, [deferredPrompt, toast]);
 
   const handleLogout = async () => {
     if (auth) {
@@ -132,36 +106,11 @@ export function Navbar() {
     toast({ title: "Location Pinned", description: "Coordinates confirmed for registry filtering." });
   };
 
-  const showBanner = mounted && deferredPrompt && !isBannerDismissed;
-
   if (!mounted) return null;
 
   return (
     <>
-      <nav className={cn(
-        "fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300 border-b",
-        showBanner ? "h-24" : "h-16"
-      )}>
-        {showBanner && (
-          <div className="h-8 bg-primary text-white flex items-center justify-between px-4 relative overflow-hidden group border-b border-white/10 shadow-lg">
-            <div className="flex items-center gap-2">
-              <Smartphone className="h-3 w-3 animate-bounce" />
-              <p className="text-[9px] font-black uppercase tracking-widest leading-none">Download GlamLux App</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={handleInstallClick}
-                className="bg-white text-primary text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full hover:scale-105 transition-all active:scale-95 shadow-sm"
-              >
-                Install
-              </button>
-              <button onClick={() => setIsBannerDismissed(true)} className="text-white/40 hover:text-white transition-colors">
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          </div>
-        )}
-
+      <nav className="fixed top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md transition-all duration-300 border-b h-16">
         <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-2 md:gap-4">
              {pathname !== '/' && (
@@ -330,28 +279,6 @@ export function Navbar() {
                             </button>
                           </div>
                         </section>
-
-                        <section className="space-y-4">
-                          <div className="px-4 flex items-center gap-2">
-                             <Download className="h-3 w-3 text-primary/30" />
-                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30">Native Experience</span>
-                          </div>
-                          <button 
-                            onClick={handleInstallClick}
-                            className="w-full flex items-center justify-between px-4 py-4 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all text-left group shadow-sm"
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transition-all group-hover:rotate-12">
-                                <Smartphone className="h-5 w-5" />
-                              </div>
-                              <div className="space-y-0.5">
-                                <p className="text-sm font-black uppercase tracking-widest">Download App</p>
-                                <p className="text-[10px] text-primary/60 italic font-bold">One-tap registry access</p>
-                              </div>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-primary/30 group-hover:translate-x-1 transition-transform" />
-                          </button>
-                        </section>
                       </div>
 
                       <div className="p-8 border-t border-primary/5 bg-primary/2">
@@ -371,10 +298,7 @@ export function Navbar() {
         </div>
       </nav>
 
-      <div className={cn(
-        "fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-center md:gap-12 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm transition-all duration-300",
-        showBanner ? "top-24" : "top-16"
-      )}>
+      <div className="fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-center md:gap-12 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm transition-all duration-300 top-16">
         <Link href="/vendors" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Parlours</Link>
         <Link href="/shop" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Products</Link>
         <Link href="/deals" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Deals</Link>

@@ -9,19 +9,6 @@ import { GlamAssistant } from '@/components/GlamAssistant';
 export const metadata: Metadata = {
   title: 'GlamLux | The Editorial Registry',
   description: 'Elite beauty curators and professional artistry registry.',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'GlamLux',
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  icons: {
-    apple: '/Glamlux.png',
-    icon: '/Glamlux.png',
-  },
 };
 
 export default function RootLayout({
@@ -36,9 +23,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
         <meta name="theme-color" content="#D70F64" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="GlamLux" />
-        <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="font-body antialiased selection:bg-secondary/30 pb-20 md:pb-0">
         <ThemeProvider
@@ -56,21 +40,6 @@ export default function RootLayout({
             </StoreProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful');
-                  }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   );
