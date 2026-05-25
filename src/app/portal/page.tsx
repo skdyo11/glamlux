@@ -48,7 +48,6 @@ import {
   Clock,
   TrendingUp,
   Users,
-  QrCode,
   ScanLine,
   AlertCircle,
   MessageSquare
@@ -62,7 +61,6 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
 import { Html5Qrcode } from 'html5-qrcode';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 
 const Map = dynamic(() => import('@/components/Map'), { 
@@ -118,6 +116,7 @@ export default function PartnerPortalPage() {
     setIsMounted(true);
   }, []);
 
+  // Handle guest access via anonymous sign-in
   useEffect(() => {
     if (isMounted && !isUserLoading && !user && auth) {
       signInAnonymously(auth).catch(err => console.error("Identity check failed", err));
@@ -287,11 +286,11 @@ export default function PartnerPortalPage() {
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) {
-      toast({ variant: "destructive", title: "Login Required" });
+      toast({ variant: "destructive", title: "Identity Required" });
       return;
     }
     try {
-      const businessName = type === 'parlour' ? `${user.displayName || 'My'} Parlour` : `${user.displayName || 'My'} Shop`;
+      const businessName = type === 'parlour' ? `${user.displayName || 'Guest'} Parlour` : `${user.displayName || 'Guest'} Shop`;
       const baseSlug = slugify(businessName);
       const businessSlug = `${baseSlug}-${user.uid.slice(0, 5)}`;
 
