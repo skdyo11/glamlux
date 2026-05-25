@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -35,7 +34,8 @@ import {
   QrCode,
   Truck,
   Plus,
-  ChevronRight
+  ChevronRight,
+  LayoutGrid
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -45,6 +45,7 @@ import { collection, query, where, updateDoc, serverTimestamp, onSnapshot, doc, 
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
 import Link from 'next/link';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
@@ -62,12 +63,12 @@ export default function PartnerPortalPage() {
   const [myBusiness, setMyBusiness] = useState<any>(null);
 
   const [arrivals, setArrivals] = useState<any[]>([]);
-  const [activeSheet, setActiveSheet] = useState<'profile' | 'survey' | 'addItem' | null>(null);
+  const [activeSheet, setActiveSheet] = useState<'profile' | 'survey' | 'addItem' | 'addService' | null>(null);
   const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]);
   const [addressInput, setAddressInput] = useState('');
 
-  // Add Item State
-  const [isSubmittingItem, setIsSubmittingItem] = useState(false);
+  // Form States
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -117,12 +118,19 @@ export default function PartnerPortalPage() {
     };
   }, [user, firestore, hasBusiness]);
 
+  // Items Query
   const itemsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
     return query(collection(firestore, 'products'), where('vendorId', '==', user.uid));
   }, [firestore, user?.uid]);
-
   const { data: myItems, isLoading: isLoadingItems } = useCollection(itemsQuery);
+
+  // Services Query
+  const servicesQuery = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return query(collection(firestore, 'deals'), where('parlourId', '==', user.uid));
+  }, [firestore, user?.uid]);
+  const { data: myServices, isLoading: isLoadingServices } = useCollection(servicesQuery);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) return;
@@ -181,7 +189,7 @@ export default function PartnerPortalPage() {
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !firestore) return;
-    setIsSubmittingItem(true);
+    setIsSubmitting(true);
 
     const formData = new FormData(e.target as HTMLFormElement);
     const name = formData.get('itemName') as string;
@@ -202,12 +210,46 @@ export default function PartnerPortalPage() {
         createdAt: serverTimestamp()
       });
 
-      toast({ title: "Item Registered", description: `${name} has been added to your collection.` });
+      toast({ title: "Item Registered", description: `${name} added to inventory.` });
       setActiveSheet(null);
     } catch (error) {
       toast({ variant: "destructive", title: "Registration Failed" });
     } finally {
-      setIsSubmittingItem(false);
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAddService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !firestore) return;
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get('serviceName') as string;
+    const category = formData.get('serviceCategory') as any;
+    const basePrice = parseFloat(formData.get('basePrice') as string);
+    const discountPrice = parseFloat(formData.get('discountPrice') as string);
+
+    try {
+      const dealRef = collection(firestore, 'deals');
+      addDocumentNonBlocking(dealRef, {
+        parlourId: user.uid,
+        parlourOwnerId: user.uid,
+        name,
+        category: category || 'Skin',
+        basePrice,
+        discountPrice,
+        currency: getCurrency(),
+        depositPercent: 10,
+        createdAt: serverTimestamp()
+      });
+
+      toast({ title: "Transformation Defined", description: `${name} is now available for booking.` });
+      setActiveSheet(null);
+    } catch (error) {
+      toast({ variant: "destructive", title: "Setup Failed" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -412,7 +454,7 @@ export default function PartnerPortalPage() {
                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <button 
                       onClick={() => setActiveSheet('addItem')}
-                      className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 transition-all group"
+                      className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 transition-all group shadow-inner"
                     >
                       <Plus className="h-8 w-8 text-primary/20 group-hover:scale-110 transition-transform" />
                       <span className="text-[10px] font-black uppercase tracking-widest text-primary/30">Add Item</span>
@@ -429,14 +471,6 @@ export default function PartnerPortalPage() {
                         </div>
                       </div>
                     ))}
-
-                    {(!myItems || myItems.length === 0) && !isLoadingItems && (
-                      [1, 2, 3].map(i => (
-                        <div key={i} className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
-                          <ShoppingBag className="h-8 w-8 text-primary/10" />
-                        </div>
-                      ))
-                    )}
                  </div>
                </div>
             </TabsContent>
@@ -445,12 +479,29 @@ export default function PartnerPortalPage() {
                <div className="space-y-8">
                  <div className="flex justify-between items-baseline px-2">
                    <h3 className="text-3xl font-headline italic text-primary">Signature Series.</h3>
-                   <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Define Edit</Button>
+                   <Button variant="ghost" onClick={() => setActiveSheet('addService')} className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Define Edit</Button>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[1, 2].map(i => (
-                      <div key={i} className="h-40 bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
-                        <Scissors className="h-8 w-8 text-primary/10" />
+                    <button 
+                      onClick={() => setActiveSheet('addService')}
+                      className="h-40 bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 transition-all group shadow-inner"
+                    >
+                      <Plus className="h-8 w-8 text-primary/20 group-hover:scale-110 transition-transform" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-primary/30">Define Transformation</span>
+                    </button>
+
+                    {isLoadingServices ? (
+                      [1, 2].map(i => <Skeleton key={i} className="h-40 rounded-[2.5rem]" />)
+                    ) : myServices?.map(service => (
+                      <div key={service.id} className="h-40 bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-primary/5 p-8 flex items-center justify-between group hover:border-primary/20 transition-all">
+                        <div className="space-y-1">
+                          <Badge variant="outline" className="bg-primary/5 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-1">{service.category}</Badge>
+                          <h4 className="font-headline text-2xl italic leading-none">{service.name}</h4>
+                          <p className="text-sm font-bold text-primary tracking-tighter pt-1">{getCurrency()} {service.discountPrice.toLocaleString()}</p>
+                        </div>
+                        <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center text-primary/20 group-hover:bg-primary group-hover:text-white transition-all">
+                           <Scissors className="h-5 w-5" />
+                        </div>
                       </div>
                     ))}
                  </div>
@@ -581,10 +632,64 @@ export default function PartnerPortalPage() {
 
                   <Button 
                     type="submit" 
-                    disabled={isSubmittingItem}
+                    disabled={isSubmitting}
                     className="w-full h-16 bg-black text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl active:scale-95 transition-all"
                   >
-                    {isSubmittingItem ? "Processing..." : "Register Item"}
+                    {isSubmitting ? "Processing..." : "Register Item"}
+                  </Button>
+                </form>
+              </div>
+           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Service Dialog */}
+      <Dialog open={activeSheet === 'addService'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden max-w-md animate-in zoom-in-95 duration-300">
+           <ScrollArea className="max-h-[85vh]">
+              <div className="p-8 space-y-8">
+                <div className="space-y-2 text-center md:text-left">
+                  <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary">Define Edit.</DialogTitle>
+                  <p className="font-body italic text-muted-foreground text-sm">Create a signature transformation package.</p>
+                </div>
+
+                <form onSubmit={handleAddService} className="space-y-8">
+                  <div className="space-y-4">
+                    <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Transformation Identity</Label>
+                    <Input name="serviceName" required placeholder="Service Name (e.g. Royal Glow)" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                    
+                    <div className="space-y-2">
+                       <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Category</Label>
+                       <Select name="serviceCategory" defaultValue="Skin">
+                         <SelectTrigger className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent px-0 font-body italic">
+                           <SelectValue placeholder="Select Category" />
+                         </SelectTrigger>
+                         <SelectContent>
+                            <SelectItem value="Bridal">Bridal</SelectItem>
+                            <SelectItem value="Hair">Hair</SelectItem>
+                            <SelectItem value="Skin">Skin</SelectItem>
+                         </SelectContent>
+                       </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Base Price</Label>
+                      <Input name="basePrice" type="number" required placeholder="0.00" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-base italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                    </div>
+                    <div className="space-y-4">
+                      <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Registry Price</Label>
+                      <Input name="discountPrice" type="number" required placeholder="0.00" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-lg italic px-0 font-bold focus-visible:ring-0 focus-visible:border-primary" />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full h-16 bg-black text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl active:scale-95 transition-all"
+                  >
+                    {isSubmitting ? "Processing..." : "Publish Service"}
                   </Button>
                 </form>
               </div>
