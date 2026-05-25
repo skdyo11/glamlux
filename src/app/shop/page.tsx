@@ -95,13 +95,18 @@ export default function ShopPage() {
               const discountPercent = hasDiscount ? Math.round((1 - product.price / product.basePrice) * 100) : 0;
               
               return (
-                <Link key={product.id} href={`/shop/${product.id}`} className="group block bg-white dark:bg-card border rounded-2xl overflow-hidden hover:shadow-marketplace transition-all">
+                <Link 
+                  key={product.id} 
+                  href={`/shop/${product.id}`} 
+                  className="group block bg-white dark:bg-card border rounded-2xl overflow-hidden hover:shadow-marketplace transition-all hover:-translate-y-2"
+                >
                   <div className="relative aspect-square">
                     <Image 
                       src={product.imageUrl || `https://picsum.photos/seed/p-${product.id}/600/600`} 
                       alt={product.name} 
                       fill 
                       className="object-cover transition-transform group-hover:scale-105" 
+                      data-ai-hint="beauty product"
                     />
                     {hasDiscount && (
                       <div className="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-[10px] font-bold rounded-lg shadow-sm">
@@ -111,7 +116,7 @@ export default function ShopPage() {
                     <button 
                       onClick={(e) => handleFavoriteToggle(e, product.id)}
                       className={cn(
-                        "absolute top-2 right-2 h-8 w-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm",
+                        "absolute top-2 right-2 h-8 w-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm z-10",
                         isFavoriteProduct(product.id) ? "text-primary" : "text-muted-foreground hover:text-primary"
                       )}
                     >

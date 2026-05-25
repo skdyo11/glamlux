@@ -424,7 +424,7 @@ export default function PartnerPortalPage() {
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    {arrivals.length > 0 ? (
                      arrivals.map(arrival => (
-                       <Card key={arrival.id} className="p-8 rounded-[2.5rem] border border-primary/5 bg-white/40 backdrop-blur-xl shadow-xl space-y-6 group hover:border-primary/20 transition-all cursor-pointer">
+                       <Card key={arrival.id} className="p-8 rounded-[2.5rem] border border-primary/5 bg-white/40 backdrop-blur-xl shadow-xl space-y-6 group hover:border-primary/20 transition-all cursor-pointer hover:-translate-y-2">
                          <div className="flex justify-between items-start">
                            <div className="space-y-1">
                              <h4 className="font-headline text-3xl italic">{arrival.userName || 'Guest'}</h4>
@@ -467,7 +467,7 @@ export default function PartnerPortalPage() {
                     {isLoadingItems ? (
                       [1, 2, 3].map(i => <Skeleton key={i} className="aspect-[3/4] rounded-[2.5rem]" />)
                     ) : myItems?.map(item => (
-                      <div key={item.id} className="aspect-[3/4] bg-white rounded-[2.5rem] border border-primary/5 shadow-md overflow-hidden relative group">
+                      <div key={item.id} className="aspect-[3/4] bg-white rounded-[2.5rem] border border-primary/5 shadow-md overflow-hidden relative group transition-all hover:-translate-y-2 hover:shadow-2xl">
                         <Image src={item.imageUrl} alt={item.name} fill className="object-cover transition-transform group-hover:scale-105" />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-6 text-white">
                            <p className="text-[8px] font-bold uppercase tracking-widest opacity-60 mb-1">{item.brand}</p>
@@ -497,7 +497,7 @@ export default function PartnerPortalPage() {
                     {isLoadingServices ? (
                       [1, 2].map(i => <Skeleton key={i} className="h-40 rounded-[2.5rem]" />)
                     ) : myServices?.map(service => (
-                      <div key={service.id} className="h-40 bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-primary/5 p-8 flex items-center justify-between group hover:border-primary/20 transition-all">
+                      <div key={service.id} className="h-40 bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-primary/5 p-8 flex items-center justify-between group hover:border-primary/20 transition-all hover:-translate-y-2 hover:shadow-2xl">
                         <div className="space-y-1">
                           <Badge variant="outline" className="bg-primary/5 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-1">{service.category}</Badge>
                           <h4 className="font-headline text-2xl italic leading-none">{service.name}</h4>
