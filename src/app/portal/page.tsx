@@ -19,7 +19,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { 
   Navigation,
@@ -287,13 +286,13 @@ export default function PartnerPortalPage() {
             <Button 
               variant="outline" 
               onClick={() => setActiveSheet('profile')}
-              className="h-14 md:h-16 rounded-[2rem] border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/5 shadow-sm"
+              className="h-14 rounded-[1.5rem] border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/5 shadow-sm"
             >
               Edit Profile
             </Button>
             <Button 
               asChild
-              className="h-14 md:h-16 rounded-[2rem] bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl"
+              className="h-14 rounded-[1.5rem] bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl"
             >
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-3" /> Messages
@@ -302,7 +301,7 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-black text-white p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px] md:min-h-[180px]">
+            <Card className="bg-black text-white p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px]">
               <Users className="h-6 w-6 opacity-40 mb-2" />
               <div className="space-y-1">
                 <p className="text-5xl md:text-6xl font-headline tracking-tighter italic">{arrivals.length}</p>
@@ -310,7 +309,7 @@ export default function PartnerPortalPage() {
               </div>
             </Card>
             
-            <Card className="bg-white dark:bg-card p-6 md:p-8 rounded-[2.5rem] border border-primary/5 shadow-2xl flex flex-col justify-between min-h-[160px] md:min-h-[180px]">
+            <Card className="bg-white dark:bg-card p-6 md:p-8 rounded-[2.5rem] border border-primary/5 shadow-2xl flex flex-col justify-between min-h-[160px]">
               <TrendingUp className="h-6 w-6 text-primary/20 mb-2" />
               <div className="space-y-1">
                 <p className="text-5xl md:text-6xl font-headline tracking-tighter italic">142K</p>
@@ -321,7 +320,7 @@ export default function PartnerPortalPage() {
 
           <button 
             onClick={() => setActiveSheet('survey')}
-            className="w-full bg-black text-white p-6 md:p-8 rounded-[2.5rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
+            className="w-full bg-black text-white p-6 md:p-8 rounded-[2rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
           >
             <div className="flex items-center gap-6 md:gap-8">
               <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border border-white/20 flex items-center justify-center">
@@ -337,12 +336,37 @@ export default function PartnerPortalPage() {
 
           {/* Detailed Navigation Tabs */}
           <Tabs defaultValue="queue" className="space-y-12 pt-12">
-            <TabsList className="bg-white dark:bg-white/5 rounded-full p-1 h-14 border border-black/5 shadow-sm w-full flex overflow-x-auto scrollbar-hide">
-              <TabsTrigger value="queue" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">QUEUE</TabsTrigger>
-              <TabsTrigger value="items" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">ITEMS</TabsTrigger>
-              <TabsTrigger value="services" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">SERVICES</TabsTrigger>
-              <TabsTrigger value="scan" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">SCAN</TabsTrigger>
-              <TabsTrigger value="fleet" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">FLEET</TabsTrigger>
+            <TabsList className="bg-muted/30 dark:bg-white/5 rounded-full p-1.5 h-16 border-none w-full flex overflow-x-auto scrollbar-hide">
+              <TabsTrigger 
+                value="queue" 
+                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+              >
+                QUEUE
+              </TabsTrigger>
+              <TabsTrigger 
+                value="items" 
+                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+              >
+                ITEMS
+              </TabsTrigger>
+              <TabsTrigger 
+                value="services" 
+                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+              >
+                SERVICES
+              </TabsTrigger>
+              <TabsTrigger 
+                value="scan" 
+                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+              >
+                SCAN
+              </TabsTrigger>
+              <TabsTrigger 
+                value="fleet" 
+                className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
+              >
+                FLEET
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="queue" className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -470,7 +494,7 @@ export default function PartnerPortalPage() {
             <div className="p-8 md:p-10 space-y-10">
               <div className="border-b border-primary/10 pb-6 md:pb-8 space-y-4 text-center md:text-left">
                 <DialogTitle className="text-4xl md:text-5xl font-headline tracking-tighter italic leading-none text-primary">Edit Sanctuary.</DialogTitle>
-                <DialogDescription className="font-body italic text-muted-foreground">Update your identity in the registry.</DialogDescription>
+                <p className="font-body italic text-muted-foreground">Update your identity in the registry.</p>
               </div>
               
               <form onSubmit={handleProfileSubmit} className="space-y-10">
@@ -534,7 +558,7 @@ export default function PartnerPortalPage() {
               <div className="p-8 space-y-8">
                 <div className="space-y-2 text-center md:text-left">
                   <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary">New Collection.</DialogTitle>
-                  <DialogDescription className="font-body italic text-muted-foreground text-sm">Register a professional artistry item.</DialogDescription>
+                  <p className="font-body italic text-muted-foreground text-sm">Register a professional artistry item.</p>
                 </div>
 
                 <form onSubmit={handleAddItem} className="space-y-8">
