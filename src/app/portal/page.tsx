@@ -324,13 +324,12 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 md:pt-4">
-            <Button 
-              variant="outline" 
+            <button 
               onClick={() => setActiveSheet('profile')}
-              className="h-14 rounded-[1.5rem] border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/5 shadow-sm"
+              className="h-14 rounded-[1.5rem] border border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/5 shadow-sm transition-all active:scale-95 bg-white dark:bg-white/5"
             >
               Edit Profile
-            </Button>
+            </button>
             <Button 
               asChild
               className="h-14 rounded-[1.5rem] bg-primary text-primary-foreground hover:opacity-90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl border-none"
@@ -342,7 +341,7 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-black text-white p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px]">
+            <Card className="bg-primary text-primary-foreground p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px]">
               <Users className="h-6 w-6 opacity-40 mb-2" />
               <div className="space-y-1">
                 <p className="text-5xl md:text-6xl font-headline tracking-tighter italic">{arrivals.length}</p>
