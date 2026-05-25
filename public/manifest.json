@@ -1,8 +1,8 @@
 
 {
-  "name": "GlamLux",
+  "name": "GlamLux Beauty",
   "short_name": "GlamLux",
-  "description": "Elite beauty curators and professional artistry registry.",
+  "description": "Elite beauty marketplace and professional artistry registry.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

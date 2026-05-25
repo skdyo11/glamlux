@@ -1,12 +1,13 @@
 
-self.addEventListener('install', function(event) {
-  console.log('Service Worker installing.');
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', function(event) {
-  console.log('Service Worker activating.');
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', function(event) {
-  // Basic pass-through fetch listener
+self.addEventListener('fetch', (event) => {
+  // Prototype strategy: network first
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
 });

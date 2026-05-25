@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { 
   Navigation,
@@ -33,12 +34,14 @@ import {
   ShieldCheck,
   PlusCircle,
   QrCode,
-  Truck
+  Truck,
+  Plus,
+  ChevronRight
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useUser, useFirebase } from '@/firebase';
+import { useUser, useFirebase, useCollection, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, updateDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
@@ -60,9 +63,12 @@ export default function PartnerPortalPage() {
   const [myBusiness, setMyBusiness] = useState<any>(null);
 
   const [arrivals, setArrivals] = useState<any[]>([]);
-  const [activeSheet, setActiveSheet] = useState<'profile' | 'survey' | null>(null);
+  const [activeSheet, setActiveSheet] = useState<'profile' | 'survey' | 'addItem' | null>(null);
   const [mapLocation, setMapLocation] = useState<[number, number]>([31.5204, 74.3587]);
   const [addressInput, setAddressInput] = useState('');
+
+  // Add Item State
+  const [isSubmittingItem, setIsSubmittingItem] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -111,6 +117,13 @@ export default function PartnerPortalPage() {
       unsubBookings();
     };
   }, [user, firestore, hasBusiness]);
+
+  const itemsQuery = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return query(collection(firestore, 'products'), where('vendorId', '==', user.uid));
+  }, [firestore, user?.uid]);
+
+  const { data: myItems, isLoading: isLoadingItems } = useCollection(itemsQuery);
 
   const handleStartBusiness = async (type: 'parlour' | 'shop') => {
     if (!user || !firestore) return;
@@ -163,6 +176,39 @@ export default function PartnerPortalPage() {
       setActiveSheet(null);
     } catch (error) {
       toast({ variant: "destructive", title: "Update Failed" });
+    }
+  };
+
+  const handleAddItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !firestore) return;
+    setIsSubmittingItem(true);
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get('itemName') as string;
+    const brand = formData.get('itemBrand') as string;
+    const price = parseFloat(formData.get('itemPrice') as string);
+    const imageUrl = formData.get('itemImage') as string;
+
+    try {
+      const productRef = collection(firestore, 'products');
+      addDocumentNonBlocking(productRef, {
+        vendorId: user.uid,
+        name,
+        brand,
+        price,
+        imageUrl: imageUrl || `https://picsum.photos/seed/${Math.random()}/600/800`,
+        currency: getCurrency(),
+        stockCount: 10,
+        createdAt: serverTimestamp()
+      });
+
+      toast({ title: "Item Registered", description: `${name} has been added to your collection.` });
+      setActiveSheet(null);
+    } catch (error) {
+      toast({ variant: "destructive", title: "Registration Failed" });
+    } finally {
+      setIsSubmittingItem(false);
     }
   };
 
@@ -230,7 +276,7 @@ export default function PartnerPortalPage() {
             </div>
             
             <div className="space-y-2 pb-2">
-              <h1 className="text-5xl md:text-8xl font-headline tracking-tighter text-primary">{myBusiness?.name || 'My Parlour'}</h1>
+              <h1 className="text-5xl md:text-8xl font-headline tracking-tighter text-primary leading-none">{myBusiness?.name || 'My Parlour'}</h1>
               <div className="flex items-center gap-2 text-muted-foreground font-black uppercase text-[10px] tracking-[0.4em]">
                 <Navigation className="h-3 w-3" /> {myBusiness?.areaTag || 'Region'}
               </div>
@@ -337,14 +383,36 @@ export default function PartnerPortalPage() {
                <div className="space-y-8">
                  <div className="flex justify-between items-baseline px-2">
                    <h3 className="text-3xl font-headline italic text-primary">Artisan Inventory.</h3>
-                   <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Add Collection</Button>
+                   <Button variant="ghost" onClick={() => setActiveSheet('addItem')} className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Add Collection</Button>
                  </div>
                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
-                        <ShoppingBag className="h-8 w-8 text-primary/10" />
+                    <button 
+                      onClick={() => setActiveSheet('addItem')}
+                      className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 transition-all group"
+                    >
+                      <Plus className="h-8 w-8 text-primary/20 group-hover:scale-110 transition-transform" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-primary/30">Add Item</span>
+                    </button>
+
+                    {isLoadingItems ? (
+                      [1, 2, 3].map(i => <Skeleton key={i} className="aspect-[3/4] rounded-[2.5rem]" />)
+                    ) : myItems?.map(item => (
+                      <div key={item.id} className="aspect-[3/4] bg-white rounded-[2.5rem] border border-primary/5 shadow-md overflow-hidden relative group">
+                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover transition-transform group-hover:scale-105" />
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-6 text-white">
+                           <p className="text-[8px] font-bold uppercase tracking-widest opacity-60 mb-1">{item.brand}</p>
+                           <h4 className="font-headline text-lg italic leading-none">{item.name}</h4>
+                        </div>
                       </div>
                     ))}
+
+                    {(!myItems || myItems.length === 0) && !isLoadingItems && (
+                      [1, 2, 3].map(i => (
+                        <div key={i} className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
+                          <ShoppingBag className="h-8 w-8 text-primary/10" />
+                        </div>
+                      ))
+                    )}
                  </div>
                </div>
             </TabsContent>
@@ -456,6 +524,47 @@ export default function PartnerPortalPage() {
               </form>
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Item Dialog */}
+      <Dialog open={activeSheet === 'addItem'} onOpenChange={() => setActiveSheet(null)}>
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden max-w-md animate-in zoom-in-95 duration-300">
+           <ScrollArea className="max-h-[85vh]">
+              <div className="p-8 space-y-8">
+                <div className="space-y-2 text-center md:text-left">
+                  <DialogTitle className="text-4xl font-headline italic tracking-tighter text-primary">New Collection.</DialogTitle>
+                  <DialogDescription className="font-body italic text-muted-foreground text-sm">Register a professional artistry item.</DialogDescription>
+                </div>
+
+                <form onSubmit={handleAddItem} className="space-y-8">
+                  <div className="space-y-4">
+                    <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Product Identity</Label>
+                    <Input name="itemName" required placeholder="Item Name (e.g. Silk Foundation)" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                    <Input name="itemBrand" required placeholder="Brand / Curator" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-base italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Valuation ({getCurrency()})</Label>
+                      <Input name="itemPrice" type="number" required placeholder="0.00" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                    </div>
+                    <div className="space-y-4">
+                      <Label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">Editorial Image</Label>
+                      <Input name="itemImage" placeholder="URL (Optional)" className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-10 text-xs italic px-0 focus-visible:ring-0 focus-visible:border-primary" />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmittingItem}
+                    className="w-full h-16 bg-black text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl active:scale-95 transition-all"
+                  >
+                    {isSubmittingItem ? "Processing..." : "Register Item"}
+                  </Button>
+                </form>
+              </div>
+           </ScrollArea>
         </DialogContent>
       </Dialog>
 
