@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -9,15 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetTitle, 
-  SheetDescription,
-  SheetHeader
-} from '@/components/ui/sheet';
 import { 
   Dialog,
   DialogContent,
@@ -31,21 +26,20 @@ import {
   ShoppingBag,
   Sparkles,
   ArrowRight,
-  Store,
   Camera,
   MessageSquare,
   Users,
   TrendingUp,
-  Check,
   ShieldCheck,
-  ChevronRight
+  PlusCircle,
+  QrCode,
+  Truck
 } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useUser, useFirestore, useFirebase } from '@/firebase';
-import { collection, query, where, updateDoc, addDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useUser, useFirebase } from '@/firebase';
+import { collection, query, where, updateDoc, serverTimestamp, onSnapshot, doc, getDocs, writeBatch } from 'firebase/firestore';
 import { slugify } from '@/lib/utils';
 import { signInAnonymously } from 'firebase/auth';
 import Link from 'next/link';
@@ -74,7 +68,6 @@ export default function PartnerPortalPage() {
     setIsMounted(true);
   }, []);
 
-  // Handle guest access via anonymous sign-in
   useEffect(() => {
     if (isMounted && !isUserLoading && !user && auth) {
       signInAnonymously(auth).catch(err => console.error("Identity check failed", err));
@@ -214,7 +207,6 @@ export default function PartnerPortalPage() {
       <Navbar />
       
       <main className="container mx-auto px-0 md:px-6 pt-16 md:pt-24">
-        {/* Banner Section */}
         <div className="relative w-full h-48 md:h-72 bg-muted overflow-hidden border-b md:rounded-b-[2rem]">
           <Image 
             src={myBusiness?.myCover || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80"} 
@@ -225,7 +217,6 @@ export default function PartnerPortalPage() {
           <div className="absolute inset-0 bg-black/10" />
         </div>
 
-        {/* Profile Info Overlay */}
         <div className="px-6 -mt-16 md:-mt-24 relative z-10 space-y-8 md:space-y-10">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 md:gap-10">
             <div className="relative group">
@@ -246,7 +237,6 @@ export default function PartnerPortalPage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 md:pt-4">
             <Button 
               variant="outline" 
@@ -265,7 +255,6 @@ export default function PartnerPortalPage() {
             </Button>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-black text-white p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px] md:min-h-[180px]">
               <Users className="h-6 w-6 opacity-40 mb-2" />
@@ -284,7 +273,6 @@ export default function PartnerPortalPage() {
             </Card>
           </div>
 
-          {/* Partner Team Banner */}
           <button 
             onClick={() => setActiveSheet('survey')}
             className="w-full bg-black text-white p-6 md:p-8 rounded-[2.5rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
@@ -300,10 +288,114 @@ export default function PartnerPortalPage() {
             </div>
             <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40 group-hover:translate-x-2 transition-all" />
           </button>
+
+          {/* Detailed Navigation Tabs */}
+          <Tabs defaultValue="queue" className="space-y-12 pt-12">
+            <TabsList className="bg-white dark:bg-white/5 rounded-full p-1 h-14 border border-black/5 shadow-sm w-full flex overflow-x-auto scrollbar-hide">
+              <TabsTrigger value="queue" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">QUEUE</TabsTrigger>
+              <TabsTrigger value="items" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">ITEMS</TabsTrigger>
+              <TabsTrigger value="services" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">SERVICES</TabsTrigger>
+              <TabsTrigger value="scan" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">SCAN</TabsTrigger>
+              <TabsTrigger value="fleet" className="flex-1 rounded-full data-[state=active]:bg-black data-[state=active]:text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em] transition-all">FLEET</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="queue" className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+               <div className="space-y-6">
+                 <div className="flex justify-between items-baseline px-2">
+                   <h3 className="text-3xl font-headline italic text-primary">Live Sessions.</h3>
+                   <span className="text-[10px] font-black uppercase tracking-widest opacity-30">{arrivals.length} ACTIVE</span>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {arrivals.length > 0 ? (
+                     arrivals.map(arrival => (
+                       <Card key={arrival.id} className="p-8 rounded-[2.5rem] border border-primary/5 bg-white/40 backdrop-blur-xl shadow-xl space-y-6 group hover:border-primary/20 transition-all cursor-pointer">
+                         <div className="flex justify-between items-start">
+                           <div className="space-y-1">
+                             <h4 className="font-headline text-3xl italic">{arrival.userName || 'Guest'}</h4>
+                             <p className="text-[10px] font-black uppercase tracking-widest text-primary/40">Ref: {arrival.referenceCode}</p>
+                           </div>
+                           <Badge className="bg-primary/5 text-primary border-none font-black text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-full">{arrival.deliveryStatus}</Badge>
+                         </div>
+                         <div className="flex items-center justify-between pt-4 border-t border-primary/5">
+                           <div className="flex items-center gap-3 text-muted-foreground italic text-sm">
+                             <Sparkles className="h-4 w-4 text-primary" /> {arrival.cartItems?.[0]?.name || 'Beauty Service'}
+                           </div>
+                           <ChevronRight className="h-5 w-5 text-primary/20 group-hover:translate-x-1 transition-all" />
+                         </div>
+                       </Card>
+                     ))
+                   ) : (
+                     <div className="col-span-full py-24 text-center bg-primary/5 rounded-[3rem] border-2 border-dashed border-primary/10">
+                       <p className="italic text-muted-foreground text-lg">Your editorial queue is currently empty.</p>
+                     </div>
+                   )}
+                 </div>
+               </div>
+            </TabsContent>
+            
+            <TabsContent value="items" className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+               <div className="space-y-8">
+                 <div className="flex justify-between items-baseline px-2">
+                   <h3 className="text-3xl font-headline italic text-primary">Artisan Inventory.</h3>
+                   <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Add Collection</Button>
+                 </div>
+                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="aspect-[3/4] bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
+                        <ShoppingBag className="h-8 w-8 text-primary/10" />
+                      </div>
+                    ))}
+                 </div>
+               </div>
+            </TabsContent>
+
+            <TabsContent value="services" className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+               <div className="space-y-8">
+                 <div className="flex justify-between items-baseline px-2">
+                   <h3 className="text-3xl font-headline italic text-primary">Signature Series.</h3>
+                   <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5"><PlusCircle className="h-4 w-4 mr-2" /> Define Edit</Button>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[1, 2].map(i => (
+                      <div key={i} className="h-40 bg-primary/5 rounded-[2.5rem] border border-dashed border-primary/10 flex items-center justify-center">
+                        <Scissors className="h-8 w-8 text-primary/10" />
+                      </div>
+                    ))}
+                 </div>
+               </div>
+            </TabsContent>
+
+            <TabsContent value="scan" className="py-20 text-center animate-in fade-in zoom-in-95 duration-500">
+               <div className="max-w-sm mx-auto space-y-10">
+                 <div className="h-32 w-32 bg-primary text-white rounded-full flex items-center justify-center mx-auto shadow-3xl">
+                   <QrCode className="h-16 w-16" strokeWidth={1} />
+                 </div>
+                 <div className="space-y-4">
+                   <h3 className="text-4xl font-headline italic text-primary">Pass Verifier.</h3>
+                   <p className="text-muted-foreground italic leading-relaxed">Scan your guest's digital pass to verify arrival and sync their credentials with the registry.</p>
+                 </div>
+                 <Button className="w-full h-16 rounded-full bg-black text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">Initialize Scanner</Button>
+               </div>
+            </TabsContent>
+
+            <TabsContent value="fleet" className="py-20 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+               <div className="max-w-md mx-auto space-y-10">
+                 <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
+                   <Truck className="h-10 w-10 text-primary" strokeWidth={1.5} />
+                 </div>
+                 <div className="space-y-4">
+                   <h3 className="text-4xl font-headline italic text-primary">Logistics Team.</h3>
+                   <p className="text-muted-foreground italic leading-relaxed">Manage your artisan fulfillment team or self-enroll to handle local area deliveries.</p>
+                 </div>
+                 {!myBusiness?.isDeliveryTeam && (
+                   <Button onClick={() => setActiveSheet('survey')} className="w-full h-16 rounded-full bg-black text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">Enroll in Fleet</Button>
+                 )}
+               </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
-      {/* Edit Profile Sheet */}
       <Dialog open={activeSheet === 'profile'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden max-w-2xl animate-in slide-in-from-bottom-4 duration-500">
           <ScrollArea className="max-h-[90vh] font-body">
@@ -367,7 +459,6 @@ export default function PartnerPortalPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Logistics Dialog (Survey) */}
       <Dialog open={activeSheet === 'survey'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-8 md:p-10 max-w-md animate-in zoom-in-95 duration-300">
            <div className="space-y-8 text-center py-4">
