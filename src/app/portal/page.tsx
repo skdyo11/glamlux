@@ -288,6 +288,8 @@ export default function PartnerPortalPage() {
     );
   }
 
+  const showFleetTab = myBusiness?.isDeliveryTeam === true;
+
   return (
     <div className="min-h-screen bg-background pb-32 font-body">
       <Navbar />
@@ -332,7 +334,7 @@ export default function PartnerPortalPage() {
             </button>
             <Button 
               asChild
-              className="h-14 rounded-[1.5rem] bg-primary text-primary-foreground hover:opacity-90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl border-none"
+              className="h-14 rounded-[1.5rem] bg-primary text-primary-foreground hover:bg-primary/95 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl border-none active:scale-95 transition-all"
             >
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-3" /> Messages
@@ -360,7 +362,7 @@ export default function PartnerPortalPage() {
 
           <button 
             onClick={() => setActiveSheet('survey')}
-            className="w-full bg-black text-white p-6 md:p-8 rounded-[2rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
+            className="w-full bg-primary text-white p-6 md:p-8 rounded-[2rem] flex items-center justify-between shadow-2xl"
           >
             <div className="flex items-center gap-6 md:gap-8">
               <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border border-white/20 flex items-center justify-center">
@@ -368,13 +370,13 @@ export default function PartnerPortalPage() {
               </div>
               <div className="text-left space-y-0.5">
                 <h4 className="text-xl md:text-2xl font-headline tracking-tight italic">{myBusiness?.isDeliveryTeam ? 'Team Member' : 'Join Partner Team'}</h4>
-                <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-all">{myBusiness?.isDeliveryTeam ? 'Elite status confirmed' : 'Earn by delivering items'}</p>
+                <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] opacity-60">{myBusiness?.isDeliveryTeam ? 'Elite status confirmed' : 'Earn by delivering items'}</p>
               </div>
             </div>
             {myBusiness?.isDeliveryTeam ? (
               <Badge className="bg-white/10 text-white border-white/20">Active</Badge>
             ) : (
-              <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40 group-hover:translate-x-2 transition-all" />
+              <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40" />
             )}
           </button>
 
@@ -405,7 +407,7 @@ export default function PartnerPortalPage() {
               >
                 SCAN
               </TabsTrigger>
-              {myBusiness?.isDeliveryTeam === true && (
+              {showFleetTab && (
                 <TabsTrigger 
                   value="fleet" 
                   className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
@@ -525,7 +527,7 @@ export default function PartnerPortalPage() {
                </div>
             </TabsContent>
 
-            {myBusiness?.isDeliveryTeam === true && (
+            {showFleetTab && (
               <TabsContent value="fleet" className="py-20 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
                  <div className="max-w-md mx-auto space-y-10">
                    <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
