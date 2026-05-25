@@ -187,7 +187,7 @@ export default function PartnerPortalPage() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-primary/10 w-full max-w-4xl shadow-2xl bg-white dark:bg-card/20">
-            <button onClick={() => handleStartBusiness('parlour')} className="group p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
+            <button onClick={() => handleStartBusiness('parlour')} className="group p-12 md:p-16 space-y-10 text-left border-r border-primary/10 hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
               <Scissors className="h-12 w-12 text-primary transition-all group-hover:scale-110" strokeWidth={1.5} />
               <div className="space-y-4">
                 <h3 className="text-4xl font-headline italic text-primary">Beauty Parlour</h3>
@@ -195,7 +195,7 @@ export default function PartnerPortalPage() {
               </div>
               <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.4em] text-primary pt-4 group-hover:translate-x-2 transition-all">Start <ArrowRight className="h-4 w-4" strokeWidth={1.5} /></div>
             </button>
-            <button onClick={() => handleStartBusiness('shop')} className="group p-16 space-y-10 text-left hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
+            <button onClick={() => handleStartBusiness('shop')} className="group p-12 md:p-16 space-y-10 text-left hover:bg-white dark:hover:bg-card transition-all relative overflow-hidden">
               <ShoppingBag className="h-12 w-12 text-primary transition-all group-hover:scale-110" strokeWidth={1.5} />
               <div className="space-y-4">
                 <h3 className="text-4xl font-headline italic text-primary">Artisan Shop</h3>
@@ -226,7 +226,7 @@ export default function PartnerPortalPage() {
         </div>
 
         {/* Profile Info Overlay */}
-        <div className="px-6 -mt-16 md:-mt-24 relative z-10 space-y-10">
+        <div className="px-6 -mt-16 md:-mt-24 relative z-10 space-y-8 md:space-y-10">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 md:gap-10">
             <div className="relative group">
               <div className="h-32 w-32 md:h-44 md:w-44 bg-[#B8A85C] rounded-[2.5rem] md:rounded-[3.5rem] flex items-center justify-center shadow-2xl border-4 border-white dark:border-background overflow-hidden">
@@ -247,17 +247,17 @@ export default function PartnerPortalPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 md:pt-4">
             <Button 
               variant="outline" 
               onClick={() => setActiveSheet('profile')}
-              className="h-16 md:h-20 rounded-[2.5rem] border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-xs hover:bg-primary/5 shadow-sm"
+              className="h-14 md:h-16 rounded-[2rem] border-primary/10 text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/5 shadow-sm"
             >
               Edit Profile
             </Button>
             <Button 
               asChild
-              className="h-16 md:h-20 rounded-[2.5rem] bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.3em] text-xs shadow-xl"
+              className="h-14 md:h-16 rounded-[2rem] bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl"
             >
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-3" /> Messages
@@ -267,19 +267,19 @@ export default function PartnerPortalPage() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-black text-white p-10 md:p-12 rounded-[3.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[220px]">
-              <Users className="h-8 w-8 opacity-40 mb-4" />
+            <Card className="bg-black text-white p-6 md:p-8 rounded-[2.5rem] border-none shadow-2xl flex flex-col justify-between min-h-[160px] md:min-h-[180px]">
+              <Users className="h-6 w-6 opacity-40 mb-2" />
               <div className="space-y-1">
-                <p className="text-7xl font-headline tracking-tighter italic">{arrivals.length}</p>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Orders</p>
+                <p className="text-5xl md:text-6xl font-headline tracking-tighter italic">{arrivals.length}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] opacity-60">Orders</p>
               </div>
             </Card>
             
-            <Card className="bg-white dark:bg-card p-10 md:p-12 rounded-[3.5rem] border border-primary/5 shadow-2xl flex flex-col justify-between min-h-[220px]">
-              <TrendingUp className="h-8 w-8 text-primary/20 mb-4" />
+            <Card className="bg-white dark:bg-card p-6 md:p-8 rounded-[2.5rem] border border-primary/5 shadow-2xl flex flex-col justify-between min-h-[160px] md:min-h-[180px]">
+              <TrendingUp className="h-6 w-6 text-primary/20 mb-2" />
               <div className="space-y-1">
-                <p className="text-7xl font-headline tracking-tighter italic">142K</p>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/40">{getCurrency()} Rev</p>
+                <p className="text-5xl md:text-6xl font-headline tracking-tighter italic">142K</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/40">{getCurrency()} Rev</p>
               </div>
             </Card>
           </div>
@@ -287,18 +287,18 @@ export default function PartnerPortalPage() {
           {/* Partner Team Banner */}
           <button 
             onClick={() => setActiveSheet('survey')}
-            className="w-full bg-black text-white p-10 md:p-12 rounded-[3.5rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
+            className="w-full bg-black text-white p-6 md:p-8 rounded-[2.5rem] flex items-center justify-between group hover:bg-primary transition-all duration-500 shadow-2xl"
           >
-            <div className="flex items-center gap-8">
-              <div className="h-14 w-14 rounded-full border border-white/20 flex items-center justify-center">
-                <ShieldCheck className="h-6 w-6" strokeWidth={1.5} />
+            <div className="flex items-center gap-6 md:gap-8">
+              <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border border-white/20 flex items-center justify-center">
+                <ShieldCheck className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.5} />
               </div>
-              <div className="text-left space-y-1">
-                <h4 className="text-2xl font-headline tracking-tight italic">Join Partner Team</h4>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-all">Earn by delivering items</p>
+              <div className="text-left space-y-0.5">
+                <h4 className="text-xl md:text-2xl font-headline tracking-tight italic">Join Partner Team</h4>
+                <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-all">Earn by delivering items</p>
               </div>
             </div>
-            <ArrowRight className="h-8 w-8 opacity-40 group-hover:translate-x-2 transition-all" />
+            <ArrowRight className="h-6 w-6 md:h-8 md:w-8 opacity-40 group-hover:translate-x-2 transition-all" />
           </button>
         </div>
       </main>
@@ -307,31 +307,31 @@ export default function PartnerPortalPage() {
       <Dialog open={activeSheet === 'profile'} onOpenChange={() => setActiveSheet(null)}>
         <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-0 overflow-hidden max-w-2xl animate-in slide-in-from-bottom-4 duration-500">
           <ScrollArea className="max-h-[90vh] font-body">
-            <div className="p-10 space-y-12">
-              <div className="border-b border-primary/10 pb-8 space-y-4 text-center md:text-left">
-                <DialogTitle className="text-5xl font-headline tracking-tighter italic leading-none text-primary">Edit Sanctuary.</DialogTitle>
+            <div className="p-8 md:p-10 space-y-10">
+              <div className="border-b border-primary/10 pb-6 md:pb-8 space-y-4 text-center md:text-left">
+                <DialogTitle className="text-4xl md:text-5xl font-headline tracking-tighter italic leading-none text-primary">Edit Sanctuary.</DialogTitle>
                 <DialogDescription className="font-body italic text-muted-foreground">Update your identity in the registry.</DialogDescription>
               </div>
               
-              <form onSubmit={handleProfileSubmit} className="space-y-12">
+              <form onSubmit={handleProfileSubmit} className="space-y-10">
                 <div className="space-y-4">
                   <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Business Name</Label>
                   <Input 
                     name="name" 
                     required 
                     defaultValue={myBusiness?.name}
-                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-2xl italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
+                    className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-12 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
                   />
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                   <div className="space-y-4">
                     <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40">Area Tag</Label>
                     <Input 
                       name="areaTag" 
                       required 
                       defaultValue={myBusiness?.areaTag}
-                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-12 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
                     />
                   </div>
                   <div className="space-y-4">
@@ -340,27 +340,27 @@ export default function PartnerPortalPage() {
                       name="description" 
                       required 
                       defaultValue={myBusiness?.description}
-                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-xl italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-12 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
                     />
                   </div>
                 </div>
 
-                <div className="space-y-8 pt-8 border-t border-primary/10">
+                <div className="space-y-6 pt-6 border-t border-primary/10">
                   <div className="space-y-4">
                     <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 flex items-center gap-2"><Navigation className="h-3 w-3" /> Map Coordinates</Label>
                     <Input 
                       value={addressInput}
                       onChange={(e) => setAddressInput(e.target.value)}
                       placeholder="Physical address..." 
-                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-14 text-lg italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
+                      className="rounded-none border-t-0 border-x-0 border-b-2 bg-transparent h-12 text-base italic px-0 focus-visible:ring-0 focus-visible:border-primary transition-all" 
                     />
                   </div>
-                  <div className="rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-inner">
+                  <div className="rounded-[2rem] border border-primary/10 overflow-hidden shadow-inner">
                     <Map center={mapLocation} onLocationSelect={(lat, lng) => setMapLocation([lat, lng])} />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full h-20 bg-black text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl hover:bg-primary transition-all">Save Profile</Button>
+                <Button type="submit" className="w-full h-16 bg-black text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:bg-primary transition-all">Save Profile</Button>
               </form>
             </div>
           </ScrollArea>
@@ -369,16 +369,16 @@ export default function PartnerPortalPage() {
 
       {/* Logistics Dialog (Survey) */}
       <Dialog open={activeSheet === 'survey'} onOpenChange={() => setActiveSheet(null)}>
-        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-10 max-w-md animate-in zoom-in-95 duration-300">
-           <div className="space-y-10 text-center py-6">
-             <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-               <ShieldCheck className="h-10 w-10 text-primary" />
+        <DialogContent className="rounded-none border border-primary/10 bg-background shadow-none p-8 md:p-10 max-w-md animate-in zoom-in-95 duration-300">
+           <div className="space-y-8 text-center py-4">
+             <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+               <ShieldCheck className="h-8 w-8 text-primary" />
              </div>
              <div className="space-y-4">
-               <h3 className="text-4xl font-headline italic tracking-tight text-primary">Join the Team.</h3>
-               <p className="text-muted-foreground italic leading-relaxed">Artisans enrolled in the Partner Team handle local area fulfillment to ensure elite delivery quality.</p>
+               <h3 className="text-3xl md:text-4xl font-headline italic tracking-tight text-primary">Join the Team.</h3>
+               <p className="text-muted-foreground italic leading-relaxed text-sm md:text-base">Artisans enrolled in the Partner Team handle local area fulfillment to ensure elite delivery quality.</p>
              </div>
-             <div className="space-y-4 pt-4">
+             <div className="space-y-4 pt-2">
                 <Button 
                   onClick={() => {
                     if (firestore && myBusiness) {
@@ -388,11 +388,11 @@ export default function PartnerPortalPage() {
                       setActiveSheet(null);
                     }
                   }}
-                  className="w-full h-16 bg-black text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs shadow-xl hover:bg-primary transition-all"
+                  className="w-full h-14 md:h-16 bg-black text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] shadow-xl hover:bg-primary transition-all"
                 >
                   Verify Application
                 </Button>
-                <Button variant="ghost" onClick={() => setActiveSheet(null)} className="font-bold text-[10px] uppercase tracking-widest text-primary/40">Cancel</Button>
+                <Button variant="ghost" onClick={() => setActiveSheet(null)} className="font-bold text-[9px] uppercase tracking-widest text-primary/40">Cancel</Button>
              </div>
            </div>
         </DialogContent>

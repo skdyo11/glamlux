@@ -102,7 +102,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
       id: deal.id,
       type: 'deal',
       name: deal.name,
-      price: deal.discountPrice, // Using full discount price for accurate 21.0 vs 2.1 display
+      price: deal.discountPrice,
       full_price: deal.discountPrice,
       quantity: personCount,
       image: vendor.imageUrls?.[0] || '',
@@ -174,24 +174,24 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                 <span className="text-xl text-muted-foreground line-through opacity-30 font-body">{getCurrency()} {deal.basePrice.toLocaleString()}</span>
               </div>
               
-              <div className="p-6 md:p-8 border rounded-[2rem] md:rounded-[3rem] flex items-center justify-between bg-white/40 backdrop-blur-xl shadow-xl ring-1 ring-black/5">
+              <div className="p-6 border rounded-[2rem] flex items-center justify-between bg-white/40 backdrop-blur-xl shadow-xl ring-1 ring-black/5">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-widest">
                     <Users className="h-4 w-4" /> Guest Count
                   </div>
                   <p className="text-[10px] text-muted-foreground italic font-body">Book for you and friends</p>
                 </div>
-                <div className="flex items-center gap-4 md:gap-6 bg-white/60 px-4 md:px-6 py-2 rounded-full border">
+                <div className="flex items-center gap-4 bg-white/60 px-4 py-2 rounded-full border">
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPersonCount(Math.max(1, personCount - 1))}><Minus className="h-3 w-3" /></Button>
-                  <span className="font-headline text-3xl md:text-4xl text-primary">{personCount}</span>
+                  <span className="font-headline text-3xl text-primary">{personCount}</span>
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPersonCount(personCount + 1)}><Plus className="h-3 w-3" /></Button>
                 </div>
               </div>
 
-              <div className="p-8 md:p-10 rounded-[2.5rem] bg-secondary/30 backdrop-blur-md space-y-4">
+              <div className="p-6 md:p-8 rounded-[2rem] bg-secondary/30 backdrop-blur-md space-y-4">
                 <div className="flex justify-between items-baseline italic text-primary">
                   <span className="text-sm font-bold font-body">Valuation</span>
-                  <span className="text-3xl md:text-4xl font-headline">{(deal.discountPrice * personCount).toLocaleString()}</span>
+                  <span className="text-3xl font-headline">{(deal.discountPrice * personCount).toLocaleString()}</span>
                 </div>
                 <p className="text-[9px] uppercase font-black opacity-30 tracking-widest flex items-center gap-1 text-primary">
                   <Info className="h-3 w-3" /> Full payment tracked in registry
@@ -199,7 +199,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
               </div>
             </div>
 
-            <Button size="lg" className="w-full h-20 bg-primary text-primary-foreground rounded-[2.5rem] text-xl font-bold uppercase tracking-widest shadow-2xl group transition-all" onClick={handleAddToCart}>
+            <Button size="lg" className="w-full h-14 md:h-16 bg-primary text-primary-foreground rounded-full text-sm font-bold uppercase tracking-widest shadow-2xl group transition-all" onClick={handleAddToCart}>
               Book Now
               <ArrowRight className="ml-4 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
