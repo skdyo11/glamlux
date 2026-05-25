@@ -1,4 +1,3 @@
-// GlamLux Service Worker for PWA
 const CACHE_NAME = 'glamlux-v1';
 const urlsToCache = [
   '/',
