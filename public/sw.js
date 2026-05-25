@@ -1,19 +1,12 @@
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open('glamlux-v1').then(function(cache) {
-      return cache.addAll([
-        '/',
-        '/manifest.json',
-        '/Glamlux.png'
-      ]);
-    })
-  );
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      return response || fetch(event.request);
-    })
-  );
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
+self.addEventListener('fetch', (event) => {
+  // Simple pass-through for now to satisfy PWA requirements
+  event.respondWith(fetch(event.request));
 });

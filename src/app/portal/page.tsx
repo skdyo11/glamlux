@@ -17,7 +17,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import { 
   Navigation,
@@ -34,8 +33,7 @@ import {
   QrCode,
   Truck,
   Plus,
-  ChevronRight,
-  LayoutGrid
+  ChevronRight
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -153,12 +151,13 @@ export default function PartnerPortalPage() {
         rating: 5.0,
         imageUrls: [],
         description: type === 'parlour' ? 'High-end beauty services.' : 'Premium makeup products.',
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        isDeliveryTeam: false
       });
       
       await batch.commit();
       setHasBusiness(true);
-      setMyBusiness({ id: user.uid, name: businessName, slug: businessSlug });
+      setMyBusiness({ id: user.uid, name: businessName, slug: businessSlug, isDeliveryTeam: false });
       toast({ title: "Business Established" });
     } catch (e) {
       toast({ variant: "destructive", title: "Setup Failed" });
@@ -334,7 +333,7 @@ export default function PartnerPortalPage() {
             </Button>
             <Button 
               asChild
-              className="h-14 rounded-[1.5rem] bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl"
+              className="h-14 rounded-[1.5rem] bg-primary text-primary-foreground hover:opacity-90 font-black uppercase tracking-[0.3em] text-[10px] shadow-xl border-none"
             >
               <Link href="/messages">
                 <MessageSquare className="h-4 w-4 mr-3" /> Messages
