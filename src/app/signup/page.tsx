@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Navbar } from '@/components/layout/Navbar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Link from 'next/link';
-import { Eye, EyeOff, ShieldCheck, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -282,13 +282,21 @@ export default function SignupPage() {
                 {isLoading ? "Signing up..." : "Sign Up"}
               </Button>
 
-              <div className="text-center pt-6">
-                <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-2">
-                  Already have an account?
-                </p>
-                <Link href="/login" className="text-primary font-bold italic font-headline text-2xl hover:text-accent-foreground transition-colors">
-                  Login
-                </Link>
+              <div className="flex flex-col items-center gap-6 pt-6">
+                <div className="text-center">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">
+                    Already have an account?
+                  </p>
+                  <Link href="/login" className="text-primary font-bold italic font-headline text-2xl hover:text-accent-foreground transition-colors">
+                    Login
+                  </Link>
+                </div>
+
+                <div className="w-full border-t border-primary/5 pt-4">
+                  <Button asChild variant="ghost" className="w-full h-12 text-[10px] uppercase font-black tracking-widest text-primary/40 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
+                    <Link href="/">Skip for now <ArrowRight className="h-3 w-3 ml-2" /></Link>
+                  </Button>
+                </div>
               </div>
             </form>
           </CardContent>

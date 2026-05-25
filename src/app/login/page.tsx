@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardDescription } from '@/components/ui/
 import { useToast } from '@/hooks/use-toast';
 import { Navbar } from '@/components/layout/Navbar';
 import Link from 'next/link';
-import { Eye, EyeOff, ShieldCheck, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -163,13 +163,21 @@ export default function LoginPage() {
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
 
-              <div className="text-center pt-4">
-                <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-2">
-                  New to GlamLux?
-                </p>
-                <Link href="/signup" className="text-primary font-bold italic font-headline text-2xl hover:text-accent-foreground transition-colors">
-                  Create an account
-                </Link>
+              <div className="flex flex-col items-center gap-4 pt-4">
+                <div className="text-center">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">
+                    New to GlamLux?
+                  </p>
+                  <Link href="/signup" className="text-primary font-bold italic font-headline text-xl hover:text-accent-foreground transition-colors">
+                    Create an account
+                  </Link>
+                </div>
+                
+                <div className="w-full border-t border-primary/5 pt-4">
+                  <Button asChild variant="ghost" className="w-full h-12 text-[10px] uppercase font-black tracking-widest text-primary/40 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
+                    <Link href="/">Skip for now <ArrowRight className="h-3 w-3 ml-2" /></Link>
+                  </Button>
+                </div>
               </div>
             </form>
           </CardContent>
