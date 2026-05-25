@@ -405,7 +405,7 @@ export default function PartnerPortalPage() {
               >
                 SCAN
               </TabsTrigger>
-              {myBusiness?.isDeliveryTeam && (
+              {myBusiness?.isDeliveryTeam === true && (
                 <TabsTrigger 
                   value="fleet" 
                   className="flex-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] transition-all h-full"
@@ -525,7 +525,7 @@ export default function PartnerPortalPage() {
                </div>
             </TabsContent>
 
-            {myBusiness?.isDeliveryTeam && (
+            {myBusiness?.isDeliveryTeam === true && (
               <TabsContent value="fleet" className="py-20 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
                  <div className="max-w-md mx-auto space-y-10">
                    <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
