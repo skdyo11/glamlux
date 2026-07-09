@@ -74,11 +74,11 @@ export default function Home() {
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-headline leading-[0.9] tracking-tighter text-primary italic">
+               <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
-                 <p className="font-headline text-2xl md:text-3xl text-primary/80 italic">The Artisan Collection</p>
+                 <p className="font-headline text-2xl md:text-3xl text-foreground/80 italic">The Artisan Collection</p>
                  <p className="max-w-md text-muted-foreground text-sm md:text-base font-body italic leading-relaxed">
                    Experience the pinnacle of beauty with our elite registry of transformations and professional boutique essentials.
                  </p>
@@ -86,7 +86,7 @@ export default function Home() {
              </div>
 
              <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-               <div className="max-w-md relative flex items-center bg-white dark:bg-card/20 rounded-full p-1.5 shadow-2xl ring-1 ring-primary/5">
+               <div className="max-w-md relative flex items-center bg-white dark:bg-card/20 rounded-full p-1.5 shadow-2xl ring-1 ring-primary/20">
                   <MapPin className="ml-5 h-5 w-5 text-primary opacity-40" />
                   <Input 
                     placeholder="Enter region..." 
