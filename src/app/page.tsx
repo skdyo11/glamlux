@@ -120,7 +120,7 @@ export default function Home() {
           </div>
 
           {/* Right Column - Featured Visual */}
-          <div className="bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden group">
+          <div className="bg-white dark:bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden group border-l border-primary/5">
             {/* Soft Ambient Glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)]" />
             
@@ -129,20 +129,20 @@ export default function Home() {
                 src="https://picsum.photos/seed/editorial-beauty/1200/1200" 
                 alt="Elite Beauty Look" 
                 fill 
-                className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
+                className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
                 priority
               />
               {/* Floating Stat Or Badge */}
-              <div className="absolute top-1/4 -right-4 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-full shadow-2xl animate-bounce duration-[3000ms]">
+              <div className="absolute top-1/4 -right-4 bg-white/40 dark:bg-white/10 backdrop-blur-xl border border-primary/10 dark:border-white/20 p-6 rounded-full shadow-2xl animate-bounce duration-[3000ms]">
                 <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-white/60 mb-1">Prestige</span>
-                  <span className="font-headline text-3xl text-white italic">Elite</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-primary/60 dark:text-white/60 mb-1">Prestige</span>
+                  <span className="font-headline text-3xl text-primary dark:text-white italic">Elite</span>
                 </div>
               </div>
             </div>
 
             {/* Corner arrow decorative */}
-            <div className="absolute bottom-12 right-12 flex flex-col items-end gap-2 text-white/20">
+            <div className="absolute bottom-12 right-12 flex flex-col items-end gap-2 text-primary/20 dark:text-white/20">
                <span className="text-[8px] font-black uppercase tracking-widest">Scroll to explore</span>
                <div className="h-6 w-6 border-r-2 border-b-2" />
             </div>
