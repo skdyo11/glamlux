@@ -140,12 +140,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* Corner arrow decorative */}
-            <div className="absolute bottom-12 right-12 flex flex-col items-end gap-2 text-primary/20 dark:text-white/20">
-               <span className="text-[8px] font-black uppercase tracking-widest">Scroll to explore</span>
-               <div className="h-6 w-6 border-r-2 border-b-2" />
-            </div>
           </div>
         </section>
 
