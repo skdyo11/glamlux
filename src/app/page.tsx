@@ -104,7 +104,7 @@ export default function Home() {
                </div>
 
                <div className="flex flex-wrap items-center gap-10">
-                 <Button asChild size="lg" className="rounded-none bg-black dark:bg-white dark:text-black hover:bg-primary transition-all px-12 h-16 font-black uppercase tracking-widest text-[11px] shadow-2xl">
+                 <Button asChild size="lg" className="rounded-full bg-black dark:bg-white dark:text-black hover:bg-primary transition-all px-12 h-16 font-black uppercase tracking-widest text-[11px] shadow-2xl">
                    <Link href="/vendors">Explore Registry</Link>
                  </Button>
                  <Link href="/shop" className="text-primary font-black uppercase tracking-[0.3em] text-[10px] border-b border-primary/20 pb-1 hover:border-primary transition-all">
