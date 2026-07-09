@@ -64,39 +64,87 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-32 md:pt-44">
-        {/* Marketplace Hero */}
-        <section className="bg-secondary/40 dark:bg-muted/10 py-12 md:py-20 px-4 md:px-6">
-          <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1 space-y-8">
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
-                Beauty services and products, <span className="text-primary italic">delivered to you.</span>
-              </h1>
-              <div className="max-w-xl relative flex items-center shadow-marketplace bg-white dark:bg-card rounded-full p-1.5 border border-primary/10">
-                <MapPin className="ml-5 h-5 w-5 text-primary" />
-                <Input 
-                  placeholder="Enter area..." 
-                  className="flex-grow border-none bg-transparent focus-visible:ring-0 text-base py-6 px-4 placeholder:text-muted-foreground/50"
-                  value={searchVal}
-                  onChange={(e) => setSearchVal(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
-                />
-                <Button 
-                  onClick={handleFindParlours} 
-                  className="rounded-full px-8 font-black uppercase tracking-widest text-[11px] h-12 bg-primary text-white hover:bg-primary/90 transition-all shadow-lg active:scale-95"
-                >
-                  Find
-                </Button>
-              </div>
-            </div>
-            <div className="hidden md:block flex-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
+      <main className="flex-grow pt-16">
+        {/* Editorial Hero Section */}
+        <section className="relative w-full min-h-[85vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden border-b border-primary/5">
+          {/* Left Column - Narrtive & Action */}
+          <div className="bg-[#F8F5F0] dark:bg-[#121212] flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20 space-y-12 relative">
+             <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
+               <div className="inline-flex items-center gap-3">
+                 <div className="w-8 h-px bg-primary/40" />
+                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
+               </div>
+               <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-headline leading-[0.9] tracking-tighter text-primary italic">
+                 CURATE <br />YOUR <br />RADIANCE.
+               </h1>
+               <div className="space-y-2">
+                 <p className="font-headline text-2xl md:text-3xl text-primary/80 italic">The Artisan Collection</p>
+                 <p className="max-w-md text-muted-foreground text-sm md:text-base font-body italic leading-relaxed">
+                   Experience the pinnacle of beauty with our elite registry of transformations and professional boutique essentials.
+                 </p>
+               </div>
+             </div>
+
+             <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+               <div className="max-w-md relative flex items-center bg-white dark:bg-card/20 rounded-full p-1.5 shadow-2xl ring-1 ring-primary/5">
+                  <MapPin className="ml-5 h-5 w-5 text-primary opacity-40" />
+                  <Input 
+                    placeholder="Enter region..." 
+                    className="flex-grow border-none bg-transparent focus-visible:ring-0 text-base py-6 px-4 placeholder:text-muted-foreground/30 font-body italic"
+                    value={searchVal}
+                    onChange={(e) => setSearchVal(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
+                  />
+                  <Button 
+                    onClick={handleFindParlours} 
+                    className="rounded-full px-10 h-12 bg-primary text-white hover:opacity-90 font-black uppercase tracking-widest text-[10px]"
+                  >
+                    Find
+                  </Button>
+               </div>
+
+               <div className="flex flex-wrap items-center gap-10">
+                 <Button asChild size="lg" className="rounded-none bg-black dark:bg-white dark:text-black hover:bg-primary transition-all px-12 h-16 font-black uppercase tracking-widest text-[11px] shadow-2xl">
+                   <Link href="/vendors">Explore Registry</Link>
+                 </Button>
+                 <Link href="/shop" className="text-primary font-black uppercase tracking-[0.3em] text-[10px] border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                   View Boutique
+                 </Link>
+               </div>
+             </div>
+             
+             {/* Decorative element */}
+             <div className="absolute bottom-10 left-10 hidden md:block">
+               <div className="h-20 w-px bg-primary/10" />
+             </div>
+          </div>
+
+          {/* Right Column - Featured Visual */}
+          <div className="bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden group">
+            {/* Soft Ambient Glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)]" />
+            
+            <div className="relative w-[80%] aspect-square animate-in zoom-in-95 duration-1000">
               <Image 
-                src="https://picsum.photos/seed/beauty-marketplace/800/600" 
-                alt="Beauty Marketplace" 
+                src="https://picsum.photos/seed/editorial-beauty/1200/1200" 
+                alt="Elite Beauty Look" 
                 fill 
-                className="object-cover"
+                className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
                 priority
               />
+              {/* Floating Stat Or Badge */}
+              <div className="absolute top-1/4 -right-4 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-full shadow-2xl animate-bounce duration-[3000ms]">
+                <div className="flex flex-col items-center">
+                  <span className="text-[8px] font-black uppercase tracking-widest text-white/60 mb-1">Prestige</span>
+                  <span className="font-headline text-3xl text-white italic">Elite</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Corner arrow decorative */}
+            <div className="absolute bottom-12 right-12 flex flex-col items-end gap-2 text-white/20">
+               <span className="text-[8px] font-black uppercase tracking-widest">Scroll to explore</span>
+               <div className="h-6 w-6 border-r-2 border-b-2" />
             </div>
           </div>
         </section>
