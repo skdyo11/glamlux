@@ -72,16 +72,21 @@ export default function Home() {
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
                 Beauty services and products, <span className="text-primary italic">delivered to you.</span>
               </h1>
-              <div className="max-w-xl relative flex items-center shadow-marketplace bg-white dark:bg-card rounded-2xl p-2">
-                <MapPin className="ml-2 md:ml-4 h-5 w-5 text-primary" />
+              <div className="max-w-xl relative flex items-center shadow-marketplace bg-white dark:bg-card rounded-full p-1.5 border border-primary/10">
+                <MapPin className="ml-5 h-5 w-5 text-primary" />
                 <Input 
                   placeholder="Enter area..." 
-                  className="flex-grow border-none focus-visible:ring-0 text-sm md:text-base py-6 px-2 md:px-4"
+                  className="flex-grow border-none bg-transparent focus-visible:ring-0 text-base py-6 px-4 placeholder:text-muted-foreground/50"
                   value={searchVal}
                   onChange={(e) => setSearchVal(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
                 />
-                <Button onClick={handleFindParlours} size="lg" className="rounded-xl px-4 md:px-8 font-bold h-12 md:h-14">Find</Button>
+                <Button 
+                  onClick={handleFindParlours} 
+                  className="rounded-full px-8 font-black uppercase tracking-widest text-[11px] h-12 bg-primary text-white hover:bg-primary/90 transition-all shadow-lg active:scale-95"
+                >
+                  Find
+                </Button>
               </div>
             </div>
             <div className="hidden md:block flex-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
