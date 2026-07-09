@@ -132,13 +132,6 @@ export default function Home() {
                 className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
                 priority
               />
-              {/* Floating Stat Or Badge */}
-              <div className="absolute top-1/4 -right-4 bg-white/40 dark:bg-white/10 backdrop-blur-xl border border-primary/10 dark:border-white/20 p-6 rounded-full shadow-2xl animate-bounce duration-[3000ms]">
-                <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-primary/60 dark:text-white/60 mb-1">Prestige</span>
-                  <span className="font-headline text-3xl text-primary dark:text-white italic">Elite</span>
-                </div>
-              </div>
             </div>
           </div>
         </section>
