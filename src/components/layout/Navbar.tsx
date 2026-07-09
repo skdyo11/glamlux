@@ -30,7 +30,10 @@ import {
   Check,
   MessageSquare,
   Settings,
-  RefreshCw
+  RefreshCw,
+  Scissors,
+  ShoppingBag,
+  Zap
 } from 'lucide-react';
 import {
   Sheet,
@@ -298,10 +301,45 @@ export function Navbar() {
         </div>
       </nav>
 
-      <div className="fixed inset-x-0 z-40 h-10 bg-white dark:bg-black border-b overflow-x-auto scrollbar-hide px-4 md:px-6 flex items-center justify-between md:justify-center md:gap-12 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm transition-all duration-300 top-16">
-        <Link href="/vendors" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/vendors') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Parlours</Link>
-        <Link href="/shop" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/shop') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Products</Link>
-        <Link href="/deals" className={cn("whitespace-nowrap transition-all h-full flex items-center border-b-2 px-2", pathname.startsWith('/deals') ? "text-primary border-primary" : "text-muted-foreground/60 border-transparent hover:text-primary")}>Deals</Link>
+      {/* Floating Pill Secondary Navigation */}
+      <div className="fixed inset-x-0 z-40 h-14 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b transition-all duration-300 top-16 flex items-center justify-center overflow-hidden">
+        <div className="container mx-auto px-4 flex justify-center">
+          <div className="inline-flex bg-primary/5 dark:bg-white/5 p-1 rounded-full border border-primary/10 shadow-inner">
+            <Link 
+              href="/vendors" 
+              className={cn(
+                "px-6 h-10 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                pathname.startsWith('/vendors') 
+                  ? "bg-primary text-white shadow-lg scale-105" 
+                  : "text-primary/60 hover:text-primary hover:bg-primary/5"
+              )}
+            >
+              <Scissors className="h-3 w-3" /> Parlours
+            </Link>
+            <Link 
+              href="/shop" 
+              className={cn(
+                "px-6 h-10 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                pathname.startsWith('/shop') 
+                  ? "bg-primary text-white shadow-lg scale-105" 
+                  : "text-primary/60 hover:text-primary hover:bg-primary/5"
+              )}
+            >
+              <ShoppingBag className="h-3 w-3" /> Products
+            </Link>
+            <Link 
+              href="/deals" 
+              className={cn(
+                "px-6 h-10 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                pathname.startsWith('/deals') 
+                  ? "bg-primary text-white shadow-lg scale-105" 
+                  : "text-primary/60 hover:text-primary hover:bg-primary/5"
+              )}
+            >
+              <Zap className="h-3 w-3" /> Deals
+            </Link>
+          </div>
+        </div>
       </div>
     </>
   );
