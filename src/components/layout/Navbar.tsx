@@ -117,16 +117,6 @@ export function Navbar() {
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center gap-3 group shrink-0">
-              <img 
-                src="https://picsum.photos/seed/logo-black/32/32" 
-                alt="GlamLux Logo" 
-                className="dark:hidden w-8 h-8 object-contain"
-              />
-              <img 
-                src="https://picsum.photos/seed/logo-white/32/32" 
-                alt="GlamLux Logo" 
-                className="hidden dark:block w-8 h-8 object-contain"
-              />
               <span className="font-headline font-bold text-2xl text-foreground tracking-tighter uppercase leading-none">
                 GlamLux
               </span>
