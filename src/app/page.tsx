@@ -66,15 +66,15 @@ export default function Home() {
       
       <main className="flex-grow pt-12 md:pt-16">
         {/* Editorial Hero Section */}
-        <section className="relative w-full min-h-[85vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden border-b border-primary/5">
-          {/* Left Column - Narrtive & Action */}
-          <div className="bg-[#F8F5F0] dark:bg-[#121212] flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20 space-y-12 relative">
+        <section className="relative w-full min-h-[85vh] lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
+          {/* Narrative & Action - Z-indexed above image on mobile */}
+          <div className="relative z-20 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20 lg:py-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
              <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
                <div className="inline-flex items-center gap-3">
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-5xl md:text-7xl lg:text-[7.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
+               <h1 className="text-4xl md:text-7xl lg:text-[6.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic drop-shadow-sm">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
@@ -114,17 +114,17 @@ export default function Home() {
              </div>
           </div>
 
-          {/* Right Column - Featured Visual */}
-          <div className="bg-white dark:bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden group border-l border-primary/5">
+          {/* Featured Visual - Behind text on mobile, right column on desktop */}
+          <div className="absolute inset-0 lg:relative lg:bg-white lg:dark:bg-[#1A1A1A] flex items-center justify-center overflow-hidden group lg:border-l border-primary/5 z-10 lg:z-auto opacity-20 lg:opacity-100">
             {/* Soft Ambient Glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)]" />
             
-            <div className="relative w-[80%] aspect-square animate-in zoom-in-95 duration-1000">
+            <div className="relative w-full h-full lg:w-[80%] lg:aspect-square animate-in zoom-in-95 duration-1000">
               <Image 
-                src="https://picsum.photos/seed/editorial-glam-3/1200/1200" 
+                src="https://images.unsplash.com/photo-1596462502278-27bf87cf3662?q=80&w=1200&auto=format&fit=crop" 
                 alt="Elite Beauty Look" 
                 fill 
-                className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
+                className="object-cover lg:rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
                 priority
                 data-ai-hint="beauty fashion"
               />
