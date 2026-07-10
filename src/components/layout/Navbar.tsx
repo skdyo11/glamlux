@@ -67,7 +67,7 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -107,31 +107,31 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 transition-all duration-500 px-6 z-50",
         isScrolled 
-          ? "bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl border-b border-black/5 dark:border-white/10 py-2" 
-          : "bg-transparent py-4"
+          ? "bg-background/90 dark:bg-background/90 backdrop-blur-2xl border-b border-primary/5 dark:border-white/5 py-1.5" 
+          : "bg-transparent py-2.5"
       )}
     >
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center group shrink-0">
-            <span className="font-headline font-bold text-3xl text-primary tracking-tighter italic leading-none">
+            <span className="font-headline font-bold text-3xl text-primary tracking-tighter italic leading-none hover:scale-105 transition-transform duration-300">
               GlamLux
             </span>
           </Link>
         </div>
 
         <div className="hidden md:flex flex-1 justify-center px-4">
-          <div className="inline-flex bg-primary/5 dark:bg-white/10 p-1 rounded-full border border-primary/10 dark:border-white/10 shadow-inner backdrop-blur-sm">
+          <div className="inline-flex bg-primary/5 dark:bg-white/5 p-1 rounded-full border border-primary/10 dark:border-white/5 shadow-inner backdrop-blur-sm">
             <Link 
               href="/vendors" 
               className={cn(
                 "px-5 h-9 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
                 pathname.startsWith('/vendors') 
                   ? "bg-primary text-white shadow-lg" 
-                  : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
+                  : "text-primary hover:bg-primary/5"
               )}
             >
-              <Scissors className={cn("h-3 w-3 text-primary", pathname.startsWith('/vendors') && "text-white")} /> Parlours
+              <Scissors className="h-3 w-3" /> Parlours
             </Link>
             <Link 
               href="/shop" 
@@ -139,10 +139,10 @@ export function Navbar() {
                 "px-5 h-9 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
                 pathname.startsWith('/shop') 
                   ? "bg-primary text-white shadow-lg" 
-                  : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
+                  : "text-primary hover:bg-primary/5"
               )}
             >
-              <ShoppingBag className={cn("h-3 w-3 text-primary", pathname.startsWith('/shop') && "text-white")} /> Products
+              <ShoppingBag className="h-3 w-3" /> Products
             </Link>
             <Link 
               href="/deals" 
@@ -150,10 +150,10 @@ export function Navbar() {
                 "px-5 h-9 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
                 pathname.startsWith('/deals') 
                   ? "bg-primary text-white shadow-lg" 
-                  : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
+                  : "text-primary hover:bg-primary/5"
               )}
             >
-              <Zap className={cn("h-3 w-3 text-primary", pathname.startsWith('/deals') && "text-white")} /> Deals
+              <Zap className="h-3 w-3" /> Deals
             </Link>
           </div>
         </div>
@@ -162,28 +162,28 @@ export function Navbar() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-9 w-9 rounded-full hidden md:flex"
+            className="h-9 w-9 rounded-full hidden md:flex text-primary/60 hover:text-primary"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           
           {!user ? (
-            <Button asChild size="sm" className="font-bold rounded-full px-6 h-9 text-[10px] uppercase tracking-widest">
+            <Button asChild size="sm" className="font-bold rounded-full px-6 h-9 text-[10px] uppercase tracking-widest bg-primary text-white shadow-lg hover:opacity-90">
               <Link href="/signup">Join</Link>
             </Button>
           ) : (
             <div className="flex items-center gap-1 md:gap-2">
               <Link href="/messages">
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary/60 hover:text-primary hover:bg-primary/5">
                   <MessageSquare className={cn("h-4 w-4", pathname === '/messages' && "text-primary")} />
                 </Button>
               </Link>
               <Link href="/cart" className="relative">
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary/60 hover:text-primary hover:bg-primary/5">
                   <ShoppingCart className={cn("h-4 w-4", pathname === '/cart' && "text-primary")} />
                   {cartCount > 0 && (
-                    <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background">
+                    <Badge className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 p-0 flex items-center justify-center bg-primary text-white text-[8px] rounded-full border-2 border-background shadow-md">
                       {cartCount}
                     </Badge>
                   )}
@@ -192,10 +192,10 @@ export function Navbar() {
               
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="h-9 w-9 rounded-full overflow-hidden border-2 border-primary/10 bg-muted flex items-center justify-center transition-all hover:border-primary/30 active:scale-95">
+                  <button className="h-9 w-9 rounded-full overflow-hidden border-2 border-primary/20 bg-muted flex items-center justify-center transition-all hover:border-primary active:scale-95 shadow-md">
                     <Avatar className="h-full w-full rounded-none">
                       <AvatarImage src={user?.photoURL || undefined} className="object-cover" />
-                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase">
+                      <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-black uppercase">
                         {user?.displayName?.[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
