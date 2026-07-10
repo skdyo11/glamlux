@@ -64,7 +64,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-16">
+      <main className="flex-grow pt-12 md:pt-16">
         {/* Editorial Hero Section */}
         <section className="relative w-full min-h-[85vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden border-b border-primary/5">
           {/* Left Column - Narrtive & Action */}
@@ -74,7 +74,7 @@ export default function Home() {
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
+               <h1 className="text-6xl md:text-8xl lg:text-[7.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
@@ -126,11 +126,12 @@ export default function Home() {
             
             <div className="relative w-[80%] aspect-square animate-in zoom-in-95 duration-1000">
               <Image 
-                src="https://picsum.photos/seed/editorial-beauty/1200/1200" 
+                src="https://picsum.photos/seed/editorial-glam-3/1200/1200" 
                 alt="Elite Beauty Look" 
                 fill 
                 className="object-cover rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
                 priority
+                data-ai-hint="beauty fashion"
               />
             </div>
           </div>
