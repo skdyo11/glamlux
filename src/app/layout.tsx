@@ -33,7 +33,6 @@ export default function RootLayout({
         >
           <FirebaseClientProvider>
             <StoreProvider>
-              <div className="wavy-bg" />
               {children}
               <GlamAssistant />
               <Toaster />
