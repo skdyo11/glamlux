@@ -70,22 +70,8 @@ export default function Home() {
       
       <main className="flex-grow">
         {/* Editorial Hero Section */}
-        <section className="relative w-full min-h-screen lg:min-h-[90vh] flex flex-col lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
-          {/* Featured Visual - Behind content on mobile, Right column on desktop */}
-          <div className="absolute inset-0 lg:relative lg:inset-auto z-0 lg:z-auto lg:order-2 overflow-hidden group lg:border-l border-primary/5 bg-[#1a1a1a]">
-            {/* Dark legibility overlay for mobile background mode */}
-            <div className="absolute inset-0 bg-black/70 lg:hidden z-10" />
-            
-            <Image 
-              src={heroImage} 
-              alt="Elite Beauty Look" 
-              fill 
-              className="object-cover transition-transform duration-[2000ms] group-hover:scale-105"
-              priority
-              data-ai-hint="beauty fashion"
-            />
-          </div>
-
+        <section className="relative w-full min-h-screen lg:min-h-[95vh] flex flex-col lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
+          
           {/* Narrative & Action - Moves down to clear Navbar */}
           <div className="relative z-20 flex flex-col justify-center px-8 md:px-16 lg:px-24 pt-48 pb-32 lg:pt-32 lg:pb-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212] lg:order-1">
              <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
@@ -93,7 +79,7 @@ export default function Home() {
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-white/80 lg:text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-5xl md:text-7xl lg:text-7xl font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
+               <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
@@ -131,6 +117,26 @@ export default function Home() {
                  </Link>
                </div>
              </div>
+          </div>
+
+          {/* Featured Visual - Behind content on mobile, Right column on desktop (as a pill) */}
+          <div className="absolute inset-0 lg:relative lg:inset-auto z-0 lg:z-auto lg:order-2 lg:flex lg:items-center lg:justify-center lg:p-12">
+            <div className="relative w-full h-full lg:h-[80%] lg:w-[85%] overflow-hidden group lg:rounded-[10rem] lg:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] lg:ring-1 lg:ring-white/10">
+              {/* Dark legibility overlay for mobile background mode */}
+              <div className="absolute inset-0 bg-black/70 lg:hidden z-10" />
+              
+              <Image 
+                src={heroImage} 
+                alt="Elite Beauty Look" 
+                fill 
+                className="object-cover transition-transform duration-[3000ms] group-hover:scale-105"
+                priority
+                data-ai-hint="beauty fashion"
+              />
+              
+              {/* Desktop Decorative Glow */}
+              <div className="absolute -inset-10 bg-primary/10 blur-[100px] opacity-0 lg:group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            </div>
           </div>
         </section>
 
