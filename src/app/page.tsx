@@ -149,7 +149,7 @@ export default function Home() {
                   href={cat.href}
                   className="group flex flex-col items-center gap-4 shrink-0 transition-transform active:scale-95"
                 >
-                  <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-muted flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-marketplace">
+                  <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-[#FAF9F6] dark:bg-zinc-800 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-marketplace">
                     {cat.icon}
                   </div>
                   <span className="text-sm font-bold">{cat.name}</span>
