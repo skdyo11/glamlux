@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -48,19 +47,6 @@ const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => <div className="h-[300px] w-full bg-muted animate-pulse rounded-2xl border border-primary/10" />
 });
-
-const CustomHomeIcon = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    className={className} 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path 
-      d="M12.707 2.293a1 1 0 00-1.414 0l-9 9A1 1 0 003 13h1v7a2 2 0 002 2h4v-5a2 2 0 014 0v5h4a2 2 0 002-2v-7h1a1 1 0 00.707-1.707l-9-9z" 
-      fill="currentColor"
-    />
-  </svg>
-);
 
 export function Navbar() {
   const { cart } = useStore();
@@ -133,16 +119,16 @@ export function Navbar() {
             <Link href="/" className="flex items-center gap-3 group shrink-0">
               <img 
                 src="https://picsum.photos/seed/logo-black/32/32" 
-                alt="TRAC AI Logo" 
+                alt="GlamLux Logo" 
                 className="dark:hidden w-8 h-8 object-contain"
               />
               <img 
                 src="https://picsum.photos/seed/logo-white/32/32" 
-                alt="TRAC AI Logo" 
+                alt="GlamLux Logo" 
                 className="hidden dark:block w-8 h-8 object-contain"
               />
               <span className="font-headline font-bold text-2xl text-foreground tracking-tighter uppercase leading-none">
-                TRAC AI
+                GlamLux
               </span>
             </Link>
           </div>
