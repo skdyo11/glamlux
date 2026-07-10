@@ -64,22 +64,22 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-12 md:pt-16">
+      <main className="flex-grow">
         {/* Editorial Hero Section */}
         <section className="relative w-full min-h-[85vh] lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
-          {/* Narrative & Action - Z-indexed above image on mobile */}
-          <div className="relative z-20 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20 lg:py-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
+          {/* Narrative & Action - Layered on top for mobile */}
+          <div className="relative z-30 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-32 lg:py-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
              <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
                <div className="inline-flex items-center gap-3">
                  <div className="w-8 h-px bg-primary/40" />
-                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
+                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60 lg:text-primary/60 text-white/80">Editorial Registry</span>
                </div>
-               <h1 className="text-4xl md:text-7xl lg:text-[6.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic drop-shadow-sm">
+               <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
-                 <p className="font-headline text-2xl md:text-3xl text-foreground/80 italic">The Artisan Collection</p>
-                 <p className="max-w-md text-muted-foreground text-sm md:text-base font-body italic leading-relaxed">
+                 <p className="font-headline text-2xl md:text-3xl italic text-white/90 lg:text-foreground/80">The Artisan Collection</p>
+                 <p className="max-w-md text-sm md:text-base font-body italic leading-relaxed text-white/70 lg:text-muted-foreground">
                    Experience the pinnacle of beauty with our elite registry of transformations and professional boutique essentials.
                  </p>
                </div>
@@ -95,36 +95,39 @@ export default function Home() {
                     onChange={(e) => setSearchVal(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleFindParlours()}
                   />
-                  <Button 
+                  <button 
                     onClick={handleFindParlours} 
-                    className="rounded-full px-10 h-12 bg-primary text-white hover:opacity-90 font-black uppercase tracking-widest text-[10px]"
+                    className="rounded-full px-10 h-12 bg-primary text-white hover:opacity-90 font-black uppercase tracking-widest text-[10px] transition-all"
                   >
                     Find
-                  </Button>
+                  </button>
                </div>
 
                <div className="flex flex-wrap items-center gap-10">
-                 <Button asChild size="lg" className="rounded-full bg-black dark:bg-white dark:text-black hover:bg-primary transition-all px-12 h-16 font-black uppercase tracking-widest text-[11px] shadow-2xl">
+                 <Button asChild size="lg" className="rounded-full bg-black dark:bg-white dark:text-black hover:bg-primary transition-all px-12 h-16 font-black uppercase tracking-widest text-[11px] shadow-2xl border-none">
                    <Link href="/vendors">Explore Registry</Link>
                  </Button>
-                 <Link href="/shop" className="text-primary font-black uppercase tracking-[0.3em] text-[10px] border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                 <Link href="/shop" className="font-black uppercase tracking-[0.3em] text-[10px] border-b border-primary/20 pb-1 hover:border-primary transition-all text-white lg:text-primary">
                    View Boutique
                  </Link>
                </div>
              </div>
           </div>
 
-          {/* Featured Visual - Behind text on mobile, right column on desktop */}
-          <div className="absolute inset-0 lg:relative lg:bg-white lg:dark:bg-[#1A1A1A] flex items-center justify-center overflow-hidden group lg:border-l border-primary/5 z-10 lg:z-auto opacity-20 lg:opacity-100">
-            {/* Soft Ambient Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)]" />
+          {/* Featured Visual - Moves behind text on mobile */}
+          <div className="absolute inset-0 lg:relative lg:inset-auto z-10 lg:z-auto flex items-center justify-center overflow-hidden group lg:border-l border-primary/5">
+            {/* Soft Ambient Glow (Desktop only) */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)] hidden lg:block" />
             
-            <div className="relative w-full h-full lg:w-[80%] lg:aspect-square animate-in zoom-in-95 duration-1000">
+            {/* Mobile Overlay for Legibility */}
+            <div className="absolute inset-0 bg-black/60 lg:hidden z-20" />
+            
+            <div className="relative w-full h-full lg:w-[85%] lg:h-[85%] lg:aspect-square animate-in zoom-in-95 duration-1000">
               <Image 
                 src="https://images.unsplash.com/photo-1596462502278-27bf87cf3662?q=80&w=1200&auto=format&fit=crop" 
                 alt="Elite Beauty Look" 
                 fill 
-                className="object-cover lg:rounded-full shadow-[0_0_100px_rgba(0,0,0,0.15)] dark:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-[2000ms]"
+                className="object-cover lg:rounded-full shadow-2xl transition-transform duration-[2000ms] group-hover:scale-105"
                 priority
                 data-ai-hint="beauty fashion"
               />
