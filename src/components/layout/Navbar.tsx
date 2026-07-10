@@ -119,7 +119,7 @@ export function Navbar() {
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center gap-3 group shrink-0">
-              <span className="font-poppins font-bold text-2xl text-primary tracking-tighter uppercase leading-none">
+              <span className="font-headline font-bold text-3xl text-primary tracking-tighter italic leading-none">
                 GlamLux
               </span>
             </Link>
