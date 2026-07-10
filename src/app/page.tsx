@@ -74,7 +74,7 @@ export default function Home() {
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-6xl md:text-8xl lg:text-[7.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
+               <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-headline leading-[0.9] tracking-tighter text-foreground italic">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
