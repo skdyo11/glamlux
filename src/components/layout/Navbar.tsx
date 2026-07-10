@@ -72,6 +72,8 @@ export function Navbar() {
   const { toast } = useToast();
   const router = useRouter();
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location, setLocation] = useState('Location');
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
   const [locationView, setLocationView] = useState<'search' | 'map'>('search');
@@ -81,6 +83,11 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleLogout = async () => {
@@ -114,15 +121,30 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md transition-all duration-300 border-b h-16">
-        <div className="container mx-auto h-16 flex items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-2 md:gap-4">
-             {pathname !== '/' && (
-              <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                <Link href="/"><CustomHomeIcon className="h-4 w-4" /></Link>
-              </Button>
-            )}
-            <Link href="/" className="font-headline italic text-2xl text-primary tracking-tighter shrink-0 drop-shadow-sm">GlamLux</Link>
+      <nav
+        className={cn(
+          "fixed top-0 left-0 right-0 transition-all duration-500 px-6 py-4",
+          isScrolled && !mobileMenuOpen ? "bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl border-b border-black/5 dark:border-white/10 py-3" : "bg-transparent",
+          mobileMenuOpen ? "z-[110]" : "z-50"
+        )}
+      >
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <Link href="/" className="flex items-center gap-3 group shrink-0">
+              <img 
+                src="https://picsum.photos/seed/logo-black/32/32" 
+                alt="TRAC AI Logo" 
+                className="dark:hidden w-8 h-8 object-contain"
+              />
+              <img 
+                src="https://picsum.photos/seed/logo-white/32/32" 
+                alt="TRAC AI Logo" 
+                className="hidden dark:block w-8 h-8 object-contain"
+              />
+              <span className="font-headline font-bold text-2xl text-foreground tracking-tighter uppercase leading-none">
+                TRAC AI
+              </span>
+            </Link>
           </div>
 
           <div className="flex items-center gap-1 md:gap-3">
@@ -303,7 +325,10 @@ export function Navbar() {
       </nav>
 
       {/* Floating Pill Secondary Navigation */}
-      <div className="fixed inset-x-0 z-40 h-14 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b transition-all duration-300 top-16 flex items-center justify-center overflow-hidden">
+      <div className={cn(
+        "fixed inset-x-0 z-40 h-14 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b transition-all duration-500 flex items-center justify-center overflow-hidden",
+        isScrolled ? "top-14" : "top-20"
+      )}>
         <div className="container mx-auto px-4 flex justify-center">
           <div className="inline-flex bg-primary/5 dark:bg-white/5 p-1 rounded-full border border-primary/10 shadow-inner">
             <Link 
@@ -345,4 +370,3 @@ export function Navbar() {
     </>
   );
 }
-
