@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -62,7 +61,8 @@ export default function Home() {
     { name: 'Spa', icon: <MapPin className="h-6 w-6" />, href: '/deals?category=Spa' },
   ];
 
-  const heroImage = PlaceHolderImages.find(img => img.id === 'beauty-ritual')?.imageUrl || "https://picsum.photos/seed/glam-hero/1200/800";
+  // Safely access placeholder images with fallback
+  const heroImage = (PlaceHolderImages || []).find(img => img.id === 'beauty-ritual')?.imageUrl || "https://picsum.photos/seed/glam-hero/1200/800";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -70,15 +70,30 @@ export default function Home() {
       
       <main className="flex-grow">
         {/* Editorial Hero Section */}
-        <section className="relative w-full min-h-screen lg:min-h-[90vh] lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
-          {/* Narrative & Action - Layered on top for mobile */}
-          <div className="relative z-30 flex flex-col justify-center px-8 md:px-16 lg:px-24 pt-72 pb-32 lg:pt-48 lg:pb-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
+        <section className="relative w-full min-h-screen lg:min-h-[90vh] flex flex-col lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
+          {/* Featured Visual - Behind content on mobile, Right column on desktop */}
+          <div className="absolute inset-0 lg:relative lg:inset-auto z-0 lg:z-auto lg:order-2 overflow-hidden group lg:border-l border-primary/5 bg-[#1a1a1a]">
+            {/* Dark legibility overlay for mobile background mode */}
+            <div className="absolute inset-0 bg-black/70 lg:hidden z-10" />
+            
+            <Image 
+              src={heroImage} 
+              alt="Elite Beauty Look" 
+              fill 
+              className="object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+              priority
+              data-ai-hint="beauty fashion"
+            />
+          </div>
+
+          {/* Narrative & Action - Moves down to clear Navbar */}
+          <div className="relative z-20 flex flex-col justify-center px-8 md:px-16 lg:px-24 pt-48 pb-32 lg:pt-32 lg:pb-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212] lg:order-1">
              <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
                <div className="inline-flex items-center gap-3">
                  <div className="w-8 h-px bg-primary/40" />
-                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60 lg:text-primary/60 text-white/80">Editorial Registry</span>
+                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-white/80 lg:text-primary/60">Editorial Registry</span>
                </div>
-               <h1 className="text-4xl md:text-5xl lg:text-7xl font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
+               <h1 className="text-5xl md:text-7xl lg:text-7xl font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
@@ -116,21 +131,6 @@ export default function Home() {
                  </Link>
                </div>
              </div>
-          </div>
-
-          {/* Featured Visual - Moves behind text on mobile */}
-          <div className="absolute inset-0 lg:relative lg:inset-auto z-10 lg:z-auto overflow-hidden group lg:border-l border-primary/5 bg-[#1a1a1a]">
-            {/* Mobile/Overlay for Legibility */}
-            <div className="absolute inset-0 bg-black/50 lg:hidden z-20" />
-            
-            <Image 
-              src={heroImage} 
-              alt="Elite Beauty Look" 
-              fill 
-              className="object-cover transition-transform duration-[2000ms] group-hover:scale-105"
-              priority
-              data-ai-hint="beauty fashion"
-            />
           </div>
         </section>
 
