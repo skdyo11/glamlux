@@ -119,7 +119,7 @@ export function Navbar() {
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center gap-3 group shrink-0">
-              <span className="font-headline font-bold text-2xl text-foreground tracking-tighter uppercase leading-none">
+              <span className="font-headline font-bold text-2xl text-primary tracking-tighter uppercase leading-none">
                 GlamLux
               </span>
             </Link>
@@ -137,7 +137,7 @@ export function Navbar() {
                     : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
                 )}
               >
-                <Scissors className="h-3 w-3" /> Parlours
+                <Scissors className={cn("h-3 w-3", !pathname.startsWith('/vendors') && "text-primary")} /> Parlours
               </Link>
               <Link 
                 href="/shop" 
@@ -148,7 +148,7 @@ export function Navbar() {
                     : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
                 )}
               >
-                <ShoppingBag className="h-3 w-3" /> Products
+                <ShoppingBag className={cn("h-3 w-3", !pathname.startsWith('/shop') && "text-primary")} /> Products
               </Link>
               <Link 
                 href="/deals" 
@@ -159,7 +159,7 @@ export function Navbar() {
                     : "text-primary/60 dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
                 )}
               >
-                <Zap className="h-3 w-3" /> Deals
+                <Zap className={cn("h-3 w-3", !pathname.startsWith('/deals') && "text-primary")} /> Deals
               </Link>
             </div>
           </div>
