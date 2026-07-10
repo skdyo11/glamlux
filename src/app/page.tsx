@@ -66,15 +66,15 @@ export default function Home() {
       
       <main className="flex-grow">
         {/* Editorial Hero Section */}
-        <section className="relative w-full min-h-[85vh] lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
+        <section className="relative w-full min-h-screen lg:min-h-[90vh] lg:grid lg:grid-cols-2 overflow-hidden border-b border-primary/5">
           {/* Narrative & Action - Layered on top for mobile */}
-          <div className="relative z-30 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-32 lg:py-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
+          <div className="relative z-30 flex flex-col justify-center px-8 md:px-16 lg:px-24 pt-48 pb-32 lg:pt-32 lg:pb-0 space-y-12 bg-transparent lg:bg-[#F8F5F0] lg:dark:bg-[#121212]">
              <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
                <div className="inline-flex items-center gap-3">
                  <div className="w-8 h-px bg-primary/40" />
                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-primary/60 lg:text-primary/60 text-white/80">Editorial Registry</span>
                </div>
-               <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
+               <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-headline leading-[0.9] tracking-tighter italic drop-shadow-sm text-white lg:text-foreground">
                  CURATE <br />YOUR <br />RADIANCE.
                </h1>
                <div className="space-y-2">
@@ -120,7 +120,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(215,15,100,0.1),transparent_70%)] hidden lg:block" />
             
             {/* Mobile Overlay for Legibility */}
-            <div className="absolute inset-0 bg-black/60 lg:hidden z-20" />
+            <div className="absolute inset-0 bg-black/50 lg:hidden z-20" />
             
             <div className="relative w-full h-full lg:w-[85%] lg:h-[85%] lg:aspect-square animate-in zoom-in-95 duration-1000">
               <Image 
