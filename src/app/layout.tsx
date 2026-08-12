@@ -9,6 +9,9 @@ import { GlamAssistant } from '@/components/GlamAssistant';
 export const metadata: Metadata = {
   title: 'GlamLux | The Editorial Registry',
   description: 'Elite beauty curators and professional artistry registry.',
+  icons: {
+    icon: '/G.jpg',
+  },
 };
 
 export default function RootLayout({
